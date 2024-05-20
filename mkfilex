@@ -1,0 +1,16 @@
+#!/usr/bin/bash -xe
+
+mk:
+  npm run dev
+
+f:
+  npx prettier --write .
+
+s:
+  npx astro sync
+
+b:
+  npx astro build
+
+p:
+  npx astro preview
