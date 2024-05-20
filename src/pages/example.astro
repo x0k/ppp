@@ -1,0 +1,34 @@
+---
+import { Code } from "astro:components";
+
+import Problem from "@/layouts/problem.astro";
+
+import { Content as Description } from "@/example/description.md";
+import code from "@/example/code.php?raw";
+---
+
+<Problem title="Example">
+  <div slot="description" class="prose p-6">
+    <Description />
+  </div>
+  <div slot="editor" class="h-full p-3 flex flex-col gap-3 overflow-hidden">
+    <div class="bg-base-200 p-3 rounded-md flex">
+      <select class="select select-sm">
+        <option>php</option>
+      </select>
+      <button class="btn btn-sm btn-primary ml-auto">Run</button>
+    </div>
+    <div class="fake-editor">
+      <Code lang="php" code={code} />
+    </div>
+  </div>
+</Problem>
+
+<style>
+  .fake-editor {
+    @apply grow overflow-auto;
+    pre {
+      @apply rounded-md p-3 w-full h-full;
+    }
+  }
+</style>

@@ -1,10 +1,8 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import { TITLE } from "@/shared";
+import Layout from "@/layouts/landing.astro";
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		Main page
-	</main>
+<Layout title={TITLE}>
+	Landing page
 </Layout>
-

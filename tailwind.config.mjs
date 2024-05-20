@@ -6,7 +6,7 @@ export default {
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
-    themes: ["light", "dark"],
+    themes: ["cmyk", "dim"],
   },
-  darkMode: ["selector", '[data-theme="dark"]'],
+  darkMode: ["selector", '[data-theme="dim"]'],
 };
