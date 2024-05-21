@@ -1,0 +1,20 @@
+---
+import RootLayout from "@/components/root-layout.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<RootLayout title={title} >
+  <div class="flex justify-center">
+    <main
+      class="p-6 pb-10 w-full lg:max-w-[900px] max-w-[100vw]"
+      transition:animate="slide"
+    >
+      <slot />
+    </main>
+  </div>
+</RootLayout>

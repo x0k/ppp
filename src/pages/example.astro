@@ -1,0 +1,56 @@
+---
+import Problem from "@/layouts/problem.astro";
+
+import { Content as Description } from "@/example/description.mdx";
+---
+
+<Problem title="Example">
+  <div slot="description" class="h-full flex flex-col">
+    <div class="prose prose-lg max-w-none p-6">
+      <Description />
+    </div>
+  </div>
+  <div slot="editor" class="flex flex-col h-full" data-theme="business">
+    <div class="p-3 flex gap-3">
+      <button class="btn btn-primary btn-sm" >
+        Run
+      </button>
+      <select class="select select-sm ml-auto" >
+        <option>
+          PHP
+        </option>
+      </select>
+    </div>
+    <div id="code-editor" class="grow"></div>
+  </div>
+</Problem>
+
+<script>
+  import { editor } from "monaco-editor";
+  import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+  import code from '@/example/code.php?raw';
+
+  const model = editor.createModel(code, "php");
+
+  window.MonacoEnvironment = {
+    getWorker(_, label) {
+      switch (label) {
+        case "editorWorkerService":
+          return new EditorWorker();
+        default:
+          throw new Error(`Unknown label ${label}`);
+      }
+    }
+  }
+
+  const codeEditorElement = document.getElementById("code-editor");
+  if (!codeEditorElement) {
+    throw new Error("Code editor element not found");
+  }
+  editor.create(codeEditorElement, {
+    model: model,
+    theme: "vs-dark",
+    language: "php",
+    automaticLayout: true,
+  });
+</script>
