@@ -1,44 +1,56 @@
 ---
-import { Code } from "astro:components";
-
 import Problem from "@/layouts/problem.astro";
 
 import { Content as Description } from "@/example/description.md";
-import code from "@/example/code.php?raw";
 ---
 
 <Problem title="Example">
   <div slot="description" class="bg-base-200 h-full flex flex-col">
-    <div class="p-3 flex items-center gap-3">
-      <div
-        class="bg-base-100 rounded-md w-14 h-14 flex items-center justify-center"
-      >
-        <p class="text-lg font-bold">3P</p>
-      </div>
-      <button class="btn btn-ghost"> Link </button>
-    </div>
-    <div class="prose max-w-none p-6">
+    <div class="prose prose-lg max-w-none p-6">
       <Description />
     </div>
   </div>
-  <div slot="editor" class="h-full p-3 flex flex-col gap-3 overflow-hidden">
-    <div class="bg-base-200 p-3 rounded-md flex">
-      <select class="select select-sm">
-        <option>php</option>
+  <div slot="editor" class="flex flex-col h-full" data-theme="business">
+    <div class="p-3 flex gap-3">
+      <button class="btn btn-primary btn-sm" >
+        Run
+      </button>
+      <select class="select select-sm ml-auto" >
+        <option>
+          PHP
+        </option>
       </select>
-      <button class="btn btn-sm btn-primary ml-auto">Run</button>
     </div>
-    <div class="fake-editor">
-      <Code theme="dracula" lang="php" code={code} />
-    </div>
+    <div id="code-editor" class="grow"></div>
   </div>
 </Problem>
 
-<style>
-  .fake-editor {
-    @apply grow overflow-auto;
-    pre {
-      @apply rounded-md p-3 w-full h-full;
+<script>
+  import { editor } from "monaco-editor";
+  import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+  import code from '@/example/code.php?raw';
+
+  const model = editor.createModel(code, "php");
+
+  window.MonacoEnvironment = {
+    getWorker(_, label) {
+      switch (label) {
+        case "editorWorkerService":
+          return new EditorWorker();
+        default:
+          throw new Error(`Unknown label ${label}`);
+      }
     }
   }
-</style>
+
+  const codeEditorElement = document.getElementById("code-editor");
+  if (!codeEditorElement) {
+    throw new Error("Code editor element not found");
+  }
+  editor.create(codeEditorElement, {
+    model: model,
+    theme: "vs-dark",
+    language: "php",
+    automaticLayout: true,
+  });
+</script>

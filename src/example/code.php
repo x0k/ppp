@@ -1,3 +1,5 @@
+<?php
+
 final class CatBankProcessor implements PaymentProcessorInterface
 {
 
