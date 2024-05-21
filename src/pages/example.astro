@@ -8,8 +8,18 @@ import code from "@/example/code.php?raw";
 ---
 
 <Problem title="Example">
-  <div slot="description" class="prose p-6">
-    <Description />
+  <div slot="description" class="bg-base-200 h-full flex flex-col">
+    <div class="p-3 flex items-center gap-3">
+      <div
+        class="bg-base-100 rounded-md w-14 h-14 flex items-center justify-center"
+      >
+        <p class="text-lg font-bold">3P</p>
+      </div>
+      <button class="btn btn-ghost"> Link </button>
+    </div>
+    <div class="prose max-w-none p-6">
+      <Description />
+    </div>
   </div>
   <div slot="editor" class="h-full p-3 flex flex-col gap-3 overflow-hidden">
     <div class="bg-base-200 p-3 rounded-md flex">
@@ -19,7 +29,7 @@ import code from "@/example/code.php?raw";
       <button class="btn btn-sm btn-primary ml-auto">Run</button>
     </div>
     <div class="fake-editor">
-      <Code lang="php" code={code} />
+      <Code theme="dracula" lang="php" code={code} />
     </div>
   </div>
 </Problem>

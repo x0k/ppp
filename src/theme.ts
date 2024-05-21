@@ -1,6 +1,6 @@
 export enum Theme {
   Light = "cmyk",
-  Dark = "dim",
+  Dark = "dracula",
 }
 
 const NEXT_THEMES: Record<Theme, Theme> = {
