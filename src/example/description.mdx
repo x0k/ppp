@@ -1,0 +1,32 @@
+# Платежные системы
+
+Необходимо выполнить интеграцию с тремя платежными системами, реализовав следующие операции:
+`payment` и `payout`.
+
+TODO: объяснение операций, что такое `amount`.
+
+Требования к реализации операции `payment`:
+
+- PayPal
+  - Уменьшает `amount` на `1`
+- Webmoney
+  - Уменьшает `amount` на `2`
+- BankCat
+  - Увеличивает `amount` на `3`
+
+Требования к реализации операции `payout`:
+
+- Использует логику расчета `payment` и уменьшает итоговое значение на `4`
+
+<div class="flex flex-col gap-3">
+  <div class="collapse bg-base-300 rounded-md">
+    <input type="radio" name="my-accordion-1" />
+    <div class="collapse-title text-xl font-medium">Hint 1</div>
+    <div class="collapse-content">Используй фабрику</div>
+  </div>
+  <div class="collapse bg-base-300 rounded-md">
+    <input type="radio" name="my-accordion-1" />
+    <div class="collapse-title text-xl font-medium">Hint 2</div>
+    <div class="collapse-content">Используй голову</div>
+  </div>
+</div>
