@@ -9,6 +9,13 @@ export default defineConfig({
   site: "https://x0k.github.io",
   base: "/ppp",
   integrations: [tailwind(), icon(), mdx()],
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ["sharp"],
+      }
+    }
+  },
   markdown: {
     shikiConfig: {
       wrap: true,
