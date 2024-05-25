@@ -1,5 +1,5 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from "astro-icon/components";
 
 import Problem from "@/layouts/problem.astro";
 
@@ -32,11 +32,13 @@ import { Content as Description } from "@/example/description.mdx";
   </div>
   <div slot="editor" class="flex flex-col h-full">
     <div id="code-editor" class="grow"></div>
-    <div class="p-4 bg-base-300 border-t border-base-100 flex items-center gap-3">
-      <button class="btn btn-sm btn-primary" >
-        Run
-      </button>
-      <select class="select select-sm select-ghost ml-auto">
+    <div
+      class="p-4 bg-base-200 border-t border-base-100 flex items-center gap-3"
+    >
+      <button class="btn btn-sm btn-primary"> Run </button>
+      <button class="btn btn-sm btn-secondary"> Case 1 </button>
+      <button class="btn btn-sm btn-secondary"> Case 2 </button>
+      <select class="select select-sm ml-auto">
         <option> PHP </option>
       </select>
     </div>
