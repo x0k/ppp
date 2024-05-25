@@ -1,0 +1,17 @@
+<script>
+  import "monaco-editor";
+  import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+
+  window.MonacoEnvironment = {
+    getWorker(_, label) {
+      switch (label) {
+        case "editorWorkerService":
+          return new EditorWorker();
+        default:
+          throw new Error(`Unknown label ${label}`);
+      }
+    },
+  };
+</script>
+
+<slot />
