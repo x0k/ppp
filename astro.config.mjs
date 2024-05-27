@@ -11,11 +11,16 @@ export default defineConfig({
   base: "/ppp",
   integrations: [tailwind(), icon(), mdx(), svelte()],
   vite: {
+    assetsInclude: ["**/*.wasm"],
     build: {
       rollupOptions: {
         external: ["sharp"],
+        output: {
+          assetFileNames: "assets/[name].[hash].[ext]",
+        },
       },
     },
+    plugins: [],
   },
   markdown: {
     shikiConfig: {
