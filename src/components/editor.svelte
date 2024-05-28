@@ -27,7 +27,7 @@
   {#await phpPromise}
     <span>Loading...</span>
   {:then php}
-    <EditorPanel {php} />
+    <EditorPanel {php} {model} />
   {:catch error}
     <span>Error: {error.message}</span>
   {/await}

@@ -16,18 +16,7 @@ export async function runTestCase<Arg, R>(
   for (const data of testData) {
     const result = await testCase.run(data.input);
     if (!deepEqual(result, data.output)) {
-      throw new Error("Test case failed.");
+      throw new Error(`Test case failed, expected "${data.output}", but got "${result}"`);
     }
   }
-}
-
-enum PaymentSystemType {
-  PayPal = "paypal",
-  WebMoney = "webmoney",
-  CatBank = "cat-bank",
-}
-
-interface FirstTestCaseInput {
-  paymentSystem: PaymentSystemType;
-  amount: number;
 }
