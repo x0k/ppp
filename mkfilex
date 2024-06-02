@@ -1,16 +1,16 @@
 #!/usr/bin/bash -xe
 
 mk:
-  npm run dev
+  bun run dev
 
 f:
-  npx prettier --write .
+  bunx prettier --write .
 
 s:
-  npx astro sync
+  bunx astro sync
 
 b:
-  npx astro build
+  bunx astro build
 
 p:
-  npx astro preview
+  bunx astro preview
