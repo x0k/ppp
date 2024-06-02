@@ -1,0 +1,30 @@
+import { Icon } from 'astro-icon/components';
+
+# Платежные системы
+
+Необходимо выполнить интеграцию с тремя платежными системами, реализовав следующие операции:
+`payment` и `payout`.
+
+TODO: объяснение операций, что такое `base` и `amount`.
+
+Требования к реализации операции `payment`:
+
+- PayPal - увеличивает `base` на `amount`
+- WebMoney - увеличивает `base` на `2*amount`
+- BankCat - увеличивает `base` в `amount` раза
+
+Требования к реализации операции `payout`:
+
+- PayPal - уменьшает `base` на `amount`
+- WebMoney - уменьшает `base` на `2*amount`
+- BankCat - уменьшает `base` в `amount` раза
+
+> Для тестовых данных результат операций будет целочисленным положительным числом.
+
+<div class="flex flex-col gap-3">
+  <div class="collapse outline outline-1">
+    <input type="checkbox" />
+    <div class="flex items-center gap-1 collapse-title"><Icon name="lucide:lightbulb" />Рекомендуемый паттерн проектирования</div>
+    <div class="collapse-content">Используй фабрику</div>
+  </div>
+</div>

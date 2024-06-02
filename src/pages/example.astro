@@ -1,9 +1,11 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from "astro-icon/components";
 
 import Problem from "@/layouts/problem.astro";
 
-import { Content as Description } from "@/example/description.mdx";
+import Editor from "@/content/design-patterns/factory/editor.svelte";
+
+import { Content as Description } from "@/content/design-patterns/factory/description.mdx";
 ---
 
 <Problem title="Example">
@@ -30,45 +32,7 @@ import { Content as Description } from "@/example/description.mdx";
       </div>
     </div>
   </div>
-  <div slot="editor" class="flex flex-col h-full">
-    <div id="code-editor" class="grow"></div>
-    <div class="p-4 bg-base-300 border-t border-base-100 flex items-center gap-3">
-      <button class="btn btn-sm btn-primary" >
-        Run
-      </button>
-      <select class="select select-sm select-ghost ml-auto">
-        <option> PHP </option>
-      </select>
-    </div>
+  <div slot="editor" class="flex flex-col h-full bg-base-300">
+    <Editor client:only="svelte" />
   </div>
 </Problem>
-
-<script>
-  import { editor } from "monaco-editor";
-  import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-  import code from "@/example/code.php?raw";
-
-  const model = editor.createModel(code, "php");
-
-  window.MonacoEnvironment = {
-    getWorker(_, label) {
-      switch (label) {
-        case "editorWorkerService":
-          return new EditorWorker();
-        default:
-          throw new Error(`Unknown label ${label}`);
-      }
-    },
-  };
-
-  const codeEditorElement = document.getElementById("code-editor");
-  if (!codeEditorElement) {
-    throw new Error("Code editor element not found");
-  }
-  editor.create(codeEditorElement, {
-    model: model,
-    theme: "vs-dark",
-    language: "php",
-    automaticLayout: true,
-  });
-</script>
