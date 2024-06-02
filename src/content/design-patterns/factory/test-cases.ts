@@ -12,6 +12,8 @@ export enum CaseType {
   Complex = "complex",
 }
 
+export const CASE_TYPES = Object.values(CaseType);
+
 export interface SimpleTestInput {
   paymentSystem: PaymentSystemType;
   base: number;

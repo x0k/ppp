@@ -1,36 +1,52 @@
-<script lang="ts">
+<script lang="ts" context="module">
+  export type UiTestCase2<T extends string, I, O> = TestCase<I, O> & {
+    id: T;
+    isRunning: boolean;
+    lastTestId: number;
+    testRunner: TestRunnerFactory<I, O>;
+  };
+</script>
+
+<script
+  lang="ts"
+  generics="Key extends string, Inputs extends Record<Key, unknown>, Outputs extends Record<Key, unknown>"
+>
   import type { editor } from "monaco-editor";
   import Icon from "@iconify/svelte";
 
-  import { runTest } from "@/lib/testing";
   import {
-    CaseType,
-    testCases,
-  } from "@/content/design-patterns/factory/test-cases";
-  import { testRunnerFactories } from "@/content/design-patterns/factory/php/test-runners";
+    runTest,
+    type TestCase,
+    type TestRunnerFactory,
+  } from "@/lib/testing";
 
-  let { model }: { model: editor.IModel } = $props();
+  interface Props<
+    T extends string,
+    Inputs extends Record<T, unknown>,
+    Outputs extends Record<T, unknown>,
+  > {
+    model: editor.IModel;
+    cases: {
+      [k in T]: UiTestCase2<k, Inputs[k], Outputs[k]>;
+    }[T][];
+  }
 
-  const cases = $state(
-    Object.entries(testCases).map(([id, testCase]) => ({
-      ...testCase,
-      id,
-      isRunning: false,
-      lastTestId: -1,
-      testRunner: testRunnerFactories[id as CaseType],
-    }))
-  );
+  let { model, cases: initialCases }: Props<Key, Inputs, Outputs> = $props();
+
+  const cases = $state(initialCases);
 
   let isRunning = $derived(cases.some((c) => c.isRunning));
 
-  async function runTestCase(testCase: (typeof cases)[number]) {
+  async function runTestCase<T extends string, I, O>(
+    testCase: UiTestCase2<T, I, O>
+  ) {
     if (testCase.isRunning) {
       return;
     }
     testCase.isRunning = true;
     const t = await testCase.testRunner(model.getValue());
     try {
-      testCase.lastTestId = await runTest(t, testCase.data as any);
+      testCase.lastTestId = await runTest(t, testCase.data);
     } finally {
       t[Symbol.dispose]();
       testCase.isRunning = false;
