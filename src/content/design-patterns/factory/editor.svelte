@@ -7,11 +7,13 @@
   import { testCases, CaseType, type Inputs, type Outputs, CASE_TYPES } from './test-cases'
   import { testRunnerFactories as phpTestRunnerFactories } from './php/test-runners'
   import { tsTestRunnerFactories, jsTestRunnerFactories } from './js/test-runners'
+  import { testRunnerFactories as pyTestRunnerFactories } from './python/test-runners'
 
   const INITIAL_VALUES: Record<Language, Promise<string>> = {
     [Language.PHP]: import('./php/code.php?raw').then(m => m.default),
     [Language.TypeScript]: import('./js/code.ts?raw').then(m => m.default),
     [Language.JavaScript]: import('./js/code.js?raw').then(m => m.default),
+    [Language.Python]: import('./python/code.py?raw').then(m => m.default),
   }
 
   const CASES_FACTORIES: Record<Language, () => TestCasesStates<CaseType, Inputs, Outputs>> = {
@@ -36,13 +38,20 @@
       testCase: testCases[id],
       testRunner: jsTestRunnerFactories[id],
     })) as TestCasesStates<CaseType, Inputs, Outputs>,
+    [Language.Python]: () => CASE_TYPES.map(id => ({
+      id,
+      isRunning: false,
+      lastTestId: -1,
+      testCase: testCases[id],
+      testRunner: pyTestRunnerFactories[id],
+    })) as TestCasesStates<CaseType, Inputs, Outputs>,
   }
   const defaultLanguage = Language.PHP;
 </script>
 
 <Editor
   {defaultLanguage}
-  languages={[Language.PHP, Language.TypeScript, Language.JavaScript]}
+  languages={Object.keys(CASES_FACTORIES) as Language[]}
   onLanguageChange={async (lang, model) => {
     model.setValue(await INITIAL_VALUES[lang])
   }}

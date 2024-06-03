@@ -1,3 +1,5 @@
-import { WebPHP } from '@php-wasm/web';
+import { WebPHP } from "@php-wasm/web";
 
-export const phpRuntimeFactory = () => WebPHP.loadRuntime('8.3')
+import { version } from "./model";
+
+export const phpRuntimeFactory = () => WebPHP.loadRuntime(version);

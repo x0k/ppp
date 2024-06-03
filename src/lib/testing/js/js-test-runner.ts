@@ -11,7 +11,7 @@ export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
 
   async run(input: I): Promise<O> {
     const transformedCode = this.transformCode(this.code);
-    const m = await import(transformedCode);
+    const m = await import(/* @vite-ignore */ transformedCode);
     return this.executeTest(m, input);
   }
 
