@@ -3,6 +3,9 @@
 mk:
   bun run dev
 
+c:
+  bunx astro check
+
 f:
   bunx prettier --write .
 

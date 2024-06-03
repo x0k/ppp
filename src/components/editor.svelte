@@ -1,34 +1,30 @@
-<script lang="ts" generics="R extends Runner">
+<script lang="ts" generics="Lang extends Language">
   import type { Snippet } from "svelte";
   import { editor } from "monaco-editor";
 
   import {
-  Language,
-    RUNNER_LANGUAGES,
-    RUNNER_TITLES,
-    Runner,
-  } from "@/lib/testing/runners";
-  import { LANGUAGE_MONACO_LANGUAGES } from "@/adapters/monaco";
+    Language,
+    LANGUAGE_TITLE,
+  } from "@/lib/testing/languages";
+  import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
 
   interface Props {
-    initialValue: string;
-    runners: R[];
-    defaultRunner?: R;
-    children: Snippet<[R, editor.ITextModel]>;
-    onLanguageChange?: (lang: Language, model: editor.ITextModel) => void;
+    languages: Lang[];
+    initialValue?: string;
+    defaultLanguage?: Lang;
+    children: Snippet<[Lang, editor.ITextModel]>;
+    onLanguageChange?: (lang: Lang, model: editor.ITextModel) => void;
   }
 
-  const { initialValue, runners, defaultRunner, children, onLanguageChange }: Props = $props();
+  const { initialValue = "", languages, defaultLanguage, children, onLanguageChange }: Props = $props();
 
-  let runner = $state(defaultRunner ?? runners[0]);
-
-  let lang = $derived(RUNNER_LANGUAGES[runner]);
+  let lang = $state(defaultLanguage ?? languages[0]);
   
   $effect(() => {
     onLanguageChange?.(lang, model);
   });
   
-  let monacoLang = $derived(LANGUAGE_MONACO_LANGUAGES[lang]);
+  let monacoLang = $derived(MONACO_LANGUAGE_ID[lang]);
   
   const model = editor.createModel(initialValue, $state.snapshot(monacoLang));
 
@@ -50,10 +46,10 @@
 
 <div bind:this={editorElement} class="grow"></div>
 <div class="p-4 border-t border-base-100 flex items-center gap-3">
-  {@render children(runner, model)}
-  <select class="select select-ghost select-sm ml-auto" bind:value={runner}>
-    {#each runners as runner (runner)}
-      <option value={runner}>{RUNNER_TITLES[runner]}</option>
+  {@render children(lang, model)}
+  <select class="select select-ghost select-sm ml-auto" bind:value={lang}>
+    {#each languages as lang (lang)}
+      <option value={lang}>{LANGUAGE_TITLE[lang]}</option>
     {/each}
   </select>
 </div>

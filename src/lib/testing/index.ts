@@ -1,2 +1,2 @@
 export * from "./testing";
-export * from "./runners";
+export * from "./languages";

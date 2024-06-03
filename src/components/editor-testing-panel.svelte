@@ -36,9 +36,13 @@
     cases: TestCasesStates<T, Inputs, Outputs>;
   }
 
-  let { model, cases: initialData }: Props<Key, Inputs, Outputs> = $props();
+  let { model, cases }: Props<Key, Inputs, Outputs> = $props();
 
-  const states = $state(initialData);
+  let states = $state<TestCasesStates<Key, Inputs, Outputs>>([]);
+
+  $effect(() => {
+    states = cases;
+  });
 
   let isRunning = $derived(states.some((c) => c.isRunning));
 
@@ -61,6 +65,7 @@
 
 <button
   class="btn btn-sm btn-primary"
+  class:hidden={states.length < 2}
   onclick={async () => {
     if (isRunning) {
       return;
