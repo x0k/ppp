@@ -1,11 +1,27 @@
+<script lang="ts" context="module">
+  export enum Orientation {
+    Vertical = "vertical",
+    Horizontal = "horizontal",
+  }
+</script>
+
 <script lang="ts">
   interface Props {
     onMove: (e: MouseEvent) => void;
     onMoveStart?: (e: MouseEvent) => void;
     onMoveEnd?: (e: MouseEvent) => void;
+    /**
+     * @default Orientation.Vertical
+     */
+    orientation?: Orientation;
   }
 
-  const { onMove, onMoveStart, onMoveEnd }: Props = $props();
+  const {
+    onMove,
+    onMoveStart,
+    onMoveEnd,
+    orientation = Orientation.Vertical,
+  }: Props = $props();
 
   let resizerElement: HTMLDivElement;
 
@@ -33,5 +49,11 @@
 
 <div
   bind:this={resizerElement}
-  class="absolute select-none w-1 z-50 h-full active:bg-primary hover:bg-primary/50 hover:cursor-col-resize"
+  class="absolute select-none z-50 h-full active:bg-primary hover:bg-primary/50"
+  class:hover:cursor-col-resize={orientation === Orientation.Vertical}
+  class:h-full={orientation === Orientation.Vertical}
+  class:w-1={orientation === Orientation.Vertical}
+  class:hover:cursor-row-resize={orientation === Orientation.Horizontal}
+  class:w-full={orientation === Orientation.Horizontal}
+  class:h-1={orientation === Orientation.Horizontal}
 ></div>

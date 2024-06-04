@@ -9,7 +9,7 @@
   import type { Position, SyncStorage } from '@/shared';
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
 
-  import Resizer from './resizer.svelte';
+  import Resizer, { Orientation } from './resizer.svelte';
 
   interface Props {
     languages: Lang[];
@@ -69,7 +69,7 @@
   })
 
   function normalizeWidth(width: number) {
-    return Math.min(Math.max(width, 400), windowWidth)
+    return Math.min(Math.max(width, 480), windowWidth)
   }
 
   let width = $state(normalizeWidth(widthStorage.load()))
@@ -86,22 +86,25 @@
     }}
     onMove={(e) => {
       width = normalizeWidth(start.x - e.clientX + info.width)
-    }}
-    onMoveEnd={() => {
-      widthStorage.save(width)
       ed.layout({
         width: width,
         height: info.height
       })
     }}
+    onMoveEnd={() => {
+      widthStorage.save(width)
+    }}
   />
   <div bind:this={editorElement} class="grow" style="width: {width}px" ></div>
-  <div class="p-4 border-t border-base-100 flex items-center gap-3">
+  <div class="border-t border-base-100 relative">
+    <Resizer orientation={Orientation.Horizontal} onMove={console.log} />
+    <div class="flex items-center gap-3" >
     {@render children(lang, model)}
     <select class="select select-ghost select-sm ml-auto" bind:value={lang}>
       {#each languages as lang (lang)}
         <option value={lang}>{LANGUAGE_TITLE[lang]}</option>
       {/each}
     </select>
+    </div>
   </div>
 </div>

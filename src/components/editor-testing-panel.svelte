@@ -49,17 +49,27 @@
     <Icon class="w-6" icon="lucide:play" />
   {/if}
 </button>
-<div role="tablist" class="tabs uppercase">
-  <span role="tab" class="tab flex gap-2 text-base-content/50">
+<div role="tablist" class="tabs panel-tabs">
+  <span role="tab" class="tab tab-active flex gap-2">
     Tests
     <div
       class="badge"
+      class:hidden={lastTestId < 0}
       class:badge-success={lastTestId === testData.length}
       class:badge-error={lastTestId < testData.length && lastTestId >= 0}
     >
-      {Math.max(lastTestId, 0)}/{testData.length}
+      {lastTestId}/{testData.length}
     </div>
   </span>
-  <span role="tab" class="tab tab-active">Output</span>
-  <span role="tab" class="tab text-base-content/50">Settings</span>
+  <span role="tab" class="tab">Output</span>
+  <span role="tab" class="tab">Settings</span>
 </div>
+
+<style>
+  .panel-tabs {
+    @apply uppercase;
+    .tab:not(.tab-active) {
+      --tab-color: oklch(var(--bc) / 0.5);
+    }
+  }
+</style>
