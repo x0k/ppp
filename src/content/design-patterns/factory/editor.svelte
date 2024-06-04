@@ -25,7 +25,7 @@
     [Language.Python]: pyTestRunnerFactory,
   }
   
-  const widthStorage = createSyncStorage(localStorage, "editor-width", window.innerWidth - 600)
+  const widthStorage = createSyncStorage(localStorage, "editor-width", window.innerWidth - 800)
   const langStorage = createSyncStorage(localStorage, "editor-lang", Language.PHP)
   const defaultLanguage = $state(langStorage.load());
 </script>
