@@ -32,7 +32,5 @@ import { Content as Description } from "@/content/design-patterns/factory/descri
       </div>
     </div>
   </div>
-  <div slot="editor" class="flex flex-col h-full bg-base-300">
-    <Editor client:only="svelte" />
-  </div>
+  <Editor slot="editor" client:only="svelte" />
 </Problem>

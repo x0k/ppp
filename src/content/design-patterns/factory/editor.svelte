@@ -1,8 +1,10 @@
 <script lang="ts">
   import { Language, type TestRunnerFactory } from '@/lib/testing';
-  
+
+  import { createSyncStorage } from '@/adapters/storage'
   import Editor from '@/components/editor.svelte';
   import EditorTestingPanel from '@/components/editor-testing-panel.svelte';
+
 
   import { testsData, type Input, type Output } from './tests-data'
   import { testRunnerFactory as phpTestRunnerFactory } from './php/test-runners'
@@ -22,14 +24,19 @@
     [Language.JavaScript]: jsTestRunnerFactory,
     [Language.Python]: pyTestRunnerFactory,
   }
-  const defaultLanguage = Language.PHP;
+  
+  const widthStorage = createSyncStorage(localStorage, "editor-width", window.innerWidth - 600)
+  const langStorage = createSyncStorage(localStorage, "editor-lang", Language.PHP)
+  const defaultLanguage = $state(langStorage.load());
 </script>
 
 <Editor
   {defaultLanguage}
+  {widthStorage}
   languages={Object.keys(TEST_RUNNER_FACTORIES) as Language[]}
   onLanguageChange={async (lang, model) => {
     model.setValue(await INITIAL_VALUES[lang])
+    langStorage.save(lang)
   }}
 >
   {#snippet children(lang, model)}

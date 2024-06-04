@@ -49,8 +49,9 @@
     <span class="loading loading-spinner"></span>
   {:else}
     <Icon class="w-6" icon="lucide:play" />
-    <span class="w-6 text-center"
-      >{Math.max(lastTestId, 0)}/{testData.length}</span
+
+    <span class="w-6 text-center" class:hidden={lastTestId === -1}
+      >{lastTestId}/{testData.length}</span
     >
   {/if}
 </button>

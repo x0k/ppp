@@ -11,10 +11,10 @@ const { title } = Astro.props;
 
 <RootLayout title={title} class="h-screen">
   <main class="h-full overflow-hidden flex">
-    <div class="h-full overflow-auto resize-x w-[800px]">
+    <div class="h-full overflow-auto grow">
       <slot name="description" />
     </div>
-    <div class="grow h-full overflow-auto">
+    <div class="h-full">
       <EditorProvider>
         <slot name="editor" />
       </EditorProvider>
