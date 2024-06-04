@@ -29,8 +29,6 @@
 
 <button
   class="btn btn-sm btn-primary"
-  class:btn-success={lastTestId === testData.length}
-  class:btn-error={lastTestId < testData.length && lastTestId >= 0}
   onclick={async () => {
     if (isRunning) {
       return;
@@ -49,9 +47,19 @@
     <span class="loading loading-spinner"></span>
   {:else}
     <Icon class="w-6" icon="lucide:play" />
-
-    <span class="w-6 text-center" class:hidden={lastTestId === -1}
-      >{lastTestId}/{testData.length}</span
-    >
   {/if}
 </button>
+<div role="tablist" class="tabs uppercase">
+  <span role="tab" class="tab flex gap-2 text-base-content/50">
+    Tests
+    <div
+      class="badge"
+      class:badge-success={lastTestId === testData.length}
+      class:badge-error={lastTestId < testData.length && lastTestId >= 0}
+    >
+      {Math.max(lastTestId, 0)}/{testData.length}
+    </div>
+  </span>
+  <span role="tab" class="tab tab-active">Output</span>
+  <span role="tab" class="tab text-base-content/50">Settings</span>
+</div>
