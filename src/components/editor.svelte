@@ -26,7 +26,7 @@
   
   let monacoLang = $derived(MONACO_LANGUAGE_ID[lang]);
   
-  const model = editor.createModel(initialValue, $state.snapshot(monacoLang));
+  const model = editor.createModel(initialValue);
 
   $effect(() => {
     editor.setModelLanguage(model, $state.snapshot(monacoLang));

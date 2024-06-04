@@ -11,28 +11,9 @@ class PaymentSystemType(Enum):
 
 
 
-def case1(
+def payment(
   type: PaymentSystemType,
   base: int,
-  amount: int
-) -> int:
-  raise NotImplementedError
-
-class PaymentSystemActionType(Enum):
-  PAYMENT = "payment"
-  PAYOUT = "payout"
-
-
-
-
-
-
-
-
-def case2(
-  type: PaymentSystemType,
-  base: int,
-  action: PaymentSystemActionType,
   amount: int
 ) -> int:
   raise NotImplementedError

@@ -10,29 +10,9 @@ const enum PaymentSystemType {
 
 
 
-export function case1(
+export function payment(
   type: PaymentSystemType,
   base: number,
-  amount: number
-): number {
-  throw new Error("Not implemented");
-}
-
-const enum PaymentSystemActionType {
-  Payment = "payment",
-  Payout = "payout",
-}
-
-
-
-
-
-
-
-export function case2(
-  type: PaymentSystemType,
-  base: number,
-  action: PaymentSystemActionType,
   amount: number
 ): number {
   throw new Error("Not implemented");

@@ -11,21 +11,6 @@ enum PaymentSystemType: string {
 
 
 // Выполните операцию payment для платежной системы `type`
-function case1(PaymentSystemType $type, int $base, int $amount): int {
-
-}
-
-enum PaymentSystemActionType: string {
-    case PAYMENT = 'payment';
-    case PAYOUT = 'payout';
-}
-
-
-
-
-
-
-// Выполните операцию `action` для платежной системы `type`
-function case2(PaymentSystemType $type, int $base, PaymentSystemActionType $action, int $amount): int {
+function payment(PaymentSystemType $type, int $base, int $amount): int {
 
 }

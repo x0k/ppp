@@ -27,43 +27,10 @@ const paymentSystemFactories: Record<PaymentSystemType, PaymentSystemFactory> =
     }),
   };
 
-export function case1(
+export function payment(
   type: PaymentSystemType,
   base: number,
   amount: number
 ): number {
   return paymentSystemFactories[type](base).payment(amount);
-}
-
-export const enum PaymentSystemActionType {
-  Payment = "payment",
-  Payout = "payout",
-}
-
-type PaymentProcessor = (amount: number) => number;
-
-type PaymentProcessorFactory = (system: PaymentSystem) => PaymentProcessor;
-
-const paymentProcessorFactory: PaymentProcessorFactory = (system) => (amount) =>
-  system.payment(amount);
-const payoutProcessorFactory: PaymentProcessorFactory = (system) => (amount) =>
-  system.payout(amount);
-
-const paymentProcessorFactories: Record<
-  PaymentSystemActionType,
-  PaymentProcessorFactory
-> = {
-  [PaymentSystemActionType.Payment]: paymentProcessorFactory,
-  [PaymentSystemActionType.Payout]: payoutProcessorFactory,
-};
-
-export function case2(
-  type: PaymentSystemType,
-  base: number,
-  action: PaymentSystemActionType,
-  amount: number
-): number {
-  return paymentProcessorFactories[action](paymentSystemFactories[type](base))(
-    amount
-  );
 }

@@ -18,7 +18,9 @@ export interface TestRunner<I, O> extends Disposable {
   run: (input: I) => Promise<O>;
 }
 
-export type TestRunnerFactory<I, O> = (code: string) => Promise<TestRunner<I, O>>;
+export type TestRunnerFactory<I, O> = (
+  code: string
+) => Promise<TestRunner<I, O>>;
 
 export async function runTest<Arg, R>(
   testCase: TestRunner<Arg, R>,
@@ -41,9 +43,4 @@ export async function runTest<Arg, R>(
     }
   }
   return i;
-}
-
-export interface TestCase<I, O> {
-  name: string;
-  data: TestData<I, O>[];
 }

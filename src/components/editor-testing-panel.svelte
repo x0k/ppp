@@ -1,77 +1,47 @@
-<script lang="ts" context="module">
-  import type { TestCase, TestRunnerFactory } from "@/lib/testing/testing";
-
-  export interface TestCaseState<T extends string, I, O> {
-    id: T;
-    isRunning: boolean;
-    lastTestId: number;
-    testCase: TestCase<I, O>;
-    testRunner: TestRunnerFactory<I, O>;
-  }
-
-  export type TestCasesStates<
-    T extends string,
-    Inputs extends Record<T, unknown>,
-    Outputs extends Record<T, unknown>,
-  > = {
-    [k in T]: TestCaseState<k, Inputs[k], Outputs[k]>;
-  }[T][];
-</script>
-
-<script
-  lang="ts"
-  generics="Key extends string, Inputs extends Record<Key, unknown>, Outputs extends Record<Key, unknown>"
->
+<script lang="ts" generics="Input, Output">
   import type { editor } from "monaco-editor";
   import Icon from "@iconify/svelte";
 
-  import { runTest } from "@/lib/testing";
+  import {
+    runTest,
+    type TestData,
+    type TestRunnerFactory,
+  } from "@/lib/testing";
 
-  interface Props<
-    T extends string,
-    Inputs extends Record<T, unknown>,
-    Outputs extends Record<T, unknown>,
-  > {
+  interface Props<I, O> {
     model: editor.IModel;
-    cases: TestCasesStates<T, Inputs, Outputs>;
+    testData: TestData<I, O>[];
+    testRunnerFactory: TestRunnerFactory<I, O>;
   }
 
-  let { model, cases }: Props<Key, Inputs, Outputs> = $props();
+  let { model, testData, testRunnerFactory }: Props<Input, Output> = $props();
 
-  let states = $state<TestCasesStates<Key, Inputs, Outputs>>([]);
+  let isRunning = $state(false);
+  let lastTestId = $state(-1);
 
   $effect(() => {
-    states = cases;
+    testData;
+    testRunnerFactory;
+    isRunning = false;
+    lastTestId = -1;
   });
-
-  let isRunning = $derived(states.some((c) => c.isRunning));
-
-  async function execTestCase<T extends string, I, O>(
-    state: TestCaseState<T, I, O>
-  ) {
-    if (state.isRunning) {
-      return;
-    }
-    state.isRunning = true;
-    const runner = await state.testRunner(model.getValue());
-    try {
-      state.lastTestId = await runTest(runner, state.testCase.data);
-    } finally {
-      runner[Symbol.dispose]();
-      state.isRunning = false;
-    }
-  }
 </script>
 
 <button
   class="btn btn-sm btn-primary"
-  class:hidden={states.length < 2}
+  class:btn-success={lastTestId === testData.length}
+  class:btn-error={lastTestId < testData.length && lastTestId >= 0}
   onclick={async () => {
     if (isRunning) {
       return;
     }
-    for (const state of states) {
-      await execTestCase(state);
+    isRunning = true;
+    const runner = await testRunnerFactory(model.getValue());
+    try {
+      lastTestId = await runTest(runner, testData);
+    } finally {
+      runner[Symbol.dispose]();
+      isRunning = false;
     }
   }}
 >
@@ -79,25 +49,8 @@
     <span class="loading loading-spinner"></span>
   {:else}
     <Icon class="w-6" icon="lucide:play" />
+    <span class="w-6 text-center"
+      >{Math.max(lastTestId, 0)}/{testData.length}</span
+    >
   {/if}
 </button>
-{#each states as state (state.id)}
-  <button
-    class="btn btn-sm btn-secondary"
-    class:btn-success={state.lastTestId === state.testCase.data.length}
-    class:btn-error={state.lastTestId < state.testCase.data.length &&
-      state.lastTestId >= 0}
-    onclick={() => {
-      execTestCase(state);
-    }}
-  >
-    {state.testCase.name}
-    {#if state.isRunning}
-      <span class="loading loading-spinner"></span>
-    {:else}
-      <span class="w-6 text-center"
-        >{Math.max(state.lastTestId, 0)}/{state.testCase.data.length}</span
-      >
-    {/if}
-  </button>
-{/each}

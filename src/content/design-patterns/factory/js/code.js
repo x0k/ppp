@@ -1,25 +1,15 @@
-const PaymentSystemType = {
-  PayPal: "paypal",
-  WebMoney: "webmoney",
-  CatBank: "cat-bank",
+const PAYMENT_SYSTEM_TYPE = {
+  PAYPAL: "paypal",
+  WEBMONEY: "webmoney",
+  CAT_BANK: "cat-bank",
 };
 
-export function case1(type, base, amount) {
-  throw new Error("Not implemented");
-}
 
 
 
 
 
 
-
-
-const PaymentSystemActionType = {
-  Payment: "payment",
-  Payout: "payout",
-};
-
-export function case2(type, base, action, amount) {
+export function payment(type, base, amount) {
   throw new Error("Not implemented");
 }
