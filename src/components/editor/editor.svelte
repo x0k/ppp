@@ -66,11 +66,16 @@
 </script>
 
 <EditorSurface {model} {widthStorage}>
-  <TestingPanel
-    {model}
-    {testsData}
-    testRunnerFactory={testRunnerFactories[lang]}
-  >
-    <LangSelect bind:lang {languages} />
-  </TestingPanel>
+  {#snippet panel({ resizer })}
+    <TestingPanel
+      {model}
+      {testsData}
+      testRunnerFactory={testRunnerFactories[lang]}
+      children={resizer}
+    >
+      {#snippet header()}
+        <LangSelect bind:lang {languages} />
+      {/snippet}
+    </TestingPanel>
+  {/snippet}
 </EditorSurface>

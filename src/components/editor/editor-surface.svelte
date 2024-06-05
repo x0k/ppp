@@ -2,31 +2,31 @@
   import { untrack, type Snippet } from 'svelte';
   import { editor } from "monaco-editor";
 
-  import type { Position, SyncStorage } from "@/shared";
-  import Resizer, { Alignment, Orientation } from './resizer.svelte';
+  import type { SyncStorage } from "@/shared";
+
+  import Resizer, { Alignment, Orientation, Position } from './resizer.svelte';
 
   interface Props {
     model: editor.IModel;
     widthStorage: SyncStorage<number>;
-    children: Snippet
+    panel: Snippet<[{ resizer: Snippet }]>;
   }
 
-  const { model, widthStorage, children }: Props = $props();
+  const { model, widthStorage, panel }: Props = $props();
 
   function normalizeWidth(width: number) {
     return Math.min(Math.max(width, 480), window.innerWidth);
   }
 
-  const RESIZER_HEIGHT = 4 // 4 for the resizer, when editor is minimized
   const MIN_PANEL_HEIGHT = 32 + 1 // 1 for the resizer, when editor is maximized
 
   function normalizeHeight(height: number) {
-    return Math.min(Math.max(height, RESIZER_HEIGHT), window.innerHeight - MIN_PANEL_HEIGHT);
+    return Math.min(Math.max(height, 0), window.innerHeight - MIN_PANEL_HEIGHT);
   }
 
   let width = $state(normalizeWidth(widthStorage.load()));
   let height = $state(window.innerHeight - MIN_PANEL_HEIGHT);
-  let start: Position;
+  let start: { x: number, y: number };
 
   function onWindowResize() {
     if (window.innerWidth < width) {
@@ -75,10 +75,10 @@
       widthStorage.save(width)
     }}
   />
-  <div bind:this={editorElement} class="relative" style="height: {height}px" >
+  <div bind:this={editorElement} class="relative" style="height: {height}px" ></div>
+  {#snippet hResizer()}
     <Resizer
       orientation={Orientation.Horizontal}
-      alignment={Alignment.End}
       onMoveStart={(e) => {
         start = { x: $state.snapshot(height), y: e.clientY }
       }}
@@ -87,6 +87,8 @@
         ed.layout({ width, height }, true)
       }}
     />
-  </div>
-  {@render children()}
+  {/snippet}
+  {@render panel({
+    resizer: hResizer
+  })}
 </div>

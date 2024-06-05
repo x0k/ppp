@@ -14,9 +14,10 @@
     testsData: TestData<I, O>[];
     testRunnerFactory: TestRunnerFactory<I, O>;
     children: Snippet
+    header: Snippet
   }
 
-  let { model, testsData, testRunnerFactory, children }: Props<Input, Output> = $props();
+  let { model, testsData, testRunnerFactory, children, header }: Props<Input, Output> = $props();
 
   let isRunning = $state(false);
   let lastTestId = $state(-1);
@@ -31,7 +32,7 @@
 
 
 <div class="border-t border-base-100 relative flex flex-col bg-base-300 overflow-hidden">
-  <div class="flex items-center gap-3">
+  <div class="flex items-center gap-3 px-4">
     <button
       class="btn btn-sm btn-primary"
       onclick={async () => {
@@ -55,7 +56,7 @@
       {/if}
     </button>
     <div role="tablist" class="tabs panel-tabs">
-      <span role="tab" class="tab tab-active flex gap-2">
+      <span role="tab" class="tab flex gap-2">
         Tests
         <div
           class="badge"
@@ -69,10 +70,11 @@
       <span role="tab" class="tab">Output</span>
       <span role="tab" class="tab">Settings</span>
     </div>
-    {@render children()}
+    <div class="grow" ></div>
+    {@render header()}
   </div>
   <div class="min-h-0 min-w-0 overflow-auto">
-    <div class="flex flex-col gap-4 p-6">
+    <div class="flex flex-col gap-4 p-4">
       {#each testsData as testData, i}
         <div>
           <div class="flex items-center gap-2 pb-2">
@@ -92,6 +94,7 @@
       {/each}
     </div>
   </div>
+  {@render children()}
 </div>
 
 <style>

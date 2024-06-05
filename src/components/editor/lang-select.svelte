@@ -9,7 +9,7 @@
   let { lang = $bindable(), languages }: Props<Lang> = $props();
 </script>
 
-<select class="select select-ghost select-sm ml-auto" bind:value={lang}>
+<select class="select select-ghost select-sm" bind:value={lang}>
   {#each languages as lang (lang)}
     <option value={lang}>{LANGUAGE_TITLE[lang]}</option>
   {/each}
