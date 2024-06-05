@@ -17,7 +17,7 @@
     initialValue?: string;
     initialLanguage?: L;
     onLanguageChange?: (lang: L, model: editor.ITextModel) => void;
-    testData: TestData<I, O>[];
+    testsData: TestData<I, O>[];
     testRunnerFactories: Record<L, TestRunnerFactory<I, O>>;
   }
 
@@ -25,7 +25,7 @@
     initialLanguage,
     onLanguageChange,
     initialValue = "",
-    testData,
+    testsData,
     testRunnerFactories,
   }: Props<Lang, Input, Output> = $props();
 
@@ -66,12 +66,11 @@
 </script>
 
 <EditorSurface {model} {widthStorage}>
-  <div class="flex items-center gap-3">
-    <TestingPanel
-      {model}
-      {testData}
-      testRunnerFactory={testRunnerFactories[lang]}
-    />
+  <TestingPanel
+    {model}
+    {testsData}
+    testRunnerFactory={testRunnerFactories[lang]}
+  >
     <LangSelect bind:lang {languages} />
-  </div>
+  </TestingPanel>
 </EditorSurface>

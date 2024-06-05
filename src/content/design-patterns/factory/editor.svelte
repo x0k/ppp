@@ -24,7 +24,7 @@
 </script>
 
 <Editor
-  testData={testsData}
+  {testsData}
   testRunnerFactories={TEST_RUNNER_FACTORIES}
   onLanguageChange={async (lang, model) => {
     model.setValue(await INITIAL_VALUES[lang])

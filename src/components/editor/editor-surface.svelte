@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+  import { untrack, type Snippet } from 'svelte';
   import { editor } from "monaco-editor";
 
   import type { Position, SyncStorage } from "@/shared";
@@ -13,27 +13,12 @@
 
   const { model, widthStorage, children }: Props = $props();
 
-  let ed: editor.IStandaloneCodeEditor;
-  let editorElement: HTMLDivElement;
-
-  $effect(() => {
-    model;
-    ed = editor.create(editorElement, {
-      model,
-      theme: "vs-dark",
-      minimap: {
-        enabled: false,
-      },
-    });
-    return () => ed.dispose();
-  });
-
   function normalizeWidth(width: number) {
     return Math.min(Math.max(width, 480), window.innerWidth);
   }
 
-  const RESIZER_HEIGHT = 4
-  const MIN_PANEL_HEIGHT = 32 + RESIZER_HEIGHT
+  const RESIZER_HEIGHT = 4 // 4 for the resizer, when editor is minimized
+  const MIN_PANEL_HEIGHT = 32 + 1 // 1 for the resizer, when editor is maximized
 
   function normalizeHeight(height: number) {
     return Math.min(Math.max(height, RESIZER_HEIGHT), window.innerHeight - MIN_PANEL_HEIGHT);
@@ -57,22 +42,40 @@
       window.removeEventListener("resize", onWindowResize);
     };
   });
+
+  let ed: editor.IStandaloneCodeEditor;
+  let editorElement: HTMLDivElement;
+
+  $effect(() => {
+    model;
+    ed = editor.create(editorElement, {
+      model,
+      theme: "vs-dark",
+      minimap: {
+        enabled: false,
+      },
+    });
+    untrack(() => {
+      ed.layout({ width, height });
+    })
+    return () => ed.dispose();
+  });
 </script>
 
-<div class="h-full flex flex-col relative bg-base-300 min-w-[480px]">
+<div class="h-full flex flex-col relative bg-base-300" style="width: {width}px">
   <Resizer
     onMoveStart={(e) => {
       start = { x: e.clientX, y: $state.snapshot(width) }
     }}
     onMove={(e) => {
       width = normalizeWidth(start.x - e.clientX + start.y)
-      ed.layout({ width, height })
+      ed.layout({ width, height }, true)
     }}
     onMoveEnd={() => {
       widthStorage.save(width)
     }}
   />
-  <div bind:this={editorElement} class="relative" style="width: {width}px; height: {height}px" >
+  <div bind:this={editorElement} class="relative" style="height: {height}px" >
     <Resizer
       orientation={Orientation.Horizontal}
       alignment={Alignment.End}
@@ -81,11 +84,9 @@
       }}
       onMove={(e) => {
         height = normalizeHeight(start.x - (start.y - e.clientY))
-        ed.layout({ width, height })
+        ed.layout({ width, height }, true)
       }}
     />
   </div>
-  <div class="border-t border-base-100 relative flex flex-col grow">
-    {@render children()}
-  </div>
+  {@render children()}
 </div>

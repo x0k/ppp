@@ -1,12 +1,12 @@
-<script lang="ts">
+<script lang="ts" generics="Lang extends Language">
   import { LANGUAGE_TITLE, type Language } from "@/lib/testing";
 
-  interface Props {
-    lang: Language;
-    languages: Language[];
+  interface Props<L extends Language> {
+    lang: L;
+    languages: L[];
   }
 
-  let { lang = $bindable(), languages }: Props = $props();
+  let { lang = $bindable(), languages }: Props<Lang> = $props();
 </script>
 
 <select class="select select-ghost select-sm ml-auto" bind:value={lang}>
