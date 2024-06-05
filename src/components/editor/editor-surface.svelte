@@ -63,17 +63,32 @@
     return () => ed.dispose();
   });
 
+  let isCollapsed = $derived(window.innerHeight - height <= MIN_PANEL_HEIGHT)
+
   const api: SurfaceApi = {
-    togglePanel (newHeight) {
-      height = height < newHeight ? normalizeHeight(newHeight) : MIN_PANEL_HEIGHT
-      ed.layout({ width, height }, true)
+    get isPanelCollapsed () {
+      return isCollapsed
     },
-    showPanel (newHeight) {
+    togglePanel(newHeight) {
+      if (isCollapsed) {
+        return api.showPanel(newHeight)
+      }
+      return api.hidePanel()
+    },
+    showPanel(newHeight) {
       const panelHeight = window.innerHeight - height
       if (panelHeight > MIN_PANEL_HEIGHT * 2) {
         return false
       }
       height = normalizeHeight(window.innerHeight - newHeight - PANEL_BORDER_HEIGHT)
+      ed.layout({ width, height }, true)
+      return true
+    },
+    hidePanel() {
+      if (isCollapsed) {
+        return false
+      }
+      height = normalizeHeight(window.innerHeight)
       ed.layout({ width, height }, true)
       return true
     },

@@ -1,4 +1,6 @@
 export interface SurfaceApi {
+  isPanelCollapsed: boolean;
   showPanel(height: number): boolean;
-  togglePanel(height: number): void;
+  hidePanel(): boolean;
+  togglePanel(height: number): boolean;
 }
