@@ -72,9 +72,25 @@
     {@render children()}
   </div>
   <div class="min-h-0 min-w-0 overflow-auto">
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer hendrerit lacinia nulla id euismod. Vestibulum ac dignissim libero, nec vehicula est. Phasellus rhoncus urna dolor, nec auctor odio tempus eu. Proin dapibus erat magna, eget dapibus urna sagittis vel. Morbi blandit in erat eget ullamcorper. Cras elementum imperdiet ipsum a maximus. Donec tempus lectus imperdiet ligula facilisis bibendum. Cras nulla erat, cursus sit amet efficitur eget, posuere in nibh. Suspendisse eu condimentum dolor. Fusce fermentum fermentum ex, ac aliquam lacus interdum a. Integer nisl ex, dapibus vitae orci et, tempus porttitor enim. Aliquam vitae urna in ante pharetra semper. Fusce vel tellus sit amet quam cursus dignissim a ut est.
-
-    Aliquam nec augue est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras blandit lacus eget urna cursus porta. Praesent nibh turpis, dapibus in tristique facilisis, suscipit eu tortor. Pellentesque volutpat magna ac tellus consequat, non tempus felis laoreet. Donec at odio pulvinar, volutpat risus vitae, porttitor ligula. Sed varius quam id mi convallis, in molestie sapien placerat. Curabitur euismod vulputate dolor non viverra. Aenean massa enim, pretium ac velit quis, iaculis pharetra massa. Nulla imperdiet, felis vitae sagittis elementum, sapien libero tempor metus, id luctus est eros ac metus. Maecenas ornare quam sed tortor feugiat, vitae iaculis libero facilisis.
+    <div class="flex flex-col gap-4 p-6">
+      {#each testsData as testData, i}
+        <div>
+          <div class="flex items-center gap-2 pb-2">
+            {#if lastTestId === i}
+              <Icon icon="lucide:circle-x" class="text-error" />
+            {:else if i < lastTestId}
+              <Icon icon="lucide:circle-check" class="text-success" />
+            {:else}
+              <Icon icon="lucide:circle-dashed" />
+            {/if}
+            Case {i + 1}
+          </div>
+          <pre
+            class="p-2 rounded bg-base-100"
+          ><code>{JSON.stringify(testData.input, null, 2)}</code></pre>
+        </div>
+      {/each}
+    </div>
   </div>
 </div>
 
