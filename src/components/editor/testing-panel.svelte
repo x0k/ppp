@@ -2,6 +2,9 @@
   import type { Snippet } from 'svelte';
   import type { editor } from "monaco-editor";
   import Icon from "@iconify/svelte";
+  import { Terminal } from '@xterm/xterm'
+  import { FitAddon } from '@xterm/addon-fit'
+  import '@xterm/xterm/css/xterm.css'
 
   import {
     runTest,
@@ -10,6 +13,7 @@
   } from "@/lib/testing";
   
   import type { SurfaceApi } from './model';
+  import { makeTheme } from './terminal'
 
   interface Props<I, O> {
     api: SurfaceApi
@@ -47,6 +51,36 @@
   let selectedTab = $state<Tab>(Tab.Tests)
 
   interface TabButtonProps { tab: Tab, append?: Snippet }
+
+  let termElement: HTMLDivElement
+  const term = new Terminal({
+    theme: makeTheme("business"),
+  })
+  const fitAddon = new FitAddon()
+  term.loadAddon(fitAddon)
+
+  $effect(() => {
+    term.open(termElement)
+    return () => {
+      term.dispose()
+    }
+  })
+
+  let resizeFrameId: number
+
+  $effect(() => {
+    api.panelHeight;
+    api.width;
+
+    cancelAnimationFrame(resizeFrameId)
+    resizeFrameId = requestAnimationFrame(() => {
+      fitAddon.fit()
+    })
+    return () => {
+      cancelAnimationFrame(resizeFrameId)
+    }
+  })
+
 </script>
 
 <div class="border-t border-base-100 relative flex flex-col bg-base-300 overflow-hidden">
@@ -117,8 +151,8 @@
       <Icon icon={api.isPanelCollapsed ? "lucide:chevron-up" : "lucide:chevron-down"} />
     </button>
   </div>
-  <div class="min-h-0 min-w-0 overflow-auto">
-    <div class="flex flex-col gap-4 p-4">
+  <div class="overflow-auto h-full" >
+    <div class="flex flex-col gap-4 p-4" class:hidden={selectedTab !== Tab.Tests}>
       {#each testsData as testData, i}
         <div>
           <div class="flex items-center gap-2 pb-2">
@@ -137,6 +171,9 @@
         </div>
       {/each}
     </div>
+  </div>
+  <div class="h-full pl-4 pt-4" class:hidden={selectedTab !== Tab.Output}>
+    <div bind:this={termElement} ></div>
   </div>
   {@render children()}
 </div>

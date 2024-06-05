@@ -63,9 +63,17 @@
     return () => ed.dispose();
   });
 
-  let isCollapsed = $derived(window.innerHeight - height <= MIN_PANEL_HEIGHT)
+  let panelHeight = $derived(window.innerHeight - height);
+
+  let isCollapsed = $derived(panelHeight <= MIN_PANEL_HEIGHT)
 
   const api: SurfaceApi = {
+    get width() {
+      return width
+    },
+    get panelHeight() {
+      return panelHeight
+    },
     get isPanelCollapsed () {
       return isCollapsed
     },
