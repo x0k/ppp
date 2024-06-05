@@ -8,8 +8,11 @@
     type TestData,
     type TestRunnerFactory,
   } from "@/lib/testing";
+  
+  import type { SurfaceApi } from './model';
 
   interface Props<I, O> {
+    api: SurfaceApi
     model: editor.IModel;
     testsData: TestData<I, O>[];
     testRunnerFactory: TestRunnerFactory<I, O>;
@@ -17,7 +20,7 @@
     header: Snippet
   }
 
-  let { model, testsData, testRunnerFactory, children, header }: Props<Input, Output> = $props();
+  let { api, model, testsData, testRunnerFactory, children, header }: Props<Input, Output> = $props();
 
   let isRunning = $state(false);
   let lastTestId = $state(-1);
@@ -28,8 +31,23 @@
     isRunning = false;
     lastTestId = -1;
   });
-</script>
 
+  enum Tab {
+    Tests = "tests",
+    Output = "output",
+    Settings = "settings",
+  }
+
+  const TAB_TITLES: Record<Tab, string> = {
+    [Tab.Tests]: "Tests",
+    [Tab.Output]: "Output",
+    [Tab.Settings]: "Settings",
+  };
+
+  let selectedTab = $state<Tab>(Tab.Tests)
+
+  interface TabButtonProps { tab: Tab, append?: Snippet }
+</script>
 
 <div class="border-t border-base-100 relative flex flex-col bg-base-300 overflow-hidden">
   <div class="flex items-center gap-3 px-4">
@@ -56,8 +74,25 @@
       {/if}
     </button>
     <div role="tablist" class="tabs panel-tabs">
-      <span role="tab" class="tab flex gap-2">
-        Tests
+      {#snippet tabButton({ tab, append }: TabButtonProps)}
+        <a
+          href="#top"
+          role="tab"
+          class="tab"
+          class:tab-with-badge={append}
+          class:tab-active={selectedTab === tab}
+          onclick={() => {
+            selectedTab = tab
+            api.showPanel(window.innerHeight/3)
+          }}
+        >
+          {TAB_TITLES[tab]}
+          {#if append}
+            {@render append()}
+          {/if}
+        </a>
+      {/snippet}
+      {#snippet testBadge()}
         <div
           class="badge"
           class:hidden={lastTestId < 0}
@@ -66,9 +101,10 @@
         >
           {lastTestId}/{testsData.length}
         </div>
-      </span>
-      <span role="tab" class="tab">Output</span>
-      <span role="tab" class="tab">Settings</span>
+      {/snippet}
+      {@render tabButton({ tab: Tab.Tests, append: testBadge })}
+      {@render tabButton({ tab: Tab.Output })}
+      {@render tabButton({ tab: Tab.Settings })}
     </div>
     <div class="grow" ></div>
     {@render header()}
@@ -98,6 +134,9 @@
 </div>
 
 <style>
+  .tab-with-badge {
+    @apply flex gap-2 items-center;
+  }
   .panel-tabs {
     @apply uppercase;
     .tab:not(.tab-active) {

@@ -1,8 +1,4 @@
 <script lang="ts" context="module">
-  export enum Position {
-    Static = "static",
-    Absolute = "absolute",
-  }
   export enum Orientation {
     Vertical = "vertical",
     Horizontal = "horizontal",
@@ -27,10 +23,6 @@
      * @default Alignment.Start
     */
     alignment?: Alignment;
-    /**
-     * @default Position.Absolute
-     */
-    position?: Position;
   }
 
   const {
@@ -39,7 +31,6 @@
     onMoveEnd,
     orientation = Orientation.Vertical,
     alignment = Alignment.Start,
-    position = Position.Absolute,
   }: Props = $props();
 
   let resizerElement: HTMLDivElement;
@@ -68,10 +59,7 @@
 
 <div
   bind:this={resizerElement}
-  class="select-none z-50 h-full active:bg-primary hover:bg-primary/50"
-
-  class:absolute={position === Position.Absolute}
-  class:static={position === Position.Static}
+  class="absolute select-none z-50 h-full active:bg-primary hover:bg-primary/50"
 
   class:top-0={alignment === Alignment.Start}
   class:bottom-0={alignment === Alignment.End}

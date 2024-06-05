@@ -66,8 +66,9 @@
 </script>
 
 <EditorSurface {model} {widthStorage}>
-  {#snippet panel({ resizer })}
+  {#snippet panel({ resizer, api })}
     <TestingPanel
+      {api}
       {model}
       {testsData}
       testRunnerFactory={testRunnerFactories[lang]}

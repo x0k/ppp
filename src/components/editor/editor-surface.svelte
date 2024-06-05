@@ -4,12 +4,13 @@
 
   import type { SyncStorage } from "@/shared";
 
-  import Resizer, { Alignment, Orientation, Position } from './resizer.svelte';
+  import { type SurfaceApi } from './model'
+  import Resizer, { Orientation } from './resizer.svelte';
 
   interface Props {
     model: editor.IModel;
     widthStorage: SyncStorage<number>;
-    panel: Snippet<[{ resizer: Snippet }]>;
+    panel: Snippet<[{ resizer: Snippet, api: SurfaceApi }]>;
   }
 
   const { model, widthStorage, panel }: Props = $props();
@@ -18,7 +19,8 @@
     return Math.min(Math.max(width, 480), window.innerWidth);
   }
 
-  const MIN_PANEL_HEIGHT = 32 + 1 // 1 for the resizer, when editor is maximized
+  const PANEL_BORDER_HEIGHT = 1
+  const MIN_PANEL_HEIGHT = 32 + PANEL_BORDER_HEIGHT
 
   function normalizeHeight(height: number) {
     return Math.min(Math.max(height, 0), window.innerHeight - MIN_PANEL_HEIGHT);
@@ -60,6 +62,23 @@
     })
     return () => ed.dispose();
   });
+
+  const api: SurfaceApi = {
+    togglePanel (newHeight) {
+      height = height < newHeight ? normalizeHeight(newHeight) : MIN_PANEL_HEIGHT
+      ed.layout({ width, height }, true)
+    },
+    showPanel (newHeight) {
+      const panelHeight = window.innerHeight - height
+      if (panelHeight > MIN_PANEL_HEIGHT * 2) {
+        return false
+      }
+      height = normalizeHeight(window.innerHeight - newHeight - PANEL_BORDER_HEIGHT)
+      ed.layout({ width, height }, true)
+      return true
+    },
+  }
+
 </script>
 
 <div class="h-full flex flex-col relative bg-base-300" style="width: {width}px">
@@ -76,7 +95,7 @@
     }}
   />
   <div bind:this={editorElement} class="relative" style="height: {height}px" ></div>
-  {#snippet hResizer()}
+  {#snippet resizer()}
     <Resizer
       orientation={Orientation.Horizontal}
       onMoveStart={(e) => {
@@ -89,6 +108,7 @@
     />
   {/snippet}
   {@render panel({
-    resizer: hResizer
+    resizer,
+    api
   })}
 </div>
