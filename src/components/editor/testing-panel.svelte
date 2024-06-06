@@ -13,7 +13,7 @@
     type TestRunnerFactory,
   } from "@/lib/testing";
   
-  import type { SurfaceApi } from './model';
+  import { type SurfaceApi, vimState } from './model';
   import { makeTheme } from './terminal'
 
   interface Props<I, O> {
@@ -189,6 +189,16 @@
     class="grow pl-4 mt-4"
     class:hidden={selectedTab !== Tab.Output}
   ></div>
+  <div class="grow overflow-auto" class:hidden={selectedTab !== Tab.Settings}>
+    <div class="flex flex-col gap-4 p-4" >
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">Vim mode</span>
+          <input type="checkbox" bind:checked={vimState.value} class="checkbox" />
+        </label>
+      </div>
+    </div>
+  </div>
   {@render children()}
 </div>
 

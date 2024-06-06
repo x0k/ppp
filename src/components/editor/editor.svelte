@@ -12,6 +12,7 @@
   import EditorSurface from "./editor-surface.svelte";
   import LangSelect from "./lang-select.svelte";
   import TestingPanel from "./testing-panel.svelte";
+  import VimMode from './vim-mode.svelte';
 
   interface Props<L extends Language, I, O> {
     initialValue?: string;
@@ -75,6 +76,7 @@
       children={resizer}
     >
       {#snippet header()}
+        <VimMode {api} />
         <LangSelect bind:lang {languages} />
       {/snippet}
     </TestingPanel>

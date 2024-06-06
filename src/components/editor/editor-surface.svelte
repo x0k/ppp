@@ -45,7 +45,7 @@
     };
   });
 
-  let ed: editor.IStandaloneCodeEditor;
+  let ed = $state<editor.IStandaloneCodeEditor>()
   let editorElement: HTMLDivElement;
 
   $effect(() => {
@@ -53,14 +53,21 @@
     ed = editor.create(editorElement, {
       model,
       theme: "vs-dark",
+      fixedOverflowWidgets: true,
+      lineNumbers: "on",
+      tabSize: 2,
+      insertSpaces: true,
+      fontSize: 16,
       minimap: {
         enabled: false,
       },
     });
     untrack(() => {
-      ed.layout({ width, height });
+      ed?.layout({ width, height });
     })
-    return () => ed.dispose();
+    return () => {
+      ed?.dispose();
+    }
   });
 
   let panelHeight = $derived(window.innerHeight - height);
@@ -68,6 +75,9 @@
   let isCollapsed = $derived(panelHeight <= MIN_PANEL_HEIGHT)
 
   const api: SurfaceApi = {
+    get editor() {
+      return ed
+    },
     get width() {
       return width
     },
@@ -89,7 +99,7 @@
         return false
       }
       height = normalizeHeight(window.innerHeight - newHeight - PANEL_BORDER_HEIGHT)
-      ed.layout({ width, height }, true)
+      ed?.layout({ width, height }, true)
       return true
     },
     hidePanel() {
@@ -97,7 +107,7 @@
         return false
       }
       height = normalizeHeight(window.innerHeight)
-      ed.layout({ width, height }, true)
+      ed?.layout({ width, height }, true)
       return true
     },
   }
@@ -111,7 +121,7 @@
     }}
     onMove={(e) => {
       width = normalizeWidth(start.x - e.clientX + start.y)
-      ed.layout({ width, height }, true)
+      ed?.layout({ width, height }, true)
     }}
     onMoveEnd={() => {
       widthStorage.save(width)
@@ -126,7 +136,7 @@
       }}
       onMove={(e) => {
         height = normalizeHeight(start.x - (start.y - e.clientY))
-        ed.layout({ width, height }, true)
+        ed?.layout({ width, height }, true)
       }}
     />
   {/snippet}
