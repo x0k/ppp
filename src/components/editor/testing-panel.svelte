@@ -83,7 +83,7 @@
 
 </script>
 
-<div class="border-t border-base-100 relative flex flex-col bg-base-300 overflow-hidden">
+<div class="grow border-t border-base-100 relative flex flex-col bg-base-300 overflow-hidden">
   <div class="flex items-center gap-3 px-4">
     <button
       class="btn btn-sm btn-primary"
@@ -151,8 +151,8 @@
       <Icon icon={api.isPanelCollapsed ? "lucide:chevron-up" : "lucide:chevron-down"} />
     </button>
   </div>
-  <div class="overflow-auto h-full" >
-    <div class="flex flex-col gap-4 p-4" class:hidden={selectedTab !== Tab.Tests}>
+  <div class="overflow-auto grow" class:hidden={selectedTab !== Tab.Tests}>
+    <div class="flex flex-col gap-4 p-4">
       {#each testsData as testData, i}
         <div>
           <div class="flex items-center gap-2 pb-2">
@@ -172,9 +172,11 @@
       {/each}
     </div>
   </div>
-  <div class="h-full pl-4 pt-4" class:hidden={selectedTab !== Tab.Output}>
-    <div bind:this={termElement} ></div>
-  </div>
+  <div
+    bind:this={termElement}
+    class="grow pl-4 mt-4"
+    class:hidden={selectedTab !== Tab.Output}
+  ></div>
   {@render children()}
 </div>
 

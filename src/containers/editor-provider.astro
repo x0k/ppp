@@ -8,6 +8,7 @@
       switch (label) {
         case "editorWorkerService":
           return new EditorWorker();
+        case "javascript":
         case "typescript":
           return new TsWorker();
         default:
