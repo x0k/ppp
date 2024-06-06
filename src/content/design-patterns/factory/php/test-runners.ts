@@ -1,4 +1,4 @@
-import type { TestRunnerConfig } from '@/lib/testing';
+import type { TestRunnerConfig } from "@/lib/testing";
 import {
   FailSafePHP,
   PHPTestRunner,
@@ -27,5 +27,5 @@ class SimpleTestRunner extends PHPTestRunner<Input, Output> {
   }
 }
 
-export const testRunnerFactory = async ({ code }: TestRunnerConfig) =>
-  new SimpleTestRunner(new FailSafePHP(phpRuntimeFactory), code);
+export const testRunnerFactory = async ({ code, out }: TestRunnerConfig) =>
+  new SimpleTestRunner(out, new FailSafePHP(phpRuntimeFactory), code);

@@ -99,6 +99,7 @@
           return;
         }
         isRunning = true;
+        term.clear();
         const runner = await testRunnerFactory({
           code: model.getValue(),
           out: term,
