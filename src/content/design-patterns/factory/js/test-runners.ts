@@ -1,3 +1,5 @@
+import { createLogger } from '@/lib/logger';
+import type { TestRunnerConfig } from '@/lib/testing';
 import { TsTestRunner, JsTestRunner } from "@/lib/testing/js";
 
 import { type Input, type Output } from "../tests-data";
@@ -14,8 +16,8 @@ class SimpleJsTestRunner extends JsTestRunner<TestingModule, Input, Output> {
   }
 }
 
-export const jsTestRunnerFactory = async (code: string) =>
-  new SimpleJsTestRunner(code);
+export const jsTestRunnerFactory = async ({ code, out }: TestRunnerConfig) =>
+  new SimpleJsTestRunner(createLogger(out), code);
 
 class SimpleTsTestRunner extends TsTestRunner<TestingModule, Input, Output> {
   async executeTest(m: TestingModule, input: Input): Promise<Output> {
@@ -23,5 +25,5 @@ class SimpleTsTestRunner extends TsTestRunner<TestingModule, Input, Output> {
   }
 }
 
-export const tsTestRunnerFactory = async (code: string) =>
-  new SimpleTsTestRunner(code);
+export const tsTestRunnerFactory = async ({ code, out }: TestRunnerConfig) =>
+  new SimpleTsTestRunner(createLogger(out), code);

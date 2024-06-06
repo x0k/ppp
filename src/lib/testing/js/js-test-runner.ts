@@ -1,7 +1,15 @@
-import type { TestRunner } from "../testing";
+import { redirect, type Logger } from "@/lib/logger";
+
+import type { TestRunner } from "../model";
 
 export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
-  constructor(protected readonly code: string) {}
+  private readonly patchedConsole: Console;
+  constructor(
+    protected readonly logger: Logger,
+    protected readonly code: string
+  ) {
+    this.patchedConsole = redirect(globalThis.console, logger);
+  }
 
   protected transformCode(code: string) {
     return `data:text/javascript;base64,${btoa(code)}`;
@@ -11,8 +19,14 @@ export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
 
   async run(input: I): Promise<O> {
     const transformedCode = this.transformCode(this.code);
-    const m = await import(/* @vite-ignore */ transformedCode);
-    return this.executeTest(m, input);
+    const originalConsole = globalThis.console;
+    globalThis.console = this.patchedConsole
+    try {
+      const m = await import(/* @vite-ignore */ transformedCode);
+      return this.executeTest(m, input);
+    } finally {
+      globalThis.console = originalConsole;
+    }
   }
 
   [Symbol.dispose](): void {}
