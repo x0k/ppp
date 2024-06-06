@@ -11,7 +11,7 @@
 
   import EditorSurface from "./editor-surface.svelte";
   import LangSelect from "./lang-select.svelte";
-  import TestingPanel from "./testing-panel.svelte";
+  import Panel from "./panel/panel.svelte"
   import VimMode from './vim-mode.svelte';
 
   interface Props<L extends Language, I, O> {
@@ -68,7 +68,7 @@
 
 <EditorSurface {model} {widthStorage}>
   {#snippet panel({ resizer, api })}
-    <TestingPanel
+    <Panel
       {api}
       {model}
       {testsData}
@@ -79,6 +79,6 @@
         <VimMode {api} />
         <LangSelect bind:lang {languages} />
       {/snippet}
-    </TestingPanel>
+    </Panel>
   {/snippet}
 </EditorSurface>

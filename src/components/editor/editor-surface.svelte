@@ -20,7 +20,8 @@
   }
 
   const PANEL_BORDER_HEIGHT = 1
-  const MIN_PANEL_HEIGHT = 32 + PANEL_BORDER_HEIGHT
+  const PANEL_HEADER_VPADDING = 4 * 2
+  const MIN_PANEL_HEIGHT = 32 + PANEL_HEADER_VPADDING + PANEL_BORDER_HEIGHT
 
   function normalizeHeight(height: number) {
     return Math.min(Math.max(height, 0), window.innerHeight - MIN_PANEL_HEIGHT);
