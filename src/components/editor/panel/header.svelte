@@ -28,7 +28,7 @@
   interface TabButtonProps { tab: Tab, append?: Snippet }
 </script>
 
-<div class="flex items-center gap-3 p-1">
+<div class="flex flex-wrap items-center gap-3 p-1">
   <button
     class="btn btn-sm btn-primary"
     onclick={onRun}
@@ -38,6 +38,7 @@
     {:else}
       <Icon class="w-6" icon="lucide:play" />
     {/if}
+    Run
   </button>
   <div role="tablist" class="tabs panel-tabs">
     {#snippet tabButton({ tab, append }: TabButtonProps)}
