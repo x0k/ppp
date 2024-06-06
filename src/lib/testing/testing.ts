@@ -1,5 +1,7 @@
 import deepEqual from "fast-deep-equal";
 
+import type { Logger, Writer } from '@/lib/logger'
+
 export interface TestData<I, O> {
   input: I;
   output: O;
@@ -18,27 +20,33 @@ export interface TestRunner<I, O> extends Disposable {
   run: (input: I) => Promise<O>;
 }
 
+export interface TestRunnerConfig {
+  code: string;
+  out: Writer
+}
+
 export type TestRunnerFactory<I, O> = (
-  code: string
+  config: TestRunnerConfig
 ) => Promise<TestRunner<I, O>>;
 
-export async function runTest<Arg, R>(
-  testCase: TestRunner<Arg, R>,
-  testData: TestData<Arg, R>[]
+export async function runTests<Arg, R>(
+  log: Logger,
+  testRunner: TestRunner<Arg, R>,
+  testsData: TestData<Arg, R>[],
 ) {
   let i = 0;
-  for (; i < testData.length; i++) {
-    const data = testData[i];
+  for (; i < testsData.length; i++) {
+    const data = testsData[i];
     try {
-      const result = await testCase.run(data.input);
+      const result = await testRunner.run(data.input);
       if (!deepEqual(result, data.output)) {
-        console.error(
+        log.error(
           `Test case failed, expected "${data.output}", but got "${result}"`
         );
         return i;
       }
     } catch (err) {
-      console.error(`Test case failed: ${err}`);
+      log.error(`Test case failed: ${err}`);
       return i;
     }
   }

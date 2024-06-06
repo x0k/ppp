@@ -1,3 +1,4 @@
+import type { TestRunnerConfig } from '@/lib/testing';
 import { PyTestRunner, pyRuntimeFactory } from "@/lib/testing/python";
 
 import { type Input, type Output } from "../tests-data";
@@ -8,5 +9,5 @@ class SimpleTestRunner extends PyTestRunner<Input, Output> {
   }
 }
 
-export const testRunnerFactory = async (code: string) =>
+export const testRunnerFactory = async ({ code }: TestRunnerConfig) =>
   new SimpleTestRunner(await pyRuntimeFactory(), code);

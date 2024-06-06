@@ -6,8 +6,9 @@
   import { FitAddon } from '@xterm/addon-fit'
   import '@xterm/xterm/css/xterm.css'
 
+  import { createLogger } from '@/lib/logger';
   import {
-    runTest,
+    runTests,
     type TestData,
     type TestRunnerFactory,
   } from "@/lib/testing";
@@ -55,6 +56,7 @@
   let termElement: HTMLDivElement
   const term = new Terminal({
     theme: makeTheme("business"),
+    fontFamily: "monospace",
   })
   const fitAddon = new FitAddon()
   term.loadAddon(fitAddon)
@@ -65,6 +67,8 @@
       term.dispose()
     }
   })
+
+  const logger = createLogger(term)
 
   let resizeFrameId: number
 
@@ -92,9 +96,12 @@
           return;
         }
         isRunning = true;
-        const runner = await testRunnerFactory(model.getValue());
+        const runner = await testRunnerFactory({
+          code: model.getValue(),
+          out: term,
+        });
         try {
-          lastTestId = await runTest(runner, testsData);
+          lastTestId = await runTests(logger, runner, testsData);
         } finally {
           runner[Symbol.dispose]();
           isRunning = false;
