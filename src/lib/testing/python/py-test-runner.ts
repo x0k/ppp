@@ -1,7 +1,7 @@
 import { loadPyodide } from "pyodide";
 import type { PyProxy } from "pyodide/ffi";
 
-import type { TestRunner } from "../testing";
+import type { TestRunner } from "../model";
 
 function isPyProxy(obj: any): obj is PyProxy {
   return typeof obj === "object" && obj;

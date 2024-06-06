@@ -1,3 +1,5 @@
+import { stringify } from '@/lib/json'
+
 export interface Writer {
   write(text: string): void;
   writeln(text: string): void;
@@ -34,4 +36,56 @@ export function createLogger(writer: Writer): Logger {
       writer.writeln(`${colors.error}[ERROR]${colors.reset} ${text}`);
     },
   };
+}
+
+type ConsoleLogMethod =
+  | "log"
+  | "info"
+  | "warn"
+  | "error"
+  | "debug"
+  | "trace"
+  | "assert"
+  | "dir";
+
+const CONSOLE_LOGGER_METHOD: Record<ConsoleLogMethod, keyof Logger> = {
+  dir: "debug",
+  trace: "debug",
+  log: "debug",
+  debug: "debug",
+  info: "info",
+  warn: "warn",
+  error: "error",
+  assert: "error",
+};
+
+const safeStringify = (value: any) => stringify(value, 2);
+
+export function redirect(originalConsole: Console, logger: Logger): Console {
+  return new Proxy(originalConsole, {
+      get(target, p, receiver) {
+        if (p in CONSOLE_LOGGER_METHOD) {
+          const method = CONSOLE_LOGGER_METHOD[p as ConsoleLogMethod];
+          if (p === "assert") {
+            return (condition: any, ...args: any[]) => {
+              if (condition) {
+                return;
+              }
+              const text = args.map(safeStringify).join(" ");
+              logger[method](text);
+            };
+          }
+          if (p === "dir") {
+            return (arg: any) => {
+              logger[method](safeStringify(arg));
+            };
+          }
+          return (...args: any[]) => {
+            const text = args.map(safeStringify).join(" ");
+            logger[method](text);
+          };
+        }
+        return Reflect.get(target, p, receiver);
+      },
+    });
 }

@@ -1,6 +1,6 @@
 import type { WebPHP } from "@php-wasm/web";
 
-import type { TestRunner } from "../testing";
+import type { TestRunner } from "../model";
 
 export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
   private result?: O;

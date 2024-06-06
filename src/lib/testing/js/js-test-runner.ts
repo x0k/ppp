@@ -1,43 +1,6 @@
-import type { Logger } from "@/lib/logger";
+import { redirect, type Logger } from "@/lib/logger";
 
-import type { TestRunner } from "../testing";
-
-function safeStringify(obj: any) {
-  const seen = new WeakSet();
-  return JSON.stringify(
-    obj,
-    (_, value) => {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) {
-          return "[Circular]";
-        }
-        seen.add(value);
-      }
-      return value;
-    }
-  );
-}
-
-type ConsoleLogMethod =
-  | "log"
-  | "info"
-  | "warn"
-  | "error"
-  | "debug"
-  | "trace"
-  | "assert"
-  | "dir";
-
-const CONSOLE_LOGGER_METHOD: Record<ConsoleLogMethod, keyof Logger> = {
-  dir: "debug",
-  trace: "debug",
-  log: "debug",
-  debug: "debug",
-  info: "info",
-  warn: "warn",
-  error: "error",
-  assert: "error",
-};
+import type { TestRunner } from "../model";
 
 export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
   private readonly patchedConsole: Console;
@@ -45,32 +8,7 @@ export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
     protected readonly logger: Logger,
     protected readonly code: string
   ) {
-    this.patchedConsole = new Proxy(globalThis.console, {
-      get(target, p, receiver) {
-        if (p in CONSOLE_LOGGER_METHOD) {
-          const method = CONSOLE_LOGGER_METHOD[p as ConsoleLogMethod];
-          if (p === "assert") {
-            return (condition: any, ...args: any[]) => {
-              if (condition) {
-                return;
-              }
-              const text = args.map(safeStringify).join(" ");
-              logger[method](text);
-            };
-          }
-          if (p === "dir") {
-            return (arg: any) => {
-              logger[method](safeStringify(arg));
-            };
-          }
-          return (...args: any[]) => {
-            const text = args.map(safeStringify).join(" ");
-            logger[method](text);
-          };
-        }
-        return Reflect.get(target, p, receiver);
-      },
-    });
+    this.patchedConsole = redirect(globalThis.console, logger);
   }
 
   protected transformCode(code: string) {

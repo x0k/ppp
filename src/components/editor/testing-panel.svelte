@@ -57,6 +57,7 @@
   const term = new Terminal({
     theme: makeTheme("business"),
     fontFamily: "monospace",
+    convertEol: true,
   })
   const fitAddon = new FitAddon()
   term.loadAddon(fitAddon)
@@ -75,7 +76,9 @@
   $effect(() => {
     api.panelHeight;
     api.width;
-
+    if (selectedTab !== Tab.Output) {
+      return
+    }
     cancelAnimationFrame(resizeFrameId)
     resizeFrameId = requestAnimationFrame(() => {
       fitAddon.fit()
