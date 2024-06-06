@@ -58,6 +58,7 @@
     theme: makeTheme("business"),
     fontFamily: "monospace",
     convertEol: true,
+    rows: 1,
   })
   const fitAddon = new FitAddon()
   term.loadAddon(fitAddon)

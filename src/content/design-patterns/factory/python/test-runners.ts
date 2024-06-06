@@ -9,5 +9,5 @@ class SimpleTestRunner extends PyTestRunner<Input, Output> {
   }
 }
 
-export const testRunnerFactory = async ({ code }: TestRunnerConfig) =>
-  new SimpleTestRunner(await pyRuntimeFactory(), code);
+export const testRunnerFactory = async ({ code, out }: TestRunnerConfig) =>
+  new SimpleTestRunner(await pyRuntimeFactory(out), code);
