@@ -65,6 +65,8 @@
     }
     cancelAnimationFrame(resizeFrameId)
     resizeFrameId = requestAnimationFrame(() => {
+      // Fix the terminal resize to the smaller height
+      term.resize(term.cols, 1)
       fitAddon.fit()
     })
     return () => {
