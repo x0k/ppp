@@ -24,9 +24,8 @@
 </script>
 
 <Editor
+  contentId="design-patterns-factory"
   {testsData}
+  initialValues={INITIAL_VALUES}
   testRunnerFactories={TEST_RUNNER_FACTORIES}
-  onLanguageChange={async (lang, model) => {
-    model.setValue(await INITIAL_VALUES[lang])
-  }}
 />

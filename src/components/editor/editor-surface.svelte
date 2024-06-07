@@ -8,6 +8,7 @@
   import Resizer, { Orientation } from './resizer.svelte';
 
   interface Props {
+    contentId: string;
     model: editor.IModel;
     widthStorage: SyncStorage<number>;
     panel: Snippet<[{ resizer: Snippet, api: SurfaceApi }]>;

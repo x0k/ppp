@@ -15,18 +15,16 @@
   import VimMode from './vim-mode.svelte';
 
   interface Props<L extends Language, I, O> {
-    initialValue?: string;
-    initialLanguage?: L;
-    onLanguageChange?: (lang: L, model: editor.ITextModel) => void;
+    contentId: string;
     testsData: TestData<I, O>[];
+    initialValues: Record<L, Promise<string>>;
     testRunnerFactories: Record<L, TestRunnerFactory<I, O>>;
   }
 
   const {
-    initialLanguage,
-    onLanguageChange,
-    initialValue = "",
+    contentId,
     testsData,
+    initialValues,
     testRunnerFactories,
   }: Props<Lang, Input, Output> = $props();
 
@@ -34,7 +32,7 @@
   if (languages.length === 0) {
     throw new Error("No test runner factories provided");
   }
-  const defaultLang = initialLanguage ?? languages[0];
+  const defaultLang = languages[0];
   const langStorage = createSyncStorage(
     localStorage,
     "editor-lang",
@@ -46,17 +44,23 @@
     initialLang in testRunnerFactories ? initialLang : defaultLang
   );
 
-  const model = editor.createModel(initialValue);
+  const model = editor.createModel("");
+
+  function resetEditorContent () {
+    initialValues[lang].then(value => {
+      model.setValue(value);
+    })
+  }
 
   $effect(() => {
-    onLanguageChange?.(lang, model);
     langStorage.save(lang);
+    resetEditorContent()
   });
 
   let monacoLang = $derived(MONACO_LANGUAGE_ID[lang]);
 
   $effect(() => {
-    editor.setModelLanguage(model, $state.snapshot(monacoLang));
+    editor.setModelLanguage(model, monacoLang);
   });
 
   const widthStorage = createSyncStorage(
@@ -66,13 +70,14 @@
   );
 </script>
 
-<EditorSurface {model} {widthStorage}>
+<EditorSurface contentId="{contentId}-{lang}" {model} {widthStorage} >
   {#snippet panel({ resizer, api })}
     <Panel
       {api}
       {model}
       {testsData}
       testRunnerFactory={testRunnerFactories[lang]}
+      {resetEditorContent}
       children={resizer}
     >
       {#snippet header()}
