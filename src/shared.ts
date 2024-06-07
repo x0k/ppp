@@ -13,4 +13,5 @@ export interface Position {
 export interface SyncStorage<T> {
   load(): T
   save(data: T): void
+  clear(): void
 }

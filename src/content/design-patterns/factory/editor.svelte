@@ -8,11 +8,16 @@
   import { jsTestRunnerFactory, tsTestRunnerFactory } from './js/test-runners'
   import { testRunnerFactory as pyTestRunnerFactory } from './python/test-runners'
 
-  const INITIAL_VALUES: Record<Language, Promise<string>> = {
-    [Language.PHP]: import('./php/code.php?raw').then(m => m.default),
-    [Language.TypeScript]: import('./js/code.ts?raw').then(m => m.default),
-    [Language.JavaScript]: import('./js/code.js?raw').then(m => m.default),
-    [Language.Python]: import('./python/code.py?raw').then(m => m.default),
+  import phpInitialValue from './php/code.php?raw'
+  import tsInitialValue from './js/code.ts?raw'
+  import jsInitialValue from './js/code.js?raw'
+  import pyInitialValue from './python/code.py?raw'
+
+  const INITIAL_VALUES: Record<Language, string> = {
+    [Language.PHP]: phpInitialValue,
+    [Language.TypeScript]: tsInitialValue,
+    [Language.JavaScript]: jsInitialValue,
+    [Language.Python]: pyInitialValue,
   }
 
   const TEST_RUNNER_FACTORIES: Record<Language, TestRunnerFactory<Input, Output>> = {

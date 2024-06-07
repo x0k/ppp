@@ -16,5 +16,8 @@ export function createSyncStorage<T>(
     save(data: T): void {
       storage.setItem(key, JSON.stringify(data));
     },
+    clear(): void {
+      storage.removeItem(key);
+    },
   };
 }

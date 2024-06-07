@@ -17,7 +17,7 @@
   interface Props<L extends Language, I, O> {
     contentId: string;
     testsData: TestData<I, O>[];
-    initialValues: Record<L, Promise<string>>;
+    initialValues: Record<L, string>;
     testRunnerFactories: Record<L, TestRunnerFactory<I, O>>;
   }
 
@@ -43,34 +43,48 @@
   let lang = $state(
     initialLang in testRunnerFactories ? initialLang : defaultLang
   );
+  let contentStorage = $derived(createSyncStorage(
+    sessionStorage,
+    `editor-${contentId}-${lang}`,
+    initialValues[lang],
+  ));
 
   const model = editor.createModel("");
 
-  function resetEditorContent () {
-    initialValues[lang].then(value => {
-      model.setValue(value);
-    })
-  }
-
   $effect(() => {
+    model.setValue(contentStorage.load());
+    editor.setModelLanguage(model, MONACO_LANGUAGE_ID[lang]);
     langStorage.save(lang);
-    resetEditorContent()
-  });
 
-  let monacoLang = $derived(MONACO_LANGUAGE_ID[lang]);
-
-  $effect(() => {
-    editor.setModelLanguage(model, monacoLang);
-  });
-
+    let saveCallbackId: NodeJS.Timeout
+    const disposable = model.onDidChangeContent(() => {
+      clearTimeout(saveCallbackId)
+      saveCallbackId = setTimeout(() => {
+        contentStorage.save(model.getValue());
+      }, 1000)
+      return () => {
+        clearTimeout(saveCallbackId)
+      }
+    })
+    return () => {
+      clearTimeout(saveCallbackId)
+      disposable.dispose()
+    }
+  })
+  
   const widthStorage = createSyncStorage(
     localStorage,
     "editor-width",
     window.innerWidth - 800
   );
+
+  function resetEditorContent () {
+    contentStorage.clear();
+    model.setValue(initialValues[lang]);
+  }
 </script>
 
-<EditorSurface contentId="{contentId}-{lang}" {model} {widthStorage} >
+<EditorSurface {model} {widthStorage} >
   {#snippet panel({ resizer, api })}
     <Panel
       {api}
