@@ -26,7 +26,6 @@
     model: editor.IModel;
     testsData: TestData<I, O>[];
     testRunnerFactory: TestRunnerFactory<I, O>;
-    resetEditorContent: () => void
     children: Snippet
     header: Snippet
   }
@@ -36,7 +35,6 @@
     model,
     testsData,
     testRunnerFactory,
-    resetEditorContent,
     children,
     header
   }: Props<Input, Output> = $props();
@@ -117,7 +115,7 @@
   {#if selectedTab === Tab.Tests}
     <TestsTab {testsData} {lastTestId} />
   {:else if selectedTab === Tab.Settings}
-    <SettingsTab {api} {resetEditorContent} />
+    <SettingsTab />
   {/if}
   <!-- This Tab should't be unmounted -->
   <TerminalTab terminal={term} class={selectedTab !== Tab.Output ? "hidden" : ""} />

@@ -2,17 +2,19 @@
   import { editor } from "monaco-editor";
 
   import {
+    LANGUAGE_TITLE,
     Language,
     type TestData,
     type TestRunnerFactory,
   } from "@/lib/testing";
+  import Select from '@/components/select.svelte';
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import { createSyncStorage } from "@/adapters/storage";
 
-  import EditorSurface from "./editor-surface.svelte";
-  import LangSelect from "./lang-select.svelte";
+  import Surface from "./surface.svelte";
   import Panel from "./panel/panel.svelte"
   import VimMode from './vim-mode.svelte';
+  import { RESET_BUTTON_ID } from '@/shared';
 
   interface Props<L extends Language, I, O> {
     contentId: string;
@@ -78,26 +80,44 @@
     window.innerWidth - 800
   );
 
+  let surface: Surface
+
   function resetEditorContent () {
     contentStorage.clear();
     model.setValue(initialValues[lang]);
+    surface.api.editor?.focus();
   }
+
+  $effect(() => {
+    const button = document.getElementById(RESET_BUTTON_ID)
+    if (!button) {
+      return
+    }
+    button.addEventListener("click", resetEditorContent)
+    return () => {
+      button.removeEventListener("click", resetEditorContent)
+    }
+  })
 </script>
 
-<EditorSurface {model} {widthStorage} >
+<Surface bind:this={surface} {model} {widthStorage} >
   {#snippet panel({ resizer, api })}
     <Panel
       {api}
       {model}
       {testsData}
       testRunnerFactory={testRunnerFactories[lang]}
-      {resetEditorContent}
       children={resizer}
     >
       {#snippet header()}
         <VimMode {api} />
-        <LangSelect bind:lang {languages} />
+        <Select
+          class="select-sm select-ghost"
+          bind:value={lang}
+          options={languages}
+          labels={LANGUAGE_TITLE}
+        />
       {/snippet}
     </Panel>
   {/snippet}
-</EditorSurface>
+</Surface>

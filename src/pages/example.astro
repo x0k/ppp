@@ -1,10 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
 
+import { RESET_BUTTON_ID } from '@/shared';
 import Problem from "@/layouts/problem.astro";
-
 import Editor from "@/content/design-patterns/factory/editor.svelte";
-
 import { Content as Description } from "@/content/design-patterns/factory/description.mdx";
 ---
 
@@ -26,6 +25,7 @@ import { Content as Description } from "@/content/design-patterns/factory/descri
           <button class="btn btn-ghost join-item"><Icon name="lucide:chevron-left" /></button>
           <button class="btn btn-ghost join-item"><Icon name="lucide:chevron-right" /></button>
           <button class="btn btn-ghost join-item"><Icon name="lucide:shuffle" /></button>
+          <button id={RESET_BUTTON_ID} class="btn btn-ghost join-item"><Icon name="lucide:rotate-ccw" /></button>
         </div>
       </div>
       <div class="prose prose-lg max-w-none">

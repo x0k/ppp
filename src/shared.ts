@@ -15,3 +15,5 @@ export interface SyncStorage<T> {
   save(data: T): void
   clear(): void
 }
+
+export const RESET_BUTTON_ID = "editor-reset-button";

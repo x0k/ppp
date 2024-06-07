@@ -3,9 +3,9 @@
   import { editor } from "monaco-editor";
 
   import type { SyncStorage } from "@/shared";
+  import Resizer, { Orientation } from '@/components/resizer.svelte';
 
   import { type SurfaceApi } from './model'
-  import Resizer, { Orientation } from './resizer.svelte';
 
   interface Props {
     model: editor.IModel;
@@ -75,7 +75,7 @@
 
   let isCollapsed = $derived(panelHeight <= MIN_PANEL_HEIGHT)
 
-  const api: SurfaceApi = {
+  export const api: SurfaceApi = {
     get editor() {
       return ed
     },
