@@ -1,4 +1,4 @@
-import type { Connection } from "./connection";
+import type { Connection } from "./model";
 
 export class WorkerConnection<I, O> implements Connection<I, O> {
   private handlers = new Set<(message: I) => void>();
