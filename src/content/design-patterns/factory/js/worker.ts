@@ -17,6 +17,6 @@ class SimpleJsTestRunner extends JsTestRunner<TestingModule, Input, Output> {
 }
 
 startTestRunnerActor(
-  async ({ code, out }: TestRunnerConfig) =>
+  async (_, { code, out }: TestRunnerConfig) =>
     new SimpleJsTestRunner(createLogger(out), code)
 );

@@ -1,8 +1,9 @@
 import type { WebPHP } from "@php-wasm/web";
 
-import type { Writer } from '@/lib/logger';
+import type { Writer } from "@/lib/logger";
 
 import type { TestRunner } from "../model";
+import type { Context } from "@/lib/context";
 
 export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
   private result?: O;
@@ -10,7 +11,7 @@ export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
   constructor(
     protected writer: Writer,
     protected readonly php: WebPHP,
-    protected readonly code: string,
+    protected readonly code: string
   ) {
     php.onMessage(this.handleResult.bind(this));
   }
@@ -31,20 +32,25 @@ export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
     this.result = this.transformResult(result);
   }
 
-  async run(input: I): Promise<O> {
+  async run(ctx: Context, input: I): Promise<O> {
     const code = this.transformCode(input);
-    const response = await this.php.run({ code });
-    const text = response.text;
-    if (text) {
-      this.writer.writeln(text);
+    const clear = ctx.onCancel(() => this.php.exit(137));
+    try {
+      const response = await this.php.run({ code });
+      const text = response.text;
+      if (text) {
+        this.writer.writeln(text);
+      }
+      if (response.errors) {
+        throw new Error(response.errors);
+      }
+      if (this.result === undefined) {
+        throw new Error("No result");
+      }
+      return this.result;
+    } finally {
+      clear();
     }
-    if (response.errors) {
-      throw new Error(response.errors);
-    }
-    if (this.result === undefined) {
-      throw new Error("No result");
-    }
-    return this.result;
   }
 
   [Symbol.dispose](): void {
