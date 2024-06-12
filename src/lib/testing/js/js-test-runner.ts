@@ -1,4 +1,5 @@
 import { redirect, type Logger } from "@/lib/logger";
+import { patch } from "@/lib/patcher";
 
 import type { TestRunner } from "../model";
 
@@ -19,13 +20,12 @@ export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
 
   async run(input: I): Promise<O> {
     const transformedCode = this.transformCode(this.code);
-    const originalConsole = globalThis.console;
-    globalThis.console = this.patchedConsole
+    const recover = patch(globalThis, "console", this.patchedConsole);
     try {
       const m = await import(/* @vite-ignore */ transformedCode);
       return this.executeTest(m, input);
     } finally {
-      globalThis.console = originalConsole;
+      recover();
     }
   }
 
