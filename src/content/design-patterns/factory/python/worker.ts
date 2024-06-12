@@ -11,6 +11,6 @@ class SimpleTestRunner extends PyTestRunner<Input, Output> {
 }
 
 startTestRunnerActor(
-  async ({ code, out }: TestRunnerConfig) =>
-    new SimpleTestRunner(await pyRuntimeFactory(out), code)
+  async (ctx, { code, out }: TestRunnerConfig) =>
+    new SimpleTestRunner(await pyRuntimeFactory(ctx, out), code)
 );

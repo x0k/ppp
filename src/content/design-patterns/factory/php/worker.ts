@@ -29,6 +29,6 @@ class SimpleTestRunner extends PHPTestRunner<Input, Output> {
 }
 
 startTestRunnerActor(
-  async ({ code, out }: TestRunnerConfig) =>
+  async (_, { code, out }: TestRunnerConfig) =>
     new SimpleTestRunner(out, new FailSafePHP(phpRuntimeFactory), code)
 );

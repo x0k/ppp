@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { vimState } from "../model";
+  import { testRunnerTimeout, vimState } from "../model";
 </script>
 
 <div class="grow overflow-auto">
@@ -10,5 +10,18 @@
         <input type="checkbox" bind:checked={vimState.value} class="checkbox" />
       </label>
     </div>
+    <label class="form-control">
+      <div class="label">
+        <span class="label-text">Test runner timeout (ms)</span>
+        <span class="label-text-alt">Use zero to disable</span>
+      </div>
+      <input
+        type="number"
+        class="input input-bordered"
+        bind:value={testRunnerTimeout.value}
+        min="1000"
+        class:input-error={testRunnerTimeout.value < 1000}
+      />
+    </label>
   </div>
 </div>

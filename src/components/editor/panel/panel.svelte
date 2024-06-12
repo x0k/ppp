@@ -5,6 +5,7 @@
   import { FitAddon } from '@xterm/addon-fit'
   import '@xterm/xterm/css/xterm.css'
 
+  import { createContext, type Context } from '@/lib/context';
   import { createLogger } from '@/lib/logger';
   import {
     runTests,
@@ -12,7 +13,7 @@
     type TestRunnerFactory,
   } from "@/lib/testing";
   
-  import { type SurfaceApi } from '../model';
+  import { testRunnerTimeout, type SurfaceApi } from '../model';
   import { Tab } from './model';
   import { makeTheme } from './terminal'
 
@@ -82,22 +83,32 @@
   })
 
   const logger = createLogger(term)
+  
+  let ctx: Context | null = null
 
-  async function handleRun (){
+  async function handleRun () {
     if (isRunning) {
+      ctx?.cancel();
       return;
     }
+    ctx = createContext(testRunnerTimeout.value);
     isRunning = true;
     term.clear();
-    const runner = await testRunnerFactory({
-      code: model.getValue(),
-      out: term,
-    });
     try {
-      lastTestId = await runTests(logger, runner, testsData);
+      const runner = await testRunnerFactory(ctx, {
+        code: model.getValue(),
+        out: term,
+      });
+      try {
+        lastTestId = await runTests(ctx, logger, runner, testsData);
+      } finally {
+        runner[Symbol.dispose]();
+      }
+    } catch (err) {
+      logger.error(String(err));
     } finally {
-      runner[Symbol.dispose]();
       isRunning = false;
+      ctx = null;
     }
   }
 </script>

@@ -2,6 +2,7 @@ import { loadPyodide } from "pyodide";
 import type { PyProxy } from "pyodide/ffi";
 
 import type { TestRunner } from "../model";
+import { inContext, type Context } from "@/lib/context";
 
 function isPyProxy(obj: any): obj is PyProxy {
   return typeof obj === "object" && obj;
@@ -31,9 +32,12 @@ export abstract class PyTestRunner<I, O> implements TestRunner<I, O> {
     return result;
   }
 
-  async run(inputIn: I): Promise<O> {
+  async run(ctx: Context, input: I): Promise<O> {
     return this.transformResult(
-      await this.python.runPythonAsync(this.transformCode(inputIn))
+      await inContext(
+        ctx,
+        this.python.runPythonAsync(this.transformCode(input))
+      )
     );
   }
 

@@ -26,9 +26,13 @@ export function startRemote<
   log: Logger,
   connection: Connection<OutgoingMessage<H, E> | Event, IncomingMessage<H>>,
   eventHandlers: {
-    [K in Event["event"]]: (e: Extract<Event, EventMessage<K, any>>['payload']) => void;
+    [K in Event["event"]]: (
+      e: Extract<Event, EventMessage<K, any>>["payload"]
+    ) => void;
   } & {
-    [K in ErrorEventMessage<E>["event"]]: (e: ErrorEventMessage<E>['payload']) => void;
+    [K in ErrorEventMessage<E>["event"]]: (
+      e: ErrorEventMessage<E>["payload"]
+    ) => void;
   }
 ) {
   let lastId = 0;
@@ -93,6 +97,8 @@ export function startRemote<
       },
     }
   ) as {
-    [K in keyof H]: (arg: Parameters<H[K]>[0]) => Promise<ReturnType<H[K]>>;
+    [K in keyof H]: Parameters<H[K]>["length"] extends 0
+      ? () => Promise<ReturnType<H[K]>>
+      : (arg: Parameters<H[K]>[0]) => Promise<ReturnType<H[K]>>;
   } & Disposable;
 }

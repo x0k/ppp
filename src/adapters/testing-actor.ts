@@ -8,13 +8,15 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "@/lib/actor";
+import { createContext, inContext, type Context } from "@/lib/context";
 import { createLogger } from "@/lib/logger";
 import type { TestRunner, TestRunnerFactory } from "@/lib/testing";
 
 interface Handlers<I, O> {
   [key: string]: any;
-  init: (code: string) => Promise<void>;
-  run: (data: I) => Promise<O>;
+  init(code: string): Promise<void>;
+  cancel(): void;
+  run(data: I): Promise<O>;
 }
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
@@ -24,9 +26,12 @@ interface WritelnEventMessage extends EventMessage<"writeln", string> {}
 
 type TestingActorEvent = WriteEventMessage | WritelnEventMessage;
 
-type Outgoing<I, O> = OutgoingMessage<Handlers<I, O>, string> | TestingActorEvent;
+type Outgoing<I, O> =
+  | OutgoingMessage<Handlers<I, O>, string>
+  | TestingActorEvent;
 
 class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
+  private ctx: Context = createContext();
   private runner: TestRunner<I, O> | null = null;
 
   constructor(
@@ -35,7 +40,7 @@ class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
   ) {
     const handlers: Handlers<I, O> = {
       init: async (code) => {
-        this.runner = await factory({
+        this.runner = await factory(this.ctx, {
           code,
           out: {
             write(text) {
@@ -55,6 +60,10 @@ class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
           },
         });
       },
+      cancel: () => {
+        this.ctx.cancel();
+        this.ctx = createContext();
+      },
       run: (input) => {
         if (!this.runner) {
           const err = new Error("Test runner not initialized");
@@ -65,7 +74,7 @@ class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
           });
           throw err;
         }
-        return this.runner.run(input);
+        return this.runner.run(this.ctx, input);
       },
     };
     super(connection, handlers, String);
@@ -92,7 +101,7 @@ interface WorkerConstructor {
 export function makeRemoteTestRunnerFactory<I, O>(
   Worker: WorkerConstructor
 ): TestRunnerFactory<I, O> {
-  return async ({ code, out }) => {
+  return async (ctx, { code, out }) => {
     const worker = new Worker();
     const connection = new WorkerConnection<Outgoing<I, O>, Incoming<I, O>>(
       worker
@@ -108,16 +117,34 @@ export function makeRemoteTestRunnerFactory<I, O>(
         writeln: (text) => out.writeln(text),
       }
     );
-    await remote.init(code);
+    const dispose = () => {
+      remote[Symbol.dispose]();
+      stopConnection();
+      worker.terminate();
+    };
+    const clear = ctx.onCancel(() => {
+      remote.cancel();
+    });
+    try {
+      await remote.init(code);
+    } catch (err) {
+      dispose();
+      throw err;
+    } finally {
+      clear();
+    }
     return {
-      async run(input) {
-        return remote.run(input);
+      async run(ctx, input) {
+        const clear = ctx.onCancel(() => {
+          remote.cancel();
+        });
+        try {
+          return inContext(ctx, remote.run(input));
+        } finally {
+          clear();
+        }
       },
-      [Symbol.dispose]() {
-        remote[Symbol.dispose]();
-        stopConnection();
-        worker.terminate();
-      },
+      [Symbol.dispose]: dispose,
     };
   };
 }

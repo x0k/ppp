@@ -35,10 +35,11 @@
   >
     {#if isRunning}
       <span class="loading loading-spinner"></span>
+      Stop
     {:else}
       <Icon class="w-6" icon="lucide:play" />
+      Run
     {/if}
-    Run
   </button>
   <div role="tablist" class="tabs panel-tabs">
     {#snippet tabButton({ tab, append }: TabButtonProps)}

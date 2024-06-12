@@ -1,4 +1,5 @@
 import { redirect, type Logger } from "@/lib/logger";
+import { inContext, type Context } from "@/lib/context";
 import { patch } from "@/lib/patcher";
 
 import type { TestRunner } from "../model";
@@ -18,11 +19,14 @@ export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
 
   abstract executeTest(m: M, input: I): Promise<O>;
 
-  async run(input: I): Promise<O> {
+  async run(ctx: Context, input: I): Promise<O> {
     const transformedCode = this.transformCode(this.code);
     const recover = patch(globalThis, "console", this.patchedConsole);
     try {
-      const m = await import(/* @vite-ignore */ transformedCode);
+      const m = await inContext(
+        ctx,
+        import(/* @vite-ignore */ transformedCode)
+      );
       return this.executeTest(m, input);
     } finally {
       recover();

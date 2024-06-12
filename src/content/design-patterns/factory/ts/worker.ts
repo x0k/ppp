@@ -17,6 +17,6 @@ class SimpleTsTestRunner extends TsTestRunner<TestingModule, Input, Output> {
 }
 
 startTestRunnerActor(
-  async ({ code, out }: TestRunnerConfig) =>
+  async (_, { code, out }: TestRunnerConfig) =>
     new SimpleTsTestRunner(createLogger(out), code)
 );
