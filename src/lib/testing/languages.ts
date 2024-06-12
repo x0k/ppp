@@ -1,6 +1,6 @@
-import { tsVersion } from './js'
-import { version as phpVersion } from './php'
-import { version as pyVersion } from './python'
+import { version as tsVersion } from "./ts/version";
+import { version as phpVersion } from "./php/version";
+import { version as pythonVersion } from "./python/version";
 
 export enum Language {
   PHP = "php",
@@ -12,6 +12,6 @@ export enum Language {
 export const LANGUAGE_TITLE: Record<Language, string> = {
   [Language.PHP]: `PHP ${phpVersion}`,
   [Language.TypeScript]: `TypeScript ${tsVersion}`,
-  [Language.Python]: `Python ${pyVersion}`,
+  [Language.Python]: `Python ${pythonVersion}`,
   [Language.JavaScript]: "JavaScript",
 };

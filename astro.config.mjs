@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { createLogger } from "vite";
+import { fileURLToPath } from "node:url";
 
 import mdx from "@astrojs/mdx";
 import svelte from "@astrojs/svelte";
@@ -12,7 +13,7 @@ const loggerWarn = logger.warn;
 
 logger.warn = (msg, options) => {
   // Ignore warnings from pyodide distribution
-  if (msg.includes("/public/pyodide/")) return;
+  if (msg.includes("pyodide/pyodide")) return;
   loggerWarn(msg, options);
 };
 
@@ -22,19 +23,42 @@ export default defineConfig({
   base: "/ppp",
   integrations: [tailwind(), icon(), mdx(), svelte()],
   vite: {
-    customLogger: logger,
-    optimizeDeps: {
-      exclude: ["pyodide"],
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
     },
-    assetsInclude: ["**/*.wasm"],
-    build: {
+    worker: {
+      format: "es",
       rollupOptions: {
-        external: ["sharp"],
         output: {
           assetFileNames: "assets/[name].[hash].[ext]",
         },
       },
+      plugins: [
+        {
+          name: "ignore-wasm-imports",
+          load(id) {
+            if (id?.endsWith(".wasm")) {
+              return {
+                code: "export default {}",
+                map: null,
+              };
+            }
+          },
+        },
+      ],
     },
+    customLogger: logger,
+    optimizeDeps: {
+      exclude: ["pyodide", "@php-wasm/web"],
+    },
+    build: {
+      rollupOptions: {
+        external: ["sharp"],
+      },
+    },
+    assetsInclude: ["**/php_8_3.wasm"],
     plugins: [
       viteStaticCopy({
         targets: [
