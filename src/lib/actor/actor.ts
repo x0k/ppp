@@ -19,23 +19,28 @@ export interface ActorConfig<H extends Handlers, E> {
 }
 
 export class Actor<H extends Handlers, E> {
-  constructor(protected readonly config: ActorConfig<H, E>) {}
+  constructor(
+    protected readonly connection: Connection<
+      IncomingMessage<H>,
+      OutgoingMessage<H, E>
+    >,
+    protected readonly handlers: H,
+    protected readonly caseError: (error: any) => E
+  ) {}
 
   start() {
-    const { connection } = this.config;
     const handleMessage = this.handleMessage.bind(this);
-    connection.onMessage(handleMessage);
+    this.connection.onMessage(handleMessage);
     return () => {
-      connection.onMessage(handleMessage);
+      this.connection.onMessage(handleMessage);
     };
   }
 
   private async handleMessage(msg: IncomingMessage<H>) {
     switch (msg.type) {
       case MessageType.Request: {
-        const { connection } = this.config;
         const result = await this.handleRequest(msg);
-        connection.send(result);
+        this.connection.send(result);
         return;
       }
       case MessageType.Event: {
@@ -51,12 +56,12 @@ export class Actor<H extends Handlers, E> {
     event: EventMessage<K, Parameters<H[K]>[0]>
   ) {
     try {
-      await this.config.handlers[event.event](event.payload);
+      await this.handlers[event.event](event.payload);
     } catch (error) {
-      this.config.connection.send({
+      this.connection.send({
         type: MessageType.Event,
         event: "error",
-        payload: this.config.caseError(error),
+        payload: this.caseError(error),
       });
     }
   }
@@ -64,9 +69,8 @@ export class Actor<H extends Handlers, E> {
   private async handleRequest<K extends keyof H>(
     request: RequestMessage<K, Parameters<H[K]>[0]>
   ): Promise<ResponseMessage<Result<ReturnType<H[K]>, E>>> {
-    const { handlers, caseError } = this.config;
     try {
-      const result = await handlers[request.request](request.payload);
+      const result = await this.handlers[request.request](request.payload);
       return {
         type: MessageType.Response,
         id: request.id,
@@ -76,7 +80,7 @@ export class Actor<H extends Handlers, E> {
       return {
         type: MessageType.Response,
         id: request.id,
-        result: err(caseError(error)),
+        result: err(this.caseError(error)),
       };
     }
   }

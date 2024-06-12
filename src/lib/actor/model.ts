@@ -1,5 +1,5 @@
 import type { AnyKey, Brand } from "@/lib/type";
-import type { Result } from '@/lib/result';
+import type { Result } from "@/lib/result";
 
 export enum MessageType {
   Event = "event",
@@ -50,4 +50,3 @@ export interface ErrorEventMessage<E> extends EventMessage<"error", E> {}
 export type OutgoingMessage<H extends Handlers, E> =
   | ResponseMessage<Result<ReturnType<H[keyof H]>, E>>
   | ErrorEventMessage<E>;
-

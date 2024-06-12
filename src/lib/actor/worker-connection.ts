@@ -1,7 +1,9 @@
 import type { Connection } from "./model";
 
-export class WorkerConnection<I, O> implements Connection<I, O> {
-  private handlers = new Set<(message: I) => void>();
+export class WorkerConnection<Incoming, Outgoing>
+  implements Connection<Incoming, Outgoing>
+{
+  private handlers = new Set<(message: Incoming) => void>();
 
   constructor(private readonly worker: Worker) {}
 
@@ -17,11 +19,11 @@ export class WorkerConnection<I, O> implements Connection<I, O> {
     };
   }
 
-  send(message: O) {
+  send(message: Outgoing) {
     this.worker.postMessage(message);
   }
 
-  onMessage(handler: (message: I) => void) {
+  onMessage(handler: (message: Incoming) => void) {
     this.handlers.add(handler);
     return () => {
       this.handlers.delete(handler);

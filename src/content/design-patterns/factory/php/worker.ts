@@ -4,6 +4,7 @@ import {
   PHPTestRunner,
   phpRuntimeFactory,
 } from "@/lib/testing/php";
+import { startTestRunnerActor } from "@/adapters/testing-actor";
 
 import { type Input, type Output } from "../tests-data";
 import { PaymentSystemType } from "../reference";
@@ -27,5 +28,7 @@ class SimpleTestRunner extends PHPTestRunner<Input, Output> {
   }
 }
 
-export const testRunnerFactory = async ({ code, out }: TestRunnerConfig) =>
-  new SimpleTestRunner(out, new FailSafePHP(phpRuntimeFactory), code);
+startTestRunnerActor(
+  async ({ code, out }: TestRunnerConfig) =>
+    new SimpleTestRunner(out, new FailSafePHP(phpRuntimeFactory), code)
+);

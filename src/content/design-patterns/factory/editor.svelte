@@ -1,31 +1,32 @@
 <script lang="ts">
-  import { Language, type TestRunnerFactory } from '@/lib/testing';
+  import { Language, type TestRunnerFactory } from "@/lib/testing";
+  import { makeRemoteTestRunnerFactory } from "@/adapters/testing-actor";
 
-  import Editor from '@/components/editor/editor.svelte';
+  import Editor from "@/components/editor/editor.svelte";
 
-  import { testsData, type Input, type Output } from './tests-data'
-  import { testRunnerFactory as phpTestRunnerFactory } from './php/test-runners'
-  import { jsTestRunnerFactory, tsTestRunnerFactory } from './js/test-runners'
-  import { testRunnerFactory as pyTestRunnerFactory } from './python/test-runners'
+  import { testsData, type Input, type Output } from "./tests-data";
 
-  import phpInitialValue from './php/code.php?raw'
-  import tsInitialValue from './js/code.ts?raw'
-  import jsInitialValue from './js/code.js?raw'
-  import pyInitialValue from './python/code.py?raw'
+  import { jsCode, JsWorker } from "./js";
+  import { tsCode, TsWorker } from "./ts";
+  import { phpCode, PhpWorker } from "./php";
+  import { pyCode, PyWorker } from "./python";
 
   const INITIAL_VALUES: Record<Language, string> = {
-    [Language.PHP]: phpInitialValue,
-    [Language.TypeScript]: tsInitialValue,
-    [Language.JavaScript]: jsInitialValue,
-    [Language.Python]: pyInitialValue,
-  }
+    [Language.PHP]: phpCode,
+    [Language.TypeScript]: tsCode,
+    [Language.JavaScript]: jsCode,
+    [Language.Python]: pyCode,
+  };
 
-  const TEST_RUNNER_FACTORIES: Record<Language, TestRunnerFactory<Input, Output>> = {
-    [Language.PHP]: phpTestRunnerFactory,
-    [Language.TypeScript]: tsTestRunnerFactory,
-    [Language.JavaScript]: jsTestRunnerFactory,
-    [Language.Python]: pyTestRunnerFactory,
-  }
+  const TEST_RUNNER_FACTORIES: Record<
+    Language,
+    TestRunnerFactory<Input, Output>
+  > = {
+    [Language.PHP]: makeRemoteTestRunnerFactory(PhpWorker),
+    [Language.TypeScript]: makeRemoteTestRunnerFactory(TsWorker),
+    [Language.JavaScript]: makeRemoteTestRunnerFactory(JsWorker),
+    [Language.Python]: makeRemoteTestRunnerFactory(PyWorker),
+  };
 </script>
 
 <Editor
