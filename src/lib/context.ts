@@ -5,8 +5,11 @@ export interface Context {
   onCancel(cb: () => void): () => void;
 }
 
-export function createContext(): Context {
+export function createContext(timeoutInMs = 0): Context {
   const ctrl = new AbortController();
+  if (timeoutInMs > 0) {
+    setTimeout(() => ctrl.abort(), timeoutInMs);
+  }
   return {
     get canceled() {
       return ctrl.signal.aborted;
@@ -34,6 +37,23 @@ export function withCancel(ctx: Context): Context {
     leaf.cancel();
   };
   ctx.signal.addEventListener("abort", cancel);
+  return {
+    ...leaf,
+    cancel,
+  };
+}
+
+export function withTimeout(ctx: Context, timeoutInMs: number): Context {
+  if (ctx.canceled) {
+    return ctx;
+  }
+  const leaf = createContext();
+  const cancel = () => {
+    ctx.signal.removeEventListener("abort", cancel);
+    leaf.cancel();
+  };
+  ctx.signal.addEventListener("abort", cancel);
+  setTimeout(cancel, timeoutInMs);
   return {
     ...leaf,
     cancel,

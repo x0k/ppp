@@ -5,7 +5,7 @@
   import { FitAddon } from '@xterm/addon-fit'
   import '@xterm/xterm/css/xterm.css'
 
-  import { createContext } from '@/lib/context';
+  import { createContext, type Context } from '@/lib/context';
   import { createLogger } from '@/lib/logger';
   import {
     runTests,
@@ -13,7 +13,7 @@
     type TestRunnerFactory,
   } from "@/lib/testing";
   
-  import { type SurfaceApi } from '../model';
+  import { testRunnerTimeout, type SurfaceApi } from '../model';
   import { Tab } from './model';
   import { makeTheme } from './terminal'
 
@@ -84,13 +84,14 @@
 
   const logger = createLogger(term)
   
-  let ctx = createContext()
+  let ctx: Context | null = null
 
-  async function handleRun (){
+  async function handleRun () {
     if (isRunning) {
-      ctx.cancel();
+      ctx?.cancel();
       return;
     }
+    ctx = createContext(testRunnerTimeout.value);
     isRunning = true;
     term.clear();
     try {
@@ -107,7 +108,7 @@
       logger.error(String(err));
     } finally {
       isRunning = false;
-      ctx = createContext();
+      ctx = null;
     }
   }
 </script>

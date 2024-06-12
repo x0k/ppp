@@ -1,7 +1,7 @@
 import deepEqual from "fast-deep-equal";
 
 import type { Logger, Writer } from "@/lib/logger";
-import { CANCELED_ERROR, type Context } from "@/lib/context";
+import { type Context } from "@/lib/context";
 
 export interface TestData<I, O> {
   input: I;
@@ -40,7 +40,7 @@ export async function runTests<Arg, R>(
   let i = 0;
   for (; i < testsData.length; i++) {
     if (ctx.canceled) {
-      log.info("Test canceled by user");
+      log.error("Test canceled by user");
       return i;
     }
     const data = testsData[i];

@@ -8,7 +8,7 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "@/lib/actor";
-import { createContext, inContext } from "@/lib/context";
+import { createContext, inContext, type Context } from "@/lib/context";
 import { createLogger } from "@/lib/logger";
 import type { TestRunner, TestRunnerFactory } from "@/lib/testing";
 
@@ -31,7 +31,7 @@ type Outgoing<I, O> =
   | TestingActorEvent;
 
 class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
-  private ctx = createContext();
+  private ctx: Context = createContext();
   private runner: TestRunner<I, O> | null = null;
 
   constructor(
@@ -121,7 +121,7 @@ export function makeRemoteTestRunnerFactory<I, O>(
       remote[Symbol.dispose]();
       stopConnection();
       worker.terminate();
-    }
+    };
     const clear = ctx.onCancel(() => {
       remote.cancel();
     });
