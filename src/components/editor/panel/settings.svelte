@@ -18,9 +18,9 @@
       <input
         type="number"
         class="input input-bordered"
+        class:input-error={testRunnerTimeout.value < 0}
         bind:value={testRunnerTimeout.value}
-        min="1000"
-        class:input-error={testRunnerTimeout.value < 1000}
+        min="0"
       />
     </label>
   </div>
