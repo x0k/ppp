@@ -1,10 +1,10 @@
 #!/usr/bin/bash -xe
 
 mk:
-  bun run dev
+  pnpm dev
 
 c:
-  bunx astro check
+  bun run check
 
 f:
   bunx prettier --write .
