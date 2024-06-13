@@ -1,17 +1,20 @@
 {
   "name": "root",
   "version": "0.0.0",
+  "author": "Krasilnikov Roman",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@9.1.4",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "turbo run dev --parallel --filter=ppp"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "check": "turbo run check",
+    "preview": "turbo run preview"
   },
-  "keywords": [],
-  "author": "Krasilnikov Roman",
-  "license": "ISC",
   "devDependencies": {
-    "only-allow": "^1.2.1"
+    "only-allow": "^1.2.1",
+    "turbo": "^2.0.3",
+    "typescript": "^5.4.5"
   }
 }

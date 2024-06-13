@@ -1,19 +1,13 @@
 #!/usr/bin/bash -xe
 
 mk:
-  pnpm dev
+  pnpm run dev
 
 c:
-  bun run check
-
-f:
-  bunx prettier --write .
-
-s:
-  bunx astro sync
+  pnpm run check
 
 b:
-  bunx astro build
+  pnpm run build
 
 p:
-  bunx astro preview
+  pnpm run preview
