@@ -1,4 +1,4 @@
-import { stringify } from '@/lib/json'
+import { stringify } from 'libs/json';
 
 export interface Writer {
   write(text: string): void;

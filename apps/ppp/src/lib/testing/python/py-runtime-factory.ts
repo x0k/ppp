@@ -1,7 +1,6 @@
 import { loadPyodide } from "pyodide";
-
-import type { Writer } from "@/lib/logger";
-import { inContext, type Context } from "@/lib/context";
+import type { Writer } from "libs/logger";
+import { inContext, type Context } from "libs/context";
 
 export const pyRuntimeFactory = (ctx: Context, writer: Writer) =>
   inContext(

@@ -1,3 +1,5 @@
+import { createContext, inContext, type Context } from "libs/context";
+import { createLogger } from "libs/logger";
 import {
   Actor,
   MessageType,
@@ -7,9 +9,8 @@ import {
   type EventMessage,
   type IncomingMessage,
   type OutgoingMessage,
-} from "@/lib/actor";
-import { createContext, inContext, type Context } from "@/lib/context";
-import { createLogger } from "@/lib/logger";
+} from "libs/actor";
+
 import type { TestRunner, TestRunnerFactory } from "@/lib/testing";
 
 interface Handlers<I, O> {

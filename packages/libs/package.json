@@ -1,0 +1,23 @@
+{
+  "name": "libs",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "Krasilnikov Roman",
+  "license": "ISC",
+  "exports": {
+    "./actor": "./dist/actor/index.js",
+    "./context": "./dist/context.js",
+    "./guards": "./dist/guards.js",
+    "./json": "./dist/json.js",
+    "./logger": "./dist/logger.js",
+    "./patcher": "./dist/patcher.js",
+    "./result": "./dist/result.js",
+    "./type": "./dist/type.js"
+  }
+}

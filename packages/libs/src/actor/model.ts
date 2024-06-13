@@ -1,5 +1,5 @@
-import type { AnyKey, Brand } from "@/lib/type";
-import type { Result } from "@/lib/result";
+import type { Brand, AnyKey } from "libs/type";
+import type { Result } from "libs/result";
 
 export enum MessageType {
   Event = "event",

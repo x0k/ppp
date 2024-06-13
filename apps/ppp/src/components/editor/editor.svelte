@@ -1,6 +1,7 @@
 <script lang="ts" generics="Lang extends Language, Input, Output">
   import { editor } from "monaco-editor";
 
+  import { RESET_BUTTON_ID } from '@/shared';
   import {
     LANGUAGE_TITLE,
     Language,
@@ -14,7 +15,6 @@
   import Surface from "./surface.svelte";
   import Panel from "./panel/panel.svelte"
   import VimMode from './vim-mode.svelte';
-  import { RESET_BUTTON_ID } from '@/shared';
 
   interface Props<L extends Language, I, O> {
     contentId: string;

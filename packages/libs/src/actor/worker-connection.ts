@@ -1,4 +1,4 @@
-import type { Connection } from "./model";
+import type { Connection } from "./model.js";
 
 export class WorkerConnection<Incoming, Outgoing>
   implements Connection<Incoming, Outgoing>

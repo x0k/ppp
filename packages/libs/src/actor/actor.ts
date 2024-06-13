@@ -1,5 +1,5 @@
-import { err, ok, type Result } from "@/lib/result";
-import { neverError } from "@/lib/guards";
+import { err, ok, type Result } from "libs/result";
+import { neverError } from "libs/guards";
 
 import {
   MessageType,
@@ -10,7 +10,7 @@ import {
   type OutgoingMessage,
   type RequestMessage,
   type ResponseMessage,
-} from "./model";
+} from "./model.js";
 
 export interface ActorConfig<H extends Handlers, E> {
   connection: Connection<IncomingMessage<H>, OutgoingMessage<H, E>>;

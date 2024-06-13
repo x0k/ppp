@@ -1,4 +1,5 @@
-import { createLogger } from "@/lib/logger";
+import { createLogger } from "libs/logger";
+
 import type { TestRunnerConfig } from "@/lib/testing";
 import { JsTestRunner } from "@/lib/testing/js";
 import { startTestRunnerActor } from "@/adapters/testing-actor";

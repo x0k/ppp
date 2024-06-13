@@ -1,6 +1,6 @@
-import type { Logger } from "@/lib/logger";
-import { neverError } from "@/lib/guards";
-import { isOk } from "@/lib/result";
+import type { Logger } from "libs/logger";
+import { neverError } from "libs/guards";
+import { isOk } from "libs/result";
 
 import {
   MessageType,
@@ -11,7 +11,7 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
   type RequestId,
-} from "./model";
+} from "./model.js";
 
 interface DeferredPromise<T, E> {
   resolve: (value: T) => void;

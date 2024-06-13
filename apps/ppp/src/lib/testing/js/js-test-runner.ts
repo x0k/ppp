@@ -1,6 +1,6 @@
-import { redirect, type Logger } from "@/lib/logger";
-import { inContext, type Context } from "@/lib/context";
-import { patch } from "@/lib/patcher";
+import { redirect, type Logger } from "libs/logger";
+import { inContext, type Context } from "libs/context";
+import { patch } from "libs/patcher";
 
 import type { TestRunner } from "../model";
 

@@ -25,7 +25,8 @@
     "monaco-vim": "^0.4.1",
     "pyodide": "^0.26.1",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "libs": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.191",

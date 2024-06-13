@@ -1,9 +1,8 @@
 import type { WebPHP } from "@php-wasm/web";
-
-import type { Writer } from "@/lib/logger";
+import type { Writer } from "libs/logger";
+import type { Context } from "libs/context";
 
 import type { TestRunner } from "../model";
-import type { Context } from "@/lib/context";
 
 export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
   private result?: O;

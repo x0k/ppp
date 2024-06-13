@@ -4,9 +4,10 @@
   import { Terminal } from '@xterm/xterm'
   import { FitAddon } from '@xterm/addon-fit'
   import '@xterm/xterm/css/xterm.css'
+  
+  import { createContext, type Context } from 'libs/context';
+  import { createLogger } from 'libs/logger';
 
-  import { createContext, type Context } from '@/lib/context';
-  import { createLogger } from '@/lib/logger';
   import {
     runTests,
     type TestData,
