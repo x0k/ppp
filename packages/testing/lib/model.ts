@@ -1,6 +1,6 @@
 import deepEqual from "fast-deep-equal";
 import type { Logger, Writer } from "libs/logger";
-import { type Context } from "libs/context";
+import type { Context } from "libs/context";
 
 export interface TestData<I, O> {
   input: I;

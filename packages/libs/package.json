@@ -13,7 +13,7 @@
   "exports": {
     "./actor": "./dist/actor/index.js",
     "./context": "./dist/context.js",
-    "./guards": "./dist/guards.js",
+    "./error": "./dist/error.js",
     "./json": "./dist/json.js",
     "./logger": "./dist/logger.js",
     "./patcher": "./dist/patcher.js",

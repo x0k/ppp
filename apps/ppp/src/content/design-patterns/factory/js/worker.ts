@@ -1,7 +1,7 @@
 import { createLogger } from "libs/logger";
+import type { TestRunnerConfig } from "testing";
+import { JsTestRunner } from 'testing/javascript'
 
-import type { TestRunnerConfig } from "@/lib/testing";
-import { JsTestRunner } from "@/lib/testing/js";
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 
 import { type Input, type Output } from "../tests-data";

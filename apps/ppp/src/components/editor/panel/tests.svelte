@@ -1,7 +1,7 @@
 <script lang="ts" generics="Input, Output">
   import Icon from "@iconify/svelte";
 
-  import type { TestData } from "@/lib/testing";
+  import type { TestData } from "testing";
 
   interface Props<I, O> {
     testsData: TestData<I, O>[];

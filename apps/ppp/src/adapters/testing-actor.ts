@@ -10,8 +10,8 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "libs/actor";
-
-import type { TestRunner, TestRunnerFactory } from "@/lib/testing";
+import { stringifyError } from "libs/error";
+import type { TestRunner, TestRunnerFactory } from "testing";
 
 interface Handlers<I, O> {
   [key: string]: any;
@@ -78,7 +78,7 @@ class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
         return this.runner.run(this.ctx, input);
       },
     };
-    super(connection, handlers, String);
+    super(connection, handlers, stringifyError);
   }
 }
 
@@ -127,7 +127,7 @@ export function makeRemoteTestRunnerFactory<I, O>(
       remote.cancel();
     });
     try {
-      await remote.init(code);
+      await inContext(ctx, remote.init(code));
     } catch (err) {
       dispose();
       throw err;

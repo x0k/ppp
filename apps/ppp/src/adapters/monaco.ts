@@ -1,4 +1,4 @@
-import { Language } from "@/lib/testing";
+import { Language } from "@/lib/languages";
 
 export const MONACO_LANGUAGE_ID: Record<Language, string> = {
   [Language.PHP]: "php",

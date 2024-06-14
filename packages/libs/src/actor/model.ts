@@ -1,5 +1,5 @@
-import type { Brand, AnyKey } from "libs/type";
-import type { Result } from "libs/result";
+import type { Brand, AnyKey } from "../type.js";
+import type { Result } from "../result.js";
 
 export enum MessageType {
   Event = "event",

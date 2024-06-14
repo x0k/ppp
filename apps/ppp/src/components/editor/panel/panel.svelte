@@ -7,12 +7,13 @@
   
   import { createContext, type Context } from 'libs/context';
   import { createLogger } from 'libs/logger';
+  import { stringifyError } from 'libs/error'
 
   import {
     runTests,
     type TestData,
     type TestRunnerFactory,
-  } from "@/lib/testing";
+  } from "testing";
   
   import { testRunnerTimeout, type SurfaceApi } from '../model';
   import { Tab } from './model';
@@ -106,7 +107,7 @@
         runner[Symbol.dispose]();
       }
     } catch (err) {
-      logger.error(String(err));
+      logger.error(stringifyError(err));
     } finally {
       isRunning = false;
       ctx = null;

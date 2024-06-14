@@ -1,9 +1,10 @@
-import type { TestRunnerConfig } from "@/lib/testing";
+import type { TestRunnerConfig } from "testing";
 import {
   FailSafePHP,
   PHPTestRunner,
   phpRuntimeFactory,
-} from "@/lib/testing/php";
+} from "testing/php";
+
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 
 import { type Input, type Output } from "../tests-data";

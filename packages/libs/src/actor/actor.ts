@@ -1,5 +1,5 @@
-import { err, ok, type Result } from "libs/result";
-import { neverError } from "libs/guards";
+import { err, ok, type Result } from "../result.js";
+import { neverError } from "../error.js";
 
 import {
   MessageType,
@@ -29,11 +29,7 @@ export class Actor<H extends Handlers, E> {
   ) {}
 
   start() {
-    const handleMessage = this.handleMessage.bind(this);
-    this.connection.onMessage(handleMessage);
-    return () => {
-      this.connection.onMessage(handleMessage);
-    };
+    return this.connection.onMessage(this.handleMessage.bind(this));
   }
 
   private async handleMessage(msg: IncomingMessage<H>) {

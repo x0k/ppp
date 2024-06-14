@@ -1,6 +1,6 @@
-import type { Logger } from "libs/logger";
-import { neverError } from "libs/guards";
-import { isOk } from "libs/result";
+import type { Logger } from "../logger.js";
+import { neverError } from "../error.js";
+import { isOk } from "../result.js";
 
 import {
   MessageType,

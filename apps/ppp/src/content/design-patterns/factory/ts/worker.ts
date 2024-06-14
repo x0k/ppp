@@ -1,7 +1,7 @@
 import { createLogger } from "libs/logger";
+import type { TestRunnerConfig } from "testing";
+import { TsTestRunner } from "testing/typescript";
 
-import type { TestRunnerConfig } from "@/lib/testing";
-import { TsTestRunner } from "@/lib/testing/ts";
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 
 import { type Input, type Output } from "../tests-data";

@@ -1,13 +1,14 @@
 <script lang="ts" generics="Lang extends Language, Input, Output">
   import { editor } from "monaco-editor";
 
+  import type { TestData, TestRunnerFactory } from "testing";
+
   import { RESET_BUTTON_ID } from '@/shared';
+
   import {
     LANGUAGE_TITLE,
     Language,
-    type TestData,
-    type TestRunnerFactory,
-  } from "@/lib/testing";
+  } from '@/lib/languages'
   import Select from '@/components/select.svelte';
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import { createSyncStorage } from "@/adapters/storage";

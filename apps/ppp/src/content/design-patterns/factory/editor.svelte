@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { Language, type TestRunnerFactory } from "@/lib/testing";
-  import { makeRemoteTestRunnerFactory } from "@/adapters/testing-actor";
+  import { type TestRunnerFactory } from "testing";
 
+  import { Language } from "@/lib/languages";
+  import { makeRemoteTestRunnerFactory } from "@/adapters/testing-actor";
   import Editor from "@/components/editor/editor.svelte";
 
   import { testsData, type Input, type Output } from "./tests-data";

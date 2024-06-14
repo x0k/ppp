@@ -1,4 +1,4 @@
-import { testData } from "@/lib/testing";
+import { testData } from "testing";
 
 import { PaymentSystemType, payment } from "./reference";
 

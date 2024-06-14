@@ -7,7 +7,7 @@ export class FailSafePHP extends WebPHP {
     super();
   }
 
-  async run(request: PHPRunOptions) {
+  override async run(request: PHPRunOptions) {
     if (this.lastRuntime === undefined) {
       this.lastRuntime = await this.runtimeFactory();
       this.initializeRuntime(this.lastRuntime);

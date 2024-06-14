@@ -1,16 +1,17 @@
-import type { TestRunnerConfig } from "@/lib/testing";
-import { PyTestRunner, pyRuntimeFactory } from "@/lib/testing/python";
+import type { TestRunnerFactory } from "testing";
+import { PyTestRunner, pyRuntimeFactory } from "testing/python";
+
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 
 import { type Input, type Output } from "../tests-data";
 
-class SimpleTestRunner extends PyTestRunner<Input, Output> {
+class TestRunner extends PyTestRunner<Input, Output> {
   protected caseExecutionCode({ paymentSystem, base, amount }: Input): string {
     return `payment("${paymentSystem}", ${base}, ${amount})`;
   }
 }
 
-startTestRunnerActor(
-  async (ctx, { code, out }: TestRunnerConfig) =>
-    new SimpleTestRunner(await pyRuntimeFactory(ctx, out), code)
-);
+const factory: TestRunnerFactory<Input, Output> = async (ctx, { code, out }) =>
+  new TestRunner(await pyRuntimeFactory(ctx, out), code);
+
+startTestRunnerActor(factory);
