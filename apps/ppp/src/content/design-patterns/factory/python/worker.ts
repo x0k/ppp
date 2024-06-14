@@ -1,5 +1,5 @@
 import type { TestRunnerFactory } from "testing";
-import { PyTestRunner, pyRuntimeFactory } from "testing/python";
+import { PyTestRunner, pyRuntimeFactory } from "testing-python";
 
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 

@@ -3,7 +3,7 @@ import {
   FailSafePHP,
   PHPTestRunner,
   phpRuntimeFactory,
-} from "testing/php";
+} from "testing-php";
 
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 

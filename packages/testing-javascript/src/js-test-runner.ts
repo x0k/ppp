@@ -2,7 +2,7 @@ import { redirect, type Logger } from "libs/logger";
 import { inContext, type Context } from "libs/context";
 import { patch } from "libs/patcher";
 
-import type { TestRunner } from "../model";
+import type { TestRunner } from "testing";
 
 export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
   private readonly patchedConsole: Console;

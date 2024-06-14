@@ -23,7 +23,11 @@
     "monaco-vim": "^0.4.1",
     "tailwindcss": "^3.4.4",
     "libs": "workspace:*",
-    "testing": "workspace:*"
+    "testing": "workspace:*",
+    "testing-javascript": "workspace:*",
+    "testing-typescript": "workspace:*",
+    "testing-python": "workspace:*",
+    "testing-php": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.191",

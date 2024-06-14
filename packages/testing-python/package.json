@@ -1,0 +1,22 @@
+{
+  "name": "testing-python",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "libs": "workspace:*",
+    "testing": "workspace:*",
+    "pyodide": "^0.26.1"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  }
+}

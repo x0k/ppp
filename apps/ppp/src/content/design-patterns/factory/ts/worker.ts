@@ -1,6 +1,6 @@
 import { createLogger } from "libs/logger";
 import type { TestRunnerConfig } from "testing";
-import { TsTestRunner } from "testing/typescript";
+import { TsTestRunner } from "testing-typescript";
 
 import { startTestRunnerActor } from "@/adapters/testing-actor";
 
