@@ -20,18 +20,19 @@
   interface Props<L extends Language, I, O> {
     contentId: string;
     testsData: TestData<I, O>[];
-    initialValues: Record<L, string>;
-    testRunnerFactories: Record<L, TestRunnerFactory<I, O>>;
+    runtimes: Record<L, {
+      initialValue: string;
+      testRunnerFactory: TestRunnerFactory<I, O>;
+    }>
   }
 
   const {
     contentId,
     testsData,
-    initialValues,
-    testRunnerFactories,
+    runtimes,
   }: Props<Lang, Input, Output> = $props();
 
-  const languages = Object.keys(testRunnerFactories) as Lang[];
+  const languages = Object.keys(runtimes) as Lang[];
   if (languages.length === 0) {
     throw new Error("No test runner factories provided");
   }
@@ -44,12 +45,13 @@
   const initialLang = langStorage.load();
 
   let lang = $state(
-    initialLang in testRunnerFactories ? initialLang : defaultLang
+    initialLang in runtimes ? initialLang : defaultLang
   );
+  let runtime = $derived(runtimes[lang]);
   let contentStorage = $derived(createSyncStorage(
     sessionStorage,
     `editor-${contentId}-${lang}`,
-    initialValues[lang],
+    runtime.initialValue,
   ));
 
   const model = editor.createModel("");
@@ -85,7 +87,7 @@
 
   function resetEditorContent () {
     contentStorage.clear();
-    model.setValue(initialValues[lang]);
+    model.setValue(runtime.initialValue);
     surface.api.editor?.focus();
   }
 
@@ -107,7 +109,7 @@
       {api}
       {model}
       {testsData}
-      testRunnerFactory={testRunnerFactories[lang]}
+      testRunnerFactory={runtime.testRunnerFactory}
       children={resizer}
     >
       {#snippet header()}
