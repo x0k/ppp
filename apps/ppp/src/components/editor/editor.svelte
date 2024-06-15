@@ -1,10 +1,20 @@
+<script lang="ts" context="module">
+  import type { TestData, TestRunnerFactory } from "testing";
+
+  export interface Props<L extends Language, I, O> {
+    contentId: string;
+    testsData: TestData<I, O>[];
+    runtimes: Record<L, {
+      initialValue: string;
+      testRunnerFactory: TestRunnerFactory<I, O>;
+    }>
+  }
+</script>
+
 <script lang="ts" generics="Lang extends Language, Input, Output">
   import { editor } from "monaco-editor";
 
-  import type { TestData, TestRunnerFactory } from "testing";
-
   import { RESET_BUTTON_ID } from '@/shared';
-
   import {
     LANGUAGE_TITLE,
     Language,
@@ -16,15 +26,6 @@
   import Surface from "./surface.svelte";
   import Panel from "./panel/panel.svelte"
   import VimMode from './vim-mode.svelte';
-
-  interface Props<L extends Language, I, O> {
-    contentId: string;
-    testsData: TestData<I, O>[];
-    runtimes: Record<L, {
-      initialValue: string;
-      testRunnerFactory: TestRunnerFactory<I, O>;
-    }>
-  }
 
   const {
     contentId,
