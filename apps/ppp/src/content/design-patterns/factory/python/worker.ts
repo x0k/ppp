@@ -1,3 +1,4 @@
+import { createLogger } from 'libs/logger';
 import type { TestRunnerFactory } from "testing";
 import { PyTestRunner, pyRuntimeFactory } from "testing-python";
 
@@ -12,6 +13,6 @@ class TestRunner extends PyTestRunner<Input, Output> {
 }
 
 const factory: TestRunnerFactory<Input, Output> = async (ctx, { code, out }) =>
-  new TestRunner(await pyRuntimeFactory(ctx, out), code);
+  new TestRunner(await pyRuntimeFactory(ctx, createLogger(out)), code);
 
 startTestRunnerActor(factory);

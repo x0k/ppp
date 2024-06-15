@@ -14,10 +14,6 @@ logger.warn = (msg, options) => {
 export default defineConfig({
   customLogger: logger,
   build: {
-    commonjsOptions: {
-      ignore: () => true,
-      ignoreDynamicRequires: true,
-    },
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.ts"),
