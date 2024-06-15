@@ -1,0 +1,18 @@
+{
+  "name": "testing",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3",
+    "libs": "workspace:*"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./actor": "./dist/actor.js"
+  }
+}

@@ -1,0 +1,41 @@
+---
+export interface Props {
+  contentId: string;
+}
+
+const { contentId } = Astro.props;
+---
+
+<div id="editor-placeholder" data-content-id={contentId}></div>
+
+<script>
+  import { makeRemoteTestRunnerFactory } from 'testing/actor'
+
+  import { Language } from "@/lib/languages";
+  import { mountEditor } from "@/adapters/svelte-editor";
+
+  import { testsData } from "design-patterns-factory";
+  import { code as jsCode, Worker as JsWorker } from "design-patterns-factory/js";
+  import { code as tsCode, Worker as TsWorker } from "design-patterns-factory/ts";
+  import { code as phpCode, Worker as PhpWorker } from "design-patterns-factory/php";
+  import { code as pyCode, Worker as PyWorker } from "design-patterns-factory/python";
+
+  mountEditor(testsData, {
+    [Language.PHP]: {
+      initialValue: phpCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(PhpWorker),
+    },
+    [Language.TypeScript]: {
+      initialValue: tsCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(TsWorker),
+    },
+    [Language.JavaScript]: {
+      initialValue: jsCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(JsWorker),
+    },
+    [Language.Python]: {
+      initialValue: pyCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(PyWorker),
+    },
+  });
+</script>

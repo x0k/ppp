@@ -1,0 +1,21 @@
+{
+  "name": "testing-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "author": "Krasilnikov Roman",
+  "license": "ISC",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "dependencies": {
+    "libs": "workspace:*",
+    "testing": "workspace:*",
+    "testing-javascript": "workspace:*",
+    "typescript": "^5.4.5"
+  }
+}
