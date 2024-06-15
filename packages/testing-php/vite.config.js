@@ -39,6 +39,16 @@ export default defineConfig({
         }
       },
     },
+    {
+      name: "transform-php-imports",
+      transform(code, id) {
+        if (id.includes("@php-wasm/web/index.js")) {
+          return {
+            code: code.replace(/await import\(".*php_\d_\d\.js"\)/g, "{}"),
+          };
+        }
+      },
+    },
     dts({
       rollupTypes: true,
     }),
