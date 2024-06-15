@@ -9,15 +9,16 @@ const { contentId } = Astro.props;
 <div id="editor-placeholder" data-content-id={contentId}></div>
 
 <script>
+  import { makeRemoteTestRunnerFactory } from 'testing/actor'
+
   import { Language } from "@/lib/languages";
   import { mountEditor } from "@/adapters/svelte-editor";
-  import { makeRemoteTestRunnerFactory } from "@/adapters/testing-actor";
 
-  import { testsData } from "./tests-data";
-  import { jsCode, JsWorker } from "./js";
-  import { tsCode, TsWorker } from "./ts";
-  import { phpCode, PhpWorker } from "./php";
-  import { pyCode, PyWorker } from "./python";
+  import { testsData } from "design-patterns-factory";
+  import { code as jsCode, Worker as JsWorker } from "design-patterns-factory/js";
+  import { code as tsCode, Worker as TsWorker } from "design-patterns-factory/ts";
+  import { code as phpCode, Worker as PhpWorker } from "design-patterns-factory/php";
+  import { code as pyCode, Worker as PyWorker } from "design-patterns-factory/python";
 
   mountEditor(testsData, {
     [Language.PHP]: {

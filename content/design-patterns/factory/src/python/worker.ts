@@ -1,13 +1,12 @@
 import { createLogger } from 'libs/logger';
 import type { TestRunnerFactory } from "testing";
+import { startTestRunnerActor } from "testing/actor";
 import { PyTestRunner, pyRuntimeFactory } from "testing-python";
 
-import { startTestRunnerActor } from "@/adapters/testing-actor";
-
-import { type Input, type Output } from "../tests-data";
+import type { Input, Output } from "../tests-data";
 
 class TestRunner extends PyTestRunner<Input, Output> {
-  protected caseExecutionCode({ paymentSystem, base, amount }: Input): string {
+  protected override caseExecutionCode({ paymentSystem, base, amount }: Input): string {
     return `payment("${paymentSystem}", ${base}, ${amount})`;
   }
 }

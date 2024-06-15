@@ -12,6 +12,7 @@
     "libs": "workspace:*"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./actor": "./dist/actor.js"
   }
 }
