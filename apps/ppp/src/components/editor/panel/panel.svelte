@@ -66,6 +66,11 @@
     term.dispose()
   })
 
+  $effect(() => {
+    testRunnerFactory;
+    term.clear();
+  })
+
   let resizeFrameId: number
   $effect(() => {
     api.panelHeight;
