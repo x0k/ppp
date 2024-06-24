@@ -127,6 +127,12 @@ importers:
         specifier: workspace:*
         version: link:../libs
 
+  packages/testing-go:
+    dependencies:
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+
   packages/testing-javascript:
     dependencies:
       libs:

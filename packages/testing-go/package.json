@@ -1,0 +1,12 @@
+{
+  "name": "testing-go",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:wasm": "GOOS=js GOARCH=wasm go build -o public/inter.wasm go/cmd/inter/main.go"
+  },
+  "dependencies": {
+    "libs": "workspace:*"
+  }
+}

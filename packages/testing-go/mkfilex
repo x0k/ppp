@@ -1,0 +1,10 @@
+#!/usr/bin/bash -xe
+
+go/:
+    pushd go
+    build:
+        GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
+    popd
+
+p:
+    bun run probe/index.ts
