@@ -3,10 +3,12 @@
 package app_compiler
 
 import (
+	"context"
 	"errors"
 	"syscall/js"
 
 	js_adapters "github.com/x0k/ppp/internal/adapters/js"
+	"github.com/x0k/ppp/internal/compiler/js_compiler"
 	"github.com/x0k/vert"
 )
 
@@ -32,7 +34,17 @@ func New(jsConfig js.Value) js_adapters.Result {
 	root := js_adapters.ObjectConstructor.New()
 
 	root.Set("compile", js_adapters.Sync(func(args []js.Value) js_adapters.Result {
-		return js_adapters.Fail(errors.New("Not implemented"))
+		if len(args) < 2 {
+			return js_adapters.Fail(errors.New("Not enough arguments, expected 2"))
+		}
+		ctx, cancel := js_adapters.WithAbortSignal(context.Background(), args[0])
+		defer cancel()
+
+		c, err := js_compiler.New()
+		if err != nil {
+			return js_adapters.Fail(err)
+		}
+		return c.Compile(ctx, args[1].String())
 	}))
 
 	return js_adapters.Ok(root)

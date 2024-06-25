@@ -1,32 +1,47 @@
-import "../public/wasm_exec.js";
 // @ts-ignore
 import WASM_PATH from "../public/compiler.wasm";
 
-import { LogLevel, type CompilerConfig } from "../src/model";
-
-import type { Result } from "./result";
-
-declare global {
-  function __wasm_init_function(config: CompilerConfig): Result<never>;
-}
-const WASM_INIT_FUNCTION = "__wasm_init_function";
+import { LogLevel, createCompilerFactory } from "../src/index.js";
 
 const wasmFile = Bun.file(WASM_PATH);
-const go = new Go();
-const source = await WebAssembly.instantiate(
-  await wasmFile.arrayBuffer(),
-  go.importObject
+
+const factory = await createCompilerFactory(
+  async (imports) =>
+    (
+      await WebAssembly.instantiate(await wasmFile.arrayBuffer(), imports)
+    ).instance
 );
-go.argv.push(WASM_INIT_FUNCTION);
-void go.run(source.instance);
-console.log(globalThis.__wasm_init_function({
+
+const compiler = factory({
   logger: {
     level: LogLevel.Debug,
     console: globalThis.console,
   },
   writer: {
-    write (s) {
-      console.log(s)
+    write(s) {
+      console.log(s);
     },
-  }
-}));
+  },
+});
+if (!compiler.ok) {
+  throw new Error(compiler.error);
+}
+
+const ctrl = new AbortController();
+const executor = compiler.value.compile<string>(
+  ctrl.signal,
+  `package main
+func Test() string {
+  return "test"
+}`
+);
+if (!executor.ok) {
+  throw new Error(executor.error);
+}
+
+const r = executor.value(ctrl.signal, "main.Test()");
+if (!r.ok) {
+  throw new Error(r.error);
+}
+
+console.log(r.value);

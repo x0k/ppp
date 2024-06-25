@@ -1,6 +1,9 @@
 package compiler
 
 import (
+	"context"
+	"reflect"
+
 	"github.com/traefik/yaegi/interp"
 	"github.com/traefik/yaegi/stdlib"
 )
@@ -23,13 +26,20 @@ func New() (*Compiler, error) {
 	}, nil
 }
 
-func (c *Compiler) Compile(code string) (*Program, error) {
-	program, err := c.inter.Compile(code)
+func (c *Compiler) Compile(ctx context.Context, code string) (*Program, error) {
+	_, err := c.inter.EvalWithContext(ctx, code)
 	if err != nil {
 		return nil, err
 	}
 	return &Program{
-		program:  program,
-		executor: c.inter,
+		inter: c.inter,
 	}, nil
+}
+
+type Program struct {
+	inter *interp.Interpreter
+}
+
+func (p *Program) Exec(ctx context.Context, code string) (reflect.Value, error) {
+	return p.inter.EvalWithContext(ctx, code)
 }

@@ -4,7 +4,11 @@ go/:
     pushd go
     build:
         GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
+    p:
+        go run cmd/probe/main.go
+    tidy:
+        go mod tidy
     popd
 
-p:
+p: go/build
     bun run probe/index.ts

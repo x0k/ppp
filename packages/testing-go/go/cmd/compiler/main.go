@@ -8,7 +8,7 @@ import (
 	"syscall/js"
 
 	js_adapters "github.com/x0k/ppp/internal/adapters/js"
-	"github.com/x0k/ppp/internal/apps/app_compiler"
+	app_compiler "github.com/x0k/ppp/internal/apps/compiler"
 )
 
 func main() {
