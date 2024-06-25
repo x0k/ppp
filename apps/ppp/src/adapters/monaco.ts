@@ -5,4 +5,5 @@ export const MONACO_LANGUAGE_ID: Record<Language, string> = {
   [Language.TypeScript]: "typescript",
   [Language.JavaScript]: "javascript",
   [Language.Python]: "python",
+  [Language.Go]: "go",
 };

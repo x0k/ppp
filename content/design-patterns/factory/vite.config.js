@@ -18,6 +18,7 @@ export default defineConfig({
         ts: resolve(__dirname, "src/ts/index.ts"),
         php: resolve(__dirname, "src/php/index.ts"),
         python: resolve(__dirname, "src/python/index.ts"),
+        go: resolve(__dirname, "src/go/index.ts"),
       },
       formats: ["es"],
       // name: "MyLib",

@@ -96,6 +96,9 @@ importers:
       testing:
         specifier: workspace:*
         version: link:../../../packages/testing
+      testing-go:
+        specifier: workspace:*
+        version: link:../../../packages/testing-go
       testing-javascript:
         specifier: workspace:*
         version: link:../../../packages/testing-javascript
