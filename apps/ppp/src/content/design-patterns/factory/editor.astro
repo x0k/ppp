@@ -9,23 +9,39 @@ const { contentId } = Astro.props;
 <div id="editor-placeholder" data-content-id={contentId}></div>
 
 <script>
-  import { makeRemoteTestRunnerFactory } from 'testing/actor'
+  import { makeRemoteTestRunnerFactory } from "testing/actor";
 
   import { Language } from "@/lib/languages";
+  import { JsWorker, TsWorker, GoWorker, PhpWorker, PyWorker } from "@/lib/workers";
   import { mountEditor } from "@/adapters/svelte-editor";
-  
+
   import { testsData } from "./tests-data";
-  
-  import JsWorker from '@/lib/workers/js?worker';
-  import jsCode from './code.js?raw';
-  import { universalFactory } from './js-factory'
+  import { jsCode, jsFactory } from "./js";
+  import { tsCode, tsFactory } from "./ts";
+  import { phpCode, phpFactory } from './php';
+  import { pyCode, pyFactory } from './python';
+  import { goCode, goFactory } from './go'
 
   mountEditor(testsData, {
-
     [Language.JavaScript]: {
       initialValue: jsCode,
-      testRunnerFactory: makeRemoteTestRunnerFactory(JsWorker, universalFactory),
+      testRunnerFactory: makeRemoteTestRunnerFactory(JsWorker, jsFactory),
     },
-
+    [Language.TypeScript]: {
+      initialValue: tsCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(TsWorker, tsFactory),
+    },
+    [Language.PHP]: {
+      initialValue: phpCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(PhpWorker, phpFactory),
+    },
+    [Language.Python]: {
+      initialValue: pyCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(PyWorker, pyFactory),
+    },
+    [Language.Go]: {
+      initialValue: goCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(GoWorker, goFactory),
+    },
   });
 </script>

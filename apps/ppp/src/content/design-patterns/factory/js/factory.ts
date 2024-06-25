@@ -3,14 +3,14 @@ import type { UniversalFactory } from "testing/actor";
 
 import type { UniversalFactoryData } from "@/lib/workers/js";
 
-import type { Input, Output } from "./tests-data";
-import type { PaymentSystemType } from "./reference";
+import type { Input, Output } from "../tests-data";
+import type { PaymentSystemType } from "../reference";
 
 interface TestingModule {
   payment(type: PaymentSystemType, base: number, amount: number): number;
 }
 
-export const universalFactory: UniversalFactory<
+export const factory: UniversalFactory<
   Input,
   Output,
   UniversalFactoryData

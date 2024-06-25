@@ -62,9 +62,21 @@ importers:
       testing:
         specifier: workspace:*
         version: link:../../packages/testing
+      testing-go:
+        specifier: workspace:*
+        version: link:../../packages/testing-go
       testing-javascript:
         specifier: workspace:*
         version: link:../../packages/testing-javascript
+      testing-php:
+        specifier: workspace:*
+        version: link:../../packages/testing-php
+      testing-python:
+        specifier: workspace:*
+        version: link:../../packages/testing-python
+      testing-typescript:
+        specifier: workspace:*
+        version: link:../../packages/testing-typescript
     devDependencies:
       '@iconify-json/lucide':
         specifier: ^1.1.191
@@ -87,37 +99,6 @@ importers:
       svelte:
         specifier: 5.0.0-next.133
         version: 5.0.0-next.133
-
-  content/design-patterns/factory:
-    dependencies:
-      libs:
-        specifier: workspace:*
-        version: link:../../../packages/libs
-      testing:
-        specifier: workspace:*
-        version: link:../../../packages/testing
-      testing-go:
-        specifier: workspace:*
-        version: link:../../../packages/testing-go
-      testing-javascript:
-        specifier: workspace:*
-        version: link:../../../packages/testing-javascript
-      testing-php:
-        specifier: workspace:*
-        version: link:../../../packages/testing-php
-      testing-python:
-        specifier: workspace:*
-        version: link:../../../packages/testing-python
-      testing-typescript:
-        specifier: workspace:*
-        version: link:../../../packages/testing-typescript
-    devDependencies:
-      vite:
-        specifier: ^5.2.0
-        version: 5.2.13(@types/node@20.14.2)
-      vite-plugin-dts:
-        specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.4.5)(vite@5.2.13(@types/node@20.14.2))
 
   packages/libs: {}
 
