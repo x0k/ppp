@@ -14,9 +14,14 @@ import { stringifyError } from "libs/error";
 
 import type { TestRunner, TestRunnerFactory } from "./model.js";
 
+export interface WorkerInitConfig {
+  code: string;
+  universalFactoryFunction: string;
+}
+
 interface Handlers<I, O> {
   [key: string]: any;
-  init(code: string): Promise<void>;
+  init(config: WorkerInitConfig): Promise<void>;
   cancel(): void;
   run(data: I): Promise<O>;
 }
@@ -32,16 +37,29 @@ type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
   | TestingActorEvent;
 
-class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
+async function evalEntity<T>(functionStr: string) {
+  const moduleStr = `export default ${functionStr}`;
+  const moduleUrl = `data:text/javascript;base64,${btoa(moduleStr)}`;
+  const mod = await import(/* @vite-ignore */ moduleUrl);
+  return mod.default as T;
+}
+
+export type UniversalFactory<I, O, D> = (data: D) => TestRunnerFactory<I, O>
+
+export type SuperFactory<I, O, D> = (universalFactory: UniversalFactory<I, O, D>) => TestRunnerFactory<I, O>
+
+class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
   private ctx: Context = createContext();
   private runner: TestRunner<I, O> | null = null;
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
-    factory: TestRunnerFactory<I, O>
+    superFactory: SuperFactory<I, O, D>
   ) {
     const handlers: Handlers<I, O> = {
-      init: async (code) => {
+      init: async ({ code, universalFactoryFunction }) => {
+        const universalFactory = await evalEntity<UniversalFactory<I, O, D>>(universalFactoryFunction);
+        const factory = superFactory(universalFactory);
         this.runner = await factory(this.ctx, {
           code,
           out: {
@@ -83,11 +101,13 @@ class TestRunnerActor<I, O> extends Actor<Handlers<I, O>, string> {
   }
 }
 
-export function startTestRunnerActor<I, O>(factory: TestRunnerFactory<I, O>) {
+export function startTestRunnerActor<I, O, D>(
+  superFactory: SuperFactory<I, O, D>
+) {
   const connection = new WorkerConnection<Incoming<I, O>, Outgoing<I, O>>(
     self as unknown as Worker
   );
-  const actor = new TestRunnerActor(connection, factory);
+  const actor = new TestRunnerActor(connection, superFactory);
   const stopConnection = connection.start();
   const stopActor = actor.start();
   return () => {
@@ -100,8 +120,9 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export function makeRemoteTestRunnerFactory<I, O>(
-  Worker: WorkerConstructor
+export function makeRemoteTestRunnerFactory<I, O, D>(
+  Worker: WorkerConstructor,
+  universalFactory: (data: D) => TestRunnerFactory<I, O>
 ): TestRunnerFactory<I, O> {
   return async (ctx, { code, out }) => {
     const worker = new Worker();
@@ -128,7 +149,13 @@ export function makeRemoteTestRunnerFactory<I, O>(
       remote.cancel();
     });
     try {
-      await inContext(ctx, remote.init(code));
+      await inContext(
+        ctx,
+        remote.init({
+          code,
+          universalFactoryFunction: universalFactory.toString(),
+        })
+      );
     } catch (err) {
       dispose();
       throw err;

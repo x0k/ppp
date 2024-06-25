@@ -47,9 +47,6 @@ importers:
       astro-icon:
         specifier: ^1.1.0
         version: 1.1.0
-      design-patterns-factory:
-        specifier: workspace:*
-        version: link:../../content/design-patterns/factory
       libs:
         specifier: workspace:*
         version: link:../../packages/libs
@@ -65,6 +62,9 @@ importers:
       testing:
         specifier: workspace:*
         version: link:../../packages/testing
+      testing-javascript:
+        specifier: workspace:*
+        version: link:../../packages/testing-javascript
     devDependencies:
       '@iconify-json/lucide':
         specifier: ^1.1.191
