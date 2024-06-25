@@ -15,5 +15,6 @@ type WriterConfig struct {
 
 type CompilerConfig struct {
 	Logger LoggerConfig `js:"logger"`
-	Writer WriterConfig `js:"writer"`
+	Stdout WriterConfig `js:"stdout"`
+	Stderr WriterConfig `js:"stderr"`
 }

@@ -23,7 +23,7 @@ func main() {
 
 	js.Global().Set(initFunctionName, js_adapters.Sync(func(args []js.Value) js_adapters.Result {
 		if len(args) < 1 {
-			return js_adapters.Fail(errors.New("Not enough arguments"))
+			return js_adapters.Err(errors.New("Not enough arguments"))
 		}
 		return app_compiler.New(args[0])
 	}))

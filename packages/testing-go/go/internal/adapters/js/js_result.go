@@ -28,7 +28,7 @@ func Ok(value js.Value) Result {
 	}
 }
 
-func Fail(err error) Result {
+func Err(err error) Result {
 	return Result{
 		ok:    false,
 		error: js.ValueOf(err.Error()),

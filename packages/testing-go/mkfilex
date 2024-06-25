@@ -3,7 +3,7 @@
 go/:
     pushd go
     build:
-        GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
+        GOOS=js GOARCH=wasm go build -o ../assets/compiler.wasm cmd/compiler/main.go
     p:
         go run cmd/probe/main.go
     tidy:

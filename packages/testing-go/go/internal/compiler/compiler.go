@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"context"
+	"io"
 	"reflect"
 
 	"github.com/traefik/yaegi/interp"
@@ -12,11 +13,16 @@ type Compiler struct {
 	inter *interp.Interpreter
 }
 
-func New() (*Compiler, error) {
+func New(
+	stdout io.Writer,
+	stderr io.Writer,
+) (*Compiler, error) {
 	inter := interp.New(interp.Options{
 		BuildTags: []string{
 			"wasm", "js",
 		},
+		Stdout: stdout,
+		Stderr: stderr,
 	})
 	if err := inter.Use(stdlib.Symbols); err != nil {
 		return nil, err

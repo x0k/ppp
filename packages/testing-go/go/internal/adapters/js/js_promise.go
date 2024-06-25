@@ -22,7 +22,7 @@ func NewPromise(action func() (Result, error)) Promise {
 		go func() {
 			result, err := action()
 			if err != nil {
-				resolve.Invoke(Fail(err).ToJS())
+				resolve.Invoke(Err(err).ToJS())
 			} else {
 				resolve.Invoke(result.ToJS())
 			}
@@ -40,6 +40,10 @@ func Resolve(data Result) Promise {
 	}
 }
 
-func ResolveError(err error) Promise {
-	return Resolve(Fail(err))
+func ResolveOk(data js.Value) Promise {
+	return Resolve(Ok(data))
+}
+
+func ResolveErr(err error) Promise {
+	return Resolve(Err(err))
 }

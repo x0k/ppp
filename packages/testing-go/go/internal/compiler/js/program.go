@@ -16,32 +16,30 @@ type JsCompiler struct {
 	compiler *compiler.Compiler
 }
 
-func New() (*JsCompiler, error) {
-	c, err := compiler.New()
-	if err != nil {
-		return nil, err
-	}
+func New(
+	compiler *compiler.Compiler,
+) *JsCompiler {
 	return &JsCompiler{
-		compiler: c,
-	}, nil
+		compiler: compiler,
+	}
 }
 
 func (c *JsCompiler) Compile(ctx context.Context, code string) js_adapters.Result {
 	p, err := c.compiler.Compile(ctx, code)
 	if err != nil {
-		return js_adapters.Fail(err)
+		return js_adapters.Err(err)
 	}
-	exec := js_adapters.Sync(func(args []js.Value) js_adapters.Result {
+	exec := js_adapters.Async(func(args []js.Value) js_adapters.Promise {
 		if len(args) < 2 {
-			return js_adapters.Fail(errors.New("Not enough arguments, expected 2"))
+			return js_adapters.ResolveErr(errors.New("Not enough arguments, expected 2"))
 		}
 		ctx, cancel := js_adapters.WithAbortSignal(context.Background(), args[0])
 		defer cancel()
 		v, err := p.Exec(ctx, args[1].String())
 		if err != nil {
-			return js_adapters.Fail(err)
+			return js_adapters.ResolveErr(err)
 		}
-		return js_adapters.Ok(vert.ValueOf(v.Interface()))
+		return js_adapters.ResolveOk(vert.ValueOf(v.Interface()))
 	})
 	return js_adapters.Ok(exec.Value)
 }
