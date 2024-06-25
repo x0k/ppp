@@ -96,6 +96,9 @@ importers:
       testing:
         specifier: workspace:*
         version: link:../../../packages/testing
+      testing-go:
+        specifier: workspace:*
+        version: link:../../../packages/testing-go
       testing-javascript:
         specifier: workspace:*
         version: link:../../../packages/testing-javascript
@@ -126,6 +129,25 @@ importers:
       libs:
         specifier: workspace:*
         version: link:../libs
+
+  packages/testing-go:
+    dependencies:
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+      testing:
+        specifier: workspace:*
+        version: link:../testing
+    devDependencies:
+      '@types/golang-wasm-exec':
+        specifier: ^1.15.2
+        version: 1.15.2
+      vite:
+        specifier: ^5.2.0
+        version: 5.2.13(@types/node@20.14.2)
+      vite-plugin-dts:
+        specifier: ^3.9.1
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.4.5)(vite@5.2.13(@types/node@20.14.2))
 
   packages/testing-javascript:
     dependencies:
@@ -1067,6 +1089,9 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  '@types/golang-wasm-exec@1.15.2':
+    resolution: {integrity: sha512-NA77toY4yOiiV5foDVT/rfxmtoox7ASHqGs4Eek8xTMcKWwAhZLOD3SYfLQKq4P2jtOLQQkeISq3zSuQ1Y+apg==}
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
@@ -4129,6 +4154,8 @@ snapshots:
       '@types/estree': 1.0.5
 
   '@types/estree@1.0.5': {}
+
+  '@types/golang-wasm-exec@1.15.2': {}
 
   '@types/hast@3.0.4':
     dependencies:

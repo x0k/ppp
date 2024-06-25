@@ -1,0 +1,24 @@
+{
+  "name": "testing-go",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build:wasm": "pushd go && GOOS=js GOARCH=wasm go build -o ../assets/compiler.wasm cmd/compiler/main.go && popd",
+    "build:js": "vite build",
+    "build": "pnpm run build:wasm && pnpm run build:js"
+  },
+  "dependencies": {
+    "libs": "workspace:*",
+    "testing": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/golang-wasm-exec": "^1.15.2",
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  }
+}

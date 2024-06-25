@@ -1,6 +1,6 @@
 #!/usr/bin/bash -xe
 
-mk:
+d:
   pnpm run dev
 
 c:

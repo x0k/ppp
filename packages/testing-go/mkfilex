@@ -1,0 +1,14 @@
+#!/usr/bin/bash -xe
+
+go/:
+    pushd go
+    build:
+        GOOS=js GOARCH=wasm go build -o ../assets/compiler.wasm cmd/compiler/main.go
+    p:
+        go run cmd/probe/main.go
+    tidy:
+        go mod tidy
+    popd
+
+p: go/build
+    bun run probe/index.ts

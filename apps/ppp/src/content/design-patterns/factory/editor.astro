@@ -19,6 +19,7 @@ const { contentId } = Astro.props;
   import { code as tsCode, Worker as TsWorker } from "design-patterns-factory/ts";
   import { code as phpCode, Worker as PhpWorker } from "design-patterns-factory/php";
   import { code as pyCode, Worker as PyWorker } from "design-patterns-factory/python";
+  import { code as goCode, Worker as GoWorker } from 'design-patterns-factory/go';
 
   mountEditor(testsData, {
     [Language.PHP]: {
@@ -37,5 +38,9 @@ const { contentId } = Astro.props;
       initialValue: pyCode,
       testRunnerFactory: makeRemoteTestRunnerFactory(PyWorker),
     },
+    [Language.Go]: {
+      initialValue: goCode,
+      testRunnerFactory: makeRemoteTestRunnerFactory(GoWorker),
+    }
   });
 </script>

@@ -13,7 +13,8 @@
     "testing-javascript": "workspace:*",
     "testing-typescript": "workspace:*",
     "testing-php": "workspace:*",
-    "testing-python": "workspace:*"
+    "testing-python": "workspace:*",
+    "testing-go": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.2.0",
@@ -24,6 +25,7 @@
     "./js": "./dist/js.js",
     "./ts": "./dist/ts.js",
     "./php": "./dist/php.js",
-    "./python": "./dist/python.js"
+    "./python": "./dist/python.js",
+    "./go": "./dist/go.js"
   }
 }
