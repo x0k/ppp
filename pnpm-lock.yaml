@@ -81,6 +81,9 @@ importers:
       '@iconify-json/lucide':
         specifier: ^1.1.191
         version: 1.1.191
+      '@iconify-json/simple-icons':
+        specifier: ^1.1.107
+        version: 1.1.107
       '@iconify/svelte':
         specifier: ^4.0.2
         version: 4.0.2(svelte@5.0.0-next.133)
@@ -675,6 +678,9 @@ packages:
 
   '@iconify-json/lucide@1.1.191':
     resolution: {integrity: sha512-lF5GibjcXCJRTnYVQhmtMZxRGZAVXACTsR1qe9Zlfqje0zW4+HVZqPPqqqxTYCDpvXCGNCuDhz2lUWI+mtW9Pw==}
+
+  '@iconify-json/simple-icons@1.1.107':
+    resolution: {integrity: sha512-IEIekNX+KsA/xOjTCxgdSDe6OJ1rOpio5CJ8GgCiyFZYSkPG1FPTFJIYGT95qh+HvnLAHqtKqZT53vDfyNl8fQ==}
 
   '@iconify/svelte@4.0.2':
     resolution: {integrity: sha512-6BSrU85FzGfhQD3bTXpnkCCvBAglEt8T9QednVnXAYm4C+d3464y+pYMzhQNJm5mPId2cuiw+2wXlDflXllHDw==}
@@ -3727,6 +3733,10 @@ snapshots:
     optional: true
 
   '@iconify-json/lucide@1.1.191':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/simple-icons@1.1.107':
     dependencies:
       '@iconify/types': 2.0.0
 

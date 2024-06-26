@@ -13,16 +13,18 @@
 
 <script lang="ts" generics="Lang extends Language, Input, Output">
   import { editor } from "monaco-editor";
+  import Icon from '@iconify/svelte'
 
   import { RESET_BUTTON_ID } from '@/shared';
   import {
     LANGUAGE_TITLE,
     Language,
   } from '@/shared/languages'
-  import Select from '@/components/select.svelte';
+  import Dropdown from '@/components/dropdown.svelte';
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import { createSyncStorage } from "@/adapters/storage";
 
+  import { LANG_ICONS } from './model'
   import Surface from "./surface.svelte";
   import Panel from "./panel/panel.svelte"
   import VimMode from './vim-mode.svelte';
@@ -115,12 +117,17 @@
     >
       {#snippet header()}
         <VimMode {api} />
-        <Select
-          class="select-sm select-ghost"
+        <Dropdown
           bind:value={lang}
           options={languages}
-          labels={LANGUAGE_TITLE}
-        />
+        >
+          {#snippet preLabel(lang)}
+            <Icon icon={LANG_ICONS[lang]} />
+          {/snippet}
+          {#snippet label(lang)}
+            {LANGUAGE_TITLE[lang]}
+          {/snippet}
+        </Dropdown>
       {/snippet}
     </Panel>
   {/snippet}

@@ -120,7 +120,7 @@
   }
 </script>
 
-<div class="grow border-t border-base-100 relative flex flex-col bg-base-300 overflow-hidden">
+<div class="grow border-t border-base-100 relative bg-base-300 flex flex-col" style="height: {api.panelHeight}px;" >
   <TabsHeader
     bind:selectedTab
     {api}
@@ -130,12 +130,14 @@
     onRun={handleRun}
     append={header}
   />
-  {#if selectedTab === Tab.Tests}
-    <TestsTab {testsData} {lastTestId} />
-  {:else if selectedTab === Tab.Settings}
-    <SettingsTab />
-  {/if}
-  <!-- This Tab should't be unmounted -->
-  <TerminalTab terminal={term} class={selectedTab !== Tab.Output ? "hidden" : ""} />
-  {@render children()}
+  <div class="grow flex flex-col overflow-hidden">
+    {#if selectedTab === Tab.Tests}
+      <TestsTab {testsData} {lastTestId} />
+    {:else if selectedTab === Tab.Settings}
+      <SettingsTab />
+    {/if}
+    <!-- This Tab should't be unmounted -->
+    <TerminalTab terminal={term} class={selectedTab !== Tab.Output ? "hidden" : ""} />
+    {@render children()}
+  </div>
 </div>
