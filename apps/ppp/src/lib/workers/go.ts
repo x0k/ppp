@@ -1,18 +1,51 @@
 import { createLogger } from "libs/logger";
-import { GoTestRunner, goRuntimeFactory } from "testing-go";
+import type { TestRunnerFactory } from "testing";
+import {
+  GoTestRunner,
+  createCompilerFactory,
+  makeGoRuntimeFactory,
+  type GoRuntimeFactory,
+} from "testing-go";
 import { startTestRunnerActor } from "testing/actor";
+import wasmInit from "testing-go/compiler.wasm?init";
 
-export interface UniversalFactoryData {
+export interface GoUniversalFactoryData<I, O> {
   createLogger: typeof createLogger;
   GoTestRunner: typeof GoTestRunner;
-  goRuntimeFactory: typeof goRuntimeFactory;
+  goRuntimeFactory: GoRuntimeFactory<O>;
+  compilerFactory: ReturnType<typeof createCompilerFactory>;
+  makeTestRunnerFactory: (
+    generateCaseExecutionCode: (input: I) => string
+  ) => TestRunnerFactory<I, O>;
 }
 
-startTestRunnerActor<unknown, unknown, UniversalFactoryData>(
-  (universalFactory) =>
-    universalFactory({
-      GoTestRunner,
-      createLogger,
-      goRuntimeFactory,
-    })
+const compilerFactory = createCompilerFactory(wasmInit);
+
+startTestRunnerActor<
+  unknown,
+  unknown,
+  GoUniversalFactoryData<unknown, unknown>
+>((universalFactory) =>
+  universalFactory({
+    GoTestRunner,
+    createLogger,
+    compilerFactory,
+    goRuntimeFactory: async (ctx, log, code) =>
+      makeGoRuntimeFactory(await compilerFactory)(ctx, log, code),
+    makeTestRunnerFactory: (generateCaseExecutionCode) => {
+      class TestRunner extends GoTestRunner<unknown, unknown> {
+        protected override generateCaseExecutionCode(input: unknown): string {
+          return generateCaseExecutionCode(input);
+        }
+      }
+      return async (ctx, { code, out }) =>
+        new TestRunner(
+          await makeGoRuntimeFactory(await compilerFactory)(
+            ctx,
+            createLogger(out),
+            code
+          )
+        );
+    },
+  })
 );

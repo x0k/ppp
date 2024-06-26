@@ -1,3 +1,5 @@
+import type { Context } from "libs/context";
+import type { Logger } from "libs/logger";
 import type { Result } from "libs/result";
 
 export enum LogLevel {
@@ -38,6 +40,12 @@ export interface Compiler {
 export type CompilerFactory = (
   config: CompilerConfig
 ) => Result<Compiler, string>;
+
+export type GoRuntimeFactory<O> = (
+  ctx: Context,
+  log: Logger,
+  code: string
+) => Promise<Executor<O>>;
 
 export const DEFAULT_GLOBAL_COMPILER_INIT_FUNCTION_NAME =
   "__compiler_init_function";
