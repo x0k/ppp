@@ -8,32 +8,25 @@ import type { Input, Output } from "../tests-data";
 // Const enum import is allowed
 import type { PaymentSystemType } from "../reference";
 
-export const factory: UniversalFactory<Input, Output, UniversalFactoryData> = ({
-  FailSafePHP,
-  PHPTestRunner,
-  phpRuntimeFactory,
-}) => {
+export const factory: UniversalFactory<
+  Input,
+  Output,
+  UniversalFactoryData<Input, Output>
+> = ({ makeTestRunnerFactory }) => {
   const PHP_PAYMENT_SYSTEM_TYPES: Record<PaymentSystemType, string> = {
-    "paypal": "PaymentSystemType::PAYPAL",
-    "webmoney": "PaymentSystemType::WEBMONEY",
+    paypal: "PaymentSystemType::PAYPAL",
+    webmoney: "PaymentSystemType::WEBMONEY",
     "cat-bank": "PaymentSystemType::CAT_BANK",
   };
-  class TestRunner extends PHPTestRunner<Input, Output> {
-    protected override caseExecutionCode({
-      paymentSystem,
-      base,
-      amount,
-    }: Input): string {
-      return `strval(payment(${PHP_PAYMENT_SYSTEM_TYPES[paymentSystem]}, ${base}, ${amount}))`;
-    }
-    protected transformResult(result: string): Output {
+  return makeTestRunnerFactory(
+    ({ paymentSystem, base, amount }: Input) =>
+      `strval(payment(${PHP_PAYMENT_SYSTEM_TYPES[paymentSystem]}, ${base}, ${amount}))`,
+    (result: string) => {
       const r = parseInt(result, 10);
       if (isNaN(r)) {
         throw new Error(`Invalid result type: ${result}, expected number`);
       }
       return r;
     }
-  }
-  return async (_, { code, out }) =>
-    new TestRunner(out, new FailSafePHP(phpRuntimeFactory), code);
+  );
 };
