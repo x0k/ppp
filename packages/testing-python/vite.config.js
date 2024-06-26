@@ -1,6 +1,7 @@
 import { resolve } from "path";
 import { defineConfig, createLogger } from "vite";
 import dts from "vite-plugin-dts";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
@@ -16,11 +17,14 @@ export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: {
+        index: resolve(__dirname, "src/index.ts"),
+        version: resolve(__dirname, "src/version.ts"),
+      },
       formats: ["es"],
       // name: "MyLib",
       // the proper extensions will be added
-      fileName: "index",
+      // fileName: "index",
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
@@ -36,8 +40,18 @@ export default defineConfig({
     },
   },
   plugins: [
-    dts({
-      rollupTypes: true,
+    dts(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: "node_modules/pyodide/pyodide.asm.wasm",
+          dest: "pyodide",
+        },
+        {
+          src: "node_modules/pyodide/python_stdlib.zip",
+          dest: "pyodide",
+        },
+      ],
     }),
   ],
 });

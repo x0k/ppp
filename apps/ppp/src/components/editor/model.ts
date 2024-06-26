@@ -18,5 +18,5 @@ export const vimState = reactive(
 );
 
 export const testRunnerTimeout = reactive(
-  createSyncStorage(localStorage, "editor-test-runner-timeout", 8000)
+  createSyncStorage(localStorage, "editor-test-runner-timeout", 60000)
 );

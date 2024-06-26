@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "check": "tsc",
-    "build:wasm": "cd go && GOOS=js GOARCH=wasm go build -o ../assets/compiler.wasm cmd/compiler/main.go && cd -",
+    "build:wasm": "cd go && GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go && cd -",
     "build:js": "vite build",
     "build": "pnpm run build:wasm && pnpm run build:js"
   },
@@ -19,6 +19,8 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js",
+    "./compiler.wasm": "./dist/compiler.wasm"
   }
 }

@@ -25,6 +25,7 @@ export default defineConfig({
         external: ["sharp"],
       },
     },
+    assetsInclude: ["**/*.wasm", "**/*.zip"],
   },
   markdown: {
     shikiConfig: {

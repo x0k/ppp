@@ -6,11 +6,14 @@ export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: {
+        index: resolve(__dirname, "src/index.ts"),
+        version: resolve(__dirname, "src/version.ts"),
+      },
       formats: ["es"],
       // name: "MyLib",
       // the proper extensions will be added
-      fileName: "index",
+      // fileName: "index",
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
@@ -25,9 +28,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [
-    dts({
-      rollupTypes: true,
-    }),
-  ],
+  plugins: [dts()],
 });

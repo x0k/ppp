@@ -17,6 +17,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js"
   }
 }

@@ -18,7 +18,7 @@
   import {
     LANGUAGE_TITLE,
     Language,
-  } from '@/lib/languages'
+  } from '@/shared/languages'
   import Select from '@/components/select.svelte';
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import { createSyncStorage } from "@/adapters/storage";
