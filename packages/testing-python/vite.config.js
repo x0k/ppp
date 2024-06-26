@@ -1,6 +1,7 @@
 import { resolve } from "path";
 import { defineConfig, createLogger } from "vite";
 import dts from "vite-plugin-dts";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
@@ -37,5 +38,17 @@ export default defineConfig({
   },
   plugins: [
     dts(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: "node_modules/pyodide/pyodide.asm.wasm",
+          dest: "pyodide",
+        },
+        {
+          src: "node_modules/pyodide/python_stdlib.zip",
+          dest: "pyodide",
+        },
+      ],
+    }),
   ],
 });

@@ -1,6 +1,4 @@
 import { loadPyodide, type PyodideInterface } from "pyodide";
-import wasmUrl from "pyodide/pyodide.asm.wasm?url";
-import stdLibUrl from "pyodide/python_stdlib.zip?url";
 import lockFilerUrl from "pyodide/pyodide-lock.json?url";
 import "pyodide/pyodide.asm.js";
 
@@ -27,7 +25,11 @@ const originalCreatePyodideModule = globalThis._createPyodideModule;
 
 export const pyRuntimeFactory = async (
   ctx: Context,
-  log: Logger
+  log: Logger,
+  wasmInstance: (
+    imports: WebAssembly.Imports
+  ) => Promise<WebAssembly.WebAssemblyInstantiatedSource>,
+  stdLibUrl: string
 ): Promise<PyodideInterface> => {
   const recover = patch(
     globalThis,
@@ -36,7 +38,7 @@ export const pyRuntimeFactory = async (
       return originalCreatePyodideModule({
         ...settings,
         instantiateWasm(imports, callback) {
-          WebAssembly.instantiateStreaming(fetch(wasmUrl), imports).then(
+          wasmInstance(imports).then(
             ({ instance, module }) => {
               callback(instance, module);
             },
@@ -50,7 +52,7 @@ export const pyRuntimeFactory = async (
     return await inContext(
       ctx,
       loadPyodide({
-        indexURL: "intentionally-missing-url",
+        indexURL: "intentionally-missing-index-url",
         stdLibURL: stdLibUrl,
         lockFileURL: lockFilerUrl,
         stdout: log.debug.bind(log),

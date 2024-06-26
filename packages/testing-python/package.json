@@ -9,14 +9,17 @@
   },
   "dependencies": {
     "libs": "workspace:*",
-    "testing": "workspace:*",
-    "pyodide": "^0.26.1"
+    "pyodide": "^0.26.1",
+    "testing": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.2.0",
-    "vite-plugin-dts": "^3.9.1"
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-static-copy": "^1.0.5"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./pyodide.wasm": "./dist/pyodide/pyodide.asm.wasm",
+    "./python-stdlib.zip": "./dist/pyodide/python_stdlib.zip"
   }
 }
