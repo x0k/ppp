@@ -20,6 +20,7 @@
   },
   "exports": {
     ".": "./dist/index.js",
+    "./version": "./dist/version.js",
     "./compiler.wasm": "./dist/compiler.wasm"
   }
 }

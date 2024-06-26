@@ -19,6 +19,7 @@
   },
   "exports": {
     ".": "./dist/index.js",
+    "./version": "./dist/version.js",
     "./pyodide.wasm": "./dist/pyodide/pyodide.asm.wasm",
     "./python-stdlib.zip": "./dist/pyodide/python_stdlib.zip"
   }

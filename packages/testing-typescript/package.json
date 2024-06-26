@@ -10,7 +10,8 @@
   "author": "Krasilnikov Roman",
   "license": "ISC",
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js"
   },
   "dependencies": {
     "libs": "workspace:*",

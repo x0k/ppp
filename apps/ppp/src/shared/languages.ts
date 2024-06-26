@@ -1,3 +1,8 @@
+import { version as goVersion } from "testing-go/version";
+import { version as phpVersion } from "testing-php/version";
+import { version as pythonVersion } from "testing-python/version";
+import { version as typescriptVersion } from "testing-typescript/version";
+
 export enum Language {
   PHP = "php",
   Python = "python",
@@ -7,9 +12,9 @@ export enum Language {
 }
 
 export const LANGUAGE_TITLE: Record<Language, string> = {
-  [Language.PHP]: `PHP 8.3`,
-  [Language.TypeScript]: `TypeScript 5.4.5`,
-  [Language.Python]: `Python 3.12.1`,
+  [Language.PHP]: `PHP ${phpVersion}`,
+  [Language.TypeScript]: `TypeScript ${typescriptVersion}`,
+  [Language.Python]: `Python ${pythonVersion}`,
   [Language.JavaScript]: "JavaScript",
-  [Language.Go]: "Go 1.22",
+  [Language.Go]: `Go ${goVersion}`,
 };
