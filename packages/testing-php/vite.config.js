@@ -49,8 +49,6 @@ export default defineConfig({
         }
       },
     },
-    dts({
-      rollupTypes: true,
-    }),
+    dts(),
   ],
 });
