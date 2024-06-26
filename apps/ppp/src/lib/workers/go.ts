@@ -40,11 +40,7 @@ startTestRunnerActor<
       }
       return async (ctx, { code, out }) =>
         new TestRunner(
-          await makeGoRuntimeFactory(await compilerFactory)(
-            ctx,
-            createLogger(out),
-            code
-          )
+          await makeGoRuntimeFactory(await compilerFactory)(ctx, out, code)
         );
     },
   })

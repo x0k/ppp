@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import type { Logger } from "libs/logger";
+import type { Logger, Writer } from "libs/logger";
 import type { Result } from "libs/result";
 
 export enum LogLevel {
@@ -43,7 +43,7 @@ export type CompilerFactory = (
 
 export type GoRuntimeFactory<O> = (
   ctx: Context,
-  log: Logger,
+  out: Writer,
   code: string
 ) => Promise<Executor<O>>;
 

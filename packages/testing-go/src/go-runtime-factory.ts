@@ -1,4 +1,4 @@
-import { redirect } from "libs/logger";
+import { createLogger, redirect, COLOR } from "libs/logger";
 import { isErr } from "libs/result";
 
 import { LogLevel, type CompilerFactory, type GoRuntimeFactory } from "./model";
@@ -6,21 +6,21 @@ import { LogLevel, type CompilerFactory, type GoRuntimeFactory } from "./model";
 export function makeGoRuntimeFactory<O>(
   makeCompiler: CompilerFactory
 ): GoRuntimeFactory<O> {
-  return async (ctx, log, code) => {
+  return async (ctx, out, code) => {
     const compiler = makeCompiler({
       logger: {
         level: LogLevel.Info,
-        console: redirect(globalThis.console, log),
+        console: redirect(globalThis.console, createLogger(out)),
       },
       stdout: {
         write(text) {
-          log.debug(text);
+          out.write(text);
           return null;
         },
       },
       stderr: {
         write(text) {
-          log.error(text);
+          out.write(`${COLOR.ERROR}${text}${COLOR.RESET}`);
           return null;
         },
       },

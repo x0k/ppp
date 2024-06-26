@@ -13,27 +13,27 @@ export interface Logger {
 }
 
 // ANSI color codes for log levels
-const colors = {
-  debug: "\x1b[32m", // Green
-  info: "\x1b[34m", // Blue
-  warn: "\x1b[33m", // Yellow
-  error: "\x1b[31m", // Red
-  reset: "\x1b[0m", // Reset to default color
+export const COLOR = {
+  DEBUG: "\x1b[32m", // Green
+  INFO: "\x1b[34m", // Blue
+  WARN: "\x1b[33m", // Yellow
+  ERROR: "\x1b[31m", // Red
+  RESET: "\x1b[0m", // Reset to default color
 };
 
 export function createLogger(writer: Writer): Logger {
   return {
     debug(text) {
-      writer.writeln(`${colors.debug}[DEBUG]${colors.reset} ${text}`);
+      writer.writeln(`${COLOR.DEBUG}[DEBUG]${COLOR.RESET} ${text}`);
     },
     info(text) {
-      writer.writeln(`${colors.info}[INFO]${colors.reset} ${text}`);
+      writer.writeln(`${COLOR.INFO}[INFO]${COLOR.RESET} ${text}`);
     },
     warn(text) {
-      writer.writeln(`${colors.warn}[WARN]${colors.reset} ${text}`);
+      writer.writeln(`${COLOR.WARN}[WARN]${COLOR.RESET} ${text}`);
     },
     error(text) {
-      writer.writeln(`${colors.error}[ERROR]${colors.reset} ${text}`);
+      writer.writeln(`${COLOR.ERROR}[ERROR]${COLOR.RESET} ${text}`);
     },
   };
 }
