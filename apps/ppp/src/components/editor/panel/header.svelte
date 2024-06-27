@@ -50,8 +50,13 @@
         class:tab-with-badge={append}
         class:tab-active={selectedTab === tab}
         onclick={() => {
-          selectedTab = tab
-          api.showPanel(window.innerHeight/3)
+          const newPanelHeight = window.innerHeight/3
+          if (selectedTab === tab) {
+            api.togglePanel(newPanelHeight)
+          } else {
+            selectedTab = tab
+            api.showPanel(newPanelHeight)
+          }
         }}
       >
         {TAB_TITLES[tab]}
