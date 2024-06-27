@@ -153,14 +153,12 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog bind:this={dialogElement} class="modal" onclick={(e) => e.stopPropagation()}>
   <div class="modal-box max-w-2xl w-full">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
     <h3 class="text-lg font-bold">{LANGUAGE_TITLE[selectedLang]}</h3>
     <div class="flex flex-col items-start gap-2 py-4">
       <svelte:component this={runtimes[selectedLang].Description} />
-    </div>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn btn-success">Ok</button>
-      </form>
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">
