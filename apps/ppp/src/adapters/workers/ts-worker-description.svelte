@@ -13,7 +13,7 @@ strictFunctionTypes: true,
 </code>
 </pre>
 
-<p>Your code is executed in a web worker environment.</p>
+<p>Transpiled code is executed in a web worker environment.</p>
 
 <p>
   <a
