@@ -81,14 +81,6 @@
   </div>
   <div class="grow" ></div>
   {@render append()}
-  <button
-    class="btn btn-sm btn-ghost"
-    onclick={() => {
-      api.togglePanel(window.innerHeight/3)
-    }}
-  >
-    <Icon icon={api.isPanelCollapsed ? "lucide:chevron-up" : "lucide:chevron-down"} />
-  </button>
 </div>
 
 <style>

@@ -32,7 +32,7 @@
 </script>
 
 <details bind:this={detailsElement} class="dropdown dropdown-top dropdown-end">
-  <summary class="btn btn-sm btn-ghost font-normal">
+  <summary class="btn btn-sm btn-ghost font-normal min-w-24">
     {#if label}
       {@render label(value)}
     {:else}

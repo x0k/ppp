@@ -1,5 +1,5 @@
 <script lang="ts" generics="Input, Output">
-  import type { Snippet } from 'svelte';
+  import { untrack, type Snippet } from 'svelte';
   import type { editor } from "monaco-editor";
   import { Terminal } from '@xterm/xterm'
   import { FitAddon } from '@xterm/addon-fit'
@@ -55,10 +55,21 @@
   let selectedTab = $state<Tab | null>(null);
 
   $effect(() => {
-    if (selectedTab) {
-      api.showPanel(window.innerHeight/3);
-    } else {
-      api.hidePanel();
+    selectedTab;
+    untrack(() => {
+      if (selectedTab) {
+        api.showPanel(window.innerHeight/3);
+      } else {
+        api.hidePanel();
+      }
+    })
+  })
+
+  $effect(() => {
+    if (api.isPanelCollapsed) {
+      // untrack(() => {
+        selectedTab = null
+      // })
     }
   })
 
@@ -143,6 +154,10 @@
       <TestsTab {testsData} {lastTestId} />
     {:else if selectedTab === Tab.Settings}
       <SettingsTab />
+    {:else if selectedTab === null}
+      <div class="grow flex items-center justify-center text-xl">
+        Select a tab
+      </div>
     {/if}
     <!-- This Tab should't be unmounted -->
     <TerminalTab terminal={term} class={selectedTab !== Tab.Output ? "hidden" : ""} />
