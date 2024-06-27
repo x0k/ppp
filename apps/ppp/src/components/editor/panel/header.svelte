@@ -9,7 +9,7 @@
     isRunning: boolean;
     testsCount: number;
     lastTestId: number;
-    selectedTab: Tab;
+    selectedTab: Tab | null;
     api: SurfaceApi;
     onRun: () => void;
     append: Snippet;
@@ -43,19 +43,19 @@
   </button>
   <div role="tablist" class="tabs panel-tabs">
     {#snippet tabButton({ tab, append }: TabButtonProps)}
-      <a
-        href="#top"
+      <!-- svelte-ignore a11y_interactive_supports_focus -->
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_missing_attribute -->
+      <span
         role="tab"
         class="tab"
         class:tab-with-badge={append}
         class:tab-active={selectedTab === tab}
         onclick={() => {
-          const newPanelHeight = window.innerHeight/3
           if (selectedTab === tab) {
-            api.togglePanel(newPanelHeight)
+            selectedTab = null
           } else {
             selectedTab = tab
-            api.showPanel(newPanelHeight)
           }
         }}
       >
@@ -63,7 +63,7 @@
         {#if append}
           {@render append()}
         {/if}
-      </a>
+      </span>
     {/snippet}
     {#snippet testBadge()}
       <div

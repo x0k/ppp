@@ -52,7 +52,15 @@
     lastTestId = -1;
   });
 
-  let selectedTab = $state<Tab>(Tab.Tests)
+  let selectedTab = $state<Tab | null>(null);
+
+  $effect(() => {
+    if (selectedTab) {
+      api.showPanel(window.innerHeight/3);
+    } else {
+      api.hidePanel();
+    }
+  })
 
   const term = new Terminal({
     theme: makeTheme("business"),
