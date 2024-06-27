@@ -1,13 +1,19 @@
 <script lang="ts" context="module">
+  import type { ComponentType, SvelteComponent } from 'svelte';
   import type { TestData, TestRunnerFactory } from "testing";
+
+  export interface Runtime<I, O> {
+    initialValue: string;
+    testRunnerFactory: TestRunnerFactory<I, O>;
+    // TODO: According to https://svelte-5-preview.vercel.app/docs/breaking-changes#components-are-no-longer-classes-component-typing-changes
+    // this type should be just `Component`.
+    Description: ComponentType<SvelteComponent<Record<string, never>>>;
+  }
 
   export interface Props<L extends Language, I, O> {
     contentId: string;
     testsData: TestData<I, O>[];
-    runtimes: Record<L, {
-      initialValue: string;
-      testRunnerFactory: TestRunnerFactory<I, O>;
-    }>
+    runtimes: Record<L, Runtime<I, O>>
   }
 </script>
 
@@ -104,6 +110,9 @@
       button.removeEventListener("click", resetEditorContent)
     }
   })
+
+  let dialogElement: HTMLDialogElement
+  let selectedLang: Lang = $state(defaultLang)
 </script>
 
 <Surface bind:this={surface} {model} {widthStorage} >
@@ -127,8 +136,34 @@
           {#snippet label(lang)}
             {LANGUAGE_TITLE[lang]}
           {/snippet}
+          {#snippet postLabel(lang)}
+            <Icon onclick={(e) => {
+              selectedLang = lang
+              e.stopPropagation()
+              dialogElement.showModal()
+            }} class="invisible group-hover:visible" icon="lucide:info" />
+          {/snippet}
         </Dropdown>
       {/snippet}
     </Panel>
   {/snippet}
 </Surface>
+
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<dialog bind:this={dialogElement} class="modal" onclick={(e) => e.stopPropagation()}>
+  <div class="modal-box max-w-2xl w-full">
+    <h3 class="text-lg font-bold">{LANGUAGE_TITLE[selectedLang]}</h3>
+    <div class="flex flex-col items-start gap-2 py-4">
+      <svelte:component this={runtimes[selectedLang].Description} />
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-success">Ok</button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

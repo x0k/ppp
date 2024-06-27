@@ -18,6 +18,17 @@
   }: Props = $props();
 
   let detailsElement: HTMLDetailsElement;
+
+  $effect(() => {
+    const handler = (event: MouseEvent) => {
+      const withinBoundaries = event.composedPath().includes(detailsElement)
+      if (!withinBoundaries) {
+        detailsElement.open = false
+      }
+    }
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
+  })
 </script>
 
 <details bind:this={detailsElement} class="dropdown dropdown-top dropdown-end">
@@ -27,23 +38,21 @@
     {:else}
       {value}
     {/if}
-    {#if postLabel}
-      {@render postLabel(value)}
-    {/if}
   </summary>
   <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
   <div
     tabindex="0"
-    class="dropdown-content bg-base-200 text-base-content rounded-box max-h-[calc(100vh-10rem)] w-56 overflow-y-auto border border-white/5 shadow-2xl outline outline-1 outline-black/5"
+    class="dropdown-content bg-base-200 text-base-content rounded-box max-h-[calc(100vh-10rem)] w-43 overflow-y-auto border border-white/5 shadow-2xl outline outline-1 outline-black/5"
   >
     <ul class="menu menu-sm gap-1">
       {#each options as option (option)}
         <li>
           <button
+            class="group"
             class:active={value == option}
             onclick={() => {
               value = option;
-              detailsElement.removeAttribute('open');
+              detailsElement.open = false
             }}
           >
             <!-- {#if $t("__code", {}, option, false) !== "__code"}

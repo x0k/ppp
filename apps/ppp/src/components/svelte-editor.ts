@@ -1,6 +1,10 @@
 import { mount } from "svelte";
 
-import type { TestData, TestRunnerFactory } from "testing";
+import type { TestData } from "testing";
+import {
+  makeRemoteTestRunnerFactory,
+  type UniversalFactory,
+} from "testing/actor";
 
 import {
   GoWorker,
@@ -10,11 +14,11 @@ import {
   TsWorker,
 } from "@/lib/workers";
 import { Language } from "@/shared/languages";
-import Editor, { type Props } from "@/components/editor/editor.svelte";
-import {
-  makeRemoteTestRunnerFactory,
-  type UniversalFactory,
-} from "testing/actor";
+import Editor, {
+  type Props,
+  type Runtime,
+} from "@/components/editor/editor.svelte";
+import { WORKER_DESCRIPTIONS } from "@/adapters/workers";
 
 export const LANG_WORKERS: Record<Language, new () => Worker> = {
   [Language.Go]: GoWorker,
@@ -46,13 +50,11 @@ export function mountEditor<L extends Language, I, O>(
                 LANG_WORKERS[lang as L],
                 runtimes[lang as L].factory
               ),
-            },
+              Description: WORKER_DESCRIPTIONS[lang as L],
+            } satisfies Runtime<I, O>,
           ] as const
       )
-    ) as Record<
-      L,
-      { initialValue: string; testRunnerFactory: TestRunnerFactory<I, O> }
-    >,
+    ) as Record<L, Runtime<I, O>>,
   } satisfies Props<L, I, O>;
   mount(Editor, {
     target: element.parentElement!,
