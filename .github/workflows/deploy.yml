@@ -30,12 +30,6 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: 'packages/testing-go/go/go.mod'
-          cache-dependency-path: |
-            packages/testing-go/go/go.sum
-
       - name: Install dependencies
         run: pnpm install
 

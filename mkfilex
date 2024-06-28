@@ -11,3 +11,12 @@ b:
 
 p:
   pnpm run preview
+
+# Artifacts
+a/:
+  go/:
+    pushd packages/testing-go/go
+    build:
+      GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
+    popd
+  build: go/build
