@@ -19,4 +19,15 @@ a/:
     build:
       GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
     popd
+  rust/:
+    pushd packages/testing-rust/rust
+    # wget url && tar -xzvf file_name.tar.gz
+    wasi-sdk:
+      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
+        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+        tar -xzvf wasi-sdk-20.0-linux.tar.gz
+      fi
+    libs: wasi-sdk
+      ./x.py install
+    popd
   build: go/build

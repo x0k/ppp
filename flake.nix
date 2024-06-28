@@ -22,6 +22,7 @@
           pkgs.nodejs
           pkgs.pnpm
           pkgs.go
+          pkgs.python3
         ];
       };
     };

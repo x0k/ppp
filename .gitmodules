@@ -1,0 +1,4 @@
+[submodule "packages/testing-rust/rust"]
+	path = packages/testing-rust/rust
+	url = https://github.com/bjorn3/rust
+	branch = compile_rustc_for_wasm15
