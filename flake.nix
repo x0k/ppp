@@ -20,10 +20,11 @@
         buildInputs = [
           mk.packages.${system}.default
           pkgs.nodejs
+          pkgs.bun
           pkgs.pnpm
           pkgs.go
           pkgs.python3
-          pkgs.libclang
+          pkgs.gcc
           pkgs.curl
           pkgs.libiconv
           pkgs.ninja
@@ -32,6 +33,7 @@
         LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
           pkgs.stdenv.cc.cc
           pkgs.xz
+          pkgs.zlib
         ];
       };
     };
