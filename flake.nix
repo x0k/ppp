@@ -23,6 +23,15 @@
           pkgs.pnpm
           pkgs.go
           pkgs.python3
+          pkgs.libclang
+          pkgs.curl
+          pkgs.libiconv
+          pkgs.ninja
+          pkgs.cmake
+        ];
+        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+          pkgs.stdenv.cc.cc
+          pkgs.xz
         ];
       };
     };
