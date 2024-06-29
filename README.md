@@ -5,7 +5,8 @@
 Clone the repository:
 
 ```
-git clone --recurse-submodules https://github.com/x0k/ppp.git
+git clone https://github.com/x0k/ppp.git
+git submodule update --init
 ````
 
 The artifacts saved in the repository must be created in the nix development environment.

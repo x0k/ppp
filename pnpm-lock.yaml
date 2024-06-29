@@ -183,6 +183,22 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(vite@5.2.13(@types/node@20.14.2))
 
+  packages/testing-rust:
+    dependencies:
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+      testing:
+        specifier: workspace:*
+        version: link:../testing
+    devDependencies:
+      vite:
+        specifier: ^5.2.0
+        version: 5.2.13(@types/node@20.14.2)
+      vite-plugin-dts:
+        specifier: ^3.9.1
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.4.5)(vite@5.2.13(@types/node@20.14.2))
+
   packages/testing-typescript:
     dependencies:
       libs:
