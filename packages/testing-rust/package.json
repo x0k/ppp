@@ -1,0 +1,25 @@
+{
+  "name": "testing-rust",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.3.0",
+    "libs": "workspace:*",
+    "testing": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js",
+    "./miri.wasm": "./dist/miri.wasm",
+    "./lib/*": "./dist/lib/*"
+  }
+}

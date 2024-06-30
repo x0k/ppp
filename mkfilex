@@ -11,3 +11,46 @@ b:
 
 p:
   pnpm run preview
+
+go/:
+  pushd packages/testing-go
+  p:
+    bun run probe/index.ts
+  b:
+    pnpm run build
+  popd
+
+rust/:
+  pushd packages/testing-rust
+  p:
+    bun run probe/index.ts
+  b:
+    pnpm run build
+  popd
+
+# Artifacts
+a/:
+  go/:
+    pushd packages/testing-go/go
+    build:
+      GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
+    probe:
+      go run cmd/probe/main.go
+    tidy:
+      go mod tidy
+    popd
+  rust/:
+    pushd packages/testing-rust/rust
+    wasi-sdk:
+      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
+        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+        tar -xzvf wasi-sdk-20.0-linux.tar.gz
+      fi
+    build-wasm:
+      ./x.py install
+    copy-wasm:
+      cp dist/bin/miri.wasm ../public
+      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib ../public/lib
+    build: wasi-sdk build-wasm copy-wasm
+    popd
+  build: go/build rust/build

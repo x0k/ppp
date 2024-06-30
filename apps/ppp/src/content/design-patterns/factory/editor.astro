@@ -18,6 +18,7 @@ const { contentId } = Astro.props;
   import { phpCode, phpFactory } from "./php";
   import { pyCode, pyFactory } from "./python";
   import { goCode, goFactory } from "./go";
+  import { rustCode, rustFactory } from './rust'
 
   mountEditor(testsData, {
     [Language.JavaScript]: {
@@ -40,5 +41,9 @@ const { contentId } = Astro.props;
       initialValue: goCode,
       factory: goFactory,
     },
+    [Language.Rust]: {
+      initialValue: rustCode,
+      factory: rustFactory,
+    }
   });
 </script>

@@ -4,8 +4,6 @@ import type { UniversalFactory } from "testing/actor";
 import type { UniversalFactoryData } from "@/lib/workers/php";
 
 import type { Input, Output } from "../tests-data";
-
-// Const enum import is allowed
 import type { PaymentSystemType } from "../reference";
 
 export const factory: UniversalFactory<

@@ -28,7 +28,8 @@
     "testing-javascript": "workspace:*",
     "testing-php": "workspace:*",
     "testing-python": "workspace:*",
-    "testing-typescript": "workspace:*"
+    "testing-typescript": "workspace:*",
+    "testing-rust": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.191",

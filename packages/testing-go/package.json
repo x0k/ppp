@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "check": "tsc",
-    "build:wasm": "cd go && GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go && cd -",
-    "build:js": "vite build",
-    "build": "pnpm run build:wasm && pnpm run build:js"
+    "build": "vite build"
   },
   "dependencies": {
     "libs": "workspace:*",
