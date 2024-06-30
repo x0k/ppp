@@ -7,6 +7,7 @@ import TsWorkerDescription from "./ts-worker-description.svelte";
 import PhpWorkerDescription from "./php-worker-description.svelte";
 import PyWorkerDescription from "./python-worker-description.svelte";
 import GoWorkerDescription from "./go-worker-description.svelte";
+import RustWorkerDescription from "./rust-worker-description.svelte";
 
 export const WORKER_DESCRIPTIONS: Record<
   Language,
@@ -17,4 +18,5 @@ export const WORKER_DESCRIPTIONS: Record<
   [Language.PHP]: PhpWorkerDescription,
   [Language.Python]: PyWorkerDescription,
   [Language.Go]: GoWorkerDescription,
+  [Language.Rust]: RustWorkerDescription,
 };

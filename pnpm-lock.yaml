@@ -74,6 +74,9 @@ importers:
       testing-python:
         specifier: workspace:*
         version: link:../../packages/testing-python
+      testing-rust:
+        specifier: workspace:*
+        version: link:../../packages/testing-rust
       testing-typescript:
         specifier: workspace:*
         version: link:../../packages/testing-typescript
@@ -185,6 +188,9 @@ importers:
 
   packages/testing-rust:
     dependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: ^0.3.0
+        version: 0.3.0
       libs:
         specifier: workspace:*
         version: link:../libs
@@ -391,6 +397,9 @@ packages:
   '@babel/types@7.24.7':
     resolution: {integrity: sha512-XEFXSlxiG5td2EJRe8vOmRbaXVgfcBlszKujvVmWIK/UpywWljQCfzAv3RQCGujWQ1RD4YYWEAqDXfuJiy8f5Q==}
     engines: {node: '>=6.9.0'}
+
+  '@bjorn3/browser_wasi_shim@0.3.0':
+    resolution: {integrity: sha512-FlRBYttPRLcWORzBe6g8nmYTafBkOEFeOqMYM4tAHJzFsQy4+xJA94z85a9BCs8S+Uzfh9LrkpII7DXr2iUVFg==}
 
   '@emmetio/abbreviation@2.3.3':
     resolution: {integrity: sha512-mgv58UrU3rh4YgbE/TzgLQwJ3pFsHHhCLqY20aJq+9comytTXUDNGG/SMtSeMJdkpxgXSXunBGLD8Boka3JyVA==}
@@ -3581,6 +3590,8 @@ snapshots:
       '@babel/helper-string-parser': 7.24.7
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
+
+  '@bjorn3/browser_wasi_shim@0.3.0': {}
 
   '@emmetio/abbreviation@2.3.3':
     dependencies:

@@ -12,6 +12,7 @@ import {
   PhpWorker,
   PyWorker,
   TsWorker,
+  RustWorker,
 } from "@/lib/workers";
 import { Language } from "@/shared/languages";
 import Editor, {
@@ -26,6 +27,7 @@ export const LANG_WORKERS: Record<Language, new () => Worker> = {
   [Language.Python]: PyWorker,
   [Language.TypeScript]: TsWorker,
   [Language.JavaScript]: JsWorker,
+  [Language.Rust]: RustWorker,
 };
 
 export function mountEditor<L extends Language, I, O>(

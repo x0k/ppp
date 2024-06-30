@@ -28,4 +28,5 @@ export const LANG_ICONS: Record<Language, string> = {
   [Language.TypeScript]: "simple-icons:typescript",
   [Language.Go]: "simple-icons:go",
   [Language.PHP]: "simple-icons:php",
+  [Language.Rust]: "simple-icons:rust",
 };

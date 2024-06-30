@@ -5,6 +5,7 @@ import {
   PreopenDirectory,
   WASI,
   Inode,
+  wasi as wasiDefs,
 } from "@bjorn3/browser_wasi_shim";
 import { readdir } from "node:fs/promises";
 
@@ -85,9 +86,8 @@ const stdin = new Stdio(out);
 const stdout = new Stdio(out);
 const stderr = new Stdio(out);
 const tmp = new PreopenDirectory("/tmp", dirContent({}));
-const code = `fn main() {
-  println!("Hello from WASM!");
-}`;
+const sysroot = buildSysroot(await loadLibs(libs));
+const code = await Bun.file(new URL("./code.rs", import.meta.url)).text();
 const mainFile = new File(new TextEncoder().encode(code));
 const root = new PreopenDirectory(
   "/",
@@ -95,7 +95,6 @@ const root = new PreopenDirectory(
     "main.rs": mainFile,
   })
 );
-const sysroot = buildSysroot(await loadLibs(libs));
 const descriptors = [stdin, stdout, stderr, tmp, sysroot, root];
 const env: string[] = [];
 const args = [
@@ -124,7 +123,7 @@ const miri = await WebAssembly.instantiate(miriModule, {
   env: {
     memory: new WebAssembly.Memory({
       initial: 256,
-      maximum: 1024 * 4,
+      // maximum: 1024 * 4,
       shared: false,
     }),
   },
@@ -148,3 +147,9 @@ try {
 }
 
 console.log(stdout.text());
+
+const node = root.path_lookup("foo.txt", 0).inode_obj;
+if (node === null || !(node instanceof File)) {
+  throw new Error("foo.txt not found");
+}
+console.log(new TextDecoder().decode(node.data));

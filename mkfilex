@@ -24,6 +24,8 @@ rust/:
   pushd packages/testing-rust
   p:
     bun run probe/index.ts
+  b:
+    pnpm run build
   popd
 
 # Artifacts
