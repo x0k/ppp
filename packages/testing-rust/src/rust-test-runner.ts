@@ -37,7 +37,10 @@ export abstract class RustTestRunner<I, O> implements TestRunner<I, O> {
       })
     );
     // @ts-expect-error lack of type information
-    this.wasi.start(instance);
+    const exitCode = this.wasi.start(instance);
+    if (exitCode !== 0) {
+      throw new Error(`Code execution failed with exit code ${exitCode}`);
+    }
     return this.readResult();
   }
 
