@@ -10,5 +10,5 @@ enum PaymentSystemType {
 
 
 fn payment(tp: PaymentSystemType, base: isize, amount: isize) -> isize {
-    
+    todo!()
 }
