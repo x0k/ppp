@@ -21,6 +21,16 @@ func (r Result) ToJS() js.Value {
 	return obj
 }
 
+func ResultFromJs(value js.Value) Result {
+	if ok := value.Get("ok").Bool(); ok {
+		return Ok(value.Get("value"))
+	}
+	return Result{
+		ok:    false,
+		error: value.Get("error"),
+	}
+}
+
 func Ok(value js.Value) Result {
 	return Result{
 		ok:    true,

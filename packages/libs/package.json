@@ -18,6 +18,7 @@
     "./logger": "./dist/logger.js",
     "./patcher": "./dist/patcher.js",
     "./result": "./dist/result.js",
-    "./type": "./dist/type.js"
+    "./type": "./dist/type.js",
+    "./io": "./dist/io.js"
   }
 }

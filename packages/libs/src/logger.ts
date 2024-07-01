@@ -1,9 +1,5 @@
 import { stringify } from "./json.js";
-
-export interface Writer {
-  write(text: string): void;
-  writeln(text: string): void;
-}
+import type { Writer } from './io.js';
 
 export interface Logger {
   debug(text: string): void;
@@ -21,19 +17,29 @@ export const COLOR = {
   RESET: "\x1b[0m", // Reset to default color
 };
 
-export function createLogger(writer: Writer): Logger {
+const encoder = new TextEncoder();
+
+export const COLOR_ENCODED: Record<keyof typeof COLOR, Uint8Array> = {
+  DEBUG: encoder.encode(COLOR.DEBUG),
+  INFO: encoder.encode(COLOR.INFO),
+  WARN: encoder.encode(COLOR.WARN),
+  ERROR: encoder.encode(COLOR.ERROR),
+  RESET: encoder.encode(COLOR.RESET),
+}
+
+export function createLogger(writer: Writer, textEncoder = encoder): Logger {
   return {
     debug(text) {
-      writer.writeln(`${COLOR.DEBUG}[DEBUG]${COLOR.RESET} ${text}`);
+      writer.write(textEncoder.encode(`[${COLOR.DEBUG}DEBUG${COLOR.RESET}] ${text}\n`));
     },
     info(text) {
-      writer.writeln(`${COLOR.INFO}[INFO]${COLOR.RESET} ${text}`);
+      writer.write(textEncoder.encode(`[${COLOR.INFO}INFO${COLOR.RESET}] ${text}\n`));
     },
     warn(text) {
-      writer.writeln(`${COLOR.WARN}[WARN]${COLOR.RESET} ${text}`);
+      writer.write(textEncoder.encode(`[${COLOR.WARN}WARN${COLOR.RESET}] ${text}\n`));
     },
     error(text) {
-      writer.writeln(`${COLOR.ERROR}[ERROR]${COLOR.RESET} ${text}`);
+      writer.write(textEncoder.encode(`[${COLOR.ERROR}ERROR${COLOR.RESET}] ${text}\n`));
     },
   };
 }

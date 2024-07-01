@@ -6,17 +6,9 @@ import {
   File,
   Directory,
 } from "@bjorn3/browser_wasi_shim";
-import type { Writer } from "libs/logger";
+import type { Writer } from "libs/io";
 
 import { contents, dir } from "./wasi.js";
-
-function makeWritable(writer: Writer) {
-  const decoder = new TextDecoder("utf-8", { fatal: false });
-  return new ConsoleStdout((buffer) => {
-    const data = decoder.decode(buffer, { stream: true });
-    writer.write(data);
-  });
-}
 
 export function wasiRuntimeFactory(
   stdout: Writer,
@@ -72,8 +64,8 @@ export function wasiRuntimeFactory(
     new ConsoleStdout(() => {
       throw new Error("Stdin is not implemented");
     }),
-    makeWritable(stdout),
-    makeWritable(stderr),
+    new ConsoleStdout(stdout.write.bind(stdout)),
+    new ConsoleStdout(stderr.write.bind(stderr)),
     tmpDir,
     sysrootDir,
     rootDir,

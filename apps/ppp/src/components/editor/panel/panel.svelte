@@ -8,6 +8,8 @@
   import { createContext, type Context } from 'libs/context';
   import { createLogger } from 'libs/logger';
   import { stringifyError } from 'libs/error'
+  import { ok } from 'libs/result';
+  import type { Writer } from 'libs/io';
 
   import {
     runTests,
@@ -108,7 +110,13 @@
     }
   })
 
-  const logger = createLogger(term)
+  const termWriter: Writer = {
+    write (data) {
+      term.write(data)
+      return ok(data.length)
+    }
+  }
+  const logger = createLogger(termWriter)
   
   let ctx: Context | null = null
 
@@ -123,7 +131,7 @@
     try {
       const runner = await testRunnerFactory(ctx, {
         code: model.getValue(),
-        out: term,
+        out: termWriter,
       });
       try {
         lastTestId = await runTests(ctx, logger, runner, testsData);

@@ -1,4 +1,4 @@
-import { createLogger, redirect, COLOR } from "libs/logger";
+import { createLogger, redirect, COLOR_ENCODED } from "libs/logger";
 import { isErr } from "libs/result";
 
 import { LogLevel, type CompilerFactory, type GoRuntimeFactory } from "./model";
@@ -12,16 +12,22 @@ export function makeGoRuntimeFactory<O>(
         level: LogLevel.Info,
         console: redirect(globalThis.console, createLogger(out)),
       },
-      stdout: {
-        write(text) {
-          out.write(text);
-          return null;
-        },
-      },
+      stdout: out,
       stderr: {
         write(text) {
-          out.write(`${COLOR.ERROR}${text}${COLOR.RESET}`);
-          return null;
+          let r = out.write(COLOR_ENCODED.ERROR)
+          if (isErr(r)) {
+            return r
+          }
+          const r2 = out.write(text);
+          if (isErr(r2)) {
+            return r2
+          }
+          r = out.write(COLOR_ENCODED.RESET)
+          if (isErr(r)) {
+            return r
+          }
+          return r2
         },
       },
     });

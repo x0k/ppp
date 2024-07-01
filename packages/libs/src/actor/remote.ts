@@ -21,7 +21,7 @@ interface DeferredPromise<T, E> {
 export function startRemote<
   H extends Handlers,
   E,
-  Event extends EventMessage<string, E>
+  Event extends EventMessage<string, any>
 >(
   log: Logger,
   connection: Connection<OutgoingMessage<H, E> | Event, IncomingMessage<H>>,

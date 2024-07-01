@@ -8,3 +8,4 @@ import (
 
 var ObjectConstructor = js.Global().Get("Object")
 var Console = js.Global().Get("console")
+var Uint8ArrayConstructor = js.Global().Get("Uint8Array")

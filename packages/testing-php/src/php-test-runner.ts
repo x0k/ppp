@@ -1,6 +1,6 @@
 import type { WebPHP } from "@php-wasm/web";
 
-import type { Writer } from "libs/logger";
+import type { Writer } from "libs/io";
 import type { Context } from "libs/context";
 import type { TestRunner } from "testing";
 
@@ -36,9 +36,9 @@ export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
     const clear = ctx.onCancel(() => this.php.exit(137));
     try {
       const response = await this.php.run({ code });
-      const text = response.text;
-      if (text) {
-        this.writer.writeln(text);
+      const text = response.bytes;
+      if (text.byteLength > 0) {
+        this.writer.write(new Uint8Array(text));
       }
       if (response.errors) {
         throw new Error(response.errors);

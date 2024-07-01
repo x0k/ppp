@@ -13,6 +13,7 @@ import {
 import { stringifyError } from "libs/error";
 
 import type { TestRunner, TestRunnerFactory } from "./model.js";
+import { ok } from "libs/result";
 
 export interface WorkerInitConfig {
   code: string;
@@ -28,10 +29,9 @@ interface Handlers<I, O> {
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
-interface WriteEventMessage extends EventMessage<"write", string> {}
-interface WritelnEventMessage extends EventMessage<"writeln", string> {}
+interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
 
-type TestingActorEvent = WriteEventMessage | WritelnEventMessage;
+type TestingActorEvent = WriteEventMessage;
 
 type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
@@ -44,9 +44,11 @@ async function evalEntity<T>(functionStr: string) {
   return mod.default as T;
 }
 
-export type UniversalFactory<I, O, D> = (data: D) => TestRunnerFactory<I, O>
+export type UniversalFactory<I, O, D> = (data: D) => TestRunnerFactory<I, O>;
 
-export type SuperFactory<I, O, D> = (universalFactory: UniversalFactory<I, O, D>) => TestRunnerFactory<I, O>
+export type SuperFactory<I, O, D> = (
+  universalFactory: UniversalFactory<I, O, D>
+) => TestRunnerFactory<I, O>;
 
 class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
   private ctx: Context = createContext();
@@ -58,24 +60,21 @@ class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
   ) {
     const handlers: Handlers<I, O> = {
       init: async ({ code, universalFactoryFunction }) => {
-        const universalFactory = await evalEntity<UniversalFactory<I, O, D>>(universalFactoryFunction);
+        const universalFactory = await evalEntity<UniversalFactory<I, O, D>>(
+          universalFactoryFunction
+        );
         const factory = superFactory(universalFactory);
         this.runner = await factory(this.ctx, {
           code,
           out: {
-            write(text) {
+            write(buffer) {
+              // TODO: synchronously wait for response
               connection.send({
                 type: MessageType.Event,
                 event: "write",
-                payload: text,
+                payload: buffer,
               });
-            },
-            writeln(text) {
-              connection.send({
-                type: MessageType.Event,
-                event: "writeln",
-                payload: text,
-              });
+              return ok(buffer.length);
             },
           },
         });
@@ -135,9 +134,12 @@ export function makeRemoteTestRunnerFactory<I, O, D>(
       log,
       connection,
       {
-        error: (err) => log.error(err),
-        write: (text) => out.write(text),
-        writeln: (text) => out.writeln(text),
+        error: (err) => {
+          log.error(err);
+        },
+        write: (text) => {
+          out.write(text);
+        },
       }
     );
     const dispose = () => {

@@ -4,8 +4,9 @@ import { RustTestRunner, wasiRuntimeFactory } from "testing-rust";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "testing-rust/miri.wasm";
-import { COLOR } from "libs/logger";
+import { COLOR_ENCODED } from "libs/logger";
 import type { Context } from "libs/context";
+import { isErr } from "libs/result";
 
 const libsUrls = import.meta.glob("/node_modules/testing-rust/dist/lib/*", {
   eager: true,
@@ -59,10 +60,19 @@ startTestRunnerActor<
             out,
             {
               write(text) {
-                out.write(`${COLOR.ERROR}${text}${COLOR.RESET}`);
-              },
-              writeln(text) {
-                out.writeln(`${COLOR.ERROR}${text}${COLOR.RESET}`);
+                let r = out.write(COLOR_ENCODED.ERROR);
+                if (isErr(r)) {
+                  return r;
+                }
+                const r2 = out.write(text);
+                if (isErr(r2)) {
+                  return r2;
+                }
+                r = out.write(COLOR_ENCODED.RESET);
+                if (isErr(r)) {
+                  return r;
+                }
+                return r2;
               },
             },
             await loadLibs(ctx)

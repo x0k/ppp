@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
-import type { Logger, Writer } from "libs/logger";
 import type { Result } from "libs/result";
+import type { Writer } from 'libs/io'
 
 export enum LogLevel {
   Disabled = -8,
@@ -15,14 +15,10 @@ export interface LoggerConfig {
   console: globalThis.Console;
 }
 
-export interface WriterConfig {
-  write: (s: string) => null | string;
-}
-
 export interface CompilerConfig {
   logger: LoggerConfig;
-  stdout: WriterConfig;
-  stderr: WriterConfig;
+  stdout: Writer;
+  stderr: Writer;
 }
 
 export type Executor<R> = (
