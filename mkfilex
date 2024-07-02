@@ -50,7 +50,15 @@ a/:
       ./x.py install
     copy-wasm:
       cp dist/bin/miri.wasm ../public
-      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib ../public/lib
+      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
     build: wasi-sdk build-wasm copy-wasm
     popd
-  build: go/build rust/build
+  gleam/:
+    pushd packages/testing-gleam/gleam/compiler-wasm
+    build-wasm:
+      CC=clang CXX=clang++ wasm-pack build --release --target web
+    copy-wasm:
+      cp -r pkg/* ../../src/vendor/
+    build: build-wasm copy-wasm
+    popd
+  build: */build
