@@ -1,5 +1,4 @@
-import type { Logger } from "libs/logger";
-import { compileJsModule } from "testing-javascript";
+import type { Writer } from "libs/io";
 
 import {
   initSync,
@@ -16,7 +15,7 @@ export class GleamModuleCompiler {
   protected lastProjectId = 0;
 
   constructor(
-    protected readonly logger: Logger,
+    protected readonly writer: Writer,
     protected readonly precompiledStdlibIndexUrl: string,
     compilerModule: WebAssembly.Module
   ) {
@@ -29,11 +28,9 @@ export class GleamModuleCompiler {
 
   compile(gleamCode: string) {
     const jsCode = this.compileGleamToJavascript(gleamCode);
-    return compileJsModule(
-      jsCode.replaceAll(
-        /from\s+"\.\/(.+)"/g,
-        `from "${this.precompiledStdlibIndexUrl}/$1"`
-      )
+    return jsCode.replaceAll(
+      /from\s+"\.\/(.+)"/g,
+      `from "${this.precompiledStdlibIndexUrl}/$1"`
     );
   }
 
@@ -55,10 +52,11 @@ export class GleamModuleCompiler {
   }
 
   protected printWarnings(projectId: number) {
+    const encoder = new TextEncoder();
     while (true) {
       const warning = pop_warning(projectId);
       if (warning === undefined) break;
-      this.logger.warn(warning);
+      this.writer.write(encoder.encode(warning + "\n"));
     }
   }
 }

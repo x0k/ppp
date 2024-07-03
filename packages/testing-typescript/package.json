@@ -14,9 +14,6 @@
     "./version": "./dist/version.js"
   },
   "dependencies": {
-    "libs": "workspace:*",
-    "testing": "workspace:*",
-    "testing-javascript": "workspace:*",
-    "typescript": "^5.5.2"
+    "typescript": "5.5.3"
   }
 }

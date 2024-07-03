@@ -8,8 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "libs": "workspace:*",
-    "testing-javascript": "workspace:*"
+    "libs": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.3.2",

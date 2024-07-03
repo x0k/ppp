@@ -12,6 +12,12 @@ b:
 p:
   pnpm run preview
 
+libs/:
+  pushd packages/libs
+  b:
+    pnpm run build
+  popd
+
 js/:
   pushd packages/testing-javascript
   b:
