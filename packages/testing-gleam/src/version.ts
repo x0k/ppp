@@ -1,1 +1,1 @@
-export { version } from "../vendor/compiler/package.json";
+export { version } from "./vendor/compiler/package.json";

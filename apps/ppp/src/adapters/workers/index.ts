@@ -8,6 +8,7 @@ import PhpWorkerDescription from "./php-worker-description.svelte";
 import PyWorkerDescription from "./python-worker-description.svelte";
 import GoWorkerDescription from "./go-worker-description.svelte";
 import RustWorkerDescription from "./rust-worker-description.svelte";
+import GleamWorkerDescription from './gleam-worker-description.svelte';
 
 export const WORKER_DESCRIPTIONS: Record<
   Language,
@@ -19,4 +20,5 @@ export const WORKER_DESCRIPTIONS: Record<
   [Language.Python]: PyWorkerDescription,
   [Language.Go]: GoWorkerDescription,
   [Language.Rust]: RustWorkerDescription,
+  [Language.Gleam]: GleamWorkerDescription
 };

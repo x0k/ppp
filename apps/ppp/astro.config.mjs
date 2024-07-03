@@ -1,6 +1,8 @@
 import { defineConfig } from "astro/config";
 import { fileURLToPath } from "node:url";
 
+import { viteStaticCopy } from "vite-plugin-static-copy";
+
 import mdx from "@astrojs/mdx";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
@@ -26,6 +28,17 @@ export default defineConfig({
       },
     },
     assetsInclude: ["**/*.wasm", "**/*.zip", "**/*.rlib", "**/*.so"],
+    plugins: [
+      viteStaticCopy({
+        targets: [
+          {
+            src: "node_modules/testing-gleam/dist/precompiled",
+            dest: "_astro",
+            rename: "gleam"
+          },
+        ],
+      }),
+    ],
   },
   markdown: {
     shikiConfig: {

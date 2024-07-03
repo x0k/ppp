@@ -7,4 +7,5 @@ export const MONACO_LANGUAGE_ID: Record<Language, string> = {
   [Language.Python]: "python",
   [Language.Go]: "go",
   [Language.Rust]: "rust",
+  [Language.Gleam]: "gleam",
 };

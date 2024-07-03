@@ -62,6 +62,9 @@ importers:
       testing:
         specifier: workspace:*
         version: link:../../packages/testing
+      testing-gleam:
+        specifier: workspace:*
+        version: link:../../packages/testing-gleam
       testing-go:
         specifier: workspace:*
         version: link:../../packages/testing-go
@@ -84,9 +87,6 @@ importers:
       '@iconify-json/lucide':
         specifier: ^1.1.197
         version: 1.1.197
-      '@iconify-json/simple-icons':
-        specifier: ^1.1.108
-        version: 1.1.108
       '@iconify/svelte':
         specifier: ^4.0.2
         version: 4.0.2(svelte@5.0.0-next.133)
@@ -105,6 +105,9 @@ importers:
       svelte:
         specifier: 5.0.0-next.133
         version: 5.0.0-next.133
+      vite-plugin-static-copy:
+        specifier: ^1.0.5
+        version: 1.0.5(vite@5.3.2(@types/node@20.14.2))
 
   packages/libs: {}
 
@@ -575,9 +578,6 @@ packages:
 
   '@iconify-json/lucide@1.1.197':
     resolution: {integrity: sha512-WI+R6uwdAibqaZ7pXNwoDsXwrUN3HEnTd3Nrb2wA2p6K0DGk8SK+gJMu5S9IC07fYbvzoUmwTcrNuNCdk3gvDg==}
-
-  '@iconify-json/simple-icons@1.1.108':
-    resolution: {integrity: sha512-GeC0Oy3j385BgjI0TadEzVbzM/cYjvAot22hJLNal3wKLmf/8t6RtH2PgRiNaK+SxELeDYdSAHocXxw4QoKXYA==}
 
   '@iconify/svelte@4.0.2':
     resolution: {integrity: sha512-6BSrU85FzGfhQD3bTXpnkCCvBAglEt8T9QednVnXAYm4C+d3464y+pYMzhQNJm5mPId2cuiw+2wXlDflXllHDw==}
@@ -3514,10 +3514,6 @@ snapshots:
     optional: true
 
   '@iconify-json/lucide@1.1.197':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/simple-icons@1.1.108':
     dependencies:
       '@iconify/types': 2.0.0
 

@@ -7,16 +7,13 @@
       "DOM"
     ],
     "noUncheckedIndexedAccess": false,
-    "rootDirs": [
-      "src",
-      "vendor"
-    ],
+    "outDir": "dist",
+    "rootDir": "src",
     "types": [
       "vite/client"
     ]
   },
   "include": [
-    "src/**/*",
-    "vendor/**/*"
+    "src/**/*"
   ],
 }

@@ -82,15 +82,15 @@ a/:
         cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
     popd
   gleam/:
-    build: vendor compiler/* stdlib/*
+    build: compiler/* stdlib/*
     pushd packages/testing-gleam
     compiler/:
       pushd gleam/compiler-wasm
       build:
        CC=clang CXX=clang++ wasm-pack build --release --target web
       copy:
-        mkdir -p ../../vendor/compiler
-        cp -r pkg/* ../../vendor/compiler/
+        mkdir -p ../../src/vendor/compiler
+        cp -r pkg/* ../../src/vendor/compiler/
       # Remove link to wasm file to prevent
       # Asset embedding by Vite
       clean:
@@ -98,14 +98,14 @@ a/:
             /^async function __wbg_init/!{
                 /^}/!d
             }
-        }' ../../vendor/compiler/gleam_wasm.js
+        }' ../../src/vendor/compiler/gleam_wasm.js
       popd
     stdlib/:
       pushd gleamstd
       build:
         gleam run
       copy:
-        mkdir -p ../vendor/stdlib
-        cp -r dist/* ../vendor/stdlib/
+        mkdir -p ../src/vendor/stdlib
+        cp -r dist/* ../src/vendor/stdlib/
       popd
     popd

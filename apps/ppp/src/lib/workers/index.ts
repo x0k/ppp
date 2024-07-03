@@ -4,3 +4,4 @@ export { default as PhpWorker } from "./php?worker";
 export { default as PyWorker } from "./python?worker";
 export { default as GoWorker } from "./go?worker";
 export { default as RustWorker } from "./rust?worker";
+export { default as GleamWorker } from "./gleam?worker";

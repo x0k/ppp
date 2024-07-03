@@ -8,8 +8,9 @@ import {
   read_compiled_javascript,
   delete_project,
   pop_warning,
-} from "../vendor/compiler/gleam_wasm.js";
-import stdlib from "../vendor/stdlib/stdlib.js";
+} from "./vendor/compiler/gleam_wasm.js";
+import stdlib from "./vendor/stdlib/stdlib.js";
+import { COLOR } from 'libs/logger';
 
 export class GleamModuleCompiler {
   protected lastProjectId = 0;
@@ -56,7 +57,7 @@ export class GleamModuleCompiler {
     while (true) {
       const warning = pop_warning(projectId);
       if (warning === undefined) break;
-      this.writer.write(encoder.encode(warning + "\n"));
+      this.writer.write(encoder.encode(`${COLOR.WARN}warning:${COLOR.RESET}${warning.slice(9)}\n`));
     }
   }
 }

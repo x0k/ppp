@@ -34,11 +34,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "vendor/compiler/gleam_wasm_bg.wasm",
+          src: "src/vendor/compiler/gleam_wasm_bg.wasm",
           dest: ".",
         },
         {
-          src: "vendor/stdlib/precompiled",
+          src: "src/vendor/stdlib/precompiled",
           dest: ".",
         },
       ],

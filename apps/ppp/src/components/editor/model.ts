@@ -1,6 +1,6 @@
 import type { editor } from "monaco-editor";
 
-import { Language } from '@/shared/languages';
+import { Language } from "@/shared/languages";
 import { createSyncStorage } from "@/adapters/storage";
 import { reactive } from "@/adapters/storage.svelte";
 
@@ -23,10 +23,11 @@ export const testRunnerTimeout = reactive(
 );
 
 export const LANG_ICONS: Record<Language, string> = {
-  [Language.JavaScript]: "simple-icons:javascript",
-  [Language.Python]: "simple-icons:python",
-  [Language.TypeScript]: "simple-icons:typescript",
-  [Language.Go]: "simple-icons:go",
-  [Language.PHP]: "simple-icons:php",
-  [Language.Rust]: "simple-icons:rust",
+  [Language.JavaScript]: "vscode-icons:file-type-js",
+  [Language.Python]: "vscode-icons:file-type-python",
+  [Language.TypeScript]: "vscode-icons:file-type-typescript",
+  [Language.Go]: "vscode-icons:file-type-go",
+  [Language.PHP]: "vscode-icons:file-type-php",
+  [Language.Rust]: "vscode-icons:file-type-rust",
+  [Language.Gleam]: "vscode-icons:file-type-gleam",
 };
