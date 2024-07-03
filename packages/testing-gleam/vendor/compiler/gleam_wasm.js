@@ -464,22 +464,6 @@ function initSync(module) {
 }
 
 async function __wbg_init(input) {
-    if (wasm !== undefined) return wasm;
-
-    if (typeof input === 'undefined') {
-        input = new URL('gleam_wasm_bg.wasm', import.meta.url);
-    }
-    const imports = __wbg_get_imports();
-
-    if (typeof input === 'string' || (typeof Request === 'function' && input instanceof Request) || (typeof URL === 'function' && input instanceof URL)) {
-        input = fetch(input);
-    }
-
-    __wbg_init_memory(imports);
-
-    const { instance, module } = await __wbg_load(await input, imports);
-
-    return __wbg_finalize_init(instance, module);
 }
 
 export { initSync }

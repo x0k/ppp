@@ -1,2 +1,2 @@
-export * from "./ts-test-runner.js";
+export * from './ts-module-compiler.js'
 export * from "./version.js";

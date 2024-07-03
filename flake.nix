@@ -43,6 +43,7 @@
           f
           pkgs.llvmPackages.bintools
           pkgs.wasm-pack
+          pkgs.gleam
         ];
         LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
           pkgs.stdenv.cc.cc

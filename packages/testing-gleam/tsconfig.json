@@ -1,0 +1,22 @@
+{
+  "extends": "@total-typescript/tsconfig/bundler/dom/library-monorepo",
+  "compilerOptions": {
+    "lib": [
+      "ES2022",
+      "ESNext.Disposable",
+      "DOM"
+    ],
+    "noUncheckedIndexedAccess": false,
+    "rootDirs": [
+      "src",
+      "vendor"
+    ],
+    "types": [
+      "vite/client"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "vendor/**/*"
+  ],
+}

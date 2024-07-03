@@ -12,6 +12,18 @@ b:
 p:
   pnpm run preview
 
+js/:
+  pushd packages/testing-javascript
+  b:
+    pnpm run build
+  popd
+
+ts/:
+  pushd packages/testing-typescript
+  b:
+    pnpm run build
+  popd
+
 go/:
   pushd packages/testing-go
   p:
@@ -28,8 +40,17 @@ rust/:
     pnpm run build
   popd
 
+gleam/:
+  pushd packages/testing-gleam
+  p:
+    bun run probe/index.ts
+  b:
+    pnpm run build
+  popd
+
 # Artifacts
 a/:
+  build: */build
   go/:
     pushd packages/testing-go/go
     build:
@@ -40,25 +61,45 @@ a/:
       go mod tidy
     popd
   rust/:
+    build: wasm/*
     pushd packages/testing-rust/rust
-    wasi-sdk:
-      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
-        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
-        tar -xzvf wasi-sdk-20.0-linux.tar.gz
-      fi
-    build-wasm:
-      ./x.py install
-    copy-wasm:
-      cp dist/bin/miri.wasm ../public
-      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
-    build: wasi-sdk build-wasm copy-wasm
+    wasm/:
+      sdk:
+        if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+          tar -xzvf wasi-sdk-20.0-linux.tar.gz
+        fi
+      build:
+        ./x.py install
+      copy:
+        cp dist/bin/miri.wasm ../public
+        cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
     popd
   gleam/:
-    pushd packages/testing-gleam/gleam/compiler-wasm
-    build-wasm:
-      CC=clang CXX=clang++ wasm-pack build --release --target web
-    copy-wasm:
-      cp -r pkg/* ../../src/vendor/
-    build: build-wasm copy-wasm
+    build: vendor compiler/* stdlib/*
+    pushd packages/testing-gleam
+    compiler/:
+      pushd gleam/compiler-wasm
+      build:
+       CC=clang CXX=clang++ wasm-pack build --release --target web
+      copy:
+        mkdir -p ../../vendor/compiler
+        cp -r pkg/* ../../vendor/compiler/
+      # Remove link to wasm file to prevent
+      # Asset embedding by Vite
+      clean:
+        sed -i '/async function __wbg_init/,/^}/{
+            /^async function __wbg_init/!{
+                /^}/!d
+            }
+        }' ../../vendor/compiler/gleam_wasm.js
+      popd
+    stdlib/:
+      pushd gleamstd
+      build:
+        gleam run
+      copy:
+        mkdir -p ../vendor/stdlib
+        cp -r dist/* ../vendor/stdlib/
+      popd
     popd
-  build: */build
