@@ -10,7 +10,7 @@ import {
   pop_warning,
 } from "./vendor/compiler/gleam_wasm.js";
 import stdlib from "./vendor/stdlib/stdlib.js";
-import { COLOR } from 'libs/logger';
+import { COLOR } from "libs/logger";
 
 export class GleamModuleCompiler {
   protected lastProjectId = 0;
@@ -22,9 +22,6 @@ export class GleamModuleCompiler {
   ) {
     initSync(compilerModule);
     initialise_panic_hook(false);
-    for (const [name, code] of Object.entries(stdlib)) {
-      write_module(1, name, code);
-    }
   }
 
   compile(gleamCode: string) {
@@ -38,6 +35,9 @@ export class GleamModuleCompiler {
   protected compileGleamToJavascript(gleamCode: string) {
     const projectId = this.lastProjectId++;
     try {
+      for (const [name, code] of Object.entries(stdlib)) {
+        write_module(projectId, name, code);
+      }
       write_module(projectId, "main", gleamCode);
       // reset_warnings(projectId); // Performed automatically
       compile_package(projectId, "javascript");
@@ -57,7 +57,11 @@ export class GleamModuleCompiler {
     while (true) {
       const warning = pop_warning(projectId);
       if (warning === undefined) break;
-      this.writer.write(encoder.encode(`${COLOR.WARN}warning:${COLOR.RESET}${warning.slice(9)}\n`));
+      this.writer.write(
+        encoder.encode(
+          `${COLOR.WARN}warning:${COLOR.RESET}${warning.slice(9)}\n`
+        )
+      );
     }
   }
 }
