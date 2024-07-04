@@ -11,6 +11,7 @@ import {
   type OutgoingMessage,
 } from "libs/actor";
 import { stringifyError } from "libs/error";
+import { compileJsModule } from 'libs/js'
 
 import type { TestRunner, TestRunnerFactory } from "./model.js";
 import { ok } from "libs/result";
@@ -39,9 +40,8 @@ type Outgoing<I, O> =
 
 async function evalEntity<T>(functionStr: string) {
   const moduleStr = `export default ${functionStr}`;
-  const moduleUrl = `data:text/javascript;base64,${btoa(moduleStr)}`;
-  const mod = await import(/* @vite-ignore */ moduleUrl);
-  return mod.default as T;
+  const mod = await compileJsModule<{ default: T }>(moduleStr)
+  return mod.default;
 }
 
 export type UniversalFactory<I, O, D> = (data: D) => TestRunnerFactory<I, O>;

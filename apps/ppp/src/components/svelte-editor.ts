@@ -13,6 +13,7 @@ import {
   PyWorker,
   TsWorker,
   RustWorker,
+  GleamWorker,
 } from "@/lib/workers";
 import { Language } from "@/shared/languages";
 import Editor, {
@@ -28,6 +29,7 @@ export const LANG_WORKERS: Record<Language, new () => Worker> = {
   [Language.TypeScript]: TsWorker,
   [Language.JavaScript]: JsWorker,
   [Language.Rust]: RustWorker,
+  [Language.Gleam]: GleamWorker,
 };
 
 export function mountEditor<L extends Language, I, O>(

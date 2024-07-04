@@ -19,6 +19,7 @@
     "./patcher": "./dist/patcher.js",
     "./result": "./dist/result.js",
     "./type": "./dist/type.js",
-    "./io": "./dist/io.js"
+    "./io": "./dist/io.js",
+    "./js": "./dist/js.js"
   }
 }

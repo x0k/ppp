@@ -11,17 +11,13 @@ interface TestingModule {
   payment(type: PaymentSystemType, base: number, amount: number): number;
 }
 
-export const factory: UniversalFactory<Input, Output, UniversalFactoryData> = ({
-  createLogger,
-  TsTestRunner,
-}) => {
-  class TestRunner extends TsTestRunner<TestingModule, Input, Output> {
-    override async executeTest(
-      m: TestingModule,
-      input: Input
-    ): Promise<Output> {
-      return m.payment(input.paymentSystem, input.base, input.amount);
-    }
-  }
-  return async (_, { code, out }) => new TestRunner(createLogger(out), code);
+export const factory: UniversalFactory<
+  Input,
+  Output,
+  UniversalFactoryData<TestingModule, Input, Output>
+> = ({ makeTestRunnerFactory }) => {
+  return makeTestRunnerFactory(
+    async (m: TestingModule, input: Input): Promise<Output> =>
+      m.payment(input.paymentSystem, input.base, input.amount)
+  );
 };

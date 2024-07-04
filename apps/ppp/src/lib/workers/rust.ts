@@ -1,12 +1,12 @@
+import { COLOR_ENCODED } from "libs/logger";
+import type { Context } from "libs/context";
+import { isErr } from "libs/result";
 import type { TestRunnerFactory } from "testing";
 import { startTestRunnerActor } from "testing/actor";
 import { RustTestRunner, wasiRuntimeFactory } from "testing-rust";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "testing-rust/miri.wasm";
-import { COLOR_ENCODED } from "libs/logger";
-import type { Context } from "libs/context";
-import { isErr } from "libs/result";
 
 const libsUrls = import.meta.glob("/node_modules/testing-rust/dist/lib/*", {
   eager: true,

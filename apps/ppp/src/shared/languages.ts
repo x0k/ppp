@@ -5,6 +5,7 @@ export enum Language {
   JavaScript = "javascript",
   Go = "go",
   Rust = "rust",
+  Gleam = "gleam",
 }
 
 export const LANGUAGE_TITLE: Record<Language, string> = {
@@ -14,4 +15,5 @@ export const LANGUAGE_TITLE: Record<Language, string> = {
   [Language.JavaScript]: "JavaScript",
   [Language.Go]: "Go",
   [Language.Rust]: "Rust",
+  [Language.Gleam]: "Gleam",
 };

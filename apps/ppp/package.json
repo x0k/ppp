@@ -17,28 +17,32 @@
     "@astrojs/tailwind": "^5.1.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "astro": "^4.11.3",
+    "astro": "^4.11.5",
     "astro-icon": "^1.1.0",
     "libs": "workspace:*",
     "monaco-editor": "^0.50.0",
+    "monaco-editor-textmate": "^4.0.0",
+    "monaco-textmate": "^3.0.1",
     "monaco-vim": "^0.4.1",
+    "onigasm": "^2.2.5",
     "tailwindcss": "^3.4.4",
     "testing": "workspace:*",
+    "testing-gleam": "workspace:*",
     "testing-go": "workspace:*",
     "testing-javascript": "workspace:*",
     "testing-php": "workspace:*",
     "testing-python": "workspace:*",
-    "testing-typescript": "workspace:*",
-    "testing-rust": "workspace:*"
+    "testing-rust": "workspace:*",
+    "testing-typescript": "workspace:*"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.1.197",
-    "@iconify-json/simple-icons": "^1.1.108",
+    "@iconify-json/lucide": "^1.1.198",
     "@iconify/svelte": "^4.0.2",
     "@tailwindcss/typography": "^0.5.13",
     "@types/color": "^3.0.6",
     "color": "^4.2.3",
     "daisyui": "^4.12.10",
-    "svelte": "5.0.0-next.133"
+    "svelte": "5.0.0-next.133",
+    "vite-plugin-static-copy": "^1.0.6"
   }
 }

@@ -6,28 +6,17 @@ import type { TestRunner } from "testing";
 
 export abstract class JsTestRunner<M, I, O> implements TestRunner<I, O> {
   private readonly patchedConsole: Console;
-  constructor(
-    protected readonly logger: Logger,
-    protected readonly code: string
-  ) {
-    this.patchedConsole = redirect(globalThis.console, logger);
-  }
 
-  protected transformCode(code: string) {
-    return `data:text/javascript;base64,${btoa(code)}`;
+  constructor(protected readonly logger: Logger, protected readonly m: M) {
+    this.patchedConsole = redirect(globalThis.console, logger);
   }
 
   abstract executeTest(m: M, input: I): Promise<O>;
 
   async run(ctx: Context, input: I): Promise<O> {
-    const transformedCode = this.transformCode(this.code);
     const recover = patch(globalThis, "console", this.patchedConsole);
     try {
-      const m = await inContext(
-        ctx,
-        import(/* @vite-ignore */ transformedCode)
-      );
-      return this.executeTest(m, input);
+      return inContext(ctx, this.executeTest(this.m, input));
     } finally {
       recover();
     }

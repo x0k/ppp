@@ -18,23 +18,23 @@ importers:
         specifier: ^2.0.6
         version: 2.0.6
       typescript:
-        specifier: ^5.5.2
-        version: 5.5.2
+        specifier: ^5.5.3
+        version: 5.5.3
 
   apps/ppp:
     dependencies:
       '@astrojs/check':
         specifier: ^0.7.0
-        version: 0.7.0(typescript@5.5.2)
+        version: 0.7.0(typescript@5.5.3)
       '@astrojs/mdx':
         specifier: ^3.1.2
-        version: 3.1.2(astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2))
+        version: 3.1.2(astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3))
       '@astrojs/svelte':
         specifier: ^5.6.0
-        version: 5.6.0(astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2))(svelte@5.0.0-next.133)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2))
+        version: 5.6.0(astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3))(svelte@5.0.0-next.133)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
       '@astrojs/tailwind':
         specifier: ^5.1.0
-        version: 5.1.0(astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2))(tailwindcss@3.4.4)
+        version: 5.1.0(astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3))(tailwindcss@3.4.4)
       '@xterm/addon-fit':
         specifier: ^0.10.0
         version: 0.10.0(@xterm/xterm@5.5.0)
@@ -42,8 +42,8 @@ importers:
         specifier: ^5.5.0
         version: 5.5.0
       astro:
-        specifier: ^4.11.3
-        version: 4.11.3(@types/node@20.14.2)(typescript@5.5.2)
+        specifier: ^4.11.5
+        version: 4.11.5(@types/node@20.14.2)(typescript@5.5.3)
       astro-icon:
         specifier: ^1.1.0
         version: 1.1.0
@@ -53,15 +53,27 @@ importers:
       monaco-editor:
         specifier: ^0.50.0
         version: 0.50.0
+      monaco-editor-textmate:
+        specifier: ^4.0.0
+        version: 4.0.0(monaco-editor@0.50.0)(monaco-textmate@3.0.1(onigasm@2.2.5))
+      monaco-textmate:
+        specifier: ^3.0.1
+        version: 3.0.1(onigasm@2.2.5)
       monaco-vim:
         specifier: ^0.4.1
         version: 0.4.1(monaco-editor@0.50.0)
+      onigasm:
+        specifier: ^2.2.5
+        version: 2.2.5
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.4
       testing:
         specifier: workspace:*
         version: link:../../packages/testing
+      testing-gleam:
+        specifier: workspace:*
+        version: link:../../packages/testing-gleam
       testing-go:
         specifier: workspace:*
         version: link:../../packages/testing-go
@@ -82,11 +94,8 @@ importers:
         version: link:../../packages/testing-typescript
     devDependencies:
       '@iconify-json/lucide':
-        specifier: ^1.1.197
-        version: 1.1.197
-      '@iconify-json/simple-icons':
-        specifier: ^1.1.108
-        version: 1.1.108
+        specifier: ^1.1.198
+        version: 1.1.198
       '@iconify/svelte':
         specifier: ^4.0.2
         version: 4.0.2(svelte@5.0.0-next.133)
@@ -105,6 +114,9 @@ importers:
       svelte:
         specifier: 5.0.0-next.133
         version: 5.0.0-next.133
+      vite-plugin-static-copy:
+        specifier: ^1.0.6
+        version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
   packages/libs: {}
 
@@ -116,6 +128,22 @@ importers:
       libs:
         specifier: workspace:*
         version: link:../libs
+
+  packages/testing-gleam:
+    dependencies:
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+    devDependencies:
+      vite:
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.2)
+      vite-plugin-dts:
+        specifier: ^3.9.1
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
+      vite-plugin-static-copy:
+        specifier: ^1.0.6
+        version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
   packages/testing-go:
     dependencies:
@@ -130,11 +158,11 @@ importers:
         specifier: ^1.15.2
         version: 1.15.2
       vite:
-        specifier: ^5.3.2
-        version: 5.3.2(@types/node@20.14.2)
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.2)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2))
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
 
   packages/testing-javascript:
     dependencies:
@@ -158,11 +186,11 @@ importers:
         version: link:../testing
     devDependencies:
       vite:
-        specifier: ^5.3.2
-        version: 5.3.2(@types/node@20.14.2)
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.2)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2))
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
 
   packages/testing-python:
     dependencies:
@@ -177,14 +205,14 @@ importers:
         version: link:../testing
     devDependencies:
       vite:
-        specifier: ^5.3.2
-        version: 5.3.2(@types/node@20.14.2)
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.2)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2))
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
       vite-plugin-static-copy:
-        specifier: ^1.0.5
-        version: 1.0.5(vite@5.3.2(@types/node@20.14.2))
+        specifier: ^1.0.6
+        version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
   packages/testing-rust:
     dependencies:
@@ -199,26 +227,17 @@ importers:
         version: link:../testing
     devDependencies:
       vite:
-        specifier: ^5.3.2
-        version: 5.3.2(@types/node@20.14.2)
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.2)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2))
+        version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
 
   packages/testing-typescript:
     dependencies:
-      libs:
-        specifier: workspace:*
-        version: link:../libs
-      testing:
-        specifier: workspace:*
-        version: link:../testing
-      testing-javascript:
-        specifier: workspace:*
-        version: link:../testing-javascript
       typescript:
-        specifier: ^5.5.2
-        version: 5.5.2
+        specifier: 5.5.3
+        version: 5.5.3
 
 packages:
 
@@ -566,11 +585,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@iconify-json/lucide@1.1.197':
-    resolution: {integrity: sha512-WI+R6uwdAibqaZ7pXNwoDsXwrUN3HEnTd3Nrb2wA2p6K0DGk8SK+gJMu5S9IC07fYbvzoUmwTcrNuNCdk3gvDg==}
-
-  '@iconify-json/simple-icons@1.1.108':
-    resolution: {integrity: sha512-GeC0Oy3j385BgjI0TadEzVbzM/cYjvAot22hJLNal3wKLmf/8t6RtH2PgRiNaK+SxELeDYdSAHocXxw4QoKXYA==}
+  '@iconify-json/lucide@1.1.198':
+    resolution: {integrity: sha512-XFALR7z8cNMpoY6SGbw12GgqAdxhouAGE4KPYNUdwovcup6miwPZRrghyi2nSz15/E2xpwfZBpmwnUJUmdt6mQ==}
 
   '@iconify/svelte@4.0.2':
     resolution: {integrity: sha512-6BSrU85FzGfhQD3bTXpnkCCvBAglEt8T9QednVnXAYm4C+d3464y+pYMzhQNJm5mPId2cuiw+2wXlDflXllHDw==}
@@ -1147,8 +1163,8 @@ packages:
   astro-icon@1.1.0:
     resolution: {integrity: sha512-Nksc09p7UuHeMcPNS9w1pKqRw3+wEmmh0A3FJW+FNXvqaeWI4RLvD1MCWErpY3Z5Cvad317rvLdik/Hg8GEk8Q==}
 
-  astro@4.11.3:
-    resolution: {integrity: sha512-SuZbB/71XVn+WqWNCe7XOfHuqhS+k4gj8+A3wluTZQrORGaHUFRn/f8F9Tu5yESQZB1q8UKhahvHwkTV3AdVsg==}
+  astro@4.11.5:
+    resolution: {integrity: sha512-TCRhuaLwrxwMhS8S1GG+ZTdrAXigX9C8E/YUTs/r2t+owHxDgwl86IV9xH1IHrCPoqhK6civyAQNOT+GKmkb0A==}
     engines: {node: ^18.17.1 || ^20.3.0 || >=21.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
 
@@ -1548,6 +1564,9 @@ packages:
 
   fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
+
+  fast-plist@0.1.3:
+    resolution: {integrity: sha512-d9cEfo/WcOezgPLAC/8t8wGb6YOD6JTCPMw2QcG2nAdFmyY+9rTUizCTaGjIZAloWENTEUMAPpkUAIJJJ0i96A==}
 
   fastparse@1.1.2:
     resolution: {integrity: sha512-483XLLxTVIwWK3QTrMGRqUfUpoOs/0hbQrl2oz4J0pAcm3A3bu84wxTFqGqkJzewCLdME38xJLJAxBABfQT8sQ==}
@@ -2188,8 +2207,19 @@ packages:
   mlly@1.7.1:
     resolution: {integrity: sha512-rrVRZRELyQzrIUAVMHxP97kv+G786pHmOKzuFII8zDYahFBS7qnHh2AlYSl1GAHhaMPCz6/oHjVMcfFYgFYHgA==}
 
+  monaco-editor-textmate@4.0.0:
+    resolution: {integrity: sha512-Clwup5LJzVfwURQrS+odSEC5/hZBEG36pQnvBKt4OtBndF8r2xLeXUZcK/AqEBK2u0Npy7frFp9hG7m66Ol9hA==}
+    peerDependencies:
+      monaco-editor: 0.x.x
+      monaco-textmate: ^3.0.0
+
   monaco-editor@0.50.0:
     resolution: {integrity: sha512-8CclLCmrRRh+sul7C08BmPBP3P8wVWfBHomsTcndxg5NRCEPfu/mc2AGU8k37ajjDVXcXFc12ORAMUkmk+lkFA==}
+
+  monaco-textmate@3.0.1:
+    resolution: {integrity: sha512-ZxxY3OsqUczYP1sGqo97tu+CJmMBwuSW+dL0WEBdDhOZ5G1zntw72hvBc68ZQAirosWvbDKgN1dL5k173QtFww==}
+    peerDependencies:
+      onigasm: ^2.0.0
 
   monaco-vim@0.4.1:
     resolution: {integrity: sha512-+cy0TE9xarjLIgUexqxIEbat3K1l7WbiFSLZKAO2kYl1qFRvkeWn4ro/C4c6dK0i9+WQKUC4Dhu/nyCbZfA37w==}
@@ -2263,6 +2293,9 @@ packages:
   onetime@6.0.0:
     resolution: {integrity: sha512-1FlR+gjXK7X+AsAHso35MnyN5KqGwJRi/31ft6x0M194ht7S+rWAvd7PHss9xSKMzE0asv1pyIHaJYq+BbacAQ==}
     engines: {node: '>=12'}
+
+  onigasm@2.2.5:
+    resolution: {integrity: sha512-F+th54mPc0l1lp1ZcFMyL/jTs2Tlq4SqIHKIXGZOR/VkHkF9A7Fr5rRr5+ZG/lWeRsyrClLYRq7s/yFQ/XhWCA==}
 
   only-allow@1.2.1:
     resolution: {integrity: sha512-M7CJbmv7UCopc0neRKdzfoGWaVZC+xC1925GitKH9EAqYFzX9//25Q7oX4+jw0tiCCj+t5l6VZh8UPH23NZkMA==}
@@ -2422,6 +2455,10 @@ packages:
 
   postcss@8.4.38:
     resolution: {integrity: sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.4.39:
+    resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
     engines: {node: ^10 || ^12 || >=14}
 
   preferred-pm@3.1.3:
@@ -2613,8 +2650,8 @@ packages:
     resolution: {integrity: sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==}
     engines: {node: '>=12'}
 
-  string-width@7.1.0:
-    resolution: {integrity: sha512-SEIJCWiX7Kg4c129n48aDRwLbFb2LJmXXFrWBG4NGaRtMQ3myKPKbwrD1BKqQn74oCoNMBVrfDEr5M9YxCsrkw==}
+  string-width@7.2.0:
+    resolution: {integrity: sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ==}
     engines: {node: '>=18'}
 
   stringify-entities@4.0.4:
@@ -2725,8 +2762,8 @@ packages:
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
-  tsconfck@3.1.0:
-    resolution: {integrity: sha512-CMjc5zMnyAjcS9sPLytrbFmj89st2g+JYtY/c02ug4Q+CZaAtCgbyviI0n1YvjZE/pzoc6FbNsINS13DOL1B9w==}
+  tsconfck@3.1.1:
+    resolution: {integrity: sha512-00eoI6WY57SvZEVjm13stEVE90VkEdJAFGgpFLTsZbJyW/LwFQ7uQxJHWpZ2hzSWgCPKc9AnBnNP+0X7o3hAmQ==}
     engines: {node: ^18 || >=20}
     hasBin: true
     peerDependencies:
@@ -2787,8 +2824,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@5.5.2:
-    resolution: {integrity: sha512-NcRtPEOsPFFWjobJEtfihkLCZCXZt/os3zf8nTxjVH3RvTSxjrCamJpbExGvYOF+tFHc3pA65qpdwPbzjohhew==}
+  typescript@5.5.3:
+    resolution: {integrity: sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2877,14 +2914,14 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-static-copy@1.0.5:
-    resolution: {integrity: sha512-02k0Rox+buYdEOfeilKZSgs1gXfPf9RjVztZEIYZgVIxjsVZi6AXssjzdi+qW6zYt00d3bq+tpP2voVXN2fKLw==}
+  vite-plugin-static-copy@1.0.6:
+    resolution: {integrity: sha512-3uSvsMwDVFZRitqoWHj0t4137Kz7UynnJeq1EZlRW7e25h2068fyIZX4ORCCOAkfp1FklGxJNVJBkBOD+PZIew==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0
 
-  vite@5.3.2:
-    resolution: {integrity: sha512-6lA7OBHBlXUxiJxbO5aAY2fsHHzDr1q7DvXYnyZycRs2Dz+dXBWuhpWHvmljTRTpQC2uvGmUFFkSHF2vGo90MA==}
+  vite@5.3.3:
+    resolution: {integrity: sha512-NPQdeCU0Dv2z5fu+ULotpuq5yfCS1BzKUIPhNbP3YBfAMGJXbt2nS+sbTFu+qchaqWTD+H3JK++nRwr6XIcp6A==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -3127,13 +3164,13 @@ snapshots:
 
   '@antfu/utils@0.7.8': {}
 
-  '@astrojs/check@0.7.0(typescript@5.5.2)':
+  '@astrojs/check@0.7.0(typescript@5.5.3)':
     dependencies:
-      '@astrojs/language-server': 2.10.0(typescript@5.5.2)
+      '@astrojs/language-server': 2.10.0(typescript@5.5.3)
       chokidar: 3.6.0
       fast-glob: 3.3.2
       kleur: 4.1.5
-      typescript: 5.5.2
+      typescript: 5.5.3
       yargs: 17.7.2
     transitivePeerDependencies:
       - prettier
@@ -3145,11 +3182,11 @@ snapshots:
 
   '@astrojs/internal-helpers@0.4.1': {}
 
-  '@astrojs/language-server@2.10.0(typescript@5.5.2)':
+  '@astrojs/language-server@2.10.0(typescript@5.5.3)':
     dependencies:
       '@astrojs/compiler': 2.8.0
       '@jridgewell/sourcemap-codec': 1.4.15
-      '@volar/kit': 2.2.5(typescript@5.5.2)
+      '@volar/kit': 2.2.5(typescript@5.5.3)
       '@volar/language-core': 2.2.5
       '@volar/language-server': 2.2.5
       '@volar/language-service': 2.2.5
@@ -3189,12 +3226,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@3.1.2(astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2))':
+  '@astrojs/mdx@3.1.2(astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3))':
     dependencies:
       '@astrojs/markdown-remark': 5.1.1
       '@mdx-js/mdx': 3.0.1
       acorn: 8.12.0
-      astro: 4.11.3(@types/node@20.14.2)(typescript@5.5.2)
+      astro: 4.11.5(@types/node@20.14.2)(typescript@5.5.3)
       es-module-lexer: 1.5.4
       estree-util-visit: 2.0.0
       github-slugger: 2.0.0
@@ -3214,20 +3251,20 @@ snapshots:
     dependencies:
       prismjs: 1.29.0
 
-  '@astrojs/svelte@5.6.0(astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2))(svelte@5.0.0-next.133)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2))':
+  '@astrojs/svelte@5.6.0(astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3))(svelte@5.0.0-next.133)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.1.1(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2))
-      astro: 4.11.3(@types/node@20.14.2)(typescript@5.5.2)
+      '@sveltejs/vite-plugin-svelte': 3.1.1(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2))
+      astro: 4.11.5(@types/node@20.14.2)(typescript@5.5.3)
       svelte: 5.0.0-next.133
-      svelte2tsx: 0.7.9(svelte@5.0.0-next.133)(typescript@5.5.2)
-      typescript: 5.5.2
+      svelte2tsx: 0.7.9(svelte@5.0.0-next.133)(typescript@5.5.3)
+      typescript: 5.5.3
     transitivePeerDependencies:
       - supports-color
       - vite
 
-  '@astrojs/tailwind@5.1.0(astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2))(tailwindcss@3.4.4)':
+  '@astrojs/tailwind@5.1.0(astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3))(tailwindcss@3.4.4)':
     dependencies:
-      astro: 4.11.3(@types/node@20.14.2)(typescript@5.5.2)
+      astro: 4.11.5(@types/node@20.14.2)(typescript@5.5.3)
       autoprefixer: 10.4.19(postcss@8.4.38)
       postcss: 8.4.38
       postcss-load-config: 4.0.2(postcss@8.4.38)
@@ -3501,11 +3538,7 @@ snapshots:
   '@esbuild/win32-x64@0.21.5':
     optional: true
 
-  '@iconify-json/lucide@1.1.197':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/simple-icons@1.1.108':
+  '@iconify-json/lucide@1.1.198':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -3847,26 +3880,26 @@ snapshots:
 
   '@shikijs/core@1.10.0': {}
 
-  '@sveltejs/vite-plugin-svelte-inspector@2.1.0(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2)))(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2))':
+  '@sveltejs/vite-plugin-svelte-inspector@2.1.0(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2)))(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.1.1(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2))
+      '@sveltejs/vite-plugin-svelte': 3.1.1(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2))
       debug: 4.3.5
       svelte: 5.0.0-next.133
-      vite: 5.3.2(@types/node@20.14.2)
+      vite: 5.3.3(@types/node@20.14.2)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2))':
+  '@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.1.0(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2)))(svelte@5.0.0-next.133)(vite@5.3.2(@types/node@20.14.2))
+      '@sveltejs/vite-plugin-svelte-inspector': 2.1.0(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2)))(svelte@5.0.0-next.133)(vite@5.3.3(@types/node@20.14.2))
       debug: 4.3.5
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.10
       svelte: 5.0.0-next.133
       svelte-hmr: 0.16.0(svelte@5.0.0-next.133)
-      vite: 5.3.2(@types/node@20.14.2)
-      vitefu: 0.2.5(vite@5.3.2(@types/node@20.14.2))
+      vite: 5.3.3(@types/node@20.14.2)
+      vitefu: 0.2.5(vite@5.3.3(@types/node@20.14.2))
     transitivePeerDependencies:
       - supports-color
 
@@ -3973,12 +4006,12 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@volar/kit@2.2.5(typescript@5.5.2)':
+  '@volar/kit@2.2.5(typescript@5.5.3)':
     dependencies:
       '@volar/language-service': 2.2.5
       '@volar/typescript': 2.2.5
       typesafe-path: 0.2.2
-      typescript: 5.5.2
+      typescript: 5.5.3
       vscode-languageserver-textdocument: 1.0.11
       vscode-uri: 3.0.8
 
@@ -4059,7 +4092,7 @@ snapshots:
       '@vue/compiler-core': 3.4.27
       '@vue/shared': 3.4.27
 
-  '@vue/language-core@1.8.27(typescript@5.5.2)':
+  '@vue/language-core@1.8.27(typescript@5.5.3)':
     dependencies:
       '@volar/language-core': 1.11.1
       '@volar/source-map': 1.11.1
@@ -4071,7 +4104,7 @@ snapshots:
       path-browserify: 1.0.1
       vue-template-compiler: 2.7.16
     optionalDependencies:
-      typescript: 5.5.2
+      typescript: 5.5.3
 
   '@vue/shared@3.4.27': {}
 
@@ -4149,7 +4182,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  astro@4.11.3(@types/node@20.14.2)(typescript@5.5.2):
+  astro@4.11.5(@types/node@20.14.2)(typescript@5.5.3):
     dependencies:
       '@astrojs/compiler': 2.8.1
       '@astrojs/internal-helpers': 0.4.1
@@ -4202,13 +4235,13 @@ snapshots:
       rehype: 13.0.1
       semver: 7.6.2
       shiki: 1.10.0
-      string-width: 7.1.0
+      string-width: 7.2.0
       strip-ansi: 7.1.0
-      tsconfck: 3.1.0(typescript@5.5.2)
+      tsconfck: 3.1.1(typescript@5.5.3)
       unist-util-visit: 5.0.0
       vfile: 6.0.1
-      vite: 5.3.2(@types/node@20.14.2)
-      vitefu: 0.2.5(vite@5.3.2(@types/node@20.14.2))
+      vite: 5.3.3(@types/node@20.14.2)
+      vitefu: 0.2.5(vite@5.3.3(@types/node@20.14.2))
       which-pm: 2.2.0
       yargs-parser: 21.1.1
       zod: 3.23.8
@@ -4655,6 +4688,8 @@ snapshots:
       micromatch: 4.0.7
 
   fast-json-stable-stringify@2.1.0: {}
+
+  fast-plist@0.1.3: {}
 
   fastparse@1.1.2: {}
 
@@ -5585,7 +5620,17 @@ snapshots:
       pkg-types: 1.1.1
       ufo: 1.5.3
 
+  monaco-editor-textmate@4.0.0(monaco-editor@0.50.0)(monaco-textmate@3.0.1(onigasm@2.2.5)):
+    dependencies:
+      monaco-editor: 0.50.0
+      monaco-textmate: 3.0.1(onigasm@2.2.5)
+
   monaco-editor@0.50.0: {}
+
+  monaco-textmate@3.0.1(onigasm@2.2.5):
+    dependencies:
+      fast-plist: 0.1.3
+      onigasm: 2.2.5
 
   monaco-vim@0.4.1(monaco-editor@0.50.0):
     dependencies:
@@ -5650,6 +5695,10 @@ snapshots:
     dependencies:
       mimic-fn: 4.0.0
 
+  onigasm@2.2.5:
+    dependencies:
+      lru-cache: 5.1.1
+
   only-allow@1.2.1:
     dependencies:
       which-pm-runs: 1.1.0
@@ -5663,7 +5712,7 @@ snapshots:
       is-unicode-supported: 2.0.0
       log-symbols: 6.0.0
       stdin-discarder: 0.2.2
-      string-width: 7.1.0
+      string-width: 7.2.0
       strip-ansi: 7.1.0
 
   p-limit@2.3.0:
@@ -5818,6 +5867,12 @@ snapshots:
       picocolors: 1.0.1
       source-map-js: 1.2.0
 
+  postcss@8.4.39:
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.0.1
+      source-map-js: 1.2.0
+
   preferred-pm@3.1.3:
     dependencies:
       find-up: 5.0.0
@@ -5862,7 +5917,7 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
       hast-util-from-html: 2.0.1
-      unified: 11.0.4
+      unified: 11.0.5
 
   rehype-raw@7.0.0:
     dependencies:
@@ -5881,7 +5936,7 @@ snapshots:
       '@types/hast': 3.0.4
       rehype-parse: 9.0.0
       rehype-stringify: 10.0.0
-      unified: 11.0.4
+      unified: 11.0.5
 
   remark-gfm@4.0.0:
     dependencies:
@@ -6090,7 +6145,7 @@ snapshots:
       emoji-regex: 9.2.2
       strip-ansi: 7.1.0
 
-  string-width@7.1.0:
+  string-width@7.2.0:
     dependencies:
       emoji-regex: 10.3.0
       get-east-asian-width: 1.2.0
@@ -6151,12 +6206,12 @@ snapshots:
     dependencies:
       svelte: 5.0.0-next.133
 
-  svelte2tsx@0.7.9(svelte@5.0.0-next.133)(typescript@5.5.2):
+  svelte2tsx@0.7.9(svelte@5.0.0-next.133)(typescript@5.5.3):
     dependencies:
       dedent-js: 1.0.1
       pascal-case: 3.1.2
       svelte: 5.0.0-next.133
-      typescript: 5.5.2
+      typescript: 5.5.3
 
   svelte@5.0.0-next.133:
     dependencies:
@@ -6239,9 +6294,9 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  tsconfck@3.1.0(typescript@5.5.2):
+  tsconfck@3.1.1(typescript@5.5.3):
     optionalDependencies:
-      typescript: 5.5.2
+      typescript: 5.5.3
 
   tslib@2.6.3: {}
 
@@ -6282,7 +6337,7 @@ snapshots:
 
   typescript@5.4.2: {}
 
-  typescript@5.5.2: {}
+  typescript@5.5.3: {}
 
   ufo@1.5.3: {}
 
@@ -6388,43 +6443,43 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-plugin-dts@3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.2)(vite@5.3.2(@types/node@20.14.2)):
+  vite-plugin-dts@3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2)):
     dependencies:
       '@microsoft/api-extractor': 7.43.0(@types/node@20.14.2)
       '@rollup/pluginutils': 5.1.0(rollup@4.18.0)
-      '@vue/language-core': 1.8.27(typescript@5.5.2)
+      '@vue/language-core': 1.8.27(typescript@5.5.3)
       debug: 4.3.5
       kolorist: 1.8.0
       magic-string: 0.30.10
-      typescript: 5.5.2
-      vue-tsc: 1.8.27(typescript@5.5.2)
+      typescript: 5.5.3
+      vue-tsc: 1.8.27(typescript@5.5.3)
     optionalDependencies:
-      vite: 5.3.2(@types/node@20.14.2)
+      vite: 5.3.3(@types/node@20.14.2)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite-plugin-static-copy@1.0.5(vite@5.3.2(@types/node@20.14.2)):
+  vite-plugin-static-copy@1.0.6(vite@5.3.3(@types/node@20.14.2)):
     dependencies:
       chokidar: 3.6.0
       fast-glob: 3.3.2
       fs-extra: 11.2.0
       picocolors: 1.0.1
-      vite: 5.3.2(@types/node@20.14.2)
+      vite: 5.3.3(@types/node@20.14.2)
 
-  vite@5.3.2(@types/node@20.14.2):
+  vite@5.3.3(@types/node@20.14.2):
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.4.38
+      postcss: 8.4.39
       rollup: 4.18.0
     optionalDependencies:
       '@types/node': 20.14.2
       fsevents: 2.3.3
 
-  vitefu@0.2.5(vite@5.3.2(@types/node@20.14.2)):
+  vitefu@0.2.5(vite@5.3.3(@types/node@20.14.2)):
     optionalDependencies:
-      vite: 5.3.2(@types/node@20.14.2)
+      vite: 5.3.3(@types/node@20.14.2)
 
   volar-service-css@0.0.45(@volar/language-service@2.2.5):
     dependencies:
@@ -6510,12 +6565,12 @@ snapshots:
       de-indent: 1.0.2
       he: 1.2.0
 
-  vue-tsc@1.8.27(typescript@5.5.2):
+  vue-tsc@1.8.27(typescript@5.5.3):
     dependencies:
       '@volar/typescript': 1.11.1
-      '@vue/language-core': 1.8.27(typescript@5.5.2)
+      '@vue/language-core': 1.8.27(typescript@5.5.3)
       semver: 7.6.2
-      typescript: 5.5.2
+      typescript: 5.5.3
 
   web-namespaces@2.0.1: {}
 
