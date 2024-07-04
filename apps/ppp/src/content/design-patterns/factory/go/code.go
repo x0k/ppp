@@ -1,13 +1,13 @@
-package factory
+package payment
 
-type PaymentSystemType string
+type SystemType int
 
 const (
-	PayPal   PaymentSystemType = "paypal"
-	WebMoney PaymentSystemType = "webmoney"
-	CatBank  PaymentSystemType = "cat-bank"
+	PayPal SystemType = iota
+	WebMoney
+	CatBank
 )
 
-func Payment(tp PaymentSystemType, base int, amount int) int {
+func Payment(tp SystemType, base int, amount int) int {
 	panic("Not implemented")
 }
