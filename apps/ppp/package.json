@@ -21,16 +21,19 @@
     "astro-icon": "^1.1.0",
     "libs": "workspace:*",
     "monaco-editor": "^0.50.0",
+    "monaco-editor-textmate": "^4.0.0",
+    "monaco-textmate": "^3.0.1",
     "monaco-vim": "^0.4.1",
+    "onigasm": "^2.2.5",
     "tailwindcss": "^3.4.4",
     "testing": "workspace:*",
+    "testing-gleam": "workspace:*",
     "testing-go": "workspace:*",
     "testing-javascript": "workspace:*",
     "testing-php": "workspace:*",
     "testing-python": "workspace:*",
-    "testing-typescript": "workspace:*",
     "testing-rust": "workspace:*",
-    "testing-gleam": "workspace:*"
+    "testing-typescript": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.197",
