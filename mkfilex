@@ -30,6 +30,12 @@ ts/:
     pnpm run build
   popd
 
+php/:
+  pushd packages/testing-php
+  b:
+    pnpm run build
+  popd
+
 go/:
   pushd packages/testing-go
   p:

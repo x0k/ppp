@@ -20,12 +20,14 @@ export abstract class PHPTestRunner<I, O> implements TestRunner<I, O> {
   }
 
   protected transformCode(input: I) {
-    return `${this.code}\npost_message_to_js(${this.caseExecutionCode(
-      input
-    )});`;
+    return `${
+      this.code
+    }\npost_message_to_js(json_encode(${this.caseExecutionCode(input)}));`;
   }
 
-  protected abstract transformResult(result: string): O;
+  protected transformResult(result: string): O {
+    return JSON.parse(result);
+  }
 
   private handleResult(result: string) {
     this.result = this.transformResult(result);

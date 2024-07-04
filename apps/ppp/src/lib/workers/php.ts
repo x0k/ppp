@@ -7,8 +7,7 @@ export interface UniversalFactoryData<I, O> {
   FailSafePHP: typeof FailSafePHP;
   phpRuntimeFactory: typeof phpRuntimeFactory;
   makeTestRunnerFactory: (
-    generateCaseExecutionCode: (input: I) => string,
-    transformResult: (result: string) => O
+    generateCaseExecutionCode: (input: I) => string
   ) => TestRunnerFactory<I, O>;
 }
 
@@ -18,13 +17,10 @@ startTestRunnerActor<unknown, unknown, UniversalFactoryData<unknown, unknown>>(
       PHPTestRunner,
       FailSafePHP,
       phpRuntimeFactory,
-      makeTestRunnerFactory: (generateCaseExecutionCode, transformResult) => {
+      makeTestRunnerFactory: (generateCaseExecutionCode) => {
         class TestRunner extends PHPTestRunner<unknown, unknown> {
           protected override caseExecutionCode(data: unknown): string {
             return generateCaseExecutionCode(data);
-          }
-          protected transformResult(result: string) {
-            return transformResult(result);
           }
         }
         return async (_, { code, out }) =>

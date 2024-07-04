@@ -18,13 +18,6 @@ export const factory: UniversalFactory<
   };
   return makeTestRunnerFactory(
     ({ paymentSystem, base, amount }: Input) =>
-      `strval(payment(${PHP_PAYMENT_SYSTEM_TYPES[paymentSystem]}, ${base}, ${amount}))`,
-    (result: string) => {
-      const r = parseInt(result, 10);
-      if (isNaN(r)) {
-        throw new Error(`Invalid result type: ${result}, expected number`);
-      }
-      return r;
-    }
+      `payment(${PHP_PAYMENT_SYSTEM_TYPES[paymentSystem]}, ${base}, ${amount})`
   );
 };
