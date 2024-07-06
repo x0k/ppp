@@ -5,3 +5,6 @@
 [submodule "packages/testing-gleam/gleam"]
 	path = packages/testing-gleam/gleam
 	url = https://github.com/gleam-lang/gleam.git
+[submodule "packages/testing-dotnet/runtime"]
+	path = packages/testing-dotnet/runtime
+	url = https://github.com/dotnet/runtime.git

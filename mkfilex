@@ -63,8 +63,9 @@ gleam/:
 # Artifacts
 a/:
   build: */build
+  pushd packages
   go/:
-    pushd packages/testing-go/go
+    pushd testing-go/go
     build:
       GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
     probe:
@@ -74,7 +75,7 @@ a/:
     popd
   rust/:
     build: wasm/*
-    pushd packages/testing-rust/rust
+    pushd testing-rust/rust
     wasm/:
       sdk:
         if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
@@ -89,7 +90,7 @@ a/:
     popd
   gleam/:
     build: compiler/* stdlib/*
-    pushd packages/testing-gleam
+    pushd testing-gleam
     compiler/:
       pushd gleam/compiler-wasm
       build:
@@ -114,4 +115,15 @@ a/:
         mkdir -p ../src/vendor/stdlib
         cp -r dist/* ../src/vendor/stdlib/
       popd
+    popd
+  dotnet/:
+    build: runtime/*
+    pushd testing-dotnet
+    runtime/:
+      image:
+        docker build -q . > .runtime_docker_image_id
+      build:
+        docker run --user $(id -u):$(id -g) -it --rm \
+          -v ./runtime:/opt/runtime -w /opt/runtime \
+          $(cat .runtime_docker_image_id) /build-runtime.sh
     popd

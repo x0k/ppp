@@ -11,6 +11,8 @@ git submodule update --init
 
 The artifacts saved in the repository must be created in the nix development environment.
 
+Temporarily, docker is required to build the dotnet runtime.
+
 ```console
 nix develop
 mk a/build
