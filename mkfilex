@@ -1,4 +1,6 @@
-#!/usr/bin/bash -xe
+#!/usr/bin/env bash
+
+set -xe
 
 d:
   pnpm run dev
@@ -87,6 +89,8 @@ a/:
       copy:
         cp dist/bin/miri.wasm ../public
         cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
+      clean:
+        rm -rf wasi-sdk-20.0* build dist
     popd
   gleam/:
     build: compiler/* stdlib/*
@@ -100,12 +104,14 @@ a/:
         cp -r pkg/* ../../src/vendor/compiler/
       # Remove link to wasm file to prevent
       # Asset embedding by Vite
-      clean:
+      refine:
         sed -i '/async function __wbg_init/,/^}/{
             /^async function __wbg_init/!{
                 /^}/!d
             }
         }' ../../src/vendor/compiler/gleam_wasm.js
+      clean:
+        rm -rf ../target pkg
       popd
     stdlib/:
       pushd gleamstd
@@ -114,6 +120,8 @@ a/:
       copy:
         mkdir -p ../src/vendor/stdlib
         cp -r dist/* ../src/vendor/stdlib/
+      clean:
+        rm -rf dist build
       popd
     popd
   dotnet/:
@@ -126,4 +134,9 @@ a/:
         docker run --user $(id -u):$(id -g) -it --rm \
           -v ./runtime:/opt/runtime -w /opt/runtime \
           $(cat .runtime_docker_image_id) /build-runtime.sh
+      # clean:
+      #   make -C runtime/src/mono/wasm clean clean-emsdk
+      #   docker rmi $(cat .runtime_docker_image_id)
+      #   TODO: rm -rf ./runtime/.dotnet ./runtime/artifacts
+      #   TODO: git restore 
     popd
