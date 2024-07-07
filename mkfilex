@@ -14,6 +14,8 @@ b:
 p:
   pnpm run preview
 
+artifacts: */artifacts
+
 libs/:
   pushd packages/libs
   b:
@@ -44,6 +46,12 @@ go/:
     bun run probe/index.ts
   b:
     pnpm run build
+  artifacts:
+    GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
+  probe:
+    go run cmd/probe/main.go
+  tidy:
+    go mod tidy
   popd
 
 rust/:
@@ -52,6 +60,22 @@ rust/:
     bun run probe/index.ts
   b:
     pnpm run build
+  artifacts: compiler/*
+  compiler/:
+    pushd rust
+    sdk:
+      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
+        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+        tar -xzvf wasi-sdk-20.0-linux.tar.gz
+      fi
+    install:
+      LD_LIBRARY_PATH="$NIX_LD_LIBRARY_PATH" ./x.py install
+    copy:
+      cp dist/bin/miri.wasm ../public
+      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
+    clean:
+      rm -rf wasi-sdk-20.0* build dist
+    popd
   popd
 
 gleam/:
@@ -60,83 +84,78 @@ gleam/:
     bun run probe/index.ts
   b:
     pnpm run build
+  artifacts: compiler/* stdlib/*
+  compiler/:
+    pushd gleam/compiler-wasm
+    build:
+      CC=clang CXX=clang++ wasm-pack build --release --target web
+    copy:
+      mkdir -p ../../src/vendor/compiler
+      cp -r pkg/* ../../src/vendor/compiler/
+    # Remove link to wasm file to prevent
+    # Asset embedding by Vite
+    refine:
+      sed -i '/async function __wbg_init/,/^}/{
+          /^async function __wbg_init/!{
+              /^}/!d
+          }
+      }' ../../src/vendor/compiler/gleam_wasm.js
+    clean:
+      rm -rf ../target pkg
+    popd
+  stdlib/:
+    pushd gleamstd
+    build:
+      gleam run
+    copy:
+      mkdir -p ../src/vendor/stdlib
+      cp -r dist/* ../src/vendor/stdlib/
+    clean:
+      rm -rf dist build
+    popd
   popd
 
-# Artifacts
-a/:
-  build: */build
-  pushd packages
-  go/:
-    pushd testing-go/go
-    build:
-      GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
-    probe:
-      go run cmd/probe/main.go
-    tidy:
-      go mod tidy
-    popd
-  rust/:
-    build: wasm/*
-    pushd testing-rust/rust
-    wasm/:
-      sdk:
-        if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
-          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
-          tar -xzvf wasi-sdk-20.0-linux.tar.gz
+dotnet/:
+  pushd packages/testing-dotnet
+  p:
+    bun run probe/index.ts
+  b:
+    pnpm run build
+  artifacts: compiler/build
+  compiler/:
+    build: install release copy clean
+    dev: compile link
+    pushd compiler
+    workloads=("wasm-tools")
+    installed_workloads=$(dotnet workload list | awk 'NR>3 && NF>0 && !/^Use/ {print $1}')
+    is_installed() {
+        echo "$installed_workloads" | grep -q "^$1$"
+    }
+    uninstalled_workloads=()
+    for workload in "${workloads[@]}"; do
+        if ! is_installed "$workload"; then
+            uninstalled_workloads+=("$workload")
         fi
-      build:
-        ./x.py install
-      copy:
-        cp dist/bin/miri.wasm ../public
-        cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
-      clean:
-        rm -rf wasi-sdk-20.0* build dist
+    done
+    install:
+      if [ ${#uninstalled_workloads[@]} -gt 0 ]; then
+        sudo dotnet workload restore
+      fi
+    compile:
+      dotnet build
+    link:
+      rm -rf ../src/vendor/compiler
+      ln -s $(pwd)/bin/Debug/net8.0/wwwroot/_framework ../src/vendor/compiler
+    release:
+      dotnet publish
+    copy:
+      rm -rf ../src/vendor/compiler
+      mkdir -p ../src/vendor/compiler
+      cp -r bin/Release/net8.0/publish/wwwroot/_framework/* ../src/vendor/compiler/
+    clean:
+      for workload in "${uninstalled_workloads[@]}"; do
+        sudo dotnet workload uninstall "${workload}"
+      done
+      rm -rf bin obj
     popd
-  gleam/:
-    build: compiler/* stdlib/*
-    pushd testing-gleam
-    compiler/:
-      pushd gleam/compiler-wasm
-      build:
-       CC=clang CXX=clang++ wasm-pack build --release --target web
-      copy:
-        mkdir -p ../../src/vendor/compiler
-        cp -r pkg/* ../../src/vendor/compiler/
-      # Remove link to wasm file to prevent
-      # Asset embedding by Vite
-      refine:
-        sed -i '/async function __wbg_init/,/^}/{
-            /^async function __wbg_init/!{
-                /^}/!d
-            }
-        }' ../../src/vendor/compiler/gleam_wasm.js
-      clean:
-        rm -rf ../target pkg
-      popd
-    stdlib/:
-      pushd gleamstd
-      build:
-        gleam run
-      copy:
-        mkdir -p ../src/vendor/stdlib
-        cp -r dist/* ../src/vendor/stdlib/
-      clean:
-        rm -rf dist build
-      popd
-    popd
-  dotnet/:
-    build: runtime/*
-    pushd testing-dotnet
-    runtime/:
-      image:
-        docker build -q . > .runtime_docker_image_id
-      build:
-        docker run --user $(id -u):$(id -g) -it --rm \
-          -v ./runtime:/opt/runtime -w /opt/runtime \
-          $(cat .runtime_docker_image_id) /build-runtime.sh
-      # clean:
-      #   make -C runtime/src/mono/wasm clean clean-emsdk
-      #   docker rmi $(cat .runtime_docker_image_id)
-      #   TODO: rm -rf ./runtime/.dotnet ./runtime/artifacts
-      #   TODO: git restore 
-    popd
+  popd

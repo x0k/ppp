@@ -15,7 +15,7 @@ Temporarily, docker is required to build the dotnet runtime.
 
 ```console
 nix develop
-mk a/build
+mk artifacts
 ```
 
 ## See also
