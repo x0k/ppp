@@ -7,5 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.10.0" />
     <PackageReference Include="Microsoft.JSInterop" Version="8.0.6" />
+    <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="8.0.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

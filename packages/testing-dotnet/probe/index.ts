@@ -18,4 +18,3 @@ const config = getConfig();
 const exports = await getAssemblyExports(config.mainAssemblyName);
 
 console.log(exports);
-await dotnet.run();
