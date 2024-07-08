@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Shared
 {
   public interface IResult<T, E>
   {

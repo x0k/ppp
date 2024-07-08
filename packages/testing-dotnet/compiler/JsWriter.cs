@@ -1,10 +1,9 @@
-using Compiler;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 
 namespace Adapters.Js
 {
-  public class Result<T, E> : IResult<T, E>
+  public class Result<T, E> : Shared.IResult<T, E>
   {
     [JsonProperty("ok")]
     private readonly bool ok;
@@ -20,12 +19,12 @@ namespace Adapters.Js
     public E Error { get => error; }
   }
 
-  public class Writer(IJSObjectReference writer) : IWriter
+  public class Writer(IJSObjectReference writer) : Shared.IWriter
   {
 
     private readonly IJSObjectReference _writer = writer;
 
-    public IResult<int, int> Write(byte[] data)
+    public Shared.IResult<int, int> Write(byte[] data)
     {
       var task = _writer.InvokeAsync<Result<int, int>>("write", data).AsTask();
       task.Wait();

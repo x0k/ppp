@@ -6,9 +6,12 @@ using Microsoft.JSInterop;
 
 
 
-public partial class Program
+public partial class Compiler
 {
-
+    public static void Main()
+    {
+        // Main method is required but can be empty
+    }
     private static readonly IJSRuntime _jsRuntime;
 
     [JSExport]
