@@ -118,7 +118,10 @@ gleam/:
 dotnet/:
   pushd packages/testing-dotnet
   p:
-    bun run probe/index.ts
+    pushd probe
+    rsync -r ../src/vendor/compiler/ ./compiler/
+    python server.py
+    popd
   b:
     pnpm run build
   artifacts: compiler/build

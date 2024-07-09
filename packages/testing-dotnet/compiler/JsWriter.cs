@@ -19,16 +19,16 @@ namespace Adapters.Js
     public E Error { get => error; }
   }
 
-  public class Writer(IJSObjectReference writer) : Shared.IWriter
-  {
+//   public class Writer(IJSObjectReference writer) : Shared.IWriter
+//   {
 
-    private readonly IJSObjectReference _writer = writer;
+//     private readonly IJSObjectReference _writer = writer;
 
-    public Shared.IResult<int, int> Write(byte[] data)
-    {
-      var task = _writer.InvokeAsync<Result<int, int>>("write", data).AsTask();
-      task.Wait();
-      return task.Result;
-    }
-  }
+//     public Shared.IResult<int, int> Write(byte[] data)
+//     {
+//       var task = _writer.InvokeAsync<Result<int, int>>("write", data).AsTask();
+//       task.Wait();
+//       return task.Result;
+//     }
+//   }
 }
