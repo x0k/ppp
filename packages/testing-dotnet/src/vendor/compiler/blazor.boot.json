@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "compiler",
   "resources": {
-    "hash": "sha256-7I9SN83C0qS5Agy6P2REdkQO6aBaLnS0lL2Z5hdieSA=",
+    "hash": "sha256-pp4y57RDcrD7CwgM6bsB4IsN+1h40IN020jzg/KTbR4=",
     "jsModuleWorker": {
       "dotnet.native.worker.8.0.7.9oacvs2mzj.js": "sha256-Qx8CvNYlt1HAErxzLAM7CARKIDWzPQ7lN4FvTjY3vAg="
     },
@@ -20,7 +20,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "compiler.wasm": "sha256-l/JuHknfysCMUCnYo0QTWkjGJVzIp6Vs4XiSOGr55y0=",
+      "compiler.wasm": "sha256-jKO/qz2BFPyw6XlLywRZefBKToyOgL/syBSQ7rnQEsQ=",
       "Humanizer.wasm": "sha256-4NbSboZzzP9nikRtXapUZNzOyITt7ht9TNqCIQHr5OE=",
       "Microsoft.CodeAnalysis.CSharp.wasm": "sha256-MmeG9q/P2+iYoe4SIOiX8O9PfmJ1tDKKZqYIUMhtLjk=",
       "Microsoft.CodeAnalysis.CSharp.Workspaces.wasm": "sha256-BNrSVaMP3zPZbm0J/QmV/A8i8SB8GA/K1yNSXFXP10s=",

@@ -1,3 +1,4 @@
+import { COLOR } from "libs/logger";
 import type { Writer } from "libs/io";
 
 import {
@@ -10,7 +11,6 @@ import {
   pop_warning,
 } from "./vendor/compiler/gleam_wasm.js";
 import stdlib from "./vendor/stdlib/stdlib.js";
-import { COLOR } from "libs/logger";
 
 export class GleamModuleCompiler {
   protected lastProjectId = 0;

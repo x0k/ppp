@@ -149,6 +149,12 @@ public partial class Compiler
         return null;
     }
 
+    [JSExport]
+    internal static void DisposeAssembly() {
+        assembly = null;
+        executionResult = null;
+    }
+
     internal static async Task<List<MetadataReference>> LoadMetadataReferences(string precompiledLibIndexPath, string[] dlls)
     {
         List<MetadataReference> references = [];
