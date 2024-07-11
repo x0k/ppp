@@ -9,9 +9,7 @@ git clone https://github.com/x0k/ppp.git
 git submodule update --init
 ````
 
-The artifacts saved in the repository must be created in the nix development environment.
-
-Temporarily, docker is required to build the dotnet runtime.
+Artifacts saved in the repository must be created in the nix development environment.
 
 ```console
 nix develop

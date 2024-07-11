@@ -3,7 +3,10 @@
         "perHostConfig": [
             {
                 "name": "browser",
-                "host": "browser"
+                "host": "browser",
+                "assemblies": [
+                    "System.Text.Json.dll"
+                ]
             }
         ]
     }

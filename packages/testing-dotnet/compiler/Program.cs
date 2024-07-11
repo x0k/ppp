@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices.JavaScript;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -43,37 +46,55 @@ public partial class Logger
     }
 }
 
-
 public partial class Compiler
 {
-    public static void Main()
+
+    private static List<MetadataReference> references;
+    private static Assembly assembly;
+
+    private static object executionResult;
+
+    // Main method is required but can be empty
+    public static void Main() { }
+
+    [JSExport]
+    internal static async Task<int> Init(string precompiledLibIndexPath, string[] dlls)
     {
-        // Main method is required but can be empty
+        references = await LoadMetadataReferences(precompiledLibIndexPath, dlls);
+        return 0;
     }
 
     [JSExport]
     [RequiresUnreferencedCode("Calls System.AppDomain.Load(Byte[])")]
-    internal static void Compile(string code)
+    internal static int Compile(string[] code)
     {
-        SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-        var hasDiagnosticError = false;
-        foreach (var diagnostic in tree.GetDiagnostics())
+        if (references == null)
         {
-            Logger.PrintDiagnostic(diagnostic);
-            if (diagnostic.Severity == DiagnosticSeverity.Error)
+            Logger.Error("Compiler is not initialized");
+            return -1;
+        }
+        SyntaxTree[] trees = new SyntaxTree[code.Length];
+        for (int i = 0; i < code.Length; i++)
+        {
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(code[i]);
+            var hasDiagnosticError = false;
+            foreach (var diagnostic in tree.GetDiagnostics())
             {
-                hasDiagnosticError = true;
+                Logger.PrintDiagnostic(diagnostic);
+                if (diagnostic.Severity == DiagnosticSeverity.Error)
+                {
+                    hasDiagnosticError = true;
+                }
             }
+            if (hasDiagnosticError)
+            {
+                return -1;
+            }
+            trees[i] = tree;
         }
-        if (hasDiagnosticError)
-        {
-            return;
-        }
-        var references = GetMetadataReferences();
-        Logger.Debug($"References: {references.Count}");
         var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).
             WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
-        var compilation = CSharpCompilation.Create("MyAssembly.Demo", [tree], references, op);
+        var compilation = CSharpCompilation.Create("assembly.compiler", trees, references, op);
 
         using MemoryStream stream = new();
         var result = compilation.Emit(stream, options: new EmitOptions());
@@ -85,57 +106,75 @@ public partial class Compiler
 
         if (!result.Success)
         {
-            return;
+            return -1;
         }
 
-        var assembly = AppDomain.CurrentDomain.Load(stream.ToArray());
+        assembly = AppDomain.CurrentDomain.Load(stream.ToArray());
+        return 0;
     }
 
-
-    internal static List<MetadataReference> GetMetadataReferences()
+    [JSExport]
+    [RequiresUnreferencedCode("Calls System.Reflection.Assembly.GetExportedTypes()")]
+    internal static int Run(string typeFullName, string methodName, string[] arguments)
     {
-        var references = new List<MetadataReference>();
+        if (assembly == null)
+        {
+            Logger.Error("There are no compiled assemblies");
+            return -1;
+        }
+        var type = assembly.GetExportedTypes().ToList().Find(x => x.FullName == typeFullName);
+        if (type == null)
+        {
+            Logger.Error($"Type not found: {typeFullName}");
+            return -1;
+        }
+        var method = type.GetMethod(methodName);
+        if (method == null)
+        {
+            Logger.Error($"Method not found: {methodName}");
+            return -1;
+        }
+        executionResult = method.Invoke(null, arguments);
+        return 0;
 
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+    }
+
+    [JSExport]
+    internal static string GetResultAsString()
+    {
+        if (executionResult is string result)
+        {
+            return result;
+        }
+        return null;
+    }
+
+    internal static async Task<List<MetadataReference>> LoadMetadataReferences(string precompiledLibIndexPath, string[] dlls)
+    {
+        List<MetadataReference> references = [];
+        var client = new HttpClient();
+        foreach (var url in dlls)
         {
             try
             {
-                var reference = CreateMetadataReference(assembly);
-                if (reference != null)
+                var response = await client.GetAsync($"{precompiledLibIndexPath}/{url}");
+                if (response.IsSuccessStatusCode)
                 {
+                    var dllBytes = await response.Content.ReadAsByteArrayAsync();
+                    var reference = MetadataReference.CreateFromImage(dllBytes);
                     references.Add(reference);
+                }
+                else
+                {
+                    Logger.Error($"Failed to download {url}: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to add reference for {assembly.FullName}: {ex.Message}");
+                Logger.Error($"Error fetching {url}: {ex.Message}");
             }
         }
 
         return references;
-    }
-
-    internal static MetadataReference CreateMetadataReference(Assembly assembly)
-    {
-        return MetadataReference.CreateFromImage(GetAssemblyMetadata(assembly));
-    }
-
-    internal static byte[] GetAssemblyMetadata(Assembly assembly)
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-
-        // Write the metadata directly
-        writer.Write(assembly.FullName);
-        foreach (var type in assembly.GetTypes())
-        {
-            writer.Write(type.FullName);
-            foreach (var method in type.GetMethods())
-            {
-                writer.Write(method.Name);
-            }
-        }
-
-        return stream.ToArray();
     }
 }
