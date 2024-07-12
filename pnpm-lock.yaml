@@ -71,6 +71,9 @@ importers:
       testing:
         specifier: workspace:*
         version: link:../../packages/testing
+      testing-dotnet:
+        specifier: workspace:*
+        version: link:../../packages/testing-dotnet
       testing-gleam:
         specifier: workspace:*
         version: link:../../packages/testing-gleam
@@ -114,6 +117,9 @@ importers:
       svelte:
         specifier: 5.0.0-next.133
         version: 5.0.0-next.133
+      vite-plugin-cross-origin-isolation:
+        specifier: ^0.1.6
+        version: 0.1.6
       vite-plugin-static-copy:
         specifier: ^1.0.6
         version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
@@ -2922,6 +2928,9 @@ packages:
 
   vfile@6.0.1:
     resolution: {integrity: sha512-1bYqc7pt6NIADBJ98UiG0Bn/CHIVOoZ/IyEkqIruLg0mE1BKzkOXY2D6CSqQIcKqgadppE5lrxgWXJmXd7zZJw==}
+
+  vite-plugin-cross-origin-isolation@0.1.6:
+    resolution: {integrity: sha512-OY0naW9nPUDrKTffYnY7FRYXOgZdHoNwMGpPxUmj/n32mGZi01fcq+J536jkmwGWX7DLT95XBQVHHbrAJzTvrw==}
 
   vite-plugin-dts@3.9.1:
     resolution: {integrity: sha512-rVp2KM9Ue22NGWB8dNtWEr+KekN3rIgz1tWD050QnRGlriUCmaDwa7qA5zDEjbXg5lAXhYMSBJtx3q3hQIJZSg==}
@@ -6461,6 +6470,8 @@ snapshots:
       '@types/unist': 3.0.2
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
+
+  vite-plugin-cross-origin-isolation@0.1.6: {}
 
   vite-plugin-dts@3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2)):
     dependencies:

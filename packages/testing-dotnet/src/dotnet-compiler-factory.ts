@@ -10,13 +10,11 @@ export interface DotnetModule<I, E> {
   getAssemblyExports: (assemblyName: string) => Promise<E>;
 }
 
-const ES_MODULE_NAME = "main.js";
-
-interface CompilerModuleImports {
+export interface CompilerModuleImports {
   logger: Logger;
 }
 
-interface CompilerModuleExports {
+export interface CompilerModuleExports {
   Compiler: {
     Init: (precompiledLibsIndexUrl: string, libs: string[]) => Promise<number>;
     Compile: (code: string[]) => number;
@@ -27,6 +25,8 @@ interface CompilerModuleExports {
 }
 
 export type DotnetCompiler = Omit<CompilerModuleExports["Compiler"], "Init">;
+
+const ES_MODULE_NAME = "main.js";
 
 export class DotnetCompilerFactory {
   constructor(

@@ -30,4 +30,5 @@ export const LANG_ICONS: Record<Language, string> = {
   [Language.PHP]: "vscode-icons:file-type-php",
   [Language.Rust]: "vscode-icons:file-type-rust",
   [Language.Gleam]: "vscode-icons:file-type-gleam",
+  [Language.CSharp]: "vscode-icons:file-type-csharp",
 };

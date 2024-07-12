@@ -2,8 +2,6 @@
 
 set -xe
 
-root=$(pwd)
-
 d:
   pnpm run dev
 
