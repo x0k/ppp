@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-gleam/version";
+  import { version } from "gleam-runtime/version";
 </script>
 
 <p>

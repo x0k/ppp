@@ -5,9 +5,9 @@ import {
   createCompilerFactory,
   makeGoRuntimeFactory,
   type GoRuntimeFactory,
-} from "testing-go";
+} from "go-runtime";
 import { startTestRunnerActor } from "testing/actor";
-import wasmInit from "testing-go/compiler.wasm?init";
+import wasmInit from "go-runtime/compiler.wasm?init";
 
 export interface GoUniversalFactoryData<I, O> {
   createLogger: typeof createLogger;

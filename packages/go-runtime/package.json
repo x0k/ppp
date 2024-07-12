@@ -1,0 +1,24 @@
+{
+  "name": "go-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "libs": "workspace:*",
+    "testing": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/golang-wasm-exec": "^1.15.2",
+    "vite": "^5.3.3",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js",
+    "./compiler.wasm": "./dist/compiler.wasm"
+  }
+}

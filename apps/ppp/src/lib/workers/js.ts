@@ -2,7 +2,7 @@ import { createLogger } from "libs/logger";
 import { compileJsModule } from "libs/js";
 import type { TestRunnerFactory } from "testing";
 import { startTestRunnerActor } from "testing/actor";
-import { JsTestRunner } from "testing-javascript";
+import { JsTestRunner } from "javascript-runtime";
 
 export interface UniversalFactoryData<M, I, O> {
   JsTestRunner: typeof JsTestRunner;

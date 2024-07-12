@@ -9,7 +9,7 @@ import {
   type DotnetModule,
   type CompilerModuleImports,
   type CompilerModuleExports,
-} from "testing-dotnet";
+} from "dotnet-runtime";
 
 const dotnetUrl = new URL(
   import.meta.env.BASE_URL + "/_astro/dotnet/compiler/dotnet.js",

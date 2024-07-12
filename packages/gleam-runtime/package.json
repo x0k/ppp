@@ -1,0 +1,24 @@
+{
+  "name": "gleam-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "libs": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^5.3.3",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-static-copy": "^1.0.6"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js",
+    "./compiler.wasm": "./dist/gleam_wasm_bg.wasm",
+    "./stdlib/*": "./dist/precompiled/*"
+  }
+}

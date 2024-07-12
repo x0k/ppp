@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-rust/version";
+  import { version } from "rust-runtime/version";
 </script>
 
 <p>

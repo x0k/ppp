@@ -1,5 +1,5 @@
 import type { TestRunnerFactory } from "testing";
-import { FailSafePHP, PHPTestRunner, phpRuntimeFactory } from "testing-php";
+import { FailSafePHP, PHPTestRunner, phpRuntimeFactory } from "php-runtime";
 import { startTestRunnerActor } from "testing/actor";
 
 export interface UniversalFactoryData<I, O> {

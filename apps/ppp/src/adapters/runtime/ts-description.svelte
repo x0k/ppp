@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-typescript/version";
+  import { version } from "typescript-runtime/version";
 </script>
 
 <p>TypeScript {version}. Transpilation options:</p>

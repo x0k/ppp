@@ -1,55 +1,50 @@
 import deepEqual from "fast-deep-equal";
 
-import type { Writer } from 'libs/io'
+import type { Writer } from "libs/io";
 import type { Logger } from "libs/logger";
 import type { Context } from "libs/context";
+import type { File } from "libs/compiler";
 
-export interface TestData<I, O> {
+export interface TestCase<I, O> {
   input: I;
   output: O;
 }
 
-export function testData<I, O>(
-  mapper: (arg: I) => O
-): (arg: I) => TestData<I, O> {
+export function testCase<I, O>(
+  test: (input: I) => O
+): (input: I) => TestCase<I, O> {
   return (input) => ({
     input,
-    output: mapper(input),
+    output: test(input),
   });
 }
 
-export interface TestRunner<I, O> extends Disposable {
+export interface TestProgram<I, O> extends Disposable {
   run: (ctx: Context, input: I) => Promise<O>;
 }
 
-export interface TestRunnerConfig {
-  code: string;
-  out: Writer;
+export interface TestProgramCompiler<I, O> extends Disposable {
+  compile: (ctx: Context, files: File[]) => Promise<TestProgram<I, O>>;
 }
 
-export type TestRunnerFactory<I, O> = (
-  ctx: Context,
-  config: TestRunnerConfig
-) => Promise<TestRunner<I, O>>;
-
-export async function runTests<Arg, R>(
+export async function runTests<I, O>(
   ctx: Context,
   log: Logger,
-  testRunner: TestRunner<Arg, R>,
-  testsData: TestData<Arg, R>[]
+  testProgram: TestProgram<I, O>,
+  testsCases: TestCase<I, O>[]
 ) {
   let i = 0;
-  for (; i < testsData.length; i++) {
+  for (; i < testsCases.length; i++) {
     if (ctx.canceled) {
       log.error("Test canceled by user");
       return i;
     }
-    const data = testsData[i];
+    const testCase = testsCases[i];
     try {
-      const result = await testRunner.run(ctx, data.input);
-      if (!deepEqual(result, data.output)) {
+      const result = await testProgram.run(ctx, testCase.input);
+      if (!deepEqual(result, testCase.output)) {
         log.error(
-          `Test case failed, expected "${data.output}", but got "${result}"`
+          `Test case failed, expected "${testCase.output}", but got "${result}"`
         );
         return i;
       }

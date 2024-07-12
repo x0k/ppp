@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-php/version";
+  import { version } from "php-runtime/version";
 </script>
 
 <p>

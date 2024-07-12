@@ -27,14 +27,14 @@
     "onigasm": "^2.2.5",
     "tailwindcss": "^3.4.4",
     "testing": "workspace:*",
-    "testing-dotnet": "workspace:*",
-    "testing-gleam": "workspace:*",
-    "testing-go": "workspace:*",
-    "testing-javascript": "workspace:*",
-    "testing-php": "workspace:*",
-    "testing-python": "workspace:*",
-    "testing-rust": "workspace:*",
-    "testing-typescript": "workspace:*"
+    "dotnet-runtime": "workspace:*",
+    "gleam-runtime": "workspace:*",
+    "go-runtime": "workspace:*",
+    "javascript-runtime": "workspace:*",
+    "php-runtime": "workspace:*",
+    "python-runtime": "workspace:*",
+    "rust-runtime": "workspace:*",
+    "typescript-runtime": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.198",

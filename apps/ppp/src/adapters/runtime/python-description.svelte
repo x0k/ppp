@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-python/version";
+  import { version } from "python-runtime/version";
 </script>
 
 <p>

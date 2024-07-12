@@ -3,10 +3,10 @@ import type { Context } from "libs/context";
 import { isErr } from "libs/result";
 import type { TestRunnerFactory } from "testing";
 import { startTestRunnerActor } from "testing/actor";
-import { RustTestRunner, wasiRuntimeFactory } from "testing-rust";
+import { RustTestRunner, wasiRuntimeFactory } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
-import miriWasmUrl from "testing-rust/miri.wasm";
+import miriWasmUrl from "rust-runtime/miri.wasm";
 
 const libsUrls = import.meta.glob("/node_modules/testing-rust/dist/lib/*", {
   eager: true,

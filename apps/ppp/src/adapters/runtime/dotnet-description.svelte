@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-dotnet/version";
+  import { version } from "dotnet-runtime/version";
   import { LIBS } from "@/lib/factories/dotnet";
 </script>
 

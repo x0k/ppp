@@ -1,11 +1,11 @@
 import { compileJsModule } from "libs/js";
 import { createLogger } from "libs/logger";
 import type { TestRunnerFactory } from "testing";
-import { JsTestRunner } from "testing-javascript";
-import { GleamModuleCompiler } from "testing-gleam";
+import { JsTestRunner } from "javascript-runtime";
+import { GleamModuleCompiler } from "gleam-runtime";
 
 // @ts-expect-error .wasm is an asset
-import compilerWasmUrl from "testing-gleam/compiler.wasm";
+import compilerWasmUrl from "gleam-runtime/compiler.wasm";
 import { startTestRunnerActor } from "testing/actor";
 
 const precompiledGleamStdlibIndexUrl = new URL(

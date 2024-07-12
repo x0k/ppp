@@ -47,6 +47,18 @@ importers:
       astro-icon:
         specifier: ^1.1.0
         version: 1.1.0
+      dotnet-runtime:
+        specifier: workspace:*
+        version: link:../../packages/dotnet-runtime
+      gleam-runtime:
+        specifier: workspace:*
+        version: link:../../packages/gleam-runtime
+      go-runtime:
+        specifier: workspace:*
+        version: link:../../packages/go-runtime
+      javascript-runtime:
+        specifier: workspace:*
+        version: link:../../packages/javascript-runtime
       libs:
         specifier: workspace:*
         version: link:../../packages/libs
@@ -65,36 +77,24 @@ importers:
       onigasm:
         specifier: ^2.2.5
         version: 2.2.5
+      php-runtime:
+        specifier: workspace:*
+        version: link:../../packages/php-runtime
+      python-runtime:
+        specifier: workspace:*
+        version: link:../../packages/python-runtime
+      rust-runtime:
+        specifier: workspace:*
+        version: link:../../packages/rust-runtime
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.4
       testing:
         specifier: workspace:*
         version: link:../../packages/testing
-      testing-dotnet:
+      typescript-runtime:
         specifier: workspace:*
-        version: link:../../packages/testing-dotnet
-      testing-gleam:
-        specifier: workspace:*
-        version: link:../../packages/testing-gleam
-      testing-go:
-        specifier: workspace:*
-        version: link:../../packages/testing-go
-      testing-javascript:
-        specifier: workspace:*
-        version: link:../../packages/testing-javascript
-      testing-php:
-        specifier: workspace:*
-        version: link:../../packages/testing-php
-      testing-python:
-        specifier: workspace:*
-        version: link:../../packages/testing-python
-      testing-rust:
-        specifier: workspace:*
-        version: link:../../packages/testing-rust
-      testing-typescript:
-        specifier: workspace:*
-        version: link:../../packages/testing-typescript
+        version: link:../../packages/typescript-runtime
     devDependencies:
       '@iconify-json/lucide':
         specifier: ^1.1.198
@@ -124,18 +124,7 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
-  packages/libs: {}
-
-  packages/testing:
-    dependencies:
-      fast-deep-equal:
-        specifier: ^3.1.3
-        version: 3.1.3
-      libs:
-        specifier: workspace:*
-        version: link:../libs
-
-  packages/testing-dotnet:
+  packages/dotnet-runtime:
     dependencies:
       libs:
         specifier: workspace:*
@@ -154,7 +143,7 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
-  packages/testing-gleam:
+  packages/gleam-runtime:
     dependencies:
       libs:
         specifier: workspace:*
@@ -170,7 +159,7 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
-  packages/testing-go:
+  packages/go-runtime:
     dependencies:
       libs:
         specifier: workspace:*
@@ -189,7 +178,7 @@ importers:
         specifier: ^3.9.1
         version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
 
-  packages/testing-javascript:
+  packages/javascript-runtime:
     dependencies:
       libs:
         specifier: workspace:*
@@ -198,7 +187,9 @@ importers:
         specifier: workspace:*
         version: link:../testing
 
-  packages/testing-php:
+  packages/libs: {}
+
+  packages/php-runtime:
     dependencies:
       '@php-wasm/web':
         specifier: ^0.7.20
@@ -217,7 +208,7 @@ importers:
         specifier: ^3.9.1
         version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
 
-  packages/testing-python:
+  packages/python-runtime:
     dependencies:
       libs:
         specifier: workspace:*
@@ -239,7 +230,7 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(vite@5.3.3(@types/node@20.14.2))
 
-  packages/testing-rust:
+  packages/rust-runtime:
     dependencies:
       '@bjorn3/browser_wasi_shim':
         specifier: ^0.3.0
@@ -258,7 +249,16 @@ importers:
         specifier: ^3.9.1
         version: 3.9.1(@types/node@20.14.2)(rollup@4.18.0)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.2))
 
-  packages/testing-typescript:
+  packages/testing:
+    dependencies:
+      fast-deep-equal:
+        specifier: ^3.1.3
+        version: 3.1.3
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+
+  packages/typescript-runtime:
     dependencies:
       typescript:
         specifier: 5.5.3

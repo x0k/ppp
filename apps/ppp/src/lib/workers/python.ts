@@ -1,13 +1,13 @@
 import type { Context } from "libs/context";
 import { createLogger, type Logger } from "libs/logger";
 import type { TestRunnerFactory } from "testing";
-import { PyTestRunner, pyRuntimeFactory } from "testing-python";
+import { PyTestRunner, pyRuntimeFactory } from "python-runtime";
 import { startTestRunnerActor } from "testing/actor";
 
 // @ts-ignore
-import wasmUrl from "testing-python/pyodide.wasm";
+import wasmUrl from "python-runtime/pyodide.wasm";
 // @ts-ignore
-import stdlibUrl from "testing-python/python-stdlib.zip";
+import stdlibUrl from "python-runtime/python-stdlib.zip";
 
 export interface UniversalFactoryData<I, O> {
   createLogger: typeof createLogger;

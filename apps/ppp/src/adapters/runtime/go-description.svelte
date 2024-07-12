@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version } from "testing-go/version";
+  import { version } from "go-runtime/version";
 </script>
 
 <p>

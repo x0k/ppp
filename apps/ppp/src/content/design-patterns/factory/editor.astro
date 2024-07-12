@@ -10,7 +10,7 @@ const { contentId } = Astro.props;
 
 <script>
   import { makeRemoteTestRunnerFactory } from "testing/actor";
-  import { makeExecutionCode } from "testing-dotnet";
+  import { makeExecutionCode } from "dotnet-runtime";
 
   import JsWorker from "@/lib/workers/js?worker";
   import TsWorker from "@/lib/workers/ts?worker";
