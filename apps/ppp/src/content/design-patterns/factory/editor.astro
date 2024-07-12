@@ -9,6 +9,17 @@ const { contentId } = Astro.props;
 <div id="editor-placeholder" data-content-id={contentId}></div>
 
 <script>
+  import { makeRemoteTestRunnerFactory } from "testing/actor";
+  import { makeExecutionCode } from "testing-dotnet";
+
+  import JsWorker from "@/lib/workers/js?worker";
+  import TsWorker from "@/lib/workers/ts?worker";
+  import PhpWorker from "@/lib/workers/php?worker";
+  import PyWorker from "@/lib/workers/python?worker";
+  import GoWorker from "@/lib/workers/go?worker";
+  import RustWorker from "@/lib/workers/rust?worker";
+  import GleamWorker from "@/lib/workers/gleam?worker";
+  import { makeDotnetTestRunnerFactory } from "@/lib/factories/dotnet";
   import { Language } from "@/shared/languages";
   import { mountEditor } from "@/components/svelte-editor";
 
@@ -20,35 +31,48 @@ const { contentId } = Astro.props;
   import { goCode, goFactory } from "./go";
   import { rustCode, rustFactory } from "./rust";
   import { gleamCode, gleamFactory } from "./gleam";
+  import { csCode, csExecutionCode, csDefinitions } from "./csharp";
 
   mountEditor(testsData, {
     [Language.JavaScript]: {
       initialValue: jsCode,
-      factory: jsFactory,
+      factory: makeRemoteTestRunnerFactory(JsWorker, jsFactory),
     },
     [Language.TypeScript]: {
       initialValue: tsCode,
-      factory: tsFactory,
+      factory: makeRemoteTestRunnerFactory(TsWorker, tsFactory),
     },
     [Language.PHP]: {
       initialValue: phpCode,
-      factory: phpFactory,
+      factory: makeRemoteTestRunnerFactory(PhpWorker, phpFactory),
     },
     [Language.Python]: {
       initialValue: pyCode,
-      factory: pyFactory,
+      factory: makeRemoteTestRunnerFactory(PyWorker, pyFactory),
     },
     [Language.Go]: {
       initialValue: goCode,
-      factory: goFactory,
+      factory: makeRemoteTestRunnerFactory(GoWorker, goFactory),
     },
     [Language.Rust]: {
       initialValue: rustCode,
-      factory: rustFactory,
+      factory: makeRemoteTestRunnerFactory(RustWorker, rustFactory),
     },
     [Language.Gleam]: {
       initialValue: gleamCode,
-      factory: gleamFactory,
+      factory: makeRemoteTestRunnerFactory(GleamWorker, gleamFactory),
+    },
+    [Language.CSharp]: {
+      initialValue: csCode,
+      factory: makeDotnetTestRunnerFactory({
+        executionCode: makeExecutionCode({
+          using: {
+            serialization: true,
+          },
+          executionCode: csExecutionCode,
+          additionalDefinitions: csDefinitions,
+        }),
+      }),
     },
   });
 </script>

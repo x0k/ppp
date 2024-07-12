@@ -27,7 +27,6 @@
     in
     {
       devShells.${system}.default = pkgs.mkShell {
-        inherit nixpkgs;
         buildInputs = [
           mk.packages.${system}.default
           pkgs.nodejs
@@ -44,8 +43,9 @@
           pkgs.llvmPackages.bintools
           pkgs.wasm-pack
           pkgs.gleam
+          pkgs.dotnet-sdk_8
         ];
-        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+        NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
           pkgs.stdenv.cc.cc
           pkgs.xz
           pkgs.zlib

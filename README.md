@@ -9,11 +9,11 @@ git clone https://github.com/x0k/ppp.git
 git submodule update --init
 ````
 
-The artifacts saved in the repository must be created in the nix development environment.
+Artifacts saved in the repository must be created in the nix development environment.
 
 ```console
 nix develop
-mk a/build
+mk artifacts
 ```
 
 ## See also

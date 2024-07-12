@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import { fileURLToPath } from "node:url";
 
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import crossOriginIsolation from 'vite-plugin-cross-origin-isolation'
 
 import mdx from "@astrojs/mdx";
 import svelte from "@astrojs/svelte";
@@ -36,8 +37,17 @@ export default defineConfig({
             dest: "_astro",
             rename: "gleam"
           },
+          {
+            src: "node_modules/testing-dotnet/dist/compiler",
+            dest: "_astro/dotnet"
+          },
+          {
+            src: "node_modules/testing-dotnet/dist/lib",
+            dest: "_astro/dotnet"
+          },
         ],
       }),
+      crossOriginIsolation()
     ],
   },
   markdown: {

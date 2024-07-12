@@ -125,6 +125,7 @@
       ctx?.cancel();
       return;
     }
+    selectedTab = Tab.Output;
     ctx = createContext(testRunnerTimeout.value);
     isRunning = true;
     term.clear();
