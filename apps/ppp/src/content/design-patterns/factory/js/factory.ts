@@ -14,7 +14,7 @@ export const factory: UniversalFactory<
   Input,
   Output,
   UniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestRunnerFactory }) => {
+> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
   return makeTestRunnerFactory(async (m, input) =>
     m.payment(input.paymentSystem, input.base, input.amount)
   );

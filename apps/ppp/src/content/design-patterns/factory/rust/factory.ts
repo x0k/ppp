@@ -10,7 +10,7 @@ export const factory: UniversalFactory<
   Input,
   Output,
   RustUniversalFactoryData<Input, Output>
-> = ({ makeTestRunnerFactory }) => {
+> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
   const RUST_PAYMENT_SYSTEM_TYPES: Record<PaymentSystemType, string> = {
     paypal: "PaymentSystemType::PayPal",
     webmoney: "PaymentSystemType::WebMoney",

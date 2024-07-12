@@ -11,7 +11,7 @@ export interface UniversalFactoryData<M, I, O> {
   createLogger: typeof createLogger;
   compileJsModule: typeof compileJsModule;
   compileTsModule: typeof compileTsModule;
-  makeTestRunnerFactory: (
+  makeTestProgramCompiler: (
     executeTest: (m: M, input: I) => Promise<O>
   ) => TestProgramCompiler<I, O>;
 }
@@ -26,20 +26,24 @@ startTestRunnerActor<
     createLogger,
     compileJsModule,
     compileTsModule,
-    makeTestRunnerFactory: (executeTest) => {
-      class TestRunner extends JsTestProgram<unknown, unknown, unknown> {
+    makeTestProgramCompiler: (invokeTestMethod) => {
+      class TestProgram extends JsTestProgram<unknown, unknown, unknown> {
         override async executeTest(
           m: unknown,
           input: unknown
         ): Promise<unknown> {
-          return executeTest(m, input);
+          return invokeTestMethod(m, input);
         }
       }
+      const patchedConsole = redirect(globalThis.console, createLogger(out));
       return {
-        async compile(ctx, files) {
-          return new TestRunner(
-            await inContext(ctx, compileJsModule(files[0].content)),
-            redirect(globalThis.console, createLogger(out))
+        async compile(_, files) {
+          if (files.length !== 1) {
+            throw new Error("Compilation of multiple files is not implemented");
+          }
+          return new TestProgram(
+            await compileJsModule(compileTsModule(files[0].content)),
+            patchedConsole
           );
         },
         [Symbol.dispose]() {},

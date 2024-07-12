@@ -1,7 +1,8 @@
+import type { Context } from "libs/context";
 import { compileJsModule } from "libs/js";
-import { createLogger } from "libs/logger";
-import type { TestRunnerFactory } from "testing";
-import { JsTestRunner } from "javascript-runtime";
+import { createLogger, redirect } from "libs/logger";
+import type { TestProgramCompiler } from "testing";
+import { JsTestProgram } from "javascript-runtime";
 import { GleamModuleCompiler } from "gleam-runtime";
 
 // @ts-expect-error .wasm is an asset
@@ -14,29 +15,30 @@ const precompiledGleamStdlibIndexUrl = new URL(
 ).toString();
 
 export interface GleamUniversalFactoryData<M, I, O> {
-  JsTestRunner: typeof JsTestRunner;
+  JsTestProgram: typeof JsTestProgram;
   createLogger: typeof createLogger;
   compileJsModule: typeof compileJsModule;
   GleamModuleCompiler: typeof GleamModuleCompiler;
   precompiledGleamStdlibIndexUrl: string;
-  makeTestRunnerFactory: (
+  makeTestProgramCompiler: (
+    ctx: Context,
     executeTest: (m: M, input: I) => Promise<O>
-  ) => TestRunnerFactory<I, O>;
+  ) => Promise<TestProgramCompiler<I, O>>;
 }
 
 startTestRunnerActor<
   unknown,
   unknown,
   GleamUniversalFactoryData<unknown, unknown, unknown>
->((universalFactory) =>
+>((out, universalFactory) =>
   universalFactory({
-    JsTestRunner,
+    JsTestProgram,
     createLogger,
     compileJsModule,
     GleamModuleCompiler,
     precompiledGleamStdlibIndexUrl,
-    makeTestRunnerFactory: (executeTest) => {
-      class TestRunner extends JsTestRunner<unknown, unknown, unknown> {
+    makeTestProgramCompiler: async (ctx, executeTest) => {
+      class TestProgram extends JsTestProgram<unknown, unknown, unknown> {
         override async executeTest(
           m: unknown,
           input: unknown
@@ -44,13 +46,23 @@ startTestRunnerActor<
           return executeTest(m, input);
         }
       }
-      return async (_, { code, out }) => {
-        const jsCode = new GleamModuleCompiler(
-          out,
-          precompiledGleamStdlibIndexUrl,
-          await WebAssembly.compileStreaming(fetch(compilerWasmUrl))
-        ).compile(code);
-        return new TestRunner(createLogger(out), await compileJsModule(jsCode));
+      const compiler = new GleamModuleCompiler(
+        out,
+        precompiledGleamStdlibIndexUrl,
+        await WebAssembly.compileStreaming(
+          fetch(compilerWasmUrl, { signal: ctx.signal })
+        )
+      );
+      const patchedConsole = redirect(globalThis.console, createLogger(out));
+      return {
+        async compile(_, files) {
+          if (files.length !== 1) {
+            throw new Error("Compilation of multiple files is not implemented");
+          }
+          const jsCode = compiler.compile(files[0].content);
+          return new TestProgram(await compileJsModule(jsCode), patchedConsole);
+        },
+        [Symbol.dispose]() {},
       };
     },
   })

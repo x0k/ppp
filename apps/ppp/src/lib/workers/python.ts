@@ -1,7 +1,7 @@
 import type { Context } from "libs/context";
 import { createLogger, type Logger } from "libs/logger";
-import type { TestRunnerFactory } from "testing";
-import { PyTestRunner, pyRuntimeFactory } from "python-runtime";
+import type { TestProgramCompiler } from "testing";
+import { PyTestProgram, pyRuntimeFactory } from "python-runtime";
 import { startTestRunnerActor } from "testing/actor";
 
 // @ts-ignore
@@ -11,46 +11,45 @@ import stdlibUrl from "python-runtime/python-stdlib.zip";
 
 export interface UniversalFactoryData<I, O> {
   createLogger: typeof createLogger;
-  PyTestRunner: typeof PyTestRunner;
-  pyRuntimeFactory: (
+  PyTestProgram: typeof PyTestProgram;
+  makeTestProgramCompiler: (
     ctx: Context,
-    log: Logger
-  ) => ReturnType<typeof pyRuntimeFactory>;
-  makeTestRunnerFactory: (
     generateCaseExecutionCode: (input: I) => string
-  ) => TestRunnerFactory<I, O>;
+  ) => Promise<TestProgramCompiler<I, O>>;
 }
 
 startTestRunnerActor<unknown, unknown, UniversalFactoryData<unknown, unknown>>(
-  (universalFactory) =>
+  (out, universalFactory) =>
     universalFactory({
-      PyTestRunner,
+      PyTestProgram,
       createLogger,
-      pyRuntimeFactory: (ctx, log) =>
-        pyRuntimeFactory(
-          ctx,
-          log,
-          (imports) =>
-            WebAssembly.instantiateStreaming(fetch(wasmUrl), imports),
-          stdlibUrl
-        ),
-      makeTestRunnerFactory: (generateCaseExecutionCode) => {
-        class TestRunner extends PyTestRunner<unknown, unknown> {
+      makeTestProgramCompiler: async (ctx, generateCaseExecutionCode) => {
+        class TestRunner extends PyTestProgram<unknown, unknown> {
           protected override caseExecutionCode(data: unknown): string {
             return generateCaseExecutionCode(data);
           }
         }
-        return async (ctx, { code, out }) =>
-          new TestRunner(
-            await pyRuntimeFactory(
-              ctx,
-              createLogger(out),
-              (imports) =>
-                WebAssembly.instantiateStreaming(fetch(wasmUrl), imports),
-              stdlibUrl
+        const pyRuntime = await pyRuntimeFactory(
+          ctx,
+          createLogger(out),
+          (imports) =>
+            WebAssembly.instantiateStreaming(
+              fetch(wasmUrl, { signal: ctx.signal }),
+              imports
             ),
-            code
-          );
+          stdlibUrl
+        );
+        return {
+          async compile(_, files) {
+            if (files.length !== 1) {
+              throw new Error(
+                "Compilation of multiple files is not implemented"
+              );
+            }
+            return new TestRunner(pyRuntime, files[0].content);
+          },
+          [Symbol.dispose]() {},
+        };
       },
     })
 );

@@ -10,7 +10,7 @@ export const factory: UniversalFactory<
   Input,
   Output,
   UniversalFactoryData<Input, Output>
-> = ({ makeTestRunnerFactory }) => {
+> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
   const PHP_PAYMENT_SYSTEM_TYPES: Record<PaymentSystemType, string> = {
     paypal: "PaymentSystemType::PAYPAL",
     webmoney: "PaymentSystemType::WEBMONEY",

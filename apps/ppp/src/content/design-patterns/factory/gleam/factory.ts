@@ -17,7 +17,7 @@ export const factory: UniversalFactory<
   Input,
   Output,
   GleamUniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestRunnerFactory }) => {
+> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
   return makeTestRunnerFactory(async (m, input) => {
     const systems: Record<PaymentSystemType, CustomType> = {
       "cat-bank": m.CatBank,

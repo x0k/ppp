@@ -10,7 +10,7 @@ export const factory: UniversalFactory<
   Input,
   Output,
   UniversalFactoryData<Input, Output>
-> = ({ makeTestRunnerFactory }) => {
+> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
   return makeTestRunnerFactory(
     ({ paymentSystem, amount, base }) =>
       `payment("${paymentSystem}", ${base}, ${amount})`

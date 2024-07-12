@@ -1,47 +1,54 @@
+import { inContext, type Context } from "libs/context";
 import { createLogger } from "libs/logger";
-import type { TestRunnerFactory } from "testing";
+import type { TestProgramCompiler } from "testing";
 import {
-  GoTestRunner,
+  GoTestProgram,
   createCompilerFactory,
   makeGoRuntimeFactory,
-  type GoRuntimeFactory,
 } from "go-runtime";
 import { startTestRunnerActor } from "testing/actor";
+
 import wasmInit from "go-runtime/compiler.wasm?init";
 
 export interface GoUniversalFactoryData<I, O> {
   createLogger: typeof createLogger;
-  GoTestRunner: typeof GoTestRunner;
-  goRuntimeFactory: GoRuntimeFactory<O>;
-  compilerFactory: ReturnType<typeof createCompilerFactory>;
-  makeTestRunnerFactory: (
+  GoTestProgram: typeof GoTestProgram;
+  makeTestProgramCompiler: (
+    ctx: Context,
     generateCaseExecutionCode: (input: I) => string
-  ) => TestRunnerFactory<I, O>;
+  ) => Promise<TestProgramCompiler<I, O>>;
 }
-
-const compilerFactory = createCompilerFactory(wasmInit);
 
 startTestRunnerActor<
   unknown,
   unknown,
   GoUniversalFactoryData<unknown, unknown>
->((universalFactory) =>
+>((out, universalFactory) =>
   universalFactory({
-    GoTestRunner,
+    GoTestProgram,
     createLogger,
-    compilerFactory,
-    goRuntimeFactory: async (ctx, log, code) =>
-      makeGoRuntimeFactory(await compilerFactory)(ctx, log, code),
-    makeTestRunnerFactory: (generateCaseExecutionCode) => {
-      class TestRunner extends GoTestRunner<unknown, unknown> {
+    makeTestProgramCompiler: async (ctx, generateCaseExecutionCode) => {
+      class TestProgram extends GoTestProgram<unknown, unknown> {
         protected override generateCaseExecutionCode(input: unknown): string {
           return generateCaseExecutionCode(input);
         }
       }
-      return async (ctx, { code, out }) =>
-        new TestRunner(
-          await makeGoRuntimeFactory(await compilerFactory)(ctx, out, code)
-        );
+      const goRuntimeFactory = makeGoRuntimeFactory(
+        await createCompilerFactory((imports) =>
+          inContext(ctx, wasmInit(imports))
+        )
+      );
+      return {
+        async compile(ctx, files) {
+          if (files.length !== 1) {
+            throw new Error("Compilation of multiple files is not implemented");
+          }
+          return new TestProgram(
+            await goRuntimeFactory(ctx, out, files[0].content)
+          );
+        },
+        [Symbol.dispose]() {},
+      };
     },
   })
 );

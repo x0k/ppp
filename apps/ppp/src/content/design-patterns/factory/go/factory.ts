@@ -11,7 +11,7 @@ export const factory: UniversalFactory<
   Input,
   Output,
   GoUniversalFactoryData<Input, Output>
-> = ({ makeTestRunnerFactory }) => {
+> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
   const GO_PAYMENT_SYSTEM_TYPES: Record<PaymentSystemType, number> = {
     paypal: 0,
     webmoney: 1,

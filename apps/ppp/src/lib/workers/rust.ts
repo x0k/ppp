@@ -1,9 +1,9 @@
 import { COLOR_ENCODED } from "libs/logger";
 import type { Context } from "libs/context";
 import { isErr } from "libs/result";
-import type { TestRunnerFactory } from "testing";
+import type { TestProgramCompiler } from "testing";
 import { startTestRunnerActor } from "testing/actor";
-import { RustTestRunner, wasiRuntimeFactory } from "rust-runtime";
+import { RustTestProgram, wasiRuntimeFactory } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "rust-runtime/miri.wasm";
@@ -14,12 +14,13 @@ const libsUrls = import.meta.glob("/node_modules/testing-rust/dist/lib/*", {
 }) as Record<string, string>;
 
 export interface RustUniversalFactoryData<I, O> {
-  RustTestRunner: typeof RustTestRunner;
+  RustTestProgram: typeof RustTestProgram;
   wasiRuntimeFactory: typeof wasiRuntimeFactory;
-  makeTestRunnerFactory: (
+  makeTestProgramCompiler: (
+    ctx: Context,
     generateOutputContentCode: (input: I) => string,
     transformResult: (result: string) => O
-  ) => TestRunnerFactory<I, O>;
+  ) => Promise<TestProgramCompiler<I, O>>;
 }
 
 // TODO: manual cache for large assets
@@ -40,12 +41,16 @@ startTestRunnerActor<
   unknown,
   unknown,
   RustUniversalFactoryData<unknown, unknown>
->((universalFactory) =>
+>((out, universalFactory) =>
   universalFactory({
-    RustTestRunner,
+    RustTestProgram,
     wasiRuntimeFactory,
-    makeTestRunnerFactory: (generateOutputContentCode, transformResult) => {
-      class TestRunner extends RustTestRunner<unknown, unknown> {
+    makeTestProgramCompiler: async (
+      ctx,
+      generateOutputContentCode,
+      transformResult
+    ) => {
+      class TestProgram extends RustTestProgram<unknown, unknown> {
         protected override generateOutputContentCode(input: unknown): string {
           return generateOutputContentCode(input);
         }
@@ -53,35 +58,47 @@ startTestRunnerActor<
           return transformResult(data);
         }
       }
-      return async (ctx, { code, out }) =>
-        new TestRunner(
-          code,
-          wasiRuntimeFactory(
-            out,
-            {
-              write(text) {
-                let r = out.write(COLOR_ENCODED.ERROR);
-                if (isErr(r)) {
-                  return r;
-                }
-                const r2 = out.write(text);
-                if (isErr(r2)) {
-                  return r2;
-                }
-                r = out.write(COLOR_ENCODED.RESET);
-                if (isErr(r)) {
-                  return r;
-                }
-                return r2;
-              },
-            },
-            await loadLibs(ctx)
-          ),
-          await WebAssembly.compileStreaming(
-            fetch(miriWasmUrl, { signal: ctx.signal, cache: "force-cache" })
-          ),
-          "case_output"
-        );
+      const [miri, libs] = await Promise.all([
+        await WebAssembly.compileStreaming(
+          fetch(miriWasmUrl, { signal: ctx.signal, cache: "force-cache" })
+        ),
+        loadLibs(ctx),
+      ]);
+      const wasi = wasiRuntimeFactory(
+        out,
+        {
+          write(text) {
+            let r = out.write(COLOR_ENCODED.ERROR);
+            if (isErr(r)) {
+              return r;
+            }
+            const r2 = out.write(text);
+            if (isErr(r2)) {
+              return r2;
+            }
+            r = out.write(COLOR_ENCODED.RESET);
+            if (isErr(r)) {
+              return r;
+            }
+            return r2;
+          },
+        },
+        libs
+      );
+      return {
+        async compile(_, files) {
+          if (files.length !== 1) {
+            throw new Error("Compilation of multiple files is not implemented");
+          }
+          return new TestProgram(
+            files[0].content,
+            wasi,
+            miri,
+            "case_output"
+          );
+        },
+        [Symbol.dispose]() {},
+      };
     },
   })
 );

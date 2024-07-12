@@ -1,30 +1,40 @@
-import type { TestRunnerFactory } from "testing";
-import { FailSafePHP, PHPTestRunner, phpRuntimeFactory } from "php-runtime";
+import type { TestProgramCompiler } from "testing";
+import { FailSafePHP, PHPTestProgram, phpRuntimeFactory } from "php-runtime";
 import { startTestRunnerActor } from "testing/actor";
 
 export interface UniversalFactoryData<I, O> {
-  PHPTestRunner: typeof PHPTestRunner;
+  PHPTestProgram: typeof PHPTestProgram;
   FailSafePHP: typeof FailSafePHP;
   phpRuntimeFactory: typeof phpRuntimeFactory;
-  makeTestRunnerFactory: (
+  makeTestProgramCompiler: (
     generateCaseExecutionCode: (input: I) => string
-  ) => TestRunnerFactory<I, O>;
+  ) => TestProgramCompiler<I, O>;
 }
 
 startTestRunnerActor<unknown, unknown, UniversalFactoryData<unknown, unknown>>(
-  (universalFactory) =>
+  (out, universalFactory) =>
     universalFactory({
-      PHPTestRunner,
+      PHPTestProgram,
       FailSafePHP,
       phpRuntimeFactory,
-      makeTestRunnerFactory: (generateCaseExecutionCode) => {
-        class TestRunner extends PHPTestRunner<unknown, unknown> {
+      makeTestProgramCompiler: (generateCaseExecutionCode) => {
+        class TestProgram extends PHPTestProgram<unknown, unknown> {
           protected override caseExecutionCode(data: unknown): string {
             return generateCaseExecutionCode(data);
           }
         }
-        return async (_, { code, out }) =>
-          new TestRunner(out, new FailSafePHP(phpRuntimeFactory), code);
+        const failSafePhp = new FailSafePHP(phpRuntimeFactory);
+        return {
+          async compile (_, files) {
+            if (files.length !== 1) {
+              throw new Error("Compilation of multiple files is not implemented");
+            }
+            return new TestProgram(out, failSafePhp, files[0].content);
+          },
+          [Symbol.dispose]() {
+            failSafePhp[Symbol.dispose]();
+          },
+        }
       },
     })
 );
