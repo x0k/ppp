@@ -21,7 +21,7 @@ const precompiledLibsIndexUrl = new URL(
   globalThis.location.origin
 ).toString();
 
-const libs = [
+export const LIBS = [
   "Humanizer.dll",
   "Microsoft.Bcl.AsyncInterfaces.dll",
   "Microsoft.CSharp.dll",
@@ -205,7 +205,7 @@ const libs = [
   "System.dll",
   "WebAssembly.dll",
   // "WindowsBase.dll",
-  "compiler.dll",
+  // "compiler.dll",
   "mscorlib.dll",
   "netstandard.dll",
 ];
@@ -238,7 +238,7 @@ export function makeDotnetTestRunnerFactory<I, O>({
         ctx,
         new DotnetCompilerFactory(log, compilerModule).create(
           precompiledLibsIndexUrl,
-          libs
+          LIBS
         )
       );
       const runtime = new DotnetRuntimeFactory(compiler).create(
