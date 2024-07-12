@@ -37,10 +37,10 @@ export default defineConfig({
             dest: "_astro",
             rename: "gleam"
           },
-        ],
-      }),
-      viteStaticCopy({
-        targets: [
+          {
+            src: "node_modules/testing-dotnet/dist/compiler",
+            dest: "_astro/dotnet"
+          },
           {
             src: "node_modules/testing-dotnet/dist/lib",
             dest: "_astro/dotnet"

@@ -9,11 +9,12 @@ import {
   type DotnetModule,
   type CompilerModuleImports,
   type CompilerModuleExports,
-  makeExecutionCode,
 } from "testing-dotnet";
-import { dotnet } from "testing-dotnet/compiler/dotnet.js";
 
-export { makeExecutionCode };
+const dotnetUrl = new URL(
+  import.meta.env.BASE_URL + "/_astro/dotnet/compiler/dotnet.js",
+  globalThis.location.origin
+).toString();
 
 const precompiledLibsIndexUrl = new URL(
   import.meta.env.BASE_URL + "/_astro/dotnet/lib",
@@ -215,21 +216,24 @@ export interface Options {
   executionCode: string;
 }
 
-export function makeTestRunnerFactory<I, O>({
+export function makeDotnetTestRunnerFactory<I, O>({
   typeFullName = "test.Test",
   methodName = "Execute",
   executionCode,
 }: Options): TestRunnerFactory<I, O> {
   return async (ctx, { code, out }) => {
+    const { dotnet } = await inContext(
+      ctx,
+      import(/* @vite-ignore */ dotnetUrl)
+    );
     const log = createLogger(out);
-    // @ts-expect-error lack of types
-    const compilerModule: DotnetModule<
-      CompilerModuleImports,
-      CompilerModuleExports
-    > = await inContext(ctx, dotnet.create());
     const patchedConsole = redirect(globalThis.console, log);
     const recover = patch(globalThis, "console", patchedConsole);
     try {
+      const compilerModule: DotnetModule<
+        CompilerModuleImports,
+        CompilerModuleExports
+      > = await inContext(ctx, dotnet.create());
       const compiler = await inContext(
         ctx,
         new DotnetCompilerFactory(log, compilerModule).create(
@@ -241,12 +245,7 @@ export function makeTestRunnerFactory<I, O>({
         code,
         executionCode
       );
-      return new DotnetTestRunner<I, O>(
-        typeFullName,
-        methodName,
-        runtime,
-        patchedConsole
-      );
+      return new DotnetTestRunner<I, O>(typeFullName, methodName, runtime);
     } finally {
       recover();
     }

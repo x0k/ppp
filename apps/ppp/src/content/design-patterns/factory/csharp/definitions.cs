@@ -1,9 +1,9 @@
 struct Args {
   [JsonPropertyName("base")]
-  public int Base;
+  public int Base { get; set; }
   [JsonPropertyName("amount")]
-  public int Amount;
+  public int Amount { get; set; }
 
-  [JsonPropertyName("paymentType")]
-  public string PaymentType;
+  [JsonPropertyName("paymentSystem")]
+  public string SystemType { get; set; }
 }

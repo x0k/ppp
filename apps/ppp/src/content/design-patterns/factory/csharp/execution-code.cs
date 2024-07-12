@@ -1,5 +1,5 @@
 var args = JsonSerializer.Deserialize<Args>(jsonArguments);
-var type = args.PaymentType switch {
+var type = args.SystemType switch {
   "paypal" => payment.SystemType.PayPal,
   "webmoney" => payment.SystemType.WebMoney,
   "catbank" => payment.SystemType.CatBank,
