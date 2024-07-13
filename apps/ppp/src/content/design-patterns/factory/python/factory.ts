@@ -1,18 +1,22 @@
+import { makeRemoteTestCompilerFactory } from "testing/actor";
+
+import Worker from "@/adapters/runtime/python/test-worker?worker";
+
 // Only type imports are allowed
 
-import type { UniversalFactory } from "testing/actor";
+import type { TestCompilerFactory } from "testing";
 
-import type { UniversalFactoryData } from "@/lib/workers/python";
+import type { PythonTestWorkerConfig } from "@/adapters/runtime/python/test-worker";
 
 import type { Input, Output } from "../tests-data";
 
-export const factory: UniversalFactory<
-  Input,
-  Output,
-  UniversalFactoryData<Input, Output>
-> = ({ makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(
-    ({ paymentSystem, amount, base }) =>
-      `payment("${paymentSystem}", ${base}, ${amount})`
+export const factory: TestCompilerFactory<Input, Output> =
+  makeRemoteTestCompilerFactory(
+    Worker,
+    (ctx, { pythonTestCompilerFactory }: PythonTestWorkerConfig) =>
+      pythonTestCompilerFactory.create(
+        ctx,
+        ({ paymentSystem, amount, base }) =>
+          `payment("${paymentSystem}", ${base}, ${amount})`
+      )
   );
-};

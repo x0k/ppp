@@ -1,7 +1,12 @@
-// Only type imports are allowed
-import type { UniversalFactory } from "testing/actor";
+import { makeRemoteTestCompilerFactory } from "testing/actor";
 
-import type { UniversalFactoryData } from "@/lib/workers/js";
+import Worker from "@/adapters/runtime/js/test-worker?worker";
+
+// Only type imports are allowed
+
+import type { TestCompilerFactory } from "testing";
+
+import type { JsTestWorkerConfig } from "@/adapters/runtime/js/test-worker";
 
 import type { Input, Output } from "../tests-data";
 import type { PaymentSystemType } from "../reference";
@@ -10,12 +15,11 @@ interface TestingModule {
   payment(type: PaymentSystemType, base: number, amount: number): number;
 }
 
-export const factory: UniversalFactory<
-  Input,
-  Output,
-  UniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(async (m, input) =>
-    m.payment(input.paymentSystem, input.base, input.amount)
+export const factory: TestCompilerFactory<Input, Output> =
+  makeRemoteTestCompilerFactory(
+    Worker,
+    async (_, { jsTestCompilerFactory }: JsTestWorkerConfig) =>
+      jsTestCompilerFactory.create(async (m: TestingModule, input) =>
+        m.payment(input.paymentSystem, input.base, input.amount)
+      )
   );
-};

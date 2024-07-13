@@ -2,7 +2,7 @@ export interface Context {
   signal: AbortSignal;
   canceled: boolean;
   cancel(): void;
-  onCancel(cb: () => void): () => void;
+  onCancel(cb: () => void): Disposable;
 }
 
 export function createContext(timeoutInMs = 0): Context {
@@ -19,7 +19,9 @@ export function createContext(timeoutInMs = 0): Context {
     },
     onCancel(cb) {
       ctrl.signal.addEventListener("abort", cb);
-      return () => ctrl.signal.removeEventListener("abort", cb);
+      return {
+       [Symbol.dispose]: () => ctrl.signal.removeEventListener("abort", cb)
+      }
     },
     cancel() {
       ctrl.abort();
@@ -68,9 +70,9 @@ export function inContext<T>(ctx: Context, promise: Promise<T>): Promise<T> {
       reject(CANCELED_ERROR);
       return;
     }
-    const dispose = ctx.onCancel(() => {
+    const disposable = ctx.onCancel(() => {
       reject(CANCELED_ERROR);
     });
-    promise.then(resolve, reject).finally(dispose);
+    promise.then(resolve, reject).finally(disposable[Symbol.dispose]);
   });
 }

@@ -1,7 +1,7 @@
-[submodule "packages/testing-rust/rust"]
-	path = packages/testing-rust/rust
+[submodule "packages/rust-runtime/rust"]
+	path = packages/rust-runtime/rust
 	url = https://github.com/bjorn3/rust
 	branch = compile_rustc_for_wasm15
-[submodule "packages/testing-gleam/gleam"]
-	path = packages/testing-gleam/gleam
+[submodule "packages/gleam-runtime/gleam"]
+	path = packages/gleam-runtime/gleam
 	url = https://github.com/gleam-lang/gleam.git

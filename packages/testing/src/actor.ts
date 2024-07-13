@@ -11,21 +11,24 @@ import {
   type OutgoingMessage,
 } from "libs/actor";
 import { stringifyError } from "libs/error";
-import { compileJsModule } from 'libs/js'
-
-import type { TestRunner, TestRunnerFactory } from "./model.js";
+import { compileJsModule } from "libs/js";
+import type { File } from "libs/compiler";
+import type { Writer } from "libs/io";
 import { ok } from "libs/result";
 
-export interface WorkerInitConfig {
-  code: string;
+import type { TestProgram, TestCompiler } from "./model.js";
+
+export interface InitConfig {
   universalFactoryFunction: string;
 }
 
 interface Handlers<I, O> {
   [key: string]: any;
-  init(config: WorkerInitConfig): Promise<void>;
+  init(config: InitConfig): Promise<void>;
+  compile(files: File[]): Promise<void>;
+  test(data: I): Promise<O>;
   cancel(): void;
-  run(data: I): Promise<O>;
+  dispose(): void;
 }
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
@@ -40,51 +43,67 @@ type Outgoing<I, O> =
 
 async function evalEntity<T>(functionStr: string) {
   const moduleStr = `export default ${functionStr}`;
-  const mod = await compileJsModule<{ default: T }>(moduleStr)
+  const mod = await compileJsModule<{ default: T }>(moduleStr);
   return mod.default;
 }
 
-export type UniversalFactory<I, O, D> = (data: D) => TestRunnerFactory<I, O>;
+export type UniversalFactory<D, I, O> = (
+  ctx: Context,
+  data: D
+) => Promise<TestCompiler<I, O>>;
 
-export type SuperFactory<I, O, D> = (
-  universalFactory: UniversalFactory<I, O, D>
-) => TestRunnerFactory<I, O>;
+export type TestCompilerFactory<D, I, O> = (
+  ctx: Context,
+  out: Writer,
+  universalFactory: UniversalFactory<D, I, O>
+) => Promise<TestCompiler<I, O>>;
 
-class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
+class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
   private ctx: Context = createContext();
-  private runner: TestRunner<I, O> | null = null;
+  private testProgramCompiler: TestCompiler<I, O> | null = null;
+  private testProgram: TestProgram<I, O> | null = null;
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
-    superFactory: SuperFactory<I, O, D>
+    superFactory: TestCompilerFactory<D, I, O>
   ) {
     const handlers: Handlers<I, O> = {
-      init: async ({ code, universalFactoryFunction }) => {
-        const universalFactory = await evalEntity<UniversalFactory<I, O, D>>(
+      init: async ({ universalFactoryFunction }) => {
+        const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
           universalFactoryFunction
         );
-        const factory = superFactory(universalFactory);
-        this.runner = await factory(this.ctx, {
-          code,
-          out: {
-            write(buffer) {
-              // TODO: synchronously wait for response
-              connection.send({
-                type: MessageType.Event,
-                event: "write",
-                payload: buffer,
-              });
-              return ok(buffer.length);
-            },
+        const out: Writer = {
+          write(buffer) {
+            // TODO: synchronously wait for response
+            connection.send({
+              type: MessageType.Event,
+              event: "write",
+              payload: buffer,
+            });
+            return ok(buffer.length);
           },
-        });
+        };
+        this.testProgramCompiler = await superFactory(
+          this.ctx,
+          out,
+          universalFactory
+        );
+      },
+      compile: async (files) => {
+        if (this.testProgramCompiler === null) {
+          throw new Error("Test runner not initialized");
+        }
+        this.testProgram = await this.testProgramCompiler.compile(
+          this.ctx,
+          files
+        );
       },
       cancel: () => {
         this.ctx.cancel();
         this.ctx = createContext();
       },
-      run: (input) => {
-        if (!this.runner) {
+      test: (input) => {
+        if (!this.testProgram) {
           const err = new Error("Test runner not initialized");
           connection.send({
             type: MessageType.Event,
@@ -93,20 +112,26 @@ class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
           });
           throw err;
         }
-        return this.runner.run(this.ctx, input);
+        return this.testProgram.run(this.ctx, input);
+      },
+      dispose: () => {
+        if (!this.testProgram) {
+          return;
+        }
+        this.testProgram[Symbol.dispose]();
       },
     };
     super(connection, handlers, stringifyError);
   }
 }
 
-export function startTestRunnerActor<I, O, D>(
-  superFactory: SuperFactory<I, O, D>
+export function startTestCompilerActor<D, I = unknown, O = unknown>(
+  superFactory: TestCompilerFactory<D, I, O>
 ) {
   const connection = new WorkerConnection<Incoming<I, O>, Outgoing<I, O>>(
     self as unknown as Worker
   );
-  const actor = new TestRunnerActor(connection, superFactory);
+  const actor = new TestCompilerActor(connection, superFactory);
   const stopConnection = connection.start();
   const stopActor = actor.start();
   return () => {
@@ -119,11 +144,11 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export function makeRemoteTestRunnerFactory<I, O, D>(
+export function makeRemoteTestCompilerFactory<D, I, O>(
   Worker: WorkerConstructor,
-  universalFactory: (data: D) => TestRunnerFactory<I, O>
-): TestRunnerFactory<I, O> {
-  return async (ctx, { code, out }) => {
+  universalFactory: UniversalFactory<D, I, O>
+) {
+  return async (ctx: Context, out: Writer): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
     const connection = new WorkerConnection<Outgoing<I, O>, Incoming<I, O>>(
       worker
@@ -147,14 +172,13 @@ export function makeRemoteTestRunnerFactory<I, O, D>(
       stopConnection();
       worker.terminate();
     };
-    const clear = ctx.onCancel(() => {
+    const cancelSubscription = ctx.onCancel(() => {
       remote.cancel();
     });
     try {
       await inContext(
         ctx,
         remote.init({
-          code,
           universalFactoryFunction: universalFactory.toString(),
         })
       );
@@ -162,17 +186,32 @@ export function makeRemoteTestRunnerFactory<I, O, D>(
       dispose();
       throw err;
     } finally {
-      clear();
+      cancelSubscription[Symbol.dispose]();
     }
     return {
-      async run(ctx, input) {
-        const clear = ctx.onCancel(() => {
+      async compile(ctx, files) {
+        const cancelSubscription = ctx.onCancel(() => {
           remote.cancel();
         });
         try {
-          return inContext(ctx, remote.run(input));
+          await inContext(ctx, remote.compile(files));
+          return {
+            async run(ctx, input) {
+              const cancelSubscription = ctx.onCancel(() => {
+                remote.cancel();
+              });
+              try {
+                return await inContext(ctx, remote.test(input));
+              } finally {
+                cancelSubscription[Symbol.dispose]();
+              }
+            },
+            [Symbol.dispose]() {
+              void remote.dispose();
+            },
+          };
         } finally {
-          clear();
+          cancelSubscription[Symbol.dispose]();
         }
       },
       [Symbol.dispose]: dispose,

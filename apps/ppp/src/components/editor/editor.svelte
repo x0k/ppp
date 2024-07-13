@@ -1,10 +1,9 @@
 <script lang="ts" context="module">
   import type { ComponentType, SvelteComponent } from 'svelte';
-  import type { TestData, TestRunnerFactory } from "testing";
-
+  import type { TestCase, TestCompilerFactory } from "testing";
   export interface Runtime<I, O> {
     initialValue: string;
-    testRunnerFactory: TestRunnerFactory<I, O>;
+    testRunnerFactory: TestCompilerFactory<I, O>;
     // TODO: According to https://svelte-5-preview.vercel.app/docs/breaking-changes#components-are-no-longer-classes-component-typing-changes
     // this type should be just `Component`.
     Description: ComponentType<SvelteComponent<Record<string, never>>>;
@@ -12,7 +11,7 @@
 
   export interface Props<L extends Language, I, O> {
     contentId: string;
-    testsData: TestData<I, O>[];
+    testCases: TestCase<I, O>[];
     runtimes: Record<L, Runtime<I, O>>
   }
 </script>
@@ -37,7 +36,7 @@
 
   const {
     contentId,
-    testsData,
+    testCases,
     runtimes,
   }: Props<Lang, Input, Output> = $props();
 
@@ -120,8 +119,8 @@
     <Panel
       {api}
       {model}
-      {testsData}
-      testRunnerFactory={runtime.testRunnerFactory}
+      {testCases}
+      testCompilerFactory={runtime.testRunnerFactory}
       children={resizer}
     >
       {#snippet header()}

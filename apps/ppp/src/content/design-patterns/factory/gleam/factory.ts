@@ -1,7 +1,13 @@
-import type { UniversalFactory } from "testing/actor";
-import type { CustomType } from 'testing-gleam/stdlib/gleam.mjs'
+import { makeRemoteTestCompilerFactory } from "testing/actor";
 
-import type { GleamUniversalFactoryData } from "@/lib/workers/gleam";
+import Worker from "@/adapters/runtime/gleam/test-worker?worker";
+
+// Only type imports are allowed
+
+import type { TestCompilerFactory } from "testing";
+import type { CustomType } from "gleam-runtime/stdlib/gleam.mjs";
+
+import type { GleamTestWorkerConfig } from "@/adapters/runtime/gleam/test-worker";
 
 import type { PaymentSystemType } from "../reference";
 import type { Input, Output } from "../tests-data";
@@ -13,17 +19,20 @@ interface TestingModule {
   payment(type: CustomType, base: number, amount: number): number;
 }
 
-export const factory: UniversalFactory<
-  Input,
-  Output,
-  GleamUniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(async (m, input) => {
-    const systems: Record<PaymentSystemType, CustomType> = {
-      "cat-bank": m.CatBank,
-      paypal: m.PayPal,
-      webmoney: m.WebMoney,
-    };
-    return m.payment(systems[input.paymentSystem], input.base, input.amount);
-  });
-};
+export const factory: TestCompilerFactory<Input, Output> =
+  makeRemoteTestCompilerFactory(
+    Worker,
+    (ctx, { gleamTestCompilerFactory }: GleamTestWorkerConfig) =>
+      gleamTestCompilerFactory.create(ctx, async (m: TestingModule, input) => {
+        const systems: Record<PaymentSystemType, CustomType> = {
+          "cat-bank": m.CatBank,
+          paypal: m.PayPal,
+          webmoney: m.WebMoney,
+        };
+        return m.payment(
+          systems[input.paymentSystem],
+          input.base,
+          input.amount
+        );
+      })
+  );

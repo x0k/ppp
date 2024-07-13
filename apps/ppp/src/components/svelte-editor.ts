@@ -1,25 +1,25 @@
 import { mount } from "svelte";
 
-import type { TestData, TestRunnerFactory } from "testing";
+import type { TestCase, TestCompilerFactory } from "testing";
 
 import { Language } from "@/shared/languages";
 import Editor, {
   type Props,
   type Runtime,
 } from "@/components/editor/editor.svelte";
-import { DESCRIPTIONS } from "@/adapters/runtime";
+import { DESCRIPTIONS } from "@/adapters/runtime/descriptions";
 
 export function mountEditor<L extends Language, I, O>(
-  testsData: TestData<I, O>[],
+  testCases: TestCase<I, O>[],
   runtimes: Record<
     L,
-    { initialValue: string; factory: TestRunnerFactory<I, O> }
+    { initialValue: string; factory: TestCompilerFactory<I, O> }
   >
 ) {
   const element = document.getElementById("editor-placeholder")!;
   const props = {
     contentId: element.dataset.contentId!,
-    testsData,
+    testCases,
     runtimes: Object.fromEntries(
       Object.keys(runtimes).map(
         (lang) =>

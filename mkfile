@@ -22,26 +22,38 @@ libs/:
     pnpm run build
   popd
 
+testing/:
+  pushd packages/testing
+  b:
+    pnpm run build
+  popd
+
 js/:
-  pushd packages/testing-javascript
+  pushd packages/javascript-runtime
   b:
     pnpm run build
   popd
 
 ts/:
-  pushd packages/testing-typescript
+  pushd packages/typescript-runtime
   b:
     pnpm run build
   popd
 
 php/:
-  pushd packages/testing-php
+  pushd packages/php-runtime
+  b:
+    pnpm run build
+  popd
+
+python/:
+  pushd packages/python-runtime
   b:
     pnpm run build
   popd
 
 go/:
-  pushd packages/testing-go
+  pushd packages/go-runtime
   p:
     bun run probe/index.ts
   b:
@@ -55,7 +67,7 @@ go/:
   popd
 
 rust/:
-  pushd packages/testing-rust
+  pushd packages/rust-runtime
   p:
     bun run probe/index.ts
   b:
@@ -79,7 +91,7 @@ rust/:
   popd
 
 gleam/:
-  pushd packages/testing-gleam
+  pushd packages/gleam-runtime
   p:
     bun run probe/index.ts
   b:
@@ -116,7 +128,7 @@ gleam/:
   popd
 
 dotnet/:
-  pushd packages/testing-dotnet
+  pushd packages/dotnet-runtime
   b:
     pnpm run build
   artifacts: compiler/build
