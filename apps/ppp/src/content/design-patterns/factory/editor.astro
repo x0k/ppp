@@ -14,7 +14,6 @@ const { contentId } = Astro.props;
   import { Language } from "@/shared/languages";
   import { mountEditor } from "@/components/svelte-editor";
   import {
-    DotnetTestWorker,
     GleamTestWorker,
     GoTestWorker,
     JsTestWorker,
@@ -32,7 +31,7 @@ const { contentId } = Astro.props;
   import { goCode, goFactory } from "./go";
   import { rustCode, rustFactory } from "./rust";
   import { gleamCode, gleamFactory } from "./gleam";
-  import { csCode, csFactory } from "./csharp";
+  import { csCode, csFactory } from './csharp';
 
   mountEditor(testCases, {
     [Language.JavaScript]: {
@@ -65,7 +64,7 @@ const { contentId } = Astro.props;
     },
     [Language.CSharp]: {
       initialValue: csCode,
-      factory: makeRemoteTestCompilerFactory(DotnetTestWorker, csFactory),
+      factory: csFactory,
     },
   });
 </script>

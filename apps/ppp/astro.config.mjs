@@ -33,16 +33,16 @@ export default defineConfig({
       viteStaticCopy({
         targets: [
           {
-            src: "node_modules/testing-gleam/dist/precompiled",
+            src: "node_modules/gleam-runtime/dist/precompiled",
             dest: "_astro",
             rename: "gleam"
           },
           {
-            src: "node_modules/testing-dotnet/dist/compiler",
+            src: "node_modules/dotnet-runtime/dist/compiler",
             dest: "_astro/dotnet"
           },
           {
-            src: "node_modules/testing-dotnet/dist/lib",
+            src: "node_modules/dotnet-runtime/dist/lib",
             dest: "_astro/dotnet"
           },
         ],

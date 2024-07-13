@@ -18,7 +18,7 @@ export class PhpTestCompilerFactory {
       }
     }
     const failSafePhp = new FailSafePHP(phpRuntimeFactory);
-    await inContext(ctx, failSafePhp.initialize());
+    await inContext(ctx, failSafePhp.failSafeInit());
     return {
       compile: async (_, files) => {
         if (files.length !== 1) {

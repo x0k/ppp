@@ -55,6 +55,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
   }
 
   [Symbol.dispose](): void {
-    this.php[Symbol.dispose]();
+    this.result = undefined;
+    // TODO: Remove on message callback
   }
 }

@@ -8,7 +8,7 @@ import { RustTestProgram, wasiRuntimeFactory } from "rust-runtime";
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "rust-runtime/miri.wasm";
 
-const libsUrls = import.meta.glob("/node_modules/testing-rust/dist/lib/*", {
+const libsUrls = import.meta.glob("/node_modules/rust-runtime/dist/lib/*", {
   eager: true,
   import: "default",
 }) as Record<string, string>;
