@@ -1,17 +1,8 @@
 import type { editor } from "monaco-editor";
 
-import type { Context } from 'libs/context';
-import type { Writer } from 'libs/io';
-import type { TestCompiler } from 'testing';
-
 import { Language } from "@/shared/languages";
 import { createSyncStorage } from "@/adapters/storage";
 import { reactive } from "@/adapters/storage.svelte";
-
-export type TestCompilerFactory<I, O> = (
-  ctx: Context,
-  out: Writer,
-) => Promise<TestCompiler<I, O>>;
 
 export interface SurfaceApi {
   editor: editor.IStandaloneCodeEditor | undefined;

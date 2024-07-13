@@ -14,9 +14,10 @@
     runTests,
     type TestCase,
     type TestCompiler,
+    type TestCompilerFactory,
   } from "testing";
   
-  import { testRunnerTimeout, type SurfaceApi, type TestCompilerFactory } from '../model';
+  import { testRunnerTimeout, type SurfaceApi } from '../model';
   import { Tab } from './model';
   import { makeTheme } from './terminal'
 

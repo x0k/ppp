@@ -1,13 +1,12 @@
 import { mount } from "svelte";
 
-import type { TestCase } from "testing";
+import type { TestCase, TestCompilerFactory } from "testing";
 
 import { Language } from "@/shared/languages";
 import Editor, {
   type Props,
   type Runtime,
 } from "@/components/editor/editor.svelte";
-import type { TestCompilerFactory } from '@/components/editor/model'
 import { DESCRIPTIONS } from "@/adapters/runtime/descriptions";
 
 export function mountEditor<L extends Language, I, O>(

@@ -1,9 +1,6 @@
 <script lang="ts" context="module">
   import type { ComponentType, SvelteComponent } from 'svelte';
-  import type { TestCase } from "testing";
-
-  import type { TestCompilerFactory } from './model'
-
+  import type { TestCase, TestCompilerFactory } from "testing";
   export interface Runtime<I, O> {
     initialValue: string;
     testRunnerFactory: TestCompilerFactory<I, O>;

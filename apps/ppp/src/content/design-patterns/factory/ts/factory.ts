@@ -1,6 +1,10 @@
+import { makeRemoteTestCompilerFactory } from "testing/actor";
+
+import Worker from "@/adapters/runtime/ts/test-worker?worker";
+
 // Only type imports are allowed
 
-import type { UniversalFactory } from "testing/actor";
+import type { TestCompilerFactory } from 'testing';
 
 import type { TsTestWorkerConfig } from "@/adapters/runtime/ts/test-worker";
 
@@ -11,11 +15,10 @@ interface TestingModule {
   payment(type: PaymentSystemType, base: number, amount: number): number;
 }
 
-export const factory: UniversalFactory<
-  TsTestWorkerConfig,
-  Input,
-  Output
-> = async (_, { tsTestCompilerFactory }) =>
-  tsTestCompilerFactory.create(async (m: TestingModule, input: Input) =>
-    m.payment(input.paymentSystem, input.base, input.amount)
-  );
+export const factory: TestCompilerFactory<Input, Output> = makeRemoteTestCompilerFactory(
+  Worker,
+  async (_, { tsTestCompilerFactory }: TsTestWorkerConfig) =>
+    tsTestCompilerFactory.create(async (m: TestingModule, input) =>
+      m.payment(input.paymentSystem, input.base, input.amount)
+    )
+);

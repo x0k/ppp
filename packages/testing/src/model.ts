@@ -27,6 +27,11 @@ export interface TestCompiler<I, O> extends Disposable {
   compile: (ctx: Context, files: File[]) => Promise<TestProgram<I, O>>;
 }
 
+export type TestCompilerFactory<I, O> = (
+  ctx: Context,
+  out: Writer,
+) => Promise<TestCompiler<I, O>>;
+
 export async function runTests<I, O>(
   ctx: Context,
   log: Logger,

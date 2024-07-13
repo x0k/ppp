@@ -1,34 +1,18 @@
-// Only type imports are allowed
+import type { TestCompilerFactory } from "testing";
+import { makeExecutionCode } from "dotnet-runtime";
 
-import type { UniversalFactory } from "testing/actor";
-
-import type { DotnetTestWorkerConfig } from "@/adapters/runtime/dotnet/test-worker";
+import { DotnetTestCompilerFactory } from "@/adapters/runtime/dotnet/test-compiler-factory";
 
 import type { Input, Output } from "../tests-data";
 
-export const factory: UniversalFactory<
-  DotnetTestWorkerConfig,
-  Input,
-  Output
-> = (ctx, { dotnetTestCompilerFactory, makeExecutionCode }) =>
-  dotnetTestCompilerFactory.create(ctx, {
-    executionCode: makeExecutionCode({
-      additionalDefinitions: `struct Args {
-  [JsonPropertyName("base")]
-  public int Base { get; set; }
-  [JsonPropertyName("amount")]
-  public int Amount { get; set; }
+import definitions from "./definitions.cs?raw";
+import executionCode from "./execution-code.cs?raw";
 
-  [JsonPropertyName("paymentSystem")]
-  public string SystemType { get; set; }
-}`,
-      executionCode: `var args = JsonSerializer.Deserialize<Args>(jsonArguments);
-var type = args.SystemType switch {
-  "paypal" => payment.SystemType.PayPal,
-  "webmoney" => payment.SystemType.WebMoney,
-  "catbank" => payment.SystemType.CatBank,
-  _ => throw new System.Exception("Unknown payment type")
-};
-var result = payment.Payment.Execute(type, args.Base, args.Amount);`,
+export const factory: TestCompilerFactory<Input, Output> = async (ctx, out) => {
+  return new DotnetTestCompilerFactory(out).create(ctx, {
+    executionCode: makeExecutionCode({
+      additionalDefinitions: definitions,
+      executionCode: executionCode,
     }),
   });
+};

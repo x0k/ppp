@@ -9,19 +9,8 @@ const { contentId } = Astro.props;
 <div id="editor-placeholder" data-content-id={contentId}></div>
 
 <script>
-  import { makeRemoteTestCompilerFactory } from "testing/actor";
-
   import { Language } from "@/shared/languages";
   import { mountEditor } from "@/components/svelte-editor";
-  import {
-    GleamTestWorker,
-    GoTestWorker,
-    JsTestWorker,
-    PhpTestWorker,
-    PyTestWorker,
-    RustTestWorker,
-    TsTestWorker,
-  } from "@/adapters/runtime/test-workers";
 
   import { testCases } from "./tests-data";
   import { jsCode, jsFactory } from "./js";
@@ -31,36 +20,36 @@ const { contentId } = Astro.props;
   import { goCode, goFactory } from "./go";
   import { rustCode, rustFactory } from "./rust";
   import { gleamCode, gleamFactory } from "./gleam";
-  import { csCode, csFactory } from './csharp';
+  import { csCode, csFactory } from "./csharp";
 
   mountEditor(testCases, {
     [Language.JavaScript]: {
       initialValue: jsCode,
-      factory: makeRemoteTestCompilerFactory(JsTestWorker, jsFactory),
+      factory: jsFactory,
     },
     [Language.TypeScript]: {
       initialValue: tsCode,
-      factory: makeRemoteTestCompilerFactory(TsTestWorker, tsFactory),
+      factory: tsFactory,
     },
     [Language.PHP]: {
       initialValue: phpCode,
-      factory: makeRemoteTestCompilerFactory(PhpTestWorker, phpFactory),
+      factory: phpFactory,
     },
     [Language.Python]: {
       initialValue: pyCode,
-      factory: makeRemoteTestCompilerFactory(PyTestWorker, pyFactory),
+      factory: pyFactory,
     },
     [Language.Go]: {
       initialValue: goCode,
-      factory: makeRemoteTestCompilerFactory(GoTestWorker, goFactory),
+      factory: goFactory,
     },
     [Language.Rust]: {
       initialValue: rustCode,
-      factory: makeRemoteTestCompilerFactory(RustTestWorker, rustFactory),
+      factory: rustFactory,
     },
     [Language.Gleam]: {
       initialValue: gleamCode,
-      factory: makeRemoteTestCompilerFactory(GleamTestWorker, gleamFactory),
+      factory: gleamFactory,
     },
     [Language.CSharp]: {
       initialValue: csCode,
