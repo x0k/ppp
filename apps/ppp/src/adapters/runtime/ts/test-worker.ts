@@ -5,8 +5,8 @@ export interface TsTestWorkerConfig {
   tsTestCompilerFactory: TsTestCompilerFactory;
 }
 
-startTestCompilerActor<TsTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<TsTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     tsTestCompilerFactory: new TsTestCompilerFactory(out),
   })
 );

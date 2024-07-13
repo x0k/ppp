@@ -1,7 +1,8 @@
+// Only type imports are allowed
 import type { UniversalFactory } from "testing/actor";
-import type { CustomType } from 'testing-gleam/stdlib/gleam.mjs'
+import type { CustomType } from "gleam-runtime/stdlib/gleam.mjs";
 
-import type { GleamUniversalFactoryData } from "@/lib/workers/gleam";
+import type { GleamTestWorkerConfig } from "@/adapters/runtime/gleam/test-workers";
 
 import type { PaymentSystemType } from "../reference";
 import type { Input, Output } from "../tests-data";
@@ -13,12 +14,11 @@ interface TestingModule {
   payment(type: CustomType, base: number, amount: number): number;
 }
 
-export const factory: UniversalFactory<
-  Input,
-  Output,
-  GleamUniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(async (m, input) => {
+export const factory: UniversalFactory<GleamTestWorkerConfig, Input, Output> = (
+  ctx,
+  { gleamTestCompilerFactory }
+) =>
+  gleamTestCompilerFactory.create(ctx, async (m: TestingModule, input) => {
     const systems: Record<PaymentSystemType, CustomType> = {
       "cat-bank": m.CatBank,
       paypal: m.PayPal,
@@ -26,4 +26,3 @@ export const factory: UniversalFactory<
     };
     return m.payment(systems[input.paymentSystem], input.base, input.amount);
   });
-};

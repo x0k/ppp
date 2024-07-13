@@ -6,8 +6,8 @@ export interface PhpTestWorkerConfig {
   phpTestCompilerFactory: PhpTestCompilerFactory;
 }
 
-startTestCompilerActor<PhpTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<PhpTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     phpTestCompilerFactory: new PhpTestCompilerFactory(out),
   })
 );

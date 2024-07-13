@@ -6,8 +6,8 @@ export interface JsTestWorkerConfig {
   jsTestCompilerFactory: JsTestCompilerFactory;
 }
 
-startTestCompilerActor<JsTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<JsTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     jsTestCompilerFactory: new JsTestCompilerFactory(out),
   })
 );

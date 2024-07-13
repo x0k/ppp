@@ -2,7 +2,7 @@
 
 import type { UniversalFactory } from "testing/actor";
 
-import type { UniversalFactoryData } from "@/lib/workers/ts";
+import type { TsTestWorkerConfig } from "@/adapters/runtime/ts/test-worker";
 
 import type { PaymentSystemType } from "../reference";
 import type { Input, Output } from "../tests-data";
@@ -12,12 +12,10 @@ interface TestingModule {
 }
 
 export const factory: UniversalFactory<
+  TsTestWorkerConfig,
   Input,
-  Output,
-  UniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(
-    async (m: TestingModule, input: Input): Promise<Output> =>
-      m.payment(input.paymentSystem, input.base, input.amount)
+  Output
+> = async (_, { tsTestCompilerFactory }) =>
+  tsTestCompilerFactory.create(async (m: TestingModule, input: Input) =>
+    m.payment(input.paymentSystem, input.base, input.amount)
   );
-};

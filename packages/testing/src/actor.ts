@@ -47,16 +47,17 @@ async function evalEntity<T>(functionStr: string) {
   return mod.default;
 }
 
-export type UniversalFactory<D, I, O> = (data: D) => TestProgramCompiler<I, O>;
+export type UniversalFactory<D, I, O> = (ctx: Context, data: D) => Promise<TestProgramCompiler<I, O>>;
 
 export type TestCompilerFactory<D, I, O> = (
+  ctx: Context,
   out: Writer,
   universalFactory: UniversalFactory<D, I, O>
-) => TestProgramCompiler<I, O>;
+) => Promise<TestProgramCompiler<I, O>>;
 
 class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
   private ctx: Context = createContext();
-  private testProgramFactory: TestProgramCompiler<I, O> | null = null;
+  private testProgramCompiler: TestProgramCompiler<I, O> | null = null;
   private testProgram: TestProgram<I, O> | null = null;
 
   constructor(
@@ -79,13 +80,13 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
             return ok(buffer.length);
           },
         }
-        this.testProgramFactory = superFactory(out, universalFactory);
+        this.testProgramCompiler = await superFactory(this.ctx, out, universalFactory);
       },
       compile: async (files) => {
-        if (this.testProgramFactory === null) {
+        if (this.testProgramCompiler === null) {
           throw new Error("Test runner not initialized");
         }
-        this.testProgram = await this.testProgramFactory.compile(this.ctx, files);
+        this.testProgram = await this.testProgramCompiler.compile(this.ctx, files);
       },
       cancel: () => {
         this.ctx.cancel();

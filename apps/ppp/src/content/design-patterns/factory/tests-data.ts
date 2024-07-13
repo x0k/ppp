@@ -1,4 +1,4 @@
-import { testData } from "testing";
+import { testCase } from "testing";
 
 import { PaymentSystemType, payment } from "./reference";
 
@@ -10,7 +10,7 @@ export interface Input {
 
 export type Output = number;
 
-export const testsData = [
+export const testCases = [
   {
     paymentSystem: PaymentSystemType.PayPal,
     base: 1,
@@ -27,5 +27,5 @@ export const testsData = [
     amount: 1,
   },
 ].map(
-  testData((input) => payment(input.paymentSystem, input.base, input.amount))
+  testCase((input) => payment(input.paymentSystem, input.base, input.amount))
 );

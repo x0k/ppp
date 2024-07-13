@@ -2,17 +2,17 @@
 
 import type { UniversalFactory } from "testing/actor";
 
-import type { UniversalFactoryData } from "@/lib/workers/python";
+import type { PythonTestWorkerConfig } from "@/adapters/runtime/python/test-worker";
 
 import type { Input, Output } from "../tests-data";
 
 export const factory: UniversalFactory<
+  PythonTestWorkerConfig,
   Input,
-  Output,
-  UniversalFactoryData<Input, Output>
-> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(
+  Output
+> = (ctx, { pythonTestCompilerFactory }) =>
+  pythonTestCompilerFactory.create(
+    ctx,
     ({ paymentSystem, amount, base }) =>
       `payment("${paymentSystem}", ${base}, ${amount})`
   );
-};

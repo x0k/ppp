@@ -6,8 +6,8 @@ export interface GoTestWorkerConfig {
   goTestCompilerFactory: GoTestCompilerFactory;
 }
 
-startTestCompilerActor<GoTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<GoTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     goTestCompilerFactory: new GoTestCompilerFactory(out),
   })
 );

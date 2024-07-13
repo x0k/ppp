@@ -8,8 +8,8 @@ export interface DotnetTestWorkerConfig {
   makeExecutionCode: typeof makeExecutionCode;
 }
 
-startTestCompilerActor<DotnetTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<DotnetTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     dotnetTestCompilerFactory: new DotnetTestCompilerFactory(out),
     makeExecutionCode,
   })

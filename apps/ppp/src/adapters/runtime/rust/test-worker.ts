@@ -6,8 +6,8 @@ export interface RustTestWorkerConfig {
   rustTestCompilerFactory: RustTestCompilerFactory;
 }
 
-startTestCompilerActor<RustTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<RustTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     rustTestCompilerFactory: new RustTestCompilerFactory(out),
   })
 );

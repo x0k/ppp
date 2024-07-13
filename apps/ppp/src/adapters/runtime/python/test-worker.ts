@@ -5,8 +5,8 @@ export interface PythonTestWorkerConfig {
   pythonTestCompilerFactory: PythonTestCompilerFactory;
 }
 
-startTestCompilerActor<PythonTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<PythonTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     pythonTestCompilerFactory: new PythonTestCompilerFactory(out),
   })
 );

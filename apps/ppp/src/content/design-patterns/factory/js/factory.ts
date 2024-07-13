@@ -1,7 +1,7 @@
 // Only type imports are allowed
 import type { UniversalFactory } from "testing/actor";
 
-import type { UniversalFactoryData } from "@/lib/workers/js";
+import type { JsTestWorkerConfig } from "@/adapters/runtime/js/test-worker";
 
 import type { Input, Output } from "../tests-data";
 import type { PaymentSystemType } from "../reference";
@@ -11,11 +11,11 @@ interface TestingModule {
 }
 
 export const factory: UniversalFactory<
+  JsTestWorkerConfig,
   Input,
-  Output,
-  UniversalFactoryData<TestingModule, Input, Output>
-> = ({ makeTestProgramCompiler: makeTestRunnerFactory }) => {
-  return makeTestRunnerFactory(async (m, input) =>
+  Output
+> = async (_, { jsTestCompilerFactory }) => {
+  return jsTestCompilerFactory.create(async (m: TestingModule, input) =>
     m.payment(input.paymentSystem, input.base, input.amount)
-  );
+  )
 };

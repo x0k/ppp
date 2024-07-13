@@ -6,8 +6,8 @@ export interface GleamTestWorkerConfig {
   gleamTestCompilerFactory: GleamTestCompilerFactory;
 }
 
-startTestCompilerActor<GleamTestWorkerConfig>((out, factory) =>
-  factory({
+startTestCompilerActor<GleamTestWorkerConfig>((ctx, out, factory) =>
+  factory(ctx, {
     gleamTestCompilerFactory: new GleamTestCompilerFactory(out),
   })
 );

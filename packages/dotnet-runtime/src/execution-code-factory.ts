@@ -1,24 +1,34 @@
 export interface UsingOptions {
-  serialization?: "" | true;
+  /** @default true */
+  serialization?: boolean;
+  /** @default "" */
   additional?: string;
 }
 
 export interface ExecutionCodeOptions {
   executionCode: string;
+  /** @default "" */
   additionalDefinitions?: string;
+  /** @default {} */
   using?: UsingOptions;
+  /** @default "test" */
   namespace?: string;
+  /** @default "Test" */
   className?: string;
+  /** @default "Execute" */
   methodName?: string;
+  /** @default "string jsonArguments" */
   args?: string;
+  /** @default "result" */
   resultVar?: string;
+  /** @default `return JsonSerializer.Serialize(${resultVar});` */
   serializeCode?: string;
 }
 
 export function makeExecutionCode({
   executionCode,
   using: {
-    serialization: serializationUsing = "",
+    serialization: serializationUsing = true,
     additional: additionalUsing = "",
   } = {},
   additionalDefinitions = "",
@@ -30,7 +40,7 @@ export function makeExecutionCode({
   serializeCode = `return JsonSerializer.Serialize(${resultVar});`,
 }: ExecutionCodeOptions) {
   return `using System.Text.Json;
-${serializationUsing && "using System.Text.Json.Serialization;"}
+${serializationUsing ? "using System.Text.Json.Serialization;" : ""}
 using System.Diagnostics.CodeAnalysis;
 ${additionalUsing}
 
