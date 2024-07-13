@@ -46,6 +46,12 @@ php/:
     pnpm run build
   popd
 
+python/:
+  pushd packages/python-runtime
+  b:
+    pnpm run build
+  popd
+
 go/:
   pushd packages/go-runtime
   p:

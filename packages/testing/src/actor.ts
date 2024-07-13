@@ -13,10 +13,10 @@ import {
 import { stringifyError } from "libs/error";
 import { compileJsModule } from "libs/js";
 import type { File } from "libs/compiler";
-
-import type { TestProgram, TestProgramCompiler } from "./model.js";
 import type { Writer } from "libs/io";
 import { ok } from 'libs/result';
+
+import type { TestProgram, TestProgramCompiler } from "./model.js";
 
 export interface InitConfig {
   universalFactoryFunction: string;
@@ -47,25 +47,25 @@ async function evalEntity<T>(functionStr: string) {
   return mod.default;
 }
 
-export type UniversalFactory<I, O, D> = (data: D) => TestProgramCompiler<I, O>;
+export type UniversalFactory<D, I, O> = (data: D) => TestProgramCompiler<I, O>;
 
-export type TestProgramCompilerFactory<I, O, D> = (
+export type TestCompilerFactory<D, I, O> = (
   out: Writer,
-  universalFactory: UniversalFactory<I, O, D>
+  universalFactory: UniversalFactory<D, I, O>
 ) => TestProgramCompiler<I, O>;
 
-class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
+class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
   private ctx: Context = createContext();
   private testProgramFactory: TestProgramCompiler<I, O> | null = null;
   private testProgram: TestProgram<I, O> | null = null;
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
-    superFactory: TestProgramCompilerFactory<I, O, D>
+    superFactory: TestCompilerFactory<D, I, O>
   ) {
     const handlers: Handlers<I, O> = {
       init: async ({ universalFactoryFunction }) => {
-        const universalFactory = await evalEntity<UniversalFactory<I, O, D>>(
+        const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
           universalFactoryFunction
         );
         const out: Writer = {
@@ -114,13 +114,13 @@ class TestRunnerActor<I, O, D> extends Actor<Handlers<I, O>, string> {
   }
 }
 
-export function startTestRunnerActor<I, O, D>(
-  superFactory: TestProgramCompilerFactory<I, O, D>
+export function startTestCompilerActor<D, I = unknown, O = unknown>(
+  superFactory: TestCompilerFactory<D, I, O>
 ) {
   const connection = new WorkerConnection<Incoming<I, O>, Outgoing<I, O>>(
     self as unknown as Worker
   );
-  const actor = new TestRunnerActor(connection, superFactory);
+  const actor = new TestCompilerActor(connection, superFactory);
   const stopConnection = connection.start();
   const stopActor = actor.start();
   return () => {
@@ -133,7 +133,7 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export async function makeRemoteTestRunnerFactory<I, O, D>(
+export async function makeRemoteTestCompilerFactory<D, I, O>(
   ctx: Context,
   Worker: WorkerConstructor,
   universalFactory: (data: D) => TestProgramCompiler<I, O>,

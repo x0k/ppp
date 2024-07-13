@@ -27,6 +27,7 @@ export const pyRuntimeFactory = async (
   ctx: Context,
   log: Logger,
   wasmInstance: (
+    ctx: Context,
     imports: WebAssembly.Imports
   ) => Promise<WebAssembly.WebAssemblyInstantiatedSource>,
   stdLibUrl: string
@@ -38,7 +39,7 @@ export const pyRuntimeFactory = async (
       return originalCreatePyodideModule({
         ...settings,
         instantiateWasm(imports, callback) {
-          wasmInstance(imports).then(
+          wasmInstance(ctx, imports).then(
             ({ instance, module }) => {
               callback(instance, module);
             },

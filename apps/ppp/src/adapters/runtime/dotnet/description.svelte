@@ -1,6 +1,7 @@
 <script lang="ts">
   import { version } from "dotnet-runtime/version";
-  import { LIBS } from "@/lib/factories/dotnet";
+
+  import { LIBS } from "./test-compiler-factory";
 </script>
 
 <p>
