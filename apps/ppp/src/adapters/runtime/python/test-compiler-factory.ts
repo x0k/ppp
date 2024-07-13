@@ -1,7 +1,7 @@
 import type { Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { createLogger, type Logger } from "libs/logger";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 import { pyRuntimeFactory, PyTestProgram } from "python-runtime";
 
 // @ts-ignore
@@ -21,7 +21,7 @@ export class PythonTestCompilerFactory {
   async create<I, O>(
     ctx: Context,
     generateCaseExecutionCode: GenerateCaseExecutionCode<I>
-  ): Promise<TestProgramCompiler<I, O>> {
+  ): Promise<TestCompiler<I, O>> {
     class TestRunner extends PyTestProgram<I, O> {
       protected override caseExecutionCode(data: I): string {
         return generateCaseExecutionCode(data);

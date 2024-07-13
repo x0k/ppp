@@ -23,7 +23,7 @@ export interface TestProgram<I, O> extends Disposable {
   run: (ctx: Context, input: I) => Promise<O>;
 }
 
-export interface TestProgramCompiler<I, O> extends Disposable {
+export interface TestCompiler<I, O> extends Disposable {
   compile: (ctx: Context, files: File[]) => Promise<TestProgram<I, O>>;
 }
 

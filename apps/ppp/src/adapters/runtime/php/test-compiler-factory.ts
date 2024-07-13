@@ -1,7 +1,7 @@
 import { inContext, type Context } from 'libs/context';
 import type { Writer } from "libs/io";
 import { FailSafePHP, phpRuntimeFactory, PHPTestProgram } from "php-runtime";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
@@ -11,7 +11,7 @@ export class PhpTestCompilerFactory {
   async create<I, O>(
     ctx: Context,
     generateCaseExecutionCode: GenerateCaseExecutionCode<I>
-  ): Promise<TestProgramCompiler<I, O>> {
+  ): Promise<TestCompiler<I, O>> {
     class TestProgram extends PHPTestProgram<I, O> {
       protected override caseExecutionCode(data: I): string {
         return generateCaseExecutionCode(data);

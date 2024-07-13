@@ -1,6 +1,6 @@
 import { inContext, type Context } from "libs/context";
 import type { Writer } from "libs/io";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 import {
   createCompilerFactory,
   GoTestProgram,
@@ -17,7 +17,7 @@ export class GoTestCompilerFactory {
   async create<I, O>(
     ctx: Context,
     generateCaseExecutionCode: GenerateCaseExecutionCode<I>
-  ): Promise<TestProgramCompiler<I, O>> {
+  ): Promise<TestCompiler<I, O>> {
     class TestProgram extends GoTestProgram<I, O> {
       protected override generateCaseExecutionCode(input: I): string {
         return generateCaseExecutionCode(input);

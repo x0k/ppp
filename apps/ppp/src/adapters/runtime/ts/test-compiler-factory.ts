@@ -1,7 +1,7 @@
 import type { Writer } from "libs/io";
 import { compileJsModule } from "libs/js";
 import { createLogger, redirect } from "libs/logger";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 import { JsTestProgram } from "javascript-runtime";
 import { compileTsModule } from "typescript-runtime";
 
@@ -16,7 +16,7 @@ export class TsTestCompilerFactory {
 
   create<M, I, O>(
     invokeTestMethod: InvokeTestMethod<M, I, O>
-  ): TestProgramCompiler<I, O> {
+  ): TestCompiler<I, O> {
     class TestProgram extends JsTestProgram<M, I, O> {
       override async executeTest(m: M, input: I): Promise<O> {
         return invokeTestMethod(m, input);

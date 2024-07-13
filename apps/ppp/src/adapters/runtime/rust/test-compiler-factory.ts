@@ -2,7 +2,7 @@ import type { Context } from "libs/context";
 import { COLOR_ENCODED } from "libs/logger";
 import { isErr } from "libs/result";
 import type { Writer } from "libs/io";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 import { RustTestProgram, wasiRuntimeFactory } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
@@ -20,7 +20,7 @@ export interface RustUniversalFactoryData<I, O> {
     ctx: Context,
     generateOutputContentCode: (input: I) => string,
     transformResult: (result: string) => O
-  ) => Promise<TestProgramCompiler<I, O>>;
+  ) => Promise<TestCompiler<I, O>>;
 }
 
 // TODO: manual cache for large assets
@@ -47,7 +47,7 @@ export class RustTestCompilerFactory {
     ctx: Context,
     generateOutputContentCode: GenerateOutputContentCode<I>,
     transformResult: TransformResult<O>
-  ): Promise<TestProgramCompiler<I, O>> {
+  ): Promise<TestCompiler<I, O>> {
     class TestProgram extends RustTestProgram<I, O> {
       protected override generateOutputContentCode(input: I): string {
         return generateOutputContentCode(input);

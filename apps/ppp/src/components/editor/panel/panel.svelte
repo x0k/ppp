@@ -10,14 +10,13 @@
   import { stringifyError } from 'libs/error'
   import { ok } from 'libs/result';
   import type { Writer } from 'libs/io';
-
   import {
     runTests,
-    type TestData,
-    type TestRunnerFactory,
+    type TestCase,
+    type TestCompiler,
   } from "testing";
   
-  import { testRunnerTimeout, type SurfaceApi } from '../model';
+  import { testRunnerTimeout, type SurfaceApi, type TestCompilerFactory } from '../model';
   import { Tab } from './model';
   import { makeTheme } from './terminal'
 
@@ -29,8 +28,8 @@
   interface Props<I, O> {
     api: SurfaceApi
     model: editor.IModel;
-    testsData: TestData<I, O>[];
-    testRunnerFactory: TestRunnerFactory<I, O>;
+    testCases: TestCase<I, O>[];
+    testCompilerFactory: TestCompilerFactory<I, O>;
     children: Snippet
     header: Snippet
   }
@@ -38,8 +37,8 @@
   let {
     api,
     model,
-    testsData,
-    testRunnerFactory,
+    testCases,
+    testCompilerFactory,
     children,
     header
   }: Props<Input, Output> = $props();
@@ -48,8 +47,8 @@
   let lastTestId = $state(-1);
 
   $effect(() => {
-    testsData;
-    testRunnerFactory;
+    testCases;
+    testCompilerFactory;
     isRunning = false;
     lastTestId = -1;
   });
@@ -88,7 +87,7 @@
   })
 
   $effect(() => {
-    testRunnerFactory;
+    testCompilerFactory;
     term.clear();
   })
 
@@ -119,6 +118,19 @@
   const logger = createLogger(termWriter)
   
   let ctx: Context | null = null
+  let testCompiler: TestCompiler<Input, Output> | null = null
+
+  $effect(() => {
+    testCompilerFactory;
+    testCompiler = null;
+    return () => {
+      if (testCompiler === null) {
+        return
+      }
+      testCompiler[Symbol.dispose]();
+      testCompiler = null;
+    }
+  })
 
   async function handleRun () {
     if (isRunning) {
@@ -130,12 +142,15 @@
     isRunning = true;
     term.clear();
     try {
-      const runner = await testRunnerFactory(ctx, {
-        code: model.getValue(),
-        out: termWriter,
-      });
+      if (testCompiler === null) {
+        testCompiler = await testCompilerFactory(ctx, termWriter);
+      }
+      const runner = await testCompiler.compile(ctx, [{
+        filename: 'main',
+        content: model.getValue()
+      }]);
       try {
-        lastTestId = await runTests(ctx, logger, runner, testsData);
+        lastTestId = await runTests(ctx, logger, runner, testCases);
       } finally {
         runner[Symbol.dispose]();
       }
@@ -154,13 +169,13 @@
     {api}
     {isRunning}
     {lastTestId}
-    testsCount={testsData.length}
+    testsCount={testCases.length}
     onRun={handleRun}
     append={header}
   />
   <div class="grow flex flex-col overflow-hidden">
     {#if selectedTab === Tab.Tests}
-      <TestsTab {testsData} {lastTestId} />
+      <TestsTab testsData={testCases} {lastTestId} />
     {:else if selectedTab === Tab.Settings}
       <SettingsTab />
     {:else if selectedTab === null}

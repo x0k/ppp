@@ -2,7 +2,7 @@ import { inContext, type Context } from "libs/context";
 import { createLogger, redirect, type Logger } from "libs/logger";
 import type { Writer } from "libs/io";
 import { patch } from "libs/patcher";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 import {
   DotnetCompilerFactory,
   DotnetRuntimeFactory,
@@ -231,33 +231,40 @@ export class DotnetTestCompilerFactory {
       methodName = "Execute",
       executionCode,
     }: Options
-  ): Promise<TestProgramCompiler<I, O>> {
+  ): Promise<TestCompiler<I, O>> {
     const { dotnet } = await inContext(
       ctx,
       import(/* @vite-ignore */ dotnetUrl)
     );
-    using _ = patch(globalThis, "console", this.patchedConsole);
-    const compilerModule: DotnetModule<
-      CompilerModuleImports,
-      CompilerModuleExports
-    > = await inContext(ctx, dotnet.create());
-    const compiler = await inContext(
-      ctx,
-      new DotnetCompilerFactory(this.log, compilerModule).create(
-        precompiledLibsIndexUrl,
-        LIBS
-      )
-    );
-    const runtimeFactory = new DotnetRuntimeFactory(compiler);
-    return {
-      async compile(_, files) {
-        if (files.length !== 1) {
-          throw new Error("Compilation of multiple files is not implemented");
-        }
-        const runtime = runtimeFactory.create(files[0].content, executionCode);
-        return new DotnetTestProgram<I, O>(typeFullName, methodName, runtime);
-      },
-      [Symbol.dispose]() {},
-    };
+    const consolePatch = patch(globalThis, "console", this.patchedConsole);
+    try {
+      const compilerModule: DotnetModule<
+        CompilerModuleImports,
+        CompilerModuleExports
+      > = await inContext(ctx, dotnet.create());
+      const compiler = await inContext(
+        ctx,
+        new DotnetCompilerFactory(this.log, compilerModule).create(
+          precompiledLibsIndexUrl,
+          LIBS
+        )
+      );
+      const runtimeFactory = new DotnetRuntimeFactory(compiler);
+      return {
+        async compile(_, files) {
+          if (files.length !== 1) {
+            throw new Error("Compilation of multiple files is not implemented");
+          }
+          const runtime = runtimeFactory.create(
+            files[0].content,
+            executionCode
+          );
+          return new DotnetTestProgram<I, O>(typeFullName, methodName, runtime);
+        },
+        [Symbol.dispose]() {},
+      };
+    } finally {
+      consolePatch[Symbol.dispose]();
+    }
   }
 }

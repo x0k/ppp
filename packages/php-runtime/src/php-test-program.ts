@@ -35,14 +35,18 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 
   async run(ctx: Context, input: I): Promise<O> {
     const code = this.transformCode(input);
-    using _ = ctx.onCancel(() => this.php.exit(137));
-    const response = await this.php.run({ code });
-    const text = response.bytes;
-    if (text.byteLength > 0) {
-      this.writer.write(new Uint8Array(text));
-    }
-    if (response.errors) {
-      throw new Error(response.errors);
+    const exitSubscription = ctx.onCancel(() => this.php.exit(137));
+    try {
+      const response = await this.php.run({ code });
+      const text = response.bytes;
+      if (text.byteLength > 0) {
+        this.writer.write(new Uint8Array(text));
+      }
+      if (response.errors) {
+        throw new Error(response.errors);
+      }
+    } finally {
+      exitSubscription[Symbol.dispose]();
     }
     if (this.result === undefined) {
       throw new Error("No result");

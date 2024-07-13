@@ -2,7 +2,7 @@ import type { Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { createLogger, redirect } from "libs/logger";
 import { compileJsModule } from "libs/js";
-import type { TestProgramCompiler } from "testing";
+import type { TestCompiler } from "testing";
 import { JsTestProgram } from "javascript-runtime";
 import { GleamModuleCompiler } from "gleam-runtime";
 
@@ -27,7 +27,7 @@ export class GleamTestCompilerFactory {
   async create<M, I, O>(
     ctx: Context,
     executeTest: ExecuteTest<M, I, O>
-  ): Promise<TestProgramCompiler<I, O>> {
+  ): Promise<TestCompiler<I, O>> {
     class TestProgram extends JsTestProgram<M, I, O> {
       override async executeTest(m: M, input: I): Promise<O> {
         return executeTest(m, input);

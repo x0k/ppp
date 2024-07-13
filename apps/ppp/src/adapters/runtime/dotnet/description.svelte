@@ -13,6 +13,8 @@
   several .NET assemblies) and is executed in the context of the current page.
 </p>
 
+<p>Namespace <code>test</code> is reserved.</p>
+
 <p>Available libraries:</p>
 
 <div class="grid grid-flow-row grid-cols-2 gap-x-2">

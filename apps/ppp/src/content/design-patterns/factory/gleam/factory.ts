@@ -2,7 +2,7 @@
 import type { UniversalFactory } from "testing/actor";
 import type { CustomType } from "gleam-runtime/stdlib/gleam.mjs";
 
-import type { GleamTestWorkerConfig } from "@/adapters/runtime/gleam/test-workers";
+import type { GleamTestWorkerConfig } from "@/adapters/runtime/gleam/test-worker";
 
 import type { PaymentSystemType } from "../reference";
 import type { Input, Output } from "../tests-data";
