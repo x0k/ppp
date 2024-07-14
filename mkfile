@@ -177,3 +177,15 @@ dotnet/:
     python server.py
     popd
   popd
+
+java/:
+  pushd packages/java-runtime
+  jvm/:
+    build: install release
+    pushd doppio
+    install:
+      npm install
+    release:
+      grunt release --force
+    popd
+  popd

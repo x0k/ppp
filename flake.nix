@@ -44,6 +44,8 @@
           pkgs.wasm-pack
           pkgs.gleam
           pkgs.dotnet-sdk_8
+          pkgs.nodePackages.grunt-cli
+          pkgs.jdk8
         ];
         NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
           pkgs.stdenv.cc.cc
