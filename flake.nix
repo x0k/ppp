@@ -26,33 +26,47 @@
         ];
     in
     {
-      devShells.${system}.default = pkgs.mkShell {
-        buildInputs = [
-          mk.packages.${system}.default
-          pkgs.nodejs
-          pkgs.bun
-          pkgs.pnpm
-          pkgs.go
-          pkgs.python3
-          pkgs.gcc
-          pkgs.curl
-          pkgs.libiconv
-          pkgs.ninja
-          pkgs.cmake
-          f
-          pkgs.llvmPackages.bintools
-          pkgs.wasm-pack
-          pkgs.gleam
-          pkgs.dotnet-sdk_8
-          pkgs.nodePackages.grunt-cli
-          pkgs.jdk8
-        ];
-        NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-          pkgs.stdenv.cc.cc
-          pkgs.xz
-          pkgs.zlib
-        ];
-        CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+      devShells.${system} = {
+        default = pkgs.mkShell {
+          buildInputs = [
+            mk.packages.${system}.default
+            pkgs.nodejs
+            pkgs.bun
+            pkgs.pnpm
+            pkgs.python3
+            pkgs.gcc
+            pkgs.curl
+            pkgs.libiconv
+            pkgs.ninja
+            pkgs.cmake
+            f
+            pkgs.llvmPackages.bintools
+            pkgs.wasm-pack
+            pkgs.gleam
+            pkgs.dotnet-sdk_8
+            pkgs.nodePackages.grunt-cli
+            pkgs.jdk8
+          ];
+          NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+            pkgs.stdenv.cc.cc
+            pkgs.xz
+            pkgs.zlib
+          ];
+          CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+        };
+        go = pkgs.mkShell {
+          buildInputs = [
+            pkgs.go
+          ];
+        };
+        java = pkgs.mkShell {
+          buildInputs = [
+            pkgs.nodePackages.grunt-cli
+            pkgs.nodejs
+            pkgs.jdk8
+            pkgs.yarn
+          ];
+        };
       };
     };
 }

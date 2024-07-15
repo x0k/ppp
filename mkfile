@@ -181,11 +181,13 @@ dotnet/:
 java/:
   pushd packages/java-runtime
   jvm/:
+    nix develop ../..#java --command bash -xe <<EOF
     build: install release
     pushd doppio
     install:
-      npm install
+      yarn install
     release:
       grunt release --force
     popd
+    EOF
   popd
