@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,12 +13,17 @@
     {
       self,
       nixpkgs,
+      nixpkgs-old,
       mk,
       fenix,
     }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      pkgs-old = import nixpkgs-old {
+        inherit system;
+        config.allowInsecure = true;
+      };
       f =
         with fenix.packages.${system};
         combine [
@@ -33,6 +39,7 @@
             pkgs.nodejs
             pkgs.bun
             pkgs.pnpm
+            pkgs.go
             pkgs.python3
             pkgs.gcc
             pkgs.curl
@@ -54,18 +61,15 @@
           ];
           CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
         };
-        go = pkgs.mkShell {
-          buildInputs = [
-            pkgs.go
-          ];
-        };
         java = pkgs.mkShell {
           buildInputs = [
-            pkgs.nodePackages.grunt-cli
-            pkgs.nodejs
+            pkgs-old.nodejs-12_x
             pkgs.jdk8
-            pkgs.yarn
           ];
+          shellHook = ''
+            export NPM_CONFIG_PREFIX=~/.npm-global
+            export PATH=$NPM_CONFIG_PREFIX/bin:$PATH
+          '';
         };
       };
     };

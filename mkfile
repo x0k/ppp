@@ -181,11 +181,12 @@ dotnet/:
 java/:
   pushd packages/java-runtime
   jvm/:
-    nix develop ../..#java --command bash -xe <<EOF
     build: install release
+    NIXPKGS_ALLOW_INSECURE=1 nix develop ../..#java --impure --command bash -xe <<EOF
     pushd doppio
     install:
-      yarn install
+      npm install -g grunt-cli yarn
+      SKIP_YARN_COREPACK_CHECK=1 yarn install
     release:
       grunt release --force
     popd
