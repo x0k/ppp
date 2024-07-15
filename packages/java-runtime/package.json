@@ -1,0 +1,23 @@
+{
+  "name": "java-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "browserfs": "^1.4.3",
+    "libs": "workspace:*",
+    "testing": "workspace:*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5",
+    "vite": "^5.3.3",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  }
+}

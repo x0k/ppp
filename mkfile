@@ -180,15 +180,26 @@ dotnet/:
 
 java/:
   pushd packages/java-runtime
+  b:
+    pnpm run build
   jvm/:
-    build: install release
-    NIXPKGS_ALLOW_INSECURE=1 nix develop ../..#java --impure --command bash -xe <<EOF
+    build: install release copy
     pushd doppio
-    install:
+    env:
+      NIXPKGS_ALLOW_INSECURE=1 nix develop ../../..#java --impure --command bash -xe <<EOF
+    install: env
       npm install -g grunt-cli yarn
       SKIP_YARN_COREPACK_CHECK=1 yarn install
-    release:
+    release: env
       grunt release --force
+    env:
+      EOF
+    copy:
+      rm -rf ../src/vendor
+      mkdir -p ../src/vendor
+      cp ./build/release/*.js* ../src/vendor
+      cp -R ./build/release/vendor/java_home ../src/vendor/
+      mkdir -p ../src/vendor/typings
+      cp -R ./dist/typings/* ../src/vendor/typings/
     popd
-    EOF
   popd
