@@ -197,9 +197,17 @@ java/:
     copy:
       rm -rf ../src/vendor
       mkdir -p ../src/vendor
-      cp ./build/release/*.js* ../src/vendor
-      cp -R ./build/release/vendor/java_home ../src/vendor/
-      mkdir -p ../src/vendor/typings
-      cp -R ./dist/typings/* ../src/vendor/typings/
+      cp ./build/release/*.js* ../src/vendor/
+      cp -R ./build/release/vendor ../src/vendor/
+      cp -R ./src ../src/vendor/
+      mkdir -p ../src/vendor/includes
+      cp ./includes/JVMTypes.d.ts ../src/vendor/includes/JVMTypes.ts
+      cp ./package.json ../src/vendor
+      # cp -R ./dist/typings ../src/vendor/
+    popd
+  p:
+    pushd probe
+    rsync -rL ../doppio/build/release/ ./public/doppio --delete
+    bun run dev
     popd
   popd

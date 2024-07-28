@@ -45,7 +45,7 @@ export default defineConfig({
 	},
   plugins: [
     inject({
-			BrowserFS: "/src/bfs.js",
+			browserfs: "/src/bfs.js",
 			process: "/src/bfs-process.js",
 		}),
     dts(),
