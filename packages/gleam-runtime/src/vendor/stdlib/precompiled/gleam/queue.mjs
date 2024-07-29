@@ -6,7 +6,7 @@ import {
   CustomType as $CustomType,
   isEqual,
 } from "../gleam.mjs";
-import * as $list from "./list.mjs";
+import * as $list from "../gleam/list.mjs";
 
 class Queue extends $CustomType {
   constructor(in$, out) {

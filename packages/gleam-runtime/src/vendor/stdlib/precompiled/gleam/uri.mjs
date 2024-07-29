@@ -6,15 +6,15 @@ import {
   CustomType as $CustomType,
   isEqual,
 } from "../gleam.mjs";
-import * as $int from "./int.mjs";
-import * as $list from "./list.mjs";
-import * as $option from "./option.mjs";
-import { None, Some } from "./option.mjs";
-import * as $pair from "./pair.mjs";
-import * as $regex from "./regex.mjs";
-import * as $result from "./result.mjs";
-import * as $string from "./string.mjs";
-import * as $string_builder from "./string_builder.mjs";
+import * as $int from "../gleam/int.mjs";
+import * as $list from "../gleam/list.mjs";
+import * as $option from "../gleam/option.mjs";
+import { None, Some } from "../gleam/option.mjs";
+import * as $pair from "../gleam/pair.mjs";
+import * as $regex from "../gleam/regex.mjs";
+import * as $result from "../gleam/result.mjs";
+import * as $string from "../gleam/string.mjs";
+import * as $string_builder from "../gleam/string_builder.mjs";
 import {
   parse_query as do_parse_query,
   percent_encode as do_percent_encode,

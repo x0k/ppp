@@ -1,7 +1,7 @@
 import { CustomType as $CustomType, isEqual } from "../gleam.mjs";
-import * as $dict from "./dict.mjs";
-import * as $list from "./list.mjs";
-import * as $result from "./result.mjs";
+import * as $dict from "../gleam/dict.mjs";
+import * as $list from "../gleam/list.mjs";
+import * as $result from "../gleam/result.mjs";
 
 class Set extends $CustomType {
   constructor(dict) {

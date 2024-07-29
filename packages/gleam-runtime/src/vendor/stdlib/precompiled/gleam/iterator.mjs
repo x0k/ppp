@@ -6,13 +6,13 @@ import {
   CustomType as $CustomType,
   isEqual,
 } from "../gleam.mjs";
-import * as $dict from "./dict.mjs";
-import * as $int from "./int.mjs";
-import * as $list from "./list.mjs";
-import * as $option from "./option.mjs";
-import { None, Some } from "./option.mjs";
-import * as $order from "./order.mjs";
-import * as $result from "./result.mjs";
+import * as $dict from "../gleam/dict.mjs";
+import * as $int from "../gleam/int.mjs";
+import * as $list from "../gleam/list.mjs";
+import * as $option from "../gleam/option.mjs";
+import { None, Some } from "../gleam/option.mjs";
+import * as $order from "../gleam/order.mjs";
+import * as $result from "../gleam/result.mjs";
 
 class Stop extends $CustomType {}
 

@@ -1,4 +1,4 @@
-import * as $order from "./order.mjs";
+import * as $order from "../gleam/order.mjs";
 
 export function and(a, b) {
   return a && b;

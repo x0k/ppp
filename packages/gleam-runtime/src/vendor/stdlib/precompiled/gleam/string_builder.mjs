@@ -1,5 +1,5 @@
 import { toList, isEqual } from "../gleam.mjs";
-import * as $list from "./list.mjs";
+import * as $list from "../gleam/list.mjs";
 import {
   add as do_append,
   concat as do_from_strings,

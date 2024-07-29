@@ -1,5 +1,5 @@
 import { Ok, Error, divideFloat } from "../gleam.mjs";
-import * as $order from "./order.mjs";
+import * as $order from "../gleam/order.mjs";
 import {
   parse_float as do_parse,
   float_to_string as do_to_string,
