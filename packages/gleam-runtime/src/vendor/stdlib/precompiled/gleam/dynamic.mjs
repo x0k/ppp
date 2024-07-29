@@ -1,10 +1,10 @@
 import { Ok, Error, toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
-import * as $dict from "./dict.mjs";
-import * as $int from "./int.mjs";
-import * as $list from "./list.mjs";
-import * as $option from "./option.mjs";
-import * as $result from "./result.mjs";
-import * as $string_builder from "./string_builder.mjs";
+import * as $dict from "../gleam/dict.mjs";
+import * as $int from "../gleam/int.mjs";
+import * as $list from "../gleam/list.mjs";
+import * as $option from "../gleam/option.mjs";
+import * as $result from "../gleam/result.mjs";
+import * as $string_builder from "../gleam/string_builder.mjs";
 import {
   identity as do_from,
   identity as do_unsafe_coerce,

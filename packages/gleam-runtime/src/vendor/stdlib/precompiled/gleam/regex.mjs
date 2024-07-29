@@ -1,5 +1,5 @@
 import { CustomType as $CustomType } from "../gleam.mjs";
-import * as $option from "./option.mjs";
+import * as $option from "../gleam/option.mjs";
 import {
   compile_regex as do_compile,
   regex_check as do_check,

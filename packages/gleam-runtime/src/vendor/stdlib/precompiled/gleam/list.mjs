@@ -6,11 +6,11 @@ import {
   CustomType as $CustomType,
   isEqual,
 } from "../gleam.mjs";
-import * as $dict from "./dict.mjs";
-import * as $float from "./float.mjs";
-import * as $int from "./int.mjs";
-import * as $order from "./order.mjs";
-import * as $pair from "./pair.mjs";
+import * as $dict from "../gleam/dict.mjs";
+import * as $float from "../gleam/float.mjs";
+import * as $int from "../gleam/int.mjs";
+import * as $order from "../gleam/order.mjs";
+import * as $pair from "../gleam/pair.mjs";
 
 export class Continue extends $CustomType {
   constructor(x0) {

@@ -1,5 +1,5 @@
 import { Error, toList, prepend as listPrepend, isEqual } from "../gleam.mjs";
-import * as $option from "./option.mjs";
+import * as $option from "../gleam/option.mjs";
 import {
   map_size as size,
   map_to_list as to_list,

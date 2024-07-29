@@ -7,8 +7,8 @@ import {
   remainderInt,
   divideInt,
 } from "../gleam.mjs";
-import * as $float from "./float.mjs";
-import * as $order from "./order.mjs";
+import * as $float from "../gleam/float.mjs";
+import * as $order from "../gleam/order.mjs";
 import {
   parse_int as do_parse,
   int_from_base_string as do_base_parse,

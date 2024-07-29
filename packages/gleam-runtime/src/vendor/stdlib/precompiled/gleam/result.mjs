@@ -1,5 +1,5 @@
 import { Ok, Error, toList, prepend as listPrepend } from "../gleam.mjs";
-import * as $list from "./list.mjs";
+import * as $list from "../gleam/list.mjs";
 
 export function is_ok(result) {
   if (!result.isOk()) {

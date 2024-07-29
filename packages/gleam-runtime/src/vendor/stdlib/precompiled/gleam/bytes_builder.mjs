@@ -1,7 +1,7 @@
 import { toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
-import * as $bit_array from "./bit_array.mjs";
-import * as $list from "./list.mjs";
-import * as $string_builder from "./string_builder.mjs";
+import * as $bit_array from "../gleam/bit_array.mjs";
+import * as $list from "../gleam/list.mjs";
+import * as $string_builder from "../gleam/string_builder.mjs";
 
 class Bytes extends $CustomType {
   constructor(x0) {

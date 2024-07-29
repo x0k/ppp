@@ -1,4 +1,4 @@
-import * as $string from "./string.mjs";
+import * as $string from "../gleam/string.mjs";
 import {
   print as do_print,
   print_error as do_print_error,

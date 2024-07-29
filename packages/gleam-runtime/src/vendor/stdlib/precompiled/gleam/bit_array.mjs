@@ -1,5 +1,5 @@
 import { toList, remainderInt } from "../gleam.mjs";
-import * as $string from "./string.mjs";
+import * as $string from "../gleam/string.mjs";
 import {
   bit_array_from_string as from_string,
   length as byte_size,

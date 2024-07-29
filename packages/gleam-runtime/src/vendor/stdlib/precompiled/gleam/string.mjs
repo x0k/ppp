@@ -1,10 +1,10 @@
 import { Ok, Error, prepend as listPrepend, remainderInt, divideInt } from "../gleam.mjs";
-import * as $iterator from "./iterator.mjs";
-import * as $list from "./list.mjs";
-import * as $option from "./option.mjs";
-import { None, Some } from "./option.mjs";
-import * as $order from "./order.mjs";
-import * as $string_builder from "./string_builder.mjs";
+import * as $iterator from "../gleam/iterator.mjs";
+import * as $list from "../gleam/list.mjs";
+import * as $option from "../gleam/option.mjs";
+import { None, Some } from "../gleam/option.mjs";
+import * as $order from "../gleam/order.mjs";
+import * as $string_builder from "../gleam/string_builder.mjs";
 import {
   string_length as do_length,
   lowercase as do_lowercase,
