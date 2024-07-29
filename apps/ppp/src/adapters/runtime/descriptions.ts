@@ -1,4 +1,4 @@
-import type { ComponentType, SvelteComponent } from "svelte";
+import type { Component } from "svelte";
 
 import { Language } from "@/shared/languages";
 
@@ -11,10 +11,7 @@ import RustDescription from "./rust/description.svelte";
 import GleamDescription from "./gleam/description.svelte";
 import DotnetDescription from "./dotnet/description.svelte";
 
-export const DESCRIPTIONS: Record<
-  Language,
-  ComponentType<SvelteComponent<Record<string, never>>>
-> = {
+export const DESCRIPTIONS: Record<Language, Component> = {
   [Language.JavaScript]: JsDescription,
   [Language.TypeScript]: TsDescription,
   [Language.PHP]: PhpDescription,
