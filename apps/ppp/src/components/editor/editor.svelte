@@ -1,12 +1,10 @@
 <script lang="ts" context="module">
-  import type { ComponentType, SvelteComponent } from 'svelte';
+  import type { Component } from 'svelte';
   import type { TestCase, TestCompilerFactory } from "testing";
   export interface Runtime<I, O> {
     initialValue: string;
     testRunnerFactory: TestCompilerFactory<I, O>;
-    // TODO: According to https://svelte-5-preview.vercel.app/docs/breaking-changes#components-are-no-longer-classes-component-typing-changes
-    // this type should be just `Component`.
-    Description: ComponentType<SvelteComponent<Record<string, never>>>;
+    Description: Component
   }
 
   export interface Props<L extends Language, I, O> {
