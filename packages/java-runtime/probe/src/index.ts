@@ -35,3 +35,13 @@ const jvm = await createJVM({
 });
 
 console.log(jvm);
+
+globalThis.global = globalThis;
+
+const code = await new Promise((resolve, reject) => jvm.runClass("util.Javac", [], (code) => {
+  if (code === 0) {
+    resolve(0);
+  } else {
+    reject(code);
+  }
+}));

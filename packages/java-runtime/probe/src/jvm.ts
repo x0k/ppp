@@ -60,18 +60,21 @@ export class JVM extends VM.JVM {
     let bootupTasks: { (next: (err?: any) => void): void }[] = [],
       firstThread: VM.Threading.JVMThread,
       firstThreadObj: JVMTypes.java_lang_Thread;
-    /**
-     * Task #1: Initialize native methods.
-     */
-    bootupTasks.push((next: (err?: any) => void): void => {
+      /**
+       * Task #1: Initialize native methods.
+      */
+     bootupTasks.push((next: (err?: any) => void): void => {
+      console.time("Task 1")
       //@ts-expect-error private method
       this.initializeNatives(next);
     });
-
+    
     /**
      * Task #2: Construct the bootstrap class loader.
-     */
-    bootupTasks.push((next: (err?: any) => void): void => {
+    */
+   bootupTasks.push((next: (err?: any) => void): void => {
+      console.timeEnd("Task 1")
+      console.time("Task 2")
       //@ts-expect-error private property
       this.bsCl = new VM.ClassFile.BootstrapClassLoader(
         //@ts-expect-error private property
@@ -86,6 +89,8 @@ export class JVM extends VM.JVM {
      * the first thread.
      */
     bootupTasks.push((next: (err?: any) => void): void => {
+      console.timeEnd("Task 2")
+      console.time("Task 3")
       //@ts-expect-error private property
       this.threadPool = new ThreadPool<VM.Threading.JVMThread>((): boolean => {
         //@ts-expect-error private method
@@ -140,6 +145,8 @@ export class JVM extends VM.JVM {
      * JVM's ThreadGroup once that class is initialized.
      */
     bootupTasks.push((next: (err?: any) => void): void => {
+      console.timeEnd("Task 3")
+      console.time("Task 4")
       VM.Util.asyncForEach<string>(
         coreClasses,
         (coreClass: string, nextItem: (err?: any) => void) => {
@@ -184,6 +191,8 @@ export class JVM extends VM.JVM {
      * Task #5: Initialize the system class.
      */
     bootupTasks.push((next: (err?: any) => void): void => {
+      console.timeEnd("Task 4")
+      console.time("Task 5")
       // Initialize the system class (initializes things like println/etc).
       var sysInit = <typeof JVMTypes.java_lang_System>(
         (<VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_System>>(
@@ -203,6 +212,8 @@ export class JVM extends VM.JVM {
      * Task #6: Initialize the application's
      */
     bootupTasks.push((next: (err?: any) => void) => {
+      console.timeEnd("Task 5")
+      console.time("Task 6")
       var clCons = <typeof JVMTypes.java_lang_ClassLoader>(
         (<VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ClassLoader>>(
           //@ts-expect-error private property
@@ -248,18 +259,19 @@ export class JVM extends VM.JVM {
     /**
      * Task #7: Initialize DoppioJVM's security provider for things like cryptographically strong RNG.
      */
-    bootupTasks.push((next: (err?: any) => void) => {
-      //@ts-expect-error private property
-      this.bsCl.initializeClass(
-        firstThread,
-        "Ldoppio/security/DoppioProvider;",
-        (cdata) => {
-          next(
-            cdata ? null : new Error(`Failed to initialize DoppioProvider.`)
-          );
-        }
-      );
-    });
+    // bootupTasks.push((next: (err?: any) => void) => {
+    //   console.log("Task 7")
+    //   //@ts-expect-error private property
+    //   this.bsCl.initializeClass(
+    //     firstThread,
+    //     "Ldoppio/security/DoppioProvider;",
+    //     (cdata) => {
+    //       next(
+    //         cdata ? null : new Error(`Failed to initialize DoppioProvider.`)
+    //       );
+    //     }
+    //   );
+    // });
 
     // Perform bootup tasks, and then trigger the callback function.
     throw new Promise((resolve, reject) =>
@@ -268,6 +280,7 @@ export class JVM extends VM.JVM {
         // frame that triggered us, and the firstThread won't transition to a
         // 'terminated' status.
         setTimeout(() => {
+          console.timeEnd("Task 6")
           if (err) {
             //@ts-expect-error private property
             this.status = VM.Enums.JVMStatus.TERMINATED;
