@@ -205,9 +205,13 @@ java/:
       cp ./package.json ../src/vendor
       # cp -R ./dist/typings ../src/vendor/
     popd
-  p:
+  p/:
     pushd probe
-    rsync -rL ../doppio/build/release/ ./public/doppio --delete
-    bun run dev
+    i:
+      bun install
+    d:
+      mkdir -p public/doppio
+      rsync -rL ../doppio/build/release/ public/doppio --delete
+      bun run dev
     popd
   popd
