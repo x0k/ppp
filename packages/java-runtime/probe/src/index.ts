@@ -1,5 +1,6 @@
 import * as BrowserFS from "browserfs";
-import * as doppio from "doppiojvm";
+
+import { createJVM } from "./jvm";
 
 const fs = await new Promise((resolve, reject) =>
   BrowserFS.configure(
@@ -26,17 +27,11 @@ const fs = await new Promise((resolve, reject) =>
   )
 );
 
-console.log(fs)
+console.log(fs);
 
-const jvm = await new Promise(
-  (resolve, reject) =>
-    new doppio.VM.JVM(
-      {
-        doppioHomePath: "/sys",
-        classpath: [".", "/sys/classes"],
-      },
-      (err, jvm) => (err ? reject(err) : resolve(jvm))
-    )
-);
+const jvm = await createJVM({
+  doppioHomePath: "/sys",
+  classpath: [".", "/sys/classes"],
+});
 
-console.log(jvm)
+console.log(jvm);
