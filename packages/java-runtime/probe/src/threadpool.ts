@@ -1,5 +1,5 @@
 import { setImmediate } from "browserfs";
-import { VM } from "doppiojvm";
+import * as doppio from "doppiojvm";
 
 import assert from "./assert";
 
@@ -7,18 +7,18 @@ import assert from "./assert";
  * Generic interface for a thread.
  */
 export interface Thread {
-  getStatus(): VM.Enums.ThreadStatus;
+  getStatus(): doppio.VM.Enums.ThreadStatus;
   isDaemon(): boolean;
   getPriority(): number;
-  setStatus(status: VM.Enums.ThreadStatus): void;
+  setStatus(status: doppio.VM.Enums.ThreadStatus): void;
   run(): void;
 }
 
 /**
  * Checks if the given thread status indicates that the thread is scheduleable.
  */
-function isRunnable(status: VM.Enums.ThreadStatus): boolean {
-  return status === VM.Enums.ThreadStatus.RUNNABLE;
+function isRunnable(status: doppio.VM.Enums.ThreadStatus): boolean {
+  return status === doppio.VM.Enums.ThreadStatus.RUNNABLE;
 }
 
 /**
@@ -82,7 +82,7 @@ class WeightedRoundRobinScheduler<T extends Thread> implements Scheduler<T> {
       if (queue.length > 0) {
         let thread = this._queue[0];
         assert(
-          thread.getStatus() === VM.Enums.ThreadStatus.RUNNABLE,
+          thread.getStatus() === doppio.VM.Enums.ThreadStatus.RUNNABLE,
           `Attempted to run non-runnable thread.`
         );
         thread.run();
@@ -131,7 +131,7 @@ class WeightedRoundRobinScheduler<T extends Thread> implements Scheduler<T> {
     this._count++;
     if (
       this._count >= thread.getPriority() ||
-      thread.getStatus() !== VM.Enums.ThreadStatus.RUNNABLE
+      thread.getStatus() !== doppio.VM.Enums.ThreadStatus.RUNNABLE
     ) {
       // Move to back of queue, reset count.
       this._count = 0;
@@ -183,8 +183,8 @@ export class ThreadPool<T extends Thread> {
       }
       let status = t.getStatus();
       if (
-        status !== VM.Enums.ThreadStatus.NEW &&
-        status !== VM.Enums.ThreadStatus.TERMINATED
+        status !== doppio.VM.Enums.ThreadStatus.NEW &&
+        status !== doppio.VM.Enums.ThreadStatus.TERMINATED
       ) {
         return true;
       }
@@ -211,15 +211,15 @@ export class ThreadPool<T extends Thread> {
    */
   public statusChange(
     thread: T,
-    oldStatus: VM.Enums.ThreadStatus,
-    newStatus: VM.Enums.ThreadStatus
+    oldStatus: doppio.VM.Enums.ThreadStatus,
+    newStatus: doppio.VM.Enums.ThreadStatus
   ): void {
     var wasRunnable = isRunnable(oldStatus),
       nowRunnable = isRunnable(newStatus);
 
     if (
-      oldStatus === VM.Enums.ThreadStatus.NEW ||
-      oldStatus === VM.Enums.ThreadStatus.TERMINATED
+      oldStatus === doppio.VM.Enums.ThreadStatus.NEW ||
+      oldStatus === doppio.VM.Enums.ThreadStatus.TERMINATED
     ) {
       if (this.threads.indexOf(thread) === -1) {
         this.threads.push(thread);
@@ -235,7 +235,7 @@ export class ThreadPool<T extends Thread> {
       }
     }
 
-    if (newStatus === VM.Enums.ThreadStatus.TERMINATED) {
+    if (newStatus === doppio.VM.Enums.ThreadStatus.TERMINATED) {
       this.threadTerminated(thread);
     }
   }

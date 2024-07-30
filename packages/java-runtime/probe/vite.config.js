@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
 import inject from "@rollup/plugin-inject";
+import replace from '@rollup/plugin-replace';
 
 export default defineConfig({
   define: {
@@ -18,6 +18,7 @@ export default defineConfig({
     },
   },
   build: {
+    target: "es2022",
     // commonjsOptions: {
     //   transformMixedEsModules: true,
     //   include: ["src/**/*"],
@@ -25,9 +26,15 @@ export default defineConfig({
   },
   plugins: [
     inject({
-      BrowserFS: "/../src/bfs.js",
-      process: "/../src/bfs-process.js",
+      BrowserFS: "/src/bfs.js",
+      process: "/src/bfs-process.js",
     }),
-    dts(),
+    replace({
+      preventAssignment: true,
+      include: "browserfs/**/*",
+      values: {
+        "global.Uint8Array": false,
+      }
+    }),
   ],
 });

@@ -211,6 +211,10 @@ java/:
       bun install
     mkdir -p public/doppio
     rsync -rL ../doppio/build/release/ public/doppio --delete
+    b:
+      bun run build
+    p: b
+      bun run preview
     bun run dev
     popd
   popd

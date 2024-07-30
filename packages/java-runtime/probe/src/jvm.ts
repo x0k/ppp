@@ -1,4 +1,4 @@
-import { VM } from "doppiojvm";
+import * as doppio from "doppiojvm";
 
 import { ThreadPool } from "./threadpool";
 import * as JVMTypes from "./vendor/includes/JVMTypes";
@@ -40,7 +40,7 @@ const coreClasses = [
 ];
 
 //@ts-expect-error private method override
-export class JVM extends VM.JVM {
+export class JVM extends doppio.VM.JVM {
   _initSystemProperties(
     bootstrapClasspath: string[],
     javaClassPath: string[],
@@ -58,7 +58,7 @@ export class JVM extends VM.JVM {
     );
 
     let bootupTasks: { (next: (err?: any) => void): void }[] = [],
-      firstThread: VM.Threading.JVMThread,
+      firstThread: doppio.VM.Threading.JVMThread,
       firstThreadObj: JVMTypes.java_lang_Thread;
       /**
        * Task #1: Initialize native methods.
@@ -76,7 +76,7 @@ export class JVM extends VM.JVM {
       console.timeEnd("Task 1")
       console.time("Task 2")
       //@ts-expect-error private property
-      this.bsCl = new VM.ClassFile.BootstrapClassLoader(
+      this.bsCl = new doppio.VM.ClassFile.BootstrapClassLoader(
         //@ts-expect-error private property
         this.systemProperties["java.home"],
         bootstrapClasspath,
@@ -92,7 +92,7 @@ export class JVM extends VM.JVM {
       console.timeEnd("Task 2")
       console.time("Task 3")
       //@ts-expect-error private property
-      this.threadPool = new ThreadPool<VM.Threading.JVMThread>((): boolean => {
+      this.threadPool = new ThreadPool<doppio.VM.Threading.JVMThread>((): boolean => {
         //@ts-expect-error private method
         return this.threadPoolIsEmpty();
       });
@@ -104,7 +104,7 @@ export class JVM extends VM.JVM {
         null,
         "Ljava/lang/Thread;",
         (
-          threadCdata: VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_Thread>
+          threadCdata: doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_Thread>
         ) => {
           if (threadCdata == null) {
             // Failed.
@@ -117,7 +117,7 @@ export class JVM extends VM.JVM {
               firstThread =
               //@ts-expect-error private property
               this.firstThread =
-                new VM.Threading.JVMThread(
+                new doppio.VM.Threading.JVMThread(
                   //@ts-expect-error error
                   this,
                   //@ts-expect-error private property
@@ -126,13 +126,13 @@ export class JVM extends VM.JVM {
                 );
             firstThreadObj.ref = 1;
             firstThreadObj["java/lang/Thread/priority"] = 5;
-            firstThreadObj["java/lang/Thread/name"] = VM.Util.initCarr(
+            firstThreadObj["java/lang/Thread/name"] = doppio.VM.Util.initCarr(
               //@ts-expect-error private property
               this.bsCl,
               "main"
             );
             firstThreadObj["java/lang/Thread/blockerLock"] = new ((<
-              VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_Object> //@ts-expect-error private property
+              doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_Object> //@ts-expect-error private property
             >this.bsCl.getResolvedClass("Ljava/lang/Object;")).getConstructor(firstThread))(firstThread);
             next();
           }
@@ -147,14 +147,14 @@ export class JVM extends VM.JVM {
     bootupTasks.push((next: (err?: any) => void): void => {
       console.timeEnd("Task 3")
       console.time("Task 4")
-      VM.Util.asyncForEach<string>(
+      doppio.VM.Util.asyncForEach<string>(
         coreClasses,
         (coreClass: string, nextItem: (err?: any) => void) => {
           //@ts-expect-error private property
           this.bsCl.initializeClass(
             firstThread,
             coreClass,
-            (cdata: VM.ClassFile.ClassData) => {
+            (cdata: doppio.VM.ClassFile.ClassData) => {
               if (cdata == null) {
                 nextItem(`Failed to initialize ${coreClass}`);
               } else {
@@ -163,7 +163,7 @@ export class JVM extends VM.JVM {
                 if (coreClass === "Ljava/lang/ThreadGroup;") {
                   // Construct a ThreadGroup object for the first thread.
                   var threadGroupCons = (<
-                      VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ThreadGroup>
+                      doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ThreadGroup>
                     >cdata).getConstructor(firstThread),
                     groupObj = new threadGroupCons(firstThread);
                   groupObj["<init>()V"](
@@ -195,7 +195,7 @@ export class JVM extends VM.JVM {
       console.time("Task 5")
       // Initialize the system class (initializes things like println/etc).
       var sysInit = <typeof JVMTypes.java_lang_System>(
-        (<VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_System>>(
+        (<doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_System>>(
           //@ts-expect-error private property
           this.bsCl.getInitializedClass(firstThread, "Ljava/lang/System;")
         )).getConstructor(firstThread)
@@ -215,7 +215,7 @@ export class JVM extends VM.JVM {
       console.timeEnd("Task 5")
       console.time("Task 6")
       var clCons = <typeof JVMTypes.java_lang_ClassLoader>(
-        (<VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ClassLoader>>(
+        (<doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ClassLoader>>(
           //@ts-expect-error private property
           this.bsCl.getInitializedClass(firstThread, "Ljava/lang/ClassLoader;")
         )).getConstructor(firstThread)
@@ -275,7 +275,7 @@ export class JVM extends VM.JVM {
 
     // Perform bootup tasks, and then trigger the callback function.
     throw new Promise((resolve, reject) =>
-      VM.Util.asyncSeries(bootupTasks, (err?: any): void => {
+      doppio.VM.Util.asyncSeries(bootupTasks, (err?: any): void => {
         // XXX: Without setImmediate, the firstThread won't clear out the stack
         // frame that triggered us, and the firstThread won't transition to a
         // 'terminated' status.
@@ -283,11 +283,11 @@ export class JVM extends VM.JVM {
           console.timeEnd("Task 6")
           if (err) {
             //@ts-expect-error private property
-            this.status = VM.Enums.JVMStatus.TERMINATED;
+            this.status = doppio.VM.Enums.JVMStatus.TERMINATED;
             reject(err);
           } else {
             //@ts-expect-error private property
-            this.status = VM.Enums.JVMStatus.BOOTED;
+            this.status = doppio.VM.Enums.JVMStatus.BOOTED;
             resolve(this);
           }
         });
@@ -298,7 +298,7 @@ export class JVM extends VM.JVM {
 
 const noop = () => {};
 
-export function createJVM(opts: VM.Interfaces.JVMOptions): Promise<JVM> {
+export function createJVM(opts: doppio.VM.Interfaces.JVMOptions): Promise<JVM> {
   try {
     new JVM(opts, noop);
   } catch (e) {
