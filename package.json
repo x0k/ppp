@@ -17,5 +17,11 @@
     "only-allow": "^1.2.1",
     "turbo": "^2.0.9",
     "typescript": "^5.5.4"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "browserfs@1.4.3": "patches/browserfs@1.4.3.patch",
+      "doppiojvm@0.5.0": "patches/doppiojvm@0.5.0.patch"
+    }
   }
 }

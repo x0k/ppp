@@ -1,0 +1,19 @@
+diff --git a/.npmignore b/.npmignore
+deleted file mode 100644
+index 3fb7b7fed3bbe44ad992f60b6f23efae22861c04..0000000000000000000000000000000000000000
+diff --git a/dist/browserfs.js b/dist/browserfs.js
+index 675051f048d127d9338ad1d5a39f68b9465794f1..8c00208aa6252c001db2a548d7798e02059f4e07 100644
+--- a/dist/browserfs.js
++++ b/dist/browserfs.js
+@@ -20145,7 +20145,7 @@ return /******/ (function(modules) { // webpackBootstrap
+ 	  return new Buffer(size);
+ 	}
+ 	exports.from = function from(value, encodingOrOffset, length) {
+-	  if (typeof Buffer.from === 'function' && (!global.Uint8Array || Uint8Array.from !== Buffer.from)) {
++	  if (typeof Buffer.from === 'function' && Uint8Array.from !== Buffer.from) {
+ 	    return Buffer.from(value, encodingOrOffset, length);
+ 	  }
+ 	  if (typeof value === 'number') {
+diff --git a/yarn.lock b/yarn.lock
+deleted file mode 100644
+index 5dd25d5a64bd715dbb8980e14d82d84e9bba106d..0000000000000000000000000000000000000000

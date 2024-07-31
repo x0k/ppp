@@ -182,28 +182,22 @@ java/:
   pushd packages/java-runtime
   b:
     pnpm run build
+  artifacts: jvm/*
   jvm/:
-    build: install release copy
     pushd doppio
-    env:
+    build/:
       NIXPKGS_ALLOW_INSECURE=1 nix develop ../../..#java --impure --command bash -xe <<EOF
-    install: env
-      npm install -g grunt-cli yarn
-      SKIP_YARN_COREPACK_CHECK=1 yarn install
-    release: env
-      grunt release --force
-    env:
+      install:
+        npm install -g grunt-cli yarn
+        SKIP_YARN_COREPACK_CHECK=1 yarn install
+      release:
+        grunt release --force
       EOF
     copy:
-      rm -rf ../src/vendor
-      mkdir -p ../src/vendor
-      cp ./build/release/*.js* ../src/vendor/
-      cp -R ./build/release/vendor ../src/vendor/
-      cp -R ./src ../src/vendor/
-      mkdir -p ../src/vendor/includes
-      cp ./includes/JVMTypes.d.ts ../src/vendor/includes/JVMTypes.ts
-      cp ./package.json ../src/vendor
-      # cp -R ./dist/typings ../src/vendor/
+      rsync -rL build/release/ ../src/vendor/ --delete
+      rm -rf ../src/vendor/classes/test
+    cleanup:
+      rm -rf build dist node_modules
     popd
   p/:
     pushd probe
