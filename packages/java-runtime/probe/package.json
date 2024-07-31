@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
-    "@rollup/plugin-replace": "^5.0.7",
     "vite": "^5.3.3"
   }
 }

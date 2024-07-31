@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import inject from "@rollup/plugin-inject";
-import replace from '@rollup/plugin-replace';
 
 export default defineConfig({
   define: {
@@ -28,13 +27,6 @@ export default defineConfig({
     inject({
       BrowserFS: "/src/bfs.js",
       process: "/src/bfs-process.js",
-    }),
-    replace({
-      preventAssignment: true,
-      include: "browserfs/**/*",
-      values: {
-        "global.Uint8Array": false,
-      }
     }),
   ],
 });
