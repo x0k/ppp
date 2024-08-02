@@ -203,8 +203,9 @@ java/:
     pushd probe
     i:
       bun install
-    mkdir -p public/doppio
-    rsync -rL ../doppio/build/release/ public/doppio --delete
+    s:
+      mkdir -p public/doppio
+      rsync -rL ../doppio/build/release/ public/doppio --delete
     b:
       bun run build
     p: b

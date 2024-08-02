@@ -3,7 +3,7 @@ import type { TestProgram } from "testing";
 
 import { JVM } from "./jvm";
 
-export type JVMFactory = (ctx: Context) => Promise<JVM>;
+export type JVMFactory = (ctx: Context) => Promise<[JVM, Disposable]>;
 
 export class JavaTestProgram<I, O> implements TestProgram<I, O> {
   constructor(
@@ -12,7 +12,7 @@ export class JavaTestProgram<I, O> implements TestProgram<I, O> {
   ) {}
 
   async run(ctx: Context, input: I): Promise<O> {
-    const jvm = await this.jvmFactory(ctx);
+    const [jvm, jvmDispose] = await this.jvmFactory(ctx);
     const dispose = ctx.onCancel(() => jvm.halt(1));
     try {
       const code = await new Promise<number>((resolve) =>
@@ -23,6 +23,7 @@ export class JavaTestProgram<I, O> implements TestProgram<I, O> {
       }
     } finally {
       dispose[Symbol.dispose]();
+      jvmDispose[Symbol.dispose]();
     }
     return this.getResult();
   }

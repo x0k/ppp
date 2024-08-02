@@ -39,8 +39,16 @@ const coreClasses = [
   "Lsun/nio/fs/UnixConstants;",
 ];
 
+export type BootstrapClassLoaderFactory = (
+  javaHome: string,
+  classPaths: string[],
+  next: (err?: any) => void
+) => doppio.VM.ClassFile.BootstrapClassLoader;
+
 //@ts-expect-error private method override
 export class JVM extends doppio.VM.JVM {
+  public static bootstrapClassLoaderFactory: BootstrapClassLoaderFactory;
+
   _initSystemProperties(
     bootstrapClasspath: string[],
     javaClassPath: string[],
@@ -60,23 +68,23 @@ export class JVM extends doppio.VM.JVM {
     let bootupTasks: { (next: (err?: any) => void): void }[] = [],
       firstThread: doppio.VM.Threading.JVMThread,
       firstThreadObj: JVMTypes.java_lang_Thread;
-      /**
-       * Task #1: Initialize native methods.
-      */
-     bootupTasks.push((next: (err?: any) => void): void => {
-      console.time("Task 1")
+    /**
+     * Task #1: Initialize native methods.
+     */
+    bootupTasks.push((next: (err?: any) => void): void => {
+      console.time("Task 1");
       //@ts-expect-error private method
       this.initializeNatives(next);
     });
-    
+
     /**
      * Task #2: Construct the bootstrap class loader.
-    */
-   bootupTasks.push((next: (err?: any) => void): void => {
-      console.timeEnd("Task 1")
-      console.time("Task 2")
+     */
+    bootupTasks.push((next: (err?: any) => void): void => {
+      console.timeEnd("Task 1");
+      console.time("Task 2");
       //@ts-expect-error private property
-      this.bsCl = new doppio.VM.ClassFile.BootstrapClassLoader(
+      this.bsCl = JVM.bootstrapClassLoaderFactory(
         //@ts-expect-error private property
         this.systemProperties["java.home"],
         bootstrapClasspath,
@@ -89,13 +97,15 @@ export class JVM extends doppio.VM.JVM {
      * the first thread.
      */
     bootupTasks.push((next: (err?: any) => void): void => {
-      console.timeEnd("Task 2")
-      console.time("Task 3")
+      console.timeEnd("Task 2");
+      console.time("Task 3");
       //@ts-expect-error private property
-      this.threadPool = new ThreadPool<doppio.VM.Threading.JVMThread>((): boolean => {
-        //@ts-expect-error private method
-        return this.threadPoolIsEmpty();
-      });
+      this.threadPool = new ThreadPool<doppio.VM.Threading.JVMThread>(
+        (): boolean => {
+          //@ts-expect-error private method
+          return this.threadPoolIsEmpty();
+        }
+      );
       // Resolve Ljava/lang/Thread so we can fake a thread.
       // NOTE: This should never actually use the Thread object unless
       // there's an error loading java/lang/Thread and associated classes.
@@ -145,8 +155,8 @@ export class JVM extends doppio.VM.JVM {
      * JVM's ThreadGroup once that class is initialized.
      */
     bootupTasks.push((next: (err?: any) => void): void => {
-      console.timeEnd("Task 3")
-      console.time("Task 4")
+      console.timeEnd("Task 3");
+      console.time("Task 4");
       doppio.VM.Util.asyncForEach<string>(
         coreClasses,
         (coreClass: string, nextItem: (err?: any) => void) => {
@@ -191,15 +201,17 @@ export class JVM extends doppio.VM.JVM {
      * Task #5: Initialize the system class.
      */
     bootupTasks.push((next: (err?: any) => void): void => {
-      console.timeEnd("Task 4")
-      console.time("Task 5")
+      console.timeEnd("Task 4");
+      console.time("Task 5");
       // Initialize the system class (initializes things like println/etc).
+      console.log("Initializing the system class...");
       var sysInit = <typeof JVMTypes.java_lang_System>(
         (<doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_System>>(
           //@ts-expect-error private property
           this.bsCl.getInitializedClass(firstThread, "Ljava/lang/System;")
         )).getConstructor(firstThread)
       );
+      console.log("Invoking initializeSystemClass()...");
       sysInit["java/lang/System/initializeSystemClass()V"](
         firstThread,
         //@ts-expect-error implementation error
@@ -212,14 +224,11 @@ export class JVM extends doppio.VM.JVM {
      * Task #6: Initialize the application's
      */
     bootupTasks.push((next: (err?: any) => void) => {
-      console.timeEnd("Task 5")
-      console.time("Task 6")
-      var clCons = <typeof JVMTypes.java_lang_ClassLoader>(
-        (<doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ClassLoader>>(
-          //@ts-expect-error private property
-          this.bsCl.getInitializedClass(firstThread, "Ljava/lang/ClassLoader;")
-        )).getConstructor(firstThread)
-      );
+      console.timeEnd("Task 5");
+      console.time("Task 6");
+      var clCons = <typeof JVMTypes.java_lang_ClassLoader>(<
+        doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_ClassLoader> //@ts-expect-error private property
+      >this.bsCl.getInitializedClass(firstThread, "Ljava/lang/ClassLoader;")).getConstructor(firstThread);
       clCons[
         "java/lang/ClassLoader/getSystemClassLoader()Ljava/lang/ClassLoader;"
       ](
@@ -280,7 +289,7 @@ export class JVM extends doppio.VM.JVM {
         // frame that triggered us, and the firstThread won't transition to a
         // 'terminated' status.
         setTimeout(() => {
-          console.timeEnd("Task 6")
+          console.timeEnd("Task 6");
           if (err) {
             //@ts-expect-error private property
             this.status = doppio.VM.Enums.JVMStatus.TERMINATED;
@@ -298,14 +307,19 @@ export class JVM extends doppio.VM.JVM {
 
 const noop = () => {};
 
-export function createJVM(opts: doppio.VM.Interfaces.JVMOptions): Promise<JVM> {
-  try {
-    new JVM(opts, noop);
-  } catch (e) {
-    if (e instanceof Promise) {
-      return e;
+export function makeJVMFactory(
+  bootstrapClassLoaderFactory: BootstrapClassLoaderFactory
+) {
+  JVM.bootstrapClassLoaderFactory = bootstrapClassLoaderFactory;
+  return (opts: doppio.VM.Interfaces.JVMOptions): Promise<JVM> => {
+    try {
+      new JVM(opts, noop);
+    } catch (e) {
+      if (e instanceof Promise) {
+        return e;
+      }
+      return Promise.reject(e);
     }
-    return Promise.reject(e);
-  }
-  return Promise.reject(new Error("JVM creation failed"));
+    return Promise.reject(new Error("JVM creation failed"));
+  };
 }

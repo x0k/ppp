@@ -1,8 +1,9 @@
 import * as BrowserFS from "browserfs";
 
-import { createJVM } from "./jvm";
+import { makeJVMFactory } from "./jvm";
 //@ts-ignore
-import javaCode from './code.java?raw';
+import javaCode from './Probe.java?raw';
+import { makeBootstrapClassLoaderFactory } from './bootstap-class-loader';
 
 await new Promise<void>((resolve, reject) =>
   BrowserFS.configure(
@@ -28,6 +29,10 @@ await new Promise<void>((resolve, reject) =>
     (e) => (e ? reject(e) : resolve())
   )
 );
+
+const createJVM = makeJVMFactory(
+  makeBootstrapClassLoaderFactory(new Map())
+)
 
 let jvm = await createJVM({
   doppioHomePath: "/sys",
@@ -82,3 +87,5 @@ await new Promise((resolve, reject) => jvm.runClass("Probe", [], (code) => {
     reject(code);
   }
 }))
+
+fs.readdirSync("/home").forEach((file) => console.log(file));
