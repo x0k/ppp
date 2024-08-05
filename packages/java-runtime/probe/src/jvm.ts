@@ -204,19 +204,21 @@ export class JVM extends doppio.VM.JVM {
       console.timeEnd("Task 4");
       console.time("Task 5");
       // Initialize the system class (initializes things like println/etc).
-      console.log("Initializing the system class...");
       var sysInit = <typeof JVMTypes.java_lang_System>(
         (<doppio.VM.ClassFile.ReferenceClassData<JVMTypes.java_lang_System>>(
           //@ts-expect-error private property
           this.bsCl.getInitializedClass(firstThread, "Ljava/lang/System;")
         )).getConstructor(firstThread)
       );
-      console.log("Invoking initializeSystemClass()...");
       sysInit["java/lang/System/initializeSystemClass()V"](
         firstThread,
         //@ts-expect-error implementation error
         null,
-        next
+        (e) => {
+          console.log("Task 5 callback", e);
+          console.log(e?.["toString()Ljava/lang/String;"]);
+          next(e);
+        }
       );
     });
 
@@ -239,6 +241,7 @@ export class JVM extends doppio.VM.JVM {
           e?: JVMTypes.java_lang_Throwable,
           rv?: JVMTypes.java_lang_ClassLoader
         ) => {
+          console.log("Task 6 callback", e, rv);
           if (e) {
             next(e);
           } else {
@@ -303,6 +306,15 @@ export class JVM extends doppio.VM.JVM {
       })
     );
   }
+}
+
+export function createJVM(
+  opts: doppio.VM.Interfaces.JVMOptions
+): Promise<doppio.VM.JVM> {
+  return new Promise(
+    (resolve, reject) =>
+      new doppio.VM.JVM(opts, (e, jvm) => (e ? reject(e) : resolve(jvm!)))
+  );
 }
 
 const noop = () => {};

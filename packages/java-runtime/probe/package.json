@@ -9,11 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "async": "^1.5.2",
     "browserfs": "^1.4.3",
     "doppiojvm": "^0.5.0"
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
+    "@types/async": "1.4.28",
     "vite": "^5.3.3"
   }
 }

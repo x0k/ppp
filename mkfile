@@ -195,7 +195,10 @@ java/:
       EOF
     copy:
       rsync -rL build/release/ ../src/vendor/ --delete
-      rm -rf ../src/vendor/classes/test
+      rm -rf ../src/vendor/classes/test ../src/vendor/*.js*
+    compress:
+      zip -r ../src/vendor/doppio.zip ../src/vendor
+      rm -rf ../src/vendor/classes ../src/vendor/vendor
     cleanup:
       rm -rf build dist node_modules
     popd
@@ -204,8 +207,7 @@ java/:
     i:
       bun install
     s:
-      mkdir -p public/doppio
-      rsync -rL ../doppio/build/release/ public/doppio --delete
+      cp ../src/vendor/doppio.zip public
     b:
       bun run build
     p: b
