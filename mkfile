@@ -195,10 +195,13 @@ java/:
       EOF
     copy:
       rsync -rL build/release/ ../src/vendor/ --delete
-      rm -rf ../src/vendor/classes/test ../src/vendor/*.js*
+      rm -rf ../src/vendor/classes/test ../src/vendor/*.js* \
+        ../src/vendor/vendor/java_home/lib/ext
     compress:
-      zip -r ../src/vendor/doppio.zip ../src/vendor
-      rm -rf ../src/vendor/classes ../src/vendor/vendor
+      pushd ../src/vendor
+      zip -r doppio.zip *
+      rm -rf classes vendor
+      popd
     cleanup:
       rm -rf build dist node_modules
     popd
