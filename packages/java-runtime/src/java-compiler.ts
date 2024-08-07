@@ -1,7 +1,7 @@
 import { CANCELED_ERROR, Context } from "libs/context";
 
-import type { JVMFactory } from "./model";
 import { FSModule } from "./fs";
+import { JVMFactory } from "./jvm-factory";
 
 export class JavaCompiler {
   constructor(

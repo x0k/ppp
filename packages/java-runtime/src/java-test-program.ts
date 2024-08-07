@@ -1,7 +1,7 @@
 import { Context } from "libs/context";
 import type { TestProgram } from "testing";
 
-import type { JVMFactory } from './model';
+import type { JVMFactory } from './jvm-factory.js';
 
 export abstract class JavaTestProgram<I, O> implements TestProgram<I, O> {
   constructor(

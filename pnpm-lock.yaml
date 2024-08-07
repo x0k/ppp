@@ -64,6 +64,9 @@ importers:
       go-runtime:
         specifier: workspace:*
         version: link:../../packages/go-runtime
+      java-runtime:
+        specifier: workspace:*
+        version: link:../../packages/java-runtime
       javascript-runtime:
         specifier: workspace:*
         version: link:../../packages/javascript-runtime

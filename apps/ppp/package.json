@@ -34,7 +34,8 @@
     "php-runtime": "workspace:*",
     "python-runtime": "workspace:*",
     "rust-runtime": "workspace:*",
-    "typescript-runtime": "workspace:*"
+    "typescript-runtime": "workspace:*",
+    "java-runtime": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.202",
