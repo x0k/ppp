@@ -33,6 +33,7 @@ export default defineConfig({
   	// global process from browserfs
 	define: {
 		global: {},
+    setImmediate: "queueMicrotask",
 	},
 	resolve: {
 		alias: {
@@ -53,9 +54,8 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "src/vendor",
-          dest: ".",
-          rename: "doppio"
+          src: "src/vendor/doppio.zip",
+          dest: "doppio",
         },
       ],
     }),

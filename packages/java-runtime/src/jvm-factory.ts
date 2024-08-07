@@ -3,9 +3,10 @@ import { COLOR_ENCODED } from "libs/logger";
 import { Writer } from "libs/io";
 
 import { createJVM } from "./jvm";
-import { JVMFactory } from "./java-test-program.js";
 
-export class JavaCompilerFactory {
+import { JVMFactory } from "./model.js";
+
+export class JVMFactoryFactory {
   constructor(
     protected readonly writer: Writer,
     protected readonly process: NodeJS.Process

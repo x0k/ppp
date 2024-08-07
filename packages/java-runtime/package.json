@@ -22,6 +22,6 @@
   "exports": {
     ".": "./dist/index.js",
     "./version": "./dist/version.js",
-    "./doppio/*": "./dist/doppio/*"
+    "./doppio.zip": "./dist/doppio/doppio.zip"
   }
 }
