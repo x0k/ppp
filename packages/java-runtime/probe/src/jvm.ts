@@ -3,6 +3,14 @@ import * as doppio from "doppiojvm";
 import { ThreadPool } from "./threadpool";
 import * as JVMTypes from "./vendor/includes/JVMTypes";
 
+// const {
+//   VM: { Util },
+// } = doppio;
+
+export const {
+  VM: { Util: util },
+} = doppio;
+
 // XXX: We currently initialize these classes at JVM bootup. This is expensive.
 // We should attempt to prune this list as much as possible.
 const coreClasses = [

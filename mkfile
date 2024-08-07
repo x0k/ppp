@@ -192,6 +192,8 @@ java/:
         SKIP_YARN_COREPACK_CHECK=1 yarn install
       release:
         grunt release --force
+      cli:
+        grunt release-cli
       EOF
     copy:
       rsync -rL build/release/ ../src/vendor/ --delete

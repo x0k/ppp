@@ -1,14 +1,13 @@
 import * as BrowserFS from "browserfs";
 
 // import { makeJVMFactory } from "./jvm";
-import { createJVM } from "./jvm";
+import { createJVM, util } from "./jvm";
 import { fs, recursiveCopy, ls } from "./fs";
 //@ts-ignore
 import javaCode from "./Probe.java?raw";
 // import { makeBootstrapClassLoaderFactory } from './bootstap-class-loader';
 
 const { Buffer } = BrowserFS.BFSRequire("buffer");
-
 
 const data = await fetch("/doppio.zip").then((res) => res.arrayBuffer());
 
@@ -40,7 +39,7 @@ await new Promise<void>((resolve, reject) =>
     (e) => (e ? reject(e) : resolve())
   )
 );
-
+console.time("Run");
 await new Promise((resolve, reject) =>
   recursiveCopy("/zip", "/sys", (e) => (e ? reject(e) : resolve(null)))
 );
@@ -97,6 +96,26 @@ jvm = await createJVM({
   classpath: ["/home", "/sys/classes"],
 });
 
+jvm.registerNatives({
+  Probe: {
+    "getStringArg()Ljava/lang/String;": function (thread) {
+      return util.initString(thread.getBsCl(), "FRIDAY")
+    },
+    "saveNumber(I)V": function (thread, arg0) {
+      console.log("Number: ", arg0);
+    },
+    "saveString(Ljava/lang/String;)V": function (thread, arg0) {
+      console.log("String: ", arg0.toString());
+    },
+    "saveArray([I)V": function (thread, arg0) {
+      console.log("Array: ", arg0);
+    },
+    "saveEnum(LDayOfWeek;)V": function (thread, arg0) {
+      console.log("Enum: ", arg0);
+    },
+  },
+});
+
 await new Promise((resolve, reject) =>
   jvm.runClass("Probe", [], (code) => {
     if (code === 0) {
@@ -106,5 +125,7 @@ await new Promise((resolve, reject) =>
     }
   })
 );
+
+console.timeEnd("Run");
 
 ls("/home");

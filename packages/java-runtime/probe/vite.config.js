@@ -27,7 +27,6 @@ export default defineConfig({
     inject({
       BrowserFS: "/src/bfs.js",
       process: "/src/bfs-process.js",
-      setImmediate: '/src/set-immediate.js',
     }),
   ],
 });
