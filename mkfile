@@ -177,3 +177,46 @@ dotnet/:
     python server.py
     popd
   popd
+
+java/:
+  pushd packages/java-runtime
+  b:
+    pnpm run build
+  artifacts: jvm/*
+  jvm/:
+    pushd doppio
+    build/:
+      NIXPKGS_ALLOW_INSECURE=1 nix develop ../../..#java --impure --command bash -xe <<EOF
+      install:
+        npm install -g grunt-cli yarn
+        SKIP_YARN_COREPACK_CHECK=1 yarn install
+      release:
+        grunt release --force
+      cli:
+        grunt release-cli
+      EOF
+    copy:
+      rsync -rL build/release/ ../src/vendor/ --delete
+      rm -rf ../src/vendor/classes/test ../src/vendor/*.js* \
+        ../src/vendor/vendor/java_home/lib/ext
+    compress:
+      pushd ../src/vendor
+      zip -r doppio.zip *
+      rm -rf classes vendor
+      popd
+    cleanup:
+      rm -rf build dist node_modules
+    popd
+  p/:
+    pushd probe
+    i:
+      bun install
+    s:
+      cp ../src/vendor/doppio.zip public
+    b:
+      bun run build
+    p:
+      bun run preview
+    bun run dev
+    popd
+  popd

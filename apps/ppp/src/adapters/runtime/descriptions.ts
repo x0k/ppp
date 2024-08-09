@@ -10,6 +10,7 @@ import GoDescription from "./go/description.svelte";
 import RustDescription from "./rust/description.svelte";
 import GleamDescription from "./gleam/description.svelte";
 import DotnetDescription from "./dotnet/description.svelte";
+import JavaDescription from "./java/description.svelte";
 
 export const DESCRIPTIONS: Record<Language, Component> = {
   [Language.JavaScript]: JsDescription,
@@ -20,4 +21,5 @@ export const DESCRIPTIONS: Record<Language, Component> = {
   [Language.Rust]: RustDescription,
   [Language.Gleam]: GleamDescription,
   [Language.CSharp]: DotnetDescription,
+  [Language.Java]: JavaDescription,
 };

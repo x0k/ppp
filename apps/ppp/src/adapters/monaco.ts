@@ -20,6 +20,7 @@ export const MONACO_LANGUAGE_ID: Record<Language, string> = {
   [Language.Rust]: "rust",
   [Language.Gleam]: Language.Gleam,
   [Language.CSharp]: "csharp",
+  [Language.Java]: "java",
 };
 
 const LANGUAGE_ID_SCOPE_NAME = {

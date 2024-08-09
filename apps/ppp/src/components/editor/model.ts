@@ -31,4 +31,5 @@ export const LANG_ICONS: Record<Language, string> = {
   [Language.Rust]: "vscode-icons:file-type-rust",
   [Language.Gleam]: "vscode-icons:file-type-gleam",
   [Language.CSharp]: "vscode-icons:file-type-csharp",
+  [Language.Java]: "vscode-icons:file-type-java",
 };

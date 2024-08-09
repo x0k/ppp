@@ -21,6 +21,7 @@ const { contentId } = Astro.props;
   import { rustCode, rustFactory } from "./rust";
   import { gleamCode, gleamFactory } from "./gleam";
   import { csCode, csFactory } from "./csharp";
+  import { javaCode, javaFactory } from './java'
 
   mountEditor(testCases, {
     [Language.JavaScript]: {
@@ -55,5 +56,9 @@ const { contentId } = Astro.props;
       initialValue: csCode,
       factory: csFactory,
     },
+    [Language.Java]: {
+      initialValue: javaCode,
+      factory: javaFactory
+    }
   });
 </script>
