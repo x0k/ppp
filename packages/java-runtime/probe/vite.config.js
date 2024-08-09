@@ -18,7 +18,20 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
+    // minify: 'esbuild',
+    // rollupOptions: {
+    //   preserveEntrySignatures: "allow-extension",
+    //   output: {
+    //     preserveModules: true,
+    //   }
+    // },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   },
+  // optimizeDeps: {
+  //   disabled: true,
+  // },
   plugins: [
     inject({
       BrowserFS: ["browserfs", "*"],

@@ -1,7 +1,7 @@
-import * as doppio from "doppiojvm";
+import Doppio from 'doppiojvm'
 
 export function makeBootstrapClassLoaderFactory(
-  cache: Map<string, doppio.VM.ClassFile.BootstrapClassLoader>
+  cache: Map<string, Doppio.VM.ClassFile.BootstrapClassLoader>
 ) {
   return (
     javaHome: string,
@@ -18,7 +18,7 @@ export function makeBootstrapClassLoaderFactory(
     if (cache.size > 0) {
       cache.clear();
     }
-    const bootstrapClassLoader = new doppio.VM.ClassFile.BootstrapClassLoader(
+    const bootstrapClassLoader = new Doppio.VM.ClassFile.BootstrapClassLoader(
       javaHome,
       classPaths,
       next

@@ -1,48 +1,17 @@
-import * as BrowserFS from "browserfs";
+import BrowserFS from "browserfs";
 
 // import { makeJVMFactory } from "./jvm";
-import { createJVM, util } from "./jvm";
-import { fs, recursiveCopy, ls } from "./fs";
+import { createJVM, util, JVMThread } from "./jvm";
+import { initFs, ls } from "./fs";
 //@ts-ignore
 import javaCode from "./Probe.java?raw";
 // import { makeBootstrapClassLoaderFactory } from './bootstap-class-loader';
 
-const { Buffer } = BrowserFS.BFSRequire("buffer");
-
 const data = await fetch("/doppio.zip").then((res) => res.arrayBuffer());
 
-await new Promise<void>((resolve, reject) =>
-  BrowserFS.configure(
-    {
-      fs: "MountableFileSystem",
-      options: {
-        "/tmp": {
-          fs: "InMemory",
-          options: {},
-        },
-        "/home": {
-          fs: "InMemory",
-          options: {},
-        },
-        "/zip": {
-          fs: "ZipFS",
-          options: {
-            zipData: Buffer.from(data),
-          },
-        },
-        "/sys": {
-          fs: "InMemory",
-          options: {},
-        },
-      },
-    },
-    (e) => (e ? reject(e) : resolve())
-  )
-);
+const fs = await initFs(data);
+
 console.time("Run");
-await new Promise((resolve, reject) =>
-  recursiveCopy("/zip", "/sys", (e) => (e ? reject(e) : resolve(null)))
-);
 
 ls("/sys");
 
@@ -62,8 +31,7 @@ var process = BrowserFS.BFSRequire("process");
 // Initialize TTYs; required if needed to be initialized immediately due to
 // circular dependency issue.
 // See: https://github.com/jvilk/bfs-process#stdinstdoutstderr
-//@ts-expect-error no types
-process.initializeTTYs();
+// process.initializeTTYs();
 process.stdout.on("data", function (data) {
   // data is a Node Buffer, which BrowserFS implements in the browser.
   // http://nodejs.org/api/buffer.html
@@ -98,19 +66,30 @@ jvm = await createJVM({
 
 jvm.registerNatives({
   Probe: {
-    "getStringArg()Ljava/lang/String;": function (thread) {
-      return util.initString(thread.getBsCl(), "FRIDAY")
+    "getStringArg()Ljava/lang/String;": function (
+      thread: JVMThread
+    ) {
+      return util.initString(thread.getBsCl(), "FRIDAY");
     },
-    "saveNumber(I)V": function (thread, arg0) {
+    "saveNumber(I)V": function (thread: JVMThread, arg0: number) {
       console.log("Number: ", arg0);
     },
-    "saveString(Ljava/lang/String;)V": function (thread, arg0) {
+    "saveString(Ljava/lang/String;)V": function (
+      thread: JVMThread,
+      arg0: string
+    ) {
       console.log("String: ", arg0.toString());
     },
-    "saveArray([I)V": function (thread, arg0) {
+    "saveArray([I)V": function (
+      thread: JVMThread,
+      arg0: number[]
+    ) {
       console.log("Array: ", arg0);
     },
-    "saveEnum(LDayOfWeek;)V": function (thread, arg0) {
+    "saveEnum(LDayOfWeek;)V": function (
+      thread: JVMThread,
+      arg0: object
+    ) {
       console.log("Enum: ", arg0);
     },
   },

@@ -1,64 +1,76 @@
-import * as BrowserFS from "browserfs";
-import * as async from "async";
+import BrowserFS from "browserfs";
 
-export const path = BrowserFS.BFSRequire("path");
-export const fs = BrowserFS.BFSRequire("fs");
+import type { FSModule } from "browserfs/dist/node/core/FS";
+export { FSModule };
 
-function copyFile(srcFile: string, destFile: string, cb: (err?: any) => void) {
-  fs.readFile(srcFile, (e: any, data?: Buffer) => {
-    if (e) {
-      cb(e);
-    } else {
-      fs.writeFile(destFile, data, cb);
-    }
-  });
+const path = BrowserFS.BFSRequire("path");
+const fs = BrowserFS.BFSRequire("fs");
+const { Buffer } = BrowserFS.BFSRequire("buffer");
+
+function copyFile(srcFile: string, destFile: string) {
+  fs.writeFileSync(destFile, fs.readFileSync(srcFile));
 }
 
-export function recursiveCopy(
-  srcFolder: string,
-  destFolder: string,
-  cb: (err?: any) => void
-): void {
-  function processDir(
-    srcFolder: string,
-    destFolder: string,
-    cb: (err?: any) => void
-  ) {
-    fs.mkdir(destFolder, (err?: NodeJS.ErrnoException) => {
+function recursiveCopy(srcFolder: string, destFolder: string) {
+  function processDir(srcFolder: string, destFolder: string) {
+    try {
+      fs.mkdirSync(destFolder);
+    } catch (err) {
       // Ignore EEXIST.
-      if (err && err.code !== "EEXIST") {
-        cb(err);
-      } else {
-        fs.readdir(srcFolder, (e, items) => {
-          if (e) {
-            cb(e);
-          } else {
-            async.each(
-              items!,
-              // @ts-expect-error
-              (item, next) => {
-                var srcItem = path.resolve(srcFolder, item),
-                  destItem = path.resolve(destFolder, item);
-                fs.stat(srcItem, (e, stat) => {
-                  if (e) {
-                    cb(e);
-                  } else {
-                    if (stat!.isDirectory()) {
-                      processDir(srcItem, destItem, next);
-                    } else {
-                      copyFile(srcItem, destItem, next);
-                    }
-                  }
-                });
-              },
-              cb
-            );
-          }
-        });
+      if (
+        err &&
+        typeof err === "object" &&
+        "code" in err &&
+        err.code !== "EEXIST"
+      ) {
+        throw err;
       }
-    });
+    }
+    for (let item of fs.readdirSync(srcFolder)) {
+      const srcItem = path.resolve(srcFolder, item),
+        destItem = path.resolve(destFolder, item),
+        stat = fs.statSync(srcItem);
+      if (stat.isDirectory()) {
+        processDir(srcItem, destItem);
+      } else {
+        copyFile(srcItem, destItem);
+      }
+    }
   }
-  processDir(srcFolder, destFolder, cb);
+  processDir(srcFolder, destFolder);
+}
+
+export async function initFs(libZipData: ArrayBuffer): Promise<FSModule> {
+  await new Promise<void>((resolve, reject) =>
+    BrowserFS.configure(
+      {
+        fs: "MountableFileSystem",
+        options: {
+          "/tmp": {
+            fs: "InMemory",
+            options: {},
+          },
+          "/home": {
+            fs: "InMemory",
+            options: {},
+          },
+          "/zip": {
+            fs: "ZipFS",
+            options: {
+              zipData: Buffer.from(libZipData),
+            },
+          },
+          "/sys": {
+            fs: "InMemory",
+            options: {},
+          },
+        },
+      },
+      (e) => (e ? reject(e) : resolve())
+    )
+  );
+  recursiveCopy("/zip", "/sys");
+  return fs;
 }
 
 export function ls(path: string) {

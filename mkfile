@@ -215,7 +215,7 @@ java/:
       cp ../src/vendor/doppio.zip public
     b:
       bun run build
-    p: b
+    p:
       bun run preview
     bun run dev
     popd

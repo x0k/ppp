@@ -16,6 +16,8 @@
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
     "@types/async": "1.4.28",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.4",
     "vite": "^5.3.3"
   }
 }
