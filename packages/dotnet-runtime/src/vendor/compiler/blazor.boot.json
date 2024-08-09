@@ -1,12 +1,12 @@
 {
   "mainAssemblyName": "compiler",
   "resources": {
-    "hash": "sha256-pp4y57RDcrD7CwgM6bsB4IsN+1h40IN020jzg/KTbR4=",
+    "hash": "sha256-F6bEMUoIdWFG5YNQAdq5PVvh4ym5CinPhMJpbTEqliA=",
     "jsModuleWorker": {
-      "dotnet.native.worker.8.0.7.9oacvs2mzj.js": "sha256-Qx8CvNYlt1HAErxzLAM7CARKIDWzPQ7lN4FvTjY3vAg="
+      "dotnet.native.worker.8.0.7.wc1hblvvs5.js": "sha256-Qx8CvNYlt1HAErxzLAM7CARKIDWzPQ7lN4FvTjY3vAg="
     },
     "jsModuleNative": {
-      "dotnet.native.8.0.7.iop1d9rfcj.js": "sha256-FFm0MOmwXmvjxlLsIfgAsG6SvgvvcCmXDR899grfp7Q="
+      "dotnet.native.8.0.7.pu4atn93yb.js": "sha256-FFm0MOmwXmvjxlLsIfgAsG6SvgvvcCmXDR899grfp7Q="
     },
     "jsModuleRuntime": {
       "dotnet.runtime.8.0.7.jxd9nmm8os.js": "sha256-NPVYgzpMzBYpFWC8OFsyjlP0td57dR3IQ6oc+hBhIK8="
@@ -20,7 +20,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "compiler.wasm": "sha256-jKO/qz2BFPyw6XlLywRZefBKToyOgL/syBSQ7rnQEsQ=",
+      "compiler.wasm": "sha256-8dpl0MEsRr6D35WuI8qgrt8d7WYcpdX4sSw21QOyocg=",
       "Humanizer.wasm": "sha256-4NbSboZzzP9nikRtXapUZNzOyITt7ht9TNqCIQHr5OE=",
       "Microsoft.CodeAnalysis.CSharp.wasm": "sha256-MmeG9q/P2+iYoe4SIOiX8O9PfmJ1tDKKZqYIUMhtLjk=",
       "Microsoft.CodeAnalysis.CSharp.Workspaces.wasm": "sha256-BNrSVaMP3zPZbm0J/QmV/A8i8SB8GA/K1yNSXFXP10s=",

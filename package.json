@@ -4,7 +4,7 @@
   "author": "Krasilnikov Roman",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.1.4",
+  "packageManager": "pnpm@9.6.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@total-typescript/tsconfig": "^1.0.4",
     "only-allow": "^1.2.1",
-    "turbo": "^2.0.9",
+    "turbo": "^2.0.12",
     "typescript": "^5.5.4"
   },
   "pnpm": {

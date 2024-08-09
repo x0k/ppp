@@ -85,6 +85,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly initialise_panic_hook: (a: number) => void;
+  readonly reset_filesystem: (a: number) => void;
   readonly delete_project: (a: number) => void;
   readonly write_module: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly write_file: (a: number, b: number, c: number, d: number, e: number) => void;
@@ -94,7 +95,6 @@ export interface InitOutput {
   readonly read_compiled_javascript: (a: number, b: number, c: number, d: number) => void;
   readonly read_compiled_erlang: (a: number, b: number, c: number, d: number) => void;
   readonly pop_warning: (a: number, b: number) => void;
-  readonly reset_filesystem: (a: number) => void;
   readonly reset_warnings: (a: number) => void;
   readonly ring_core_0_17_8_bn_mul_mont: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
