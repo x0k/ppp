@@ -8,8 +8,12 @@
     ],
     "noUncheckedIndexedAccess": false,
     "rootDir": "src",
-    "types": ["vite/client"],
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    "noEmit": false,
+    "composite": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
   },
   "include": [
     "src/**/*"

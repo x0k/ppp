@@ -1,4 +1,4 @@
-import * as doppio from "doppiojvm";
+import Doppio from "doppiojvm";
 
 /**
  * Checks the given assertion. Throws an error if it fails.
@@ -6,7 +6,7 @@ import * as doppio from "doppiojvm";
 export default function assert(
   assertion: boolean,
   msg?: string,
-  thread?: doppio.VM.Threading.JVMThread
+  thread?: Doppio.VM.Threading.JVMThread
 ) {
   if (!assertion) {
     throw new Error(

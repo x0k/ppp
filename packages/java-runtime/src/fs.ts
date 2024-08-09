@@ -1,10 +1,11 @@
-import * as BrowserFS from "browserfs";
+import BrowserFS from "browserfs";
 import type { FSModule } from "browserfs/dist/node/core/FS";
 
 export { FSModule };
 
 const path = BrowserFS.BFSRequire("path");
 const fs = BrowserFS.BFSRequire("fs");
+const { Buffer } = BrowserFS.BFSRequire("buffer");
 
 function copyFile(srcFile: string, destFile: string) {
   fs.writeFileSync(destFile, fs.readFileSync(srcFile));

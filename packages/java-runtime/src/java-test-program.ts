@@ -1,4 +1,4 @@
-import { Context } from "libs/context";
+import type { Context } from "libs/context";
 import type { TestProgram } from "testing";
 
 import type { JVMFactory } from './jvm-factory.js';

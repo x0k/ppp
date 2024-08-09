@@ -12,7 +12,7 @@
     "verbatimModuleSyntax": false,
     "allowSyntheticDefaultImports": true,
     "noEmit": false,
-    // "declaration": true,
+    "declaration": true,
     "composite": true,
     "emitDeclarationOnly": true,
     "outDir": "dist",

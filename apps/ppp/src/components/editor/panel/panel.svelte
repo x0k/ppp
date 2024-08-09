@@ -156,6 +156,7 @@
         runner[Symbol.dispose]();
       }
     } catch (err) {
+      console.error(err);
       logger.error(stringifyError(err));
     } finally {
       isRunning = false;
