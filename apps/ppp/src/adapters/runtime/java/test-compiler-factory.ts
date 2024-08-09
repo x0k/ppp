@@ -50,6 +50,7 @@ export class JavaTestCompilerFactory {
         this.output = output;
       }
       protected override getNatives(input: I): Record<string, Function> {
+        this.output = undefined;
         return nativesFactory(input, this.saveOutput.bind(this));
       }
       protected override getResult(): O {
@@ -64,6 +65,8 @@ export class JavaTestCompilerFactory {
         if (files.length !== 1) {
           throw new Error("Compilation of multiple files is not implemented");
         }
+        // TODO: Fix handling compilation errors or at least remove previous
+        // compilation output
         await compiler.compile(
           ctx,
           `${files[0].content}
