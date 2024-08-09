@@ -18,14 +18,10 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
-    // commonjsOptions: {
-    //   transformMixedEsModules: true,
-    //   include: ["src/**/*"],
-    // },
   },
   plugins: [
     inject({
-      BrowserFS: "/src/bfs.js",
+      BrowserFS: ["browserfs", "*"],
       process: "/src/bfs-process.js",
     }),
   ],

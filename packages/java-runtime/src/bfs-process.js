@@ -1,5 +1,5 @@
-import { BFSRequire } from "browserfs";
+import * as bfsFS from "browserfs";
 
-const bfsProcess = BFSRequire("process");
+const bfsProcess = bfsFS.BFSRequire("process");
 
 export default bfsProcess;

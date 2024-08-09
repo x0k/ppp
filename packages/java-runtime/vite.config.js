@@ -7,30 +7,20 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 export default defineConfig({
   build: {
     lib: {
-      // Could also be a dictionary or array of multiple entry points
       entry: {
         index: resolve(__dirname, "src/index.ts"),
         version: resolve(__dirname, "src/version.ts"),
       },
       formats: ["es"],
-      // name: "MyLib",
-      // the proper extensions will be added
-      // fileName: "index",
     },
     rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
       external: [/^libs\//],
-      output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          // vue: "Vue",
-        },
-      },
     },
+    commonjsOptions: {
+      include: /node_modules/,
+      transformMixedEsModules: true,
+    }
   },
-  	// global process from browserfs
 	define: {
 		global: {},
     setImmediate: "queueMicrotask",
@@ -47,7 +37,7 @@ export default defineConfig({
 	},
   plugins: [
     inject({
-			browserfs: "/src/bfs.js",
+      BrowserFS: ["browserfs", "*"],
 			process: "/src/bfs-process.js",
 		}),
     dts(),
