@@ -66,77 +66,82 @@ public partial class Compiler
 
     [JSExport]
     [RequiresUnreferencedCode("Calls System.AppDomain.Load(Byte[])")]
-    internal static int Compile(string[] code)
+    internal static async Task<int> Compile(string[] code)
     {
-        if (references == null)
+        return await Task.Run(() =>
         {
-            Logger.Error("Compiler is not initialized");
-            return -1;
-        }
-        SyntaxTree[] trees = new SyntaxTree[code.Length];
-        for (int i = 0; i < code.Length; i++)
-        {
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(code[i]);
-            var hasDiagnosticError = false;
-            foreach (var diagnostic in tree.GetDiagnostics())
+            if (references == null)
+            {
+                Logger.Error("Compiler is not initialized");
+                return -1;
+            }
+            SyntaxTree[] trees = new SyntaxTree[code.Length];
+            for (int i = 0; i < code.Length; i++)
+            {
+                SyntaxTree tree = CSharpSyntaxTree.ParseText(code[i]);
+                var hasDiagnosticError = false;
+                foreach (var diagnostic in tree.GetDiagnostics())
+                {
+                    Logger.PrintDiagnostic(diagnostic);
+                    if (diagnostic.Severity == DiagnosticSeverity.Error)
+                    {
+                        hasDiagnosticError = true;
+                    }
+                }
+                if (hasDiagnosticError)
+                {
+                    return -1;
+                }
+                trees[i] = tree;
+            }
+            var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).
+                WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
+            var compilation = CSharpCompilation.Create("assembly.compiler", trees, references, op);
+
+            using MemoryStream stream = new();
+            var result = compilation.Emit(stream, options: new EmitOptions());
+
+            foreach (var diagnostic in result.Diagnostics)
             {
                 Logger.PrintDiagnostic(diagnostic);
-                if (diagnostic.Severity == DiagnosticSeverity.Error)
-                {
-                    hasDiagnosticError = true;
-                }
             }
-            if (hasDiagnosticError)
+
+            if (!result.Success)
             {
                 return -1;
             }
-            trees[i] = tree;
-        }
-        var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).
-            WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
-        var compilation = CSharpCompilation.Create("assembly.compiler", trees, references, op);
 
-        using MemoryStream stream = new();
-        var result = compilation.Emit(stream, options: new EmitOptions());
-
-        foreach (var diagnostic in result.Diagnostics)
-        {
-            Logger.PrintDiagnostic(diagnostic);
-        }
-
-        if (!result.Success)
-        {
-            return -1;
-        }
-
-        assembly = AppDomain.CurrentDomain.Load(stream.ToArray());
-        return 0;
+            assembly = AppDomain.CurrentDomain.Load(stream.ToArray());
+            return 0;
+        });
     }
 
     [JSExport]
     [RequiresUnreferencedCode("Calls System.Reflection.Assembly.GetExportedTypes()")]
-    internal static int Run(string typeFullName, string methodName, string[] arguments)
+    internal static async Task<int> Run(string typeFullName, string methodName, string[] arguments)
     {
-        if (assembly == null)
+        return await Task.Run(() =>
         {
-            Logger.Error("There are no compiled assemblies");
-            return -1;
-        }
-        var type = assembly.GetExportedTypes().ToList().Find(x => x.FullName == typeFullName);
-        if (type == null)
-        {
-            Logger.Error($"Type not found: {typeFullName}");
-            return -1;
-        }
-        var method = type.GetMethod(methodName);
-        if (method == null)
-        {
-            Logger.Error($"Method not found: {methodName}");
-            return -1;
-        }
-        executionResult = method.Invoke(null, arguments);
-        return 0;
-
+            if (assembly == null)
+            {
+                Logger.Error("There are no compiled assemblies");
+                return -1;
+            }
+            var type = assembly.GetExportedTypes().ToList().Find(x => x.FullName == typeFullName);
+            if (type == null)
+            {
+                Logger.Error($"Type not found: {typeFullName}");
+                return -1;
+            }
+            var method = type.GetMethod(methodName);
+            if (method == null)
+            {
+                Logger.Error($"Method not found: {methodName}");
+                return -1;
+            }
+            executionResult = method.Invoke(null, arguments);
+            return 0;
+        });
     }
 
     [JSExport]
@@ -150,7 +155,8 @@ public partial class Compiler
     }
 
     [JSExport]
-    internal static void DisposeAssembly() {
+    internal static void DisposeAssembly()
+    {
         assembly = null;
         executionResult = null;
     }

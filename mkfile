@@ -146,7 +146,7 @@ dotnet/:
         fi
     done
     for workload in "${uninstalled_workloads[@]}"; do
-        sudo dotnet workload install "${workload}"
+        sudo env PATH=$PATH dotnet workload install "${workload}"
     done
   compiler/: workloads
     build: release copy cleanup
@@ -172,7 +172,7 @@ dotnet/:
     popd
   workloads:
     for workload in "${uninstalled_workloads[@]}"; do
-      sudo dotnet workload uninstall "${workload}"
+      sudo env PATH=$PATH dotnet workload uninstall "${workload}"
     done
   p:
     pushd probe

@@ -11,7 +11,7 @@ export class DotnetTestProgram<I, O> implements TestProgram<I, O> {
   ) {}
 
   async run(_: Context, input: I): Promise<O> {
-    const status = this.runtime.Run(
+    const status = await this.runtime.Run(
       this.typeFullName,
       this.methodName,
       this.convertToArgs(input)
