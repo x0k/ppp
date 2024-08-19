@@ -1,4 +1,3 @@
 export * from "./php-test-program";
-export * from "./fail-safe-php";
-export * from "./php-runtime-factory";
+export * from "./php-compiler-factory";
 export * from "./version";

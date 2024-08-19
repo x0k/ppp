@@ -1,4 +1,4 @@
-import type { WebPHP } from "@php-wasm/web";
+import type { PHP } from "@php-wasm/universal";
 
 import type { Writer } from "libs/io";
 import type { Context } from "libs/context";
@@ -9,7 +9,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 
   constructor(
     protected writer: Writer,
-    protected readonly php: WebPHP,
+    protected readonly php: PHP,
     protected readonly code: string
   ) {
     php.onMessage(this.handleResult.bind(this));

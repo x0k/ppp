@@ -1,6 +1,6 @@
 import { inContext, type Context } from 'libs/context';
 import type { Writer } from "libs/io";
-import { FailSafePHP, phpRuntimeFactory, PHPTestProgram } from "php-runtime";
+import { phpCompilerFactory, PHPTestProgram } from "php-runtime";
 import type { TestCompiler } from "testing";
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
@@ -17,17 +17,16 @@ export class PhpTestCompilerFactory {
         return generateCaseExecutionCode(data);
       }
     }
-    const failSafePhp = new FailSafePHP(phpRuntimeFactory);
-    await inContext(ctx, failSafePhp.failSafeInit());
+    const php = await inContext(ctx, phpCompilerFactory());
     return {
       compile: async (_, files) => {
         if (files.length !== 1) {
           throw new Error("Compilation of multiple files is not implemented");
         }
-        return new TestProgram(this.out, failSafePhp, files[0].content);
+        return new TestProgram(this.out, php, files[0].content);
       },
       [Symbol.dispose]() {
-        failSafePhp[Symbol.dispose]();
+        php[Symbol.dispose]();
       },
     };
   }
