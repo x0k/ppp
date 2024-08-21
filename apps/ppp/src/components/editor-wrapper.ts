@@ -16,7 +16,11 @@ export function mountEditor<L extends Language, I, O>(
     { initialValue: string; factory: TestCompilerFactory<I, O> }
   >
 ) {
-  const element = document.getElementById("editor-placeholder")!;
+  const element = document.getElementById("editor-placeholder");
+  if (!element) {
+    return;
+    // throw new Error("No editor placeholder found");
+  }
   const props = {
     contentId: element.dataset.contentId!,
     testCases,
@@ -27,7 +31,7 @@ export function mountEditor<L extends Language, I, O>(
             lang,
             {
               initialValue: runtimes[lang as L].initialValue,
-              testRunnerFactory:runtimes[lang as L].factory,
+              testRunnerFactory: runtimes[lang as L].factory,
               Description: DESCRIPTIONS[lang as L],
             } satisfies Runtime<I, O>,
           ] as const

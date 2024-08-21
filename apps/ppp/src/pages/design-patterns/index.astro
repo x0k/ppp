@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '@/layouts/landing.astro'
+
+const designPatternsEntries = await getCollection("designPatterns")
+---
+<Layout title='Design Patterns' >
+  <ul>
+    {
+      designPatternsEntries.map((entry) => (
+        <li>
+          <a href={`./${entry.id}`}>{entry.data.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>

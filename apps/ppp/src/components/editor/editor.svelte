@@ -155,7 +155,7 @@
     </form>
     <h3 class="text-lg font-bold">{LANGUAGE_TITLE[selectedLang]}</h3>
     <div class="flex flex-col items-start gap-2 py-4">
-      <svelte:component this={runtimes[selectedLang].Description} />
+      {runtimes[selectedLang].Description}
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">

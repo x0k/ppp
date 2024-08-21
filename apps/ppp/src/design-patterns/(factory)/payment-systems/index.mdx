@@ -1,8 +1,13 @@
+---
+title: Платежные системы
+contentId: design-patterns-factory
+---
 import Layout from "@/layouts/problem.astro";
 import Hint from "@/components/hint.astro";
-import Editor from "@/content/design-patterns/factory/editor.astro";
 
-<Layout title="Example" category="Design Patterns" >
+import Editor from "./editor.astro";
+
+<Layout category="Design Patterns">
   # Платежные системы
 
   Необходимо выполнить интеграцию с тремя платежными системами, реализовав операцию `payment`.
@@ -18,5 +23,6 @@ import Editor from "@/content/design-patterns/factory/editor.astro";
   > Для тестовых данных результат операций будет целочисленным положительным числом.
 
   <Hint title="Рекомендуемый паттерн проектирования">Используй фабрику.</Hint>
+
   <Editor slot="editor" contentId="design-patterns-factory" />
 </Layout>
