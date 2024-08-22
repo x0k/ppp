@@ -1,0 +1,22 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n'
+
+import { Page } from "@/shared";
+import { type Lang, useTranslations, getPageLabel } from '@/i18n';
+
+export interface Props {
+  currentPage: Page
+}
+
+const lang = Astro.currentLocale as Lang;
+const t = useTranslations(lang);
+---
+
+<div class="navbar bg-base-100 max-w-4xl m-auto gap-3">
+	<a href={getRelativeLocaleUrl(lang, Page.Main)} class="avatar placeholder">
+		<div class="bg-base-300 text-neutral-content rounded-md w-12">
+			<span class="text-xl">3P</span>
+		</div>
+	</a>
+	<a class="link link-hover" href={getRelativeLocaleUrl(lang, Page.Problems)}>{t(getPageLabel(Page.Problems))}</a></li>
+</div>

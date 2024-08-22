@@ -22,7 +22,7 @@ export function mountEditor<L extends Language, I, O>(
     // throw new Error("No editor placeholder found");
   }
   const props = {
-    contentId: element.dataset.contentId!,
+    contentId: location.pathname,
     testCases,
     runtimes: Object.fromEntries(
       Object.keys(runtimes).map(

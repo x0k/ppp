@@ -1,12 +1,4 @@
----
-export interface Props {
-  contentId: string;
-}
-
-const { contentId } = Astro.props;
----
-
-<div id="editor-placeholder" data-content-id={contentId}></div>
+<div id="editor-placeholder"></div>
 
 <script>
   import { Language } from "@/shared/languages";

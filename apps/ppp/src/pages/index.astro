@@ -1,8 +1,14 @@
 ---
-import { TITLE } from "@/shared";
+import { Page } from "@/shared";
 import Layout from "@/layouts/landing.astro";
+import Navigation from '@/containers/navigation.astro';
+import { getPageLabel, Lang, useTranslations } from '@/i18n';
+
+const lang = Astro.currentLocale as Lang;
+const t = useTranslations(lang);
 ---
 
-<Layout title={TITLE}>
+<Layout title={t(getPageLabel(Page.Main))}>
+	<Navigation slot="nav" currentPage={Page.Main} />
 	Landing page
 </Layout>

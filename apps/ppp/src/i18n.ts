@@ -16,17 +16,17 @@ export function getNextLang(lang: Lang): Lang {
 
 export enum Label {
   MainPage = "page:main",
-  ProblemPage = "page:problem",
+  ProblemsPage = "page:problems",
 }
 
 const strings: Record<Lang, Record<Label, string>> = {
   [Lang.EN]: {
     [Label.MainPage]: TITLE,
-    [Label.ProblemPage]: "Problem",
+    [Label.ProblemsPage]: "Problems",
   },
   [Lang.RU]: {
     [Label.MainPage]: TITLE,
-    [Label.ProblemPage]: "Задача",
+    [Label.ProblemsPage]: "Проблемы",
   },
 };
 
@@ -36,7 +36,7 @@ export function useTranslations(lang: Lang) {
 
 const PAGE_TO_LABEL: Record<Page, Label> = {
   [Page.Main]: Label.MainPage,
-  [Page.Problem]: Label.ProblemPage,
+  [Page.Problems]: Label.ProblemsPage,
 };
 
 export function getPageLabel(page: Page): Label {

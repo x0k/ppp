@@ -1,11 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 
-import Layout from '@/components/root-layout.astro'
+import Layout from '@/components/root.astro'
 
 export async function getStaticPaths() {
-  const designPatterns = await getCollection('designPatterns');
-  return designPatterns.map(entry => ({
+  const problems = await getCollection('problems');
+  return problems.map(entry => ({
     params: { slug: entry.id }, props: { entry },
   }));
 }

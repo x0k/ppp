@@ -12,10 +12,10 @@ function generateId({ data, entry }: GenerateIdOptions) {
   return slug;
 }
 
-const designPatterns = defineCollection({
+const problems = defineCollection({
   loader: glob({
     pattern: "**/*.mdx",
-    base: "./src/design-patterns",
+    base: "./src/problems",
     generateId,
   }),
   schema: z.object({
@@ -23,4 +23,4 @@ const designPatterns = defineCollection({
   }),
 });
 
-export const collections = { designPatterns };
+export const collections = { problems };

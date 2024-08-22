@@ -1,6 +1,6 @@
 export enum Page {
   Main = "/",
-  Problem = "/task",
+  Problems = "/problems",
 }
 
 export const TITLE = "Programming Patterns Practice";
