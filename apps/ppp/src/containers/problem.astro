@@ -4,6 +4,7 @@ import { Icon } from "astro-icon/components";
 import { RESET_BUTTON_ID } from '@/shared'
 import type { ProblemCategory } from '@/shared/problems'
 import { type Lang, getProblemCategoryLabel, useTranslations } from '@/i18n'
+import Logo from '@/components/logo.astro';
 
 export interface Props {
   category: ProblemCategory
@@ -20,11 +21,7 @@ const { category } = Astro.props
     <div slot="description" class="h-full flex flex-col">
       <div class="p-6">
         <div class="flex gap-3 items-center mb-8">
-          <div class="avatar placeholder">
-            <div class="bg-base-300 text-neutral-content rounded-md w-12">
-              <span class="text-xl">3P</span>
-            </div>
-          </div>
+          <Logo lang={lang} />
           <div class="breadcrumbs">
             <ul>
               <li><a>{t(getProblemCategoryLabel(category))}</a></li>
