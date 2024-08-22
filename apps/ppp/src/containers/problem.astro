@@ -1,14 +1,18 @@
 ---
 import { Icon } from "astro-icon/components";
 
-import { RESET_BUTTON_ID } from '@/shared';
-import EditorProvider from "@/containers/editor-provider.astro";
+import { RESET_BUTTON_ID } from '@/shared'
+import type { ProblemCategory } from '@/shared/problems'
+import { type Lang, getProblemCategoryLabel, useTranslations } from '@/i18n'
 
 export interface Props {
-  category: string;
+  category: ProblemCategory
 }
 
-const { category } = Astro.props;
+const lang = Astro.currentLocale as Lang
+const t = useTranslations(lang)
+
+const { category } = Astro.props
 ---
 
 <main class="h-full overflow-hidden flex">
@@ -23,7 +27,7 @@ const { category } = Astro.props;
           </div>
           <div class="breadcrumbs">
             <ul>
-              <li><a>{category}</a></li>
+              <li><a>{t(getProblemCategoryLabel(category))}</a></li>
             </ul>
           </div>
           <div class="join ml-auto rounded">
@@ -48,8 +52,6 @@ const { category } = Astro.props;
     </div>
   </div>
   <div class="h-full">
-    <EditorProvider>
-      <slot name="editor" />
-    </EditorProvider>
+    <slot name="editor" />
   </div>
 </main>

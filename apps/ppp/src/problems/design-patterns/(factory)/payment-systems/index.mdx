@@ -1,12 +1,13 @@
 ---
 title: Платежные системы
 ---
-import Layout from "@/layouts/problem.astro";
+import Problem from "@/containers/problem.astro";
 import Hint from "@/components/hint.astro";
+import { ProblemCategory } from '@/shared/problems';
 
 import Editor from "./editor.astro";
 
-<Layout category="Design Patterns">
+<Problem category={ProblemCategory.DesignPatterns}>
   # Платежные системы
 
   Необходимо выполнить интеграцию с тремя платежными системами, реализовав операцию `payment`.
@@ -24,4 +25,4 @@ import Editor from "./editor.astro";
   <Hint title="Рекомендуемый паттерн проектирования">Используй фабрику.</Hint>
 
   <Editor slot="editor" />
-</Layout>
+</Problem>

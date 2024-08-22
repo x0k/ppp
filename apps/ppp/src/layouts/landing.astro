@@ -1,5 +1,5 @@
 ---
-import RootLayout from "@/components/root.astro";
+import Root from "./root.astro";
 
 interface Props {
   title: string;
@@ -8,7 +8,7 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<RootLayout title={title}>
+<Root title={title}>
   <slot name="nav" />
   <div class="flex justify-center">
     <main
@@ -18,4 +18,4 @@ const { title } = Astro.props;
       <slot />
     </main>
   </div>
-</RootLayout>
+</Root>
