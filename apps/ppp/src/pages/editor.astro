@@ -1,0 +1,12 @@
+---
+import Root from '@/layouts/root.astro'
+import EditorProvider from '@/containers/editor-provider.astro'
+
+import SvelteEditor from './_editor.svelte'
+---
+
+<Root title="Editor">
+  <EditorProvider>
+    <SvelteEditor client:only="svelte" />
+  </EditorProvider>
+</Root>

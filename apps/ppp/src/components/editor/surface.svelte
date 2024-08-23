@@ -112,7 +112,6 @@
       return true
     },
   }
-
 </script>
 
 <div class="h-full flex flex-col relative bg-base-300" style="width: {width}px">

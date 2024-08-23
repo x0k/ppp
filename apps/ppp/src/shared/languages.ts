@@ -10,6 +10,8 @@ export enum Language {
   Java = "java",
 }
 
+export const LANGUAGES = Object.values(Language);
+
 export const LANGUAGE_TITLE: Record<Language, string> = {
   [Language.PHP]: "PHP",
   [Language.TypeScript]: "TypeScript",

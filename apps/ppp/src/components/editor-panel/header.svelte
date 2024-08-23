@@ -1,43 +1,31 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import Icon from '@iconify/svelte';
 
   import { Tab, TAB_TITLES } from './model';
 
   interface Props {
-    isRunning: boolean;
     testsCount: number;
     lastTestId: number;
     selectedTab: Tab | null;
-    onRun: () => void;
-    append: Snippet;
+    prepend?: Snippet;
+    append?: Snippet;
   }
 
   let {
     selectedTab = $bindable(),
-    isRunning,
     testsCount,
     lastTestId,
+    prepend,
     append,
-    onRun
   }: Props = $props();
 
   interface TabButtonProps { tab: Tab, append?: Snippet }
 </script>
 
 <div class="flex flex-wrap items-center gap-3 p-1">
-  <button
-    class="btn btn-sm btn-primary"
-    onclick={onRun}
-  >
-    {#if isRunning}
-      <span class="loading loading-spinner"></span>
-      Stop
-    {:else}
-      <Icon class="w-6" icon="lucide:play" />
-      Run
-    {/if}
-  </button>
+  {#if prepend}
+    {@render prepend()}
+  {/if}
   <div role="tablist" class="tabs panel-tabs">
     {#snippet tabButton({ tab, append }: TabButtonProps)}
       <!-- svelte-ignore a11y_interactive_supports_focus -->
@@ -76,8 +64,10 @@
     {@render tabButton({ tab: Tab.Output })}
     {@render tabButton({ tab: Tab.Settings })}
   </div>
-  <div class="grow" ></div>
-  {@render append()}
+  <div class="grow"></div>
+  {#if append}
+    {@render append()}
+  {/if}
 </div>
 
 <style>

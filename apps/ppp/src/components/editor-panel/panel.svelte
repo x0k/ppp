@@ -17,7 +17,6 @@
     type TestCompilerFactory,
   } from "testing";
   
-  import { testRunnerTimeout, type SurfaceApi } from '../model';
   import { Tab } from './model';
   import { makeTheme } from './terminal'
 
@@ -27,7 +26,6 @@
   import TabsHeader from './header.svelte';
 
   interface Props<I, O> {
-    api: SurfaceApi
     model: editor.IModel;
     testCases: TestCase<I, O>[];
     testCompilerFactory: TestCompilerFactory<I, O>;
@@ -36,7 +34,6 @@
   }
 
   let {
-    api,
     model,
     testCases,
     testCompilerFactory,
@@ -56,25 +53,6 @@
 
   let selectedTab = $state<Tab | null>(null);
 
-  $effect(() => {
-    selectedTab;
-    untrack(() => {
-      if (selectedTab) {
-        api.showPanel(window.innerHeight/3);
-      } else {
-        api.hidePanel();
-      }
-    })
-  })
-
-  $effect(() => {
-    if (api.isPanelCollapsed) {
-      // untrack(() => {
-        selectedTab = null
-      // })
-    }
-  })
-
   const term = new Terminal({
     theme: makeTheme("business"),
     fontFamily: "monospace",
@@ -92,23 +70,23 @@
     term.clear();
   })
 
-  let resizeFrameId: number
-  $effect(() => {
-    api.panelHeight;
-    api.width;
-    if (selectedTab !== Tab.Output) {
-      return
-    }
-    cancelAnimationFrame(resizeFrameId)
-    resizeFrameId = requestAnimationFrame(() => {
-      // Fix the terminal resize to the smaller height
-      term.resize(term.cols, 1)
-      fitAddon.fit()
-    })
-    return () => {
-      cancelAnimationFrame(resizeFrameId)
-    }
-  })
+  // let resizeFrameId: number
+  // $effect(() => {
+  //   api.panelHeight;
+  //   api.width;
+  //   if (selectedTab !== Tab.Output) {
+  //     return
+  //   }
+  //   cancelAnimationFrame(resizeFrameId)
+  //   resizeFrameId = requestAnimationFrame(() => {
+  //     // Fix the terminal resize to the smaller height
+  //     term.resize(term.cols, 1)
+  //     fitAddon.fit()
+  //   })
+  //   return () => {
+  //     cancelAnimationFrame(resizeFrameId)
+  //   }
+  // })
 
   const termWriter: Writer = {
     write (data) {

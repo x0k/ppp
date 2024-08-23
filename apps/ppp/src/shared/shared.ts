@@ -5,7 +5,7 @@ export enum Page {
 
 export const TITLE = "Programming Patterns Practice";
 
-export interface Position {
+export interface Vec2 {
   x: number;
   y: number;
 }
