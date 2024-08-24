@@ -4,14 +4,16 @@
   import Icon from '@iconify/svelte';
 
   import type { Compiler } from "libs/compiler";
-  import type { Context } from "libs/context";
   import type { Writer } from "libs/io";
+  import { createContext, type Context } from "libs/context";
+  import { createLogger } from 'libs/logger';
+  import { stringifyError } from 'libs/error';
 
   import { reactiveWindow } from '@/lib/reactive-window.svelte'
   import { debouncedSave, immediateSave } from "@/lib/sync-storage.svelte";
   import { Language, LANGUAGE_ICONS, LANGUAGE_TITLE } from "@/shared/languages";
   import { EditorPanelTab } from '@/shared/editor-panel-tab';
-  import type { Lang } from '@/i18n';
+  import { Label, type Lang } from '@/i18n';
   import { createSyncStorage } from "@/adapters/storage";
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import Dropdown from '@/components/dropdown.svelte';
@@ -21,9 +23,11 @@
     setEditorContext,
     VimStatus,
     createTerminal,
+    createTerminalWriter,
+    RunButton,
   } from "@/components/editor2";
   import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor2/panel";
-  import { VimMode } from '@/components/editor2/settings';
+  import { CheckBox, Number } from '@/components/editor2/controls';
 
   interface Props {
     lang: Lang
@@ -31,7 +35,7 @@
 
   const { lang: pageLang }: Props = $props();
 
-  type CompilerFactory = (ctx: Context, out: Writer) => Compiler;
+  type CompilerFactory = (ctx: Context, out: Writer) => Promise<Compiler>;
   interface Runtime {
     initialValue: string;
     compilerFactory: CompilerFactory;
@@ -115,14 +119,71 @@
   let vimState = $state(vimStateStorage.load());
   immediateSave(vimStateStorage, () => vimState);
 
+  const executionTimeoutStorage = createSyncStorage(
+    localStorage,
+    "editor-execution-timeout",
+    60000
+  )
+  let executionTimeout = $state(executionTimeoutStorage.load());
+  debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
+
   let descriptionDialogElement: HTMLDialogElement
   let describedLanguage = $state(defaultLang);
+
+  const terminalWriter = createTerminalWriter(terminal)
+  const terminalLogger = createLogger(terminalWriter)
+  let compilerFactory = $derived(RUNTIMES[lang].compilerFactory);
+  let isRunning = $state(false);
+  let ctx: Context | null = null;
+  let compiler: Compiler | null = null;
+  $effect(() => {
+    compilerFactory;
+    isRunning = false;
+    compiler = null;
+    return () => {
+      if (compiler === null) {
+        return
+      }
+      compiler[Symbol.dispose]();
+      compiler = null
+    };
+  })
+  async function handleRun() {
+    if (isRunning) {
+      ctx?.cancel();
+      return;
+    }
+    ctx = createContext(executionTimeout);
+    isRunning = true;
+    terminal.clear();
+    try {
+      if (compiler === null) {
+        compiler = await compilerFactory(ctx, terminalWriter);
+      }
+      const programm = await compiler.compile(ctx, [{
+        filename: 'main',
+        content: model.getValue()
+      }])
+      try {
+        await programm.run(ctx)
+      } finally {
+        programm[Symbol.dispose]();
+      }
+    } catch (err) {
+      console.error(err);
+      terminalLogger.error(stringifyError(err));
+    } finally {
+      isRunning = false;
+      ctx = null;
+    }
+  }
 </script>
 
 <div class="h-screen flex flex-col">
   <Editor width={reactiveWindow.innerWidth} height={reactiveWindow.innerHeight - panelHeight} />
   <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
     <div class="flex flex-wrap items-center gap-3 p-1">
+      <RunButton {isRunning} onClick={handleRun} />
       <Tabs>
         <Tab tab={EditorPanelTab.Output} />
         <Tab tab={EditorPanelTab.Settings} />
@@ -151,7 +212,8 @@
     <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />
     <TabContent tab={EditorPanelTab.Settings}>
       <div class="overflow-auto flex flex-col gap-4 p-4">
-        <VimMode bind:vimState />
+        <CheckBox title={Label.EditorSettingsVimMode} bind:value={vimState} />
+        <Number title={Label.EditorSettingsExecutionTimeout} alt={Label.EditorSettingsExecutionTimeoutAlt} bind:value={executionTimeout} />
       </div>
     </TabContent>
   </Panel>

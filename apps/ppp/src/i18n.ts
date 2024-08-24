@@ -24,6 +24,10 @@ export enum Label {
   EditorPanelTabOutput = "editor:panel:tab:output",
   EditorPanelTabSettings = "editor:panel:tab:settings",
   EditorSettingsVimMode = "editor:settings:vim-mode",
+  EditorRunButton = "editor:button:run",
+  EditorStopButton = "editor:button:stop",
+  EditorSettingsExecutionTimeout = "editor:settings:execution-timeout",
+  EditorSettingsExecutionTimeoutAlt = "editor:settings:execution-timeout-alt",
 }
 
 const strings: Record<Lang, Record<Label, string>> = {
@@ -35,6 +39,10 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.EditorPanelTabOutput]: "Output",
     [Label.EditorPanelTabSettings]: "Settings",
     [Label.EditorSettingsVimMode]: "Vim mode",
+    [Label.EditorRunButton]: "Run",
+    [Label.EditorStopButton]: "Stop",
+    [Label.EditorSettingsExecutionTimeout]: "Execution timeout (ms)",
+    [Label.EditorSettingsExecutionTimeoutAlt]: "Use zero to disable",
   },
   [Lang.RU]: {
     [Label.MainPage]: TITLE,
@@ -44,6 +52,10 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.EditorPanelTabOutput]: "Вывод",
     [Label.EditorPanelTabSettings]: "Настройки",
     [Label.EditorSettingsVimMode]: "Режим Vim",
+    [Label.EditorRunButton]: "Запустить",
+    [Label.EditorStopButton]: "Остановить",
+    [Label.EditorSettingsExecutionTimeout]: "Таймаут выполнения (мс)",
+    [Label.EditorSettingsExecutionTimeoutAlt]: "Используйте ноль для отключения",
   },
 };
 

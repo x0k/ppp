@@ -1,6 +1,6 @@
 import type { Context } from './context.js';
 
-export interface Program {
+export interface Program extends Disposable {
   run: (ctx: Context) => Promise<void>;
 }
 
@@ -9,6 +9,6 @@ export interface File {
   content: string;
 }
 
-export interface Compiler {
+export interface Compiler extends Disposable {
   compile: (ctx: Context, files: File[]) => Promise<Program>;
 }

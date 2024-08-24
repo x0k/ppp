@@ -9,11 +9,10 @@
 
   interface Props {
     tab: EditorPanelTab
-    onClick?: () => void
     append?: Snippet
   }
 
-  const { tab, onClick, append }: Props = $props();
+  const { tab, append }: Props = $props();
 
   const editorCtx = getEditorContext()
   const t = useTranslations(editorCtx.lang)
@@ -31,7 +30,6 @@
   class:tab-active={isSelected}
   onclick={() => {
     ctx.selectedTab = tab
-    onClick?.()
   }}
 >
   {t(getEditorPanelTabLabel(tab))}
