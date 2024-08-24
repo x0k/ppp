@@ -1,5 +1,6 @@
 import { Page, TITLE } from "./shared";
 import { ProblemCategory } from "./shared/problems";
+import { EditorPanelTab } from "./shared/editor-panel-tab";
 
 export enum Lang {
   EN = "en",
@@ -19,6 +20,9 @@ export enum Label {
   MainPage = "page:main",
   ProblemsPage = "page:problems",
   ProblemsCategoryDesignPatterns = "problems:category:design-patterns",
+  EditorPanelTabTests = "editor:panel:tab:tests",
+  EditorPanelTabOutput = "editor:panel:tab:output",
+  EditorPanelTabSettings = "editor:panel:tab:settings",
 }
 
 const strings: Record<Lang, Record<Label, string>> = {
@@ -26,11 +30,17 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.MainPage]: TITLE,
     [Label.ProblemsPage]: "Problems",
     [Label.ProblemsCategoryDesignPatterns]: "Design Patterns",
+    [Label.EditorPanelTabTests]: "Tests",
+    [Label.EditorPanelTabOutput]: "Output",
+    [Label.EditorPanelTabSettings]: "Settings",
   },
   [Lang.RU]: {
     [Label.MainPage]: TITLE,
     [Label.ProblemsPage]: "Проблемы",
     [Label.ProblemsCategoryDesignPatterns]: "Паттерны проектирования",
+    [Label.EditorPanelTabTests]: "Тесты",
+    [Label.EditorPanelTabOutput]: "Вывод",
+    [Label.EditorPanelTabSettings]: "Настройки",
   },
 };
 
@@ -53,4 +63,14 @@ const PROBLEM_CATEGORY_TO_LABEL: Record<ProblemCategory, Label> = {
 
 export function getProblemCategoryLabel(category: ProblemCategory): Label {
   return PROBLEM_CATEGORY_TO_LABEL[category];
+}
+
+const EDITOR_PANEL_TAB_TO_LABEL: Record<EditorPanelTab, Label> = {
+  [EditorPanelTab.Tests]: Label.EditorPanelTabTests,
+  [EditorPanelTab.Output]: Label.EditorPanelTabOutput,
+  [EditorPanelTab.Settings]: Label.EditorPanelTabSettings,
+};
+
+export function getEditorPanelTabLabel(tab: EditorPanelTab): Label {
+  return EDITOR_PANEL_TAB_TO_LABEL[tab];
 }

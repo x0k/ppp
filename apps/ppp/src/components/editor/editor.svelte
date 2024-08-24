@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
   import type { Component } from 'svelte';
   import type { TestCase, TestCompilerFactory } from "testing";
   export interface Runtime<I, O> {
@@ -30,7 +30,7 @@
   import { LANG_ICONS } from './model'
   import Surface from "./surface.svelte";
   import Panel from "./panel/panel.svelte"
-  import VimMode from './vim-mode.svelte';
+  import VimMode from '../../containers/editor/vim-mode.svelte';
 
   const {
     contentId,

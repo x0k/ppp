@@ -23,3 +23,15 @@ export const LANGUAGE_TITLE: Record<Language, string> = {
   [Language.CSharp]: "CSharp",
   [Language.Java]: "Java",
 };
+
+export const LANGUAGE_ICONS: Record<Language, string> = {
+  [Language.JavaScript]: "vscode-icons:file-type-js",
+  [Language.Python]: "vscode-icons:file-type-python",
+  [Language.TypeScript]: "vscode-icons:file-type-typescript",
+  [Language.Go]: "vscode-icons:file-type-go",
+  [Language.PHP]: "vscode-icons:file-type-php",
+  [Language.Rust]: "vscode-icons:file-type-rust",
+  [Language.Gleam]: "vscode-icons:file-type-gleam",
+  [Language.CSharp]: "vscode-icons:file-type-csharp",
+  [Language.Java]: "vscode-icons:file-type-java",
+};
