@@ -4,11 +4,9 @@ import { EditorPanelTab } from "@/shared/editor-panel-tab";
 
 export class EditorPanelContext {
   selectedTab = $state<EditorPanelTab>();
-  
-  constructor (private heightGetter: () => number) {}
 
-  get height () {
-    return this.heightGetter();
+  constructor(selectedTab: EditorPanelTab) {
+    this.selectedTab = selectedTab;
   }
 }
 

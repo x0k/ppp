@@ -6,9 +6,11 @@
   import { getEditorPanelContext } from "./context.svelte";
 
   interface Props {
+    height: number;
+    width: number;
     class?: string;
   }
-  const { class: className }: Props = $props();
+  const { class: className, width, height }: Props = $props();
 
   let termElement: HTMLDivElement;
 
@@ -23,7 +25,8 @@
   let resizeFrameId: number;
   let isTerminalSelected = $derived(ctx.selectedTab === EditorPanelTab.Output);
   $effect(() => {
-    ctx.height;
+    width;
+    height;
     if (!isTerminalSelected) {
       return;
     }

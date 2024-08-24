@@ -23,6 +23,7 @@ export enum Label {
   EditorPanelTabTests = "editor:panel:tab:tests",
   EditorPanelTabOutput = "editor:panel:tab:output",
   EditorPanelTabSettings = "editor:panel:tab:settings",
+  EditorSettingsVimMode = "editor:settings:vim-mode",
 }
 
 const strings: Record<Lang, Record<Label, string>> = {
@@ -33,6 +34,7 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.EditorPanelTabTests]: "Tests",
     [Label.EditorPanelTabOutput]: "Output",
     [Label.EditorPanelTabSettings]: "Settings",
+    [Label.EditorSettingsVimMode]: "Vim mode",
   },
   [Lang.RU]: {
     [Label.MainPage]: TITLE,
@@ -41,6 +43,7 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.EditorPanelTabTests]: "Тесты",
     [Label.EditorPanelTabOutput]: "Вывод",
     [Label.EditorPanelTabSettings]: "Настройки",
+    [Label.EditorSettingsVimMode]: "Режим Vim",
   },
 };
 

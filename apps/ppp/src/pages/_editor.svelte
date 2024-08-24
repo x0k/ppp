@@ -19,10 +19,11 @@
     Editor,
     EditorContext,
     setEditorContext,
-    VimMode,
+    VimStatus,
     createTerminal,
   } from "@/components/editor2";
-  import { Panel, Tab, Tabs, Terminal } from "@/components/editor2/panel";
+  import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor2/panel";
+  import { VimMode } from '@/components/editor2/settings';
 
   interface Props {
     lang: Lang
@@ -124,8 +125,10 @@
     <div class="flex flex-wrap items-center gap-3 p-1">
       <Tabs>
         <Tab tab={EditorPanelTab.Output} />
+        <Tab tab={EditorPanelTab.Settings} />
       </Tabs>
       <div class="grow"></div>
+      <VimStatus bind:vimState />
       <Dropdown
         bind:value={lang}
         options={languages}
@@ -144,9 +147,13 @@
           }} class="invisible group-hover:visible" icon="lucide:info" />
         {/snippet}
       </Dropdown>
-      <VimMode bind:vimState />
     </div>
-    <Terminal class="grow ml-4 mt-4" />
+    <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />
+    <TabContent tab={EditorPanelTab.Settings}>
+      <div class="overflow-auto flex flex-col gap-4 p-4">
+        <VimMode bind:vimState />
+      </div>
+    </TabContent>
   </Panel>
 </div>
 

@@ -1,4 +1,5 @@
-export { default as Panel, MIN_PANEL_HEIGHT } from "./panel.svelte";
+export { default as Panel } from "./panel.svelte";
 export { default as Tab } from "./tab.svelte";
 export { default as Tabs } from "./tabs.svelte";
-export { default as Terminal } from './terminal.svelte';
+export { default as TerminalTab } from './terminal-tab.svelte';
+export { default as TabContent } from './tab-content.svelte';

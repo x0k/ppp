@@ -12,9 +12,8 @@
   {@render children()}
 </div>
 
-<!-- svelte-ignore css_unused_selector -->
 <style>
-  .panel-tabs {
+  .panel-tabs :global {
     @apply uppercase;
     .tab:not(.tab-active) {
       --tab-color: oklch(var(--bc) / 0.5);
