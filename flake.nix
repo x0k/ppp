@@ -39,7 +39,7 @@
             pkgs.nodejs
             pkgs.bun
             pkgs.pnpm
-            pkgs.go
+            pkgs.go_1_23
             pkgs.python3
             pkgs.gcc
             pkgs.curl

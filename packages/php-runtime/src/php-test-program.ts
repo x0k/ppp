@@ -8,7 +8,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
   private result?: O;
 
   constructor(
-    protected writer: Writer,
+    protected readonly writer: Writer,
     protected readonly php: PHP,
     protected readonly code: string
   ) {
