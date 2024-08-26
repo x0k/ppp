@@ -10,7 +10,7 @@ import type { Writer } from "libs/io";
 
 import wasmInit from "go-runtime/compiler.wasm?init";
 
-export class CompilerFactory {
+export class GoCompilerFactory {
   constructor(protected readonly out: Writer) {}
 
   async create(ctx: Context): Promise<Compiler> {

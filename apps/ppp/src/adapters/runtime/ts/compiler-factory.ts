@@ -10,7 +10,7 @@ export class TsCompilerFactory {
     this.patchedConsole = redirect(globalThis.console, createLogger(out));
   }
 
-  create(): Compiler {
+  async create(): Promise<Compiler> {
     return {
       compile: async (_, files) => {
         if (files.length !== 1) {
