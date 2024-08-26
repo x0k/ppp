@@ -1,4 +1,4 @@
-import type { Compiler } from "libs/compiler";
+import type { Compiler } from "compiler";
 import type { Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { COLOR_ENCODED } from "libs/logger";

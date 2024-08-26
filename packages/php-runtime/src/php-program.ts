@@ -1,5 +1,5 @@
 import type { PHP } from "@php-wasm/universal";
-import type { Program } from "libs/compiler";
+import type { Program } from "compiler";
 import type { Context } from "libs/context";
 import type { Writer } from "libs/io";
 

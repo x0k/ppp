@@ -1,4 +1,4 @@
-import type { Compiler } from "libs/compiler";
+import type { Compiler } from "compiler";
 import type { Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { type Logger, createLogger } from "libs/logger";

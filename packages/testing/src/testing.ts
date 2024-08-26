@@ -3,7 +3,7 @@ import deepEqual from "fast-deep-equal";
 import type { Writer } from "libs/io";
 import type { Logger } from "libs/logger";
 import type { Context } from "libs/context";
-import type { File } from "libs/compiler";
+import type { File } from "compiler";
 
 export interface TestCase<I, O> {
   input: I;

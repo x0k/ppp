@@ -1,7 +1,7 @@
 import type { Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { redirect, createLogger } from "libs/logger";
-import type { Compiler } from "libs/compiler";
+import type { Compiler } from "compiler";
 import { GleamModuleCompiler } from "gleam-runtime";
 import { JsProgram } from "javascript-runtime";
 

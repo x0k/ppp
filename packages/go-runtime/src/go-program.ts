@@ -1,8 +1,8 @@
-import type { Program } from 'libs/compiler';
-import type { Context } from 'libs/context';
-import { isErr } from 'libs/result';
+import type { Program } from "compiler";
+import type { Context } from "libs/context";
+import { isErr } from "libs/result";
 
-import type { Executor } from './model';
+import type { Executor } from "./model";
 
 export class GoProgram implements Program {
   constructor(protected readonly program: Executor) {}

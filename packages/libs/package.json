@@ -20,7 +20,6 @@
     "./result": "./dist/result.js",
     "./type": "./dist/type.js",
     "./io": "./dist/io.js",
-    "./js": "./dist/js.js",
-    "./compiler": "./dist/compiler.js"
+    "./js": "./dist/js.js"
   }
 }

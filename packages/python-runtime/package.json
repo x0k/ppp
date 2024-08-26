@@ -10,6 +10,7 @@
   "dependencies": {
     "libs": "workspace:*",
     "pyodide": "^0.26.2",
+    "compiler": "workspace:*",
     "testing": "workspace:*"
   },
   "devDependencies": {

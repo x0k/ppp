@@ -4,7 +4,7 @@ import {
   makeGoCompilerFactory,
   makeGoExecutorFactory,
 } from "go-runtime";
-import type { Compiler } from "libs/compiler";
+import type { Compiler } from "compiler";
 import { inContext, type Context } from "libs/context";
 import type { Writer } from "libs/io";
 

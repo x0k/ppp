@@ -11,6 +11,7 @@
     "@php-wasm/universal": "^0.9.30",
     "@php-wasm/web": "^0.9.30",
     "libs": "workspace:*",
+    "compiler": "workspace:*",
     "testing": "workspace:*"
   },
   "devDependencies": {

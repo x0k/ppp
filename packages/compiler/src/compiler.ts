@@ -1,4 +1,4 @@
-import type { Context } from './context.js';
+import type { Context } from 'libs/context';
 
 export interface Program extends Disposable {
   run: (ctx: Context) => Promise<void>;

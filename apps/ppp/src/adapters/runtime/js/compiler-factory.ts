@@ -1,5 +1,5 @@
 import { JsProgram } from "javascript-runtime";
-import type { Compiler } from "libs/compiler";
+import type { Compiler } from "compiler";
 import type { Writer } from "libs/io";
 import { redirect, createLogger } from "libs/logger";
 

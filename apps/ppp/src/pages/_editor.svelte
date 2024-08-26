@@ -3,7 +3,7 @@
   import { editor } from "monaco-editor";
   import Icon from '@iconify/svelte';
 
-  import type { Compiler } from "libs/compiler";
+  import type { Compiler } from "compiler";
   import type { Writer } from "libs/io";
   import { createContext, type Context } from "libs/context";
   import { createLogger } from 'libs/logger';

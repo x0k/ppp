@@ -6,7 +6,7 @@ import {
   DotnetCompilerFactory as CompilerFactory,
   DotnetRuntimeFactory,
 } from "dotnet-runtime";
-import type { Compiler } from "libs/compiler";
+import type { Compiler } from "compiler";
 import { inContext, type Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { createLogger, redirect, type Logger } from "libs/logger";

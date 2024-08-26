@@ -1,5 +1,5 @@
 import type { loadPyodide } from "pyodide";
-import type { Program } from "libs/compiler";
+import type { Program } from "compiler";
 import { inContext, type Context } from "libs/context";
 
 export class PyProgram implements Program {

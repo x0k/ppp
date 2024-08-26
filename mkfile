@@ -22,6 +22,12 @@ libs/:
     pnpm run build
   popd
 
+compiler/:
+  pushd packages/compiler
+  b:
+    pnpm run build
+  popd
+
 testing/:
   pushd packages/testing
   b:
