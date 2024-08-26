@@ -13,6 +13,7 @@ function generateId({ data, entry }: GenerateIdOptions) {
 }
 
 const problems = defineCollection({
+  type: "content_layer",
   loader: glob({
     pattern: "**/*.mdx",
     base: "./src/problems",

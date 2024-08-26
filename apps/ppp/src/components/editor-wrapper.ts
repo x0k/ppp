@@ -6,8 +6,9 @@ import { Language } from "@/shared/languages";
 import Editor, {
   type Props,
   type Runtime,
-} from "@/components/editor/editor.svelte";
-import { DESCRIPTIONS } from "@/adapters/runtime/descriptions";
+} from "@/containers/test-editor.svelte";
+import { DESCRIPTIONS } from "@/adapters/runtime/test-descriptions";
+import type { Lang } from '@/i18n';
 
 export function mountEditor<L extends Language, I, O>(
   testCases: TestCase<I, O>[],
@@ -22,6 +23,7 @@ export function mountEditor<L extends Language, I, O>(
     // throw new Error("No editor placeholder found");
   }
   const props = {
+    pageLang: element.dataset.lang as Lang,
     contentId: location.pathname,
     testCases,
     runtimes: Object.fromEntries(
@@ -31,7 +33,7 @@ export function mountEditor<L extends Language, I, O>(
             lang,
             {
               initialValue: runtimes[lang as L].initialValue,
-              testRunnerFactory: runtimes[lang as L].factory,
+              testCompilerFactory: runtimes[lang as L].factory,
               Description: DESCRIPTIONS[lang as L],
             } satisfies Runtime<I, O>,
           ] as const

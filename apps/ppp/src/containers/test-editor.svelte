@@ -1,12 +1,8 @@
 <script lang="ts" module>
   import type { Component, Snippet } from "svelte";
-  import { runTests, type TestCase, type TestCompiler, type TestCompilerFactory } from "testing";
   
   import type { Lang } from '@/i18n';
   import { type Language } from "@/shared/languages";
-  import ResizablePanel from '@/components/resizable-panel.svelte';
-  import Editor from '@/components/editor2/editor.svelte';
-  import Panel from '@/components/editor2/panel/panel.svelte';
   
   export interface Runtime<I, O> {
     initialValue: string;
@@ -19,7 +15,7 @@
     contentId: string;
     testCases: TestCase<I, O>[];
     runtimes: Record<L, Runtime<I, O>>;
-    children: Snippet;
+    children?: Snippet;
   }
 </script>
 
@@ -28,13 +24,17 @@
   import { stringifyError } from 'libs/error';
   import { createLogger } from 'libs/logger';
   import { type Context, createContext } from 'libs/context';
-
+  import { runTests, type TestCase, type TestCompiler, type TestCompilerFactory } from "testing";
+  
   import { debouncedSave, immediateSave } from '@/lib/sync-storage.svelte';
   import { reactiveWindow } from '@/lib/reactive-window.svelte';
   import { LANGUAGE_TITLE } from '@/shared/languages'
-  import { createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor2';
   import { MONACO_LANGUAGE_ID } from '@/adapters/monaco';
   import { createSyncStorage } from '@/adapters/storage';
+  import ResizablePanel, { Alignment } from '@/components/resizable-panel.svelte';
+  import Editor from '@/components/editor2/editor.svelte';
+  import Panel from '@/components/editor2/panel/panel.svelte';
+  import { createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor2';
   
   const { pageLang, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
 
@@ -172,10 +172,14 @@
 </script>
 
 <div class="h-screen flex">
-  <ResizablePanel bind:size={barWidth}>
-    {@render children()}
+  <ResizablePanel class="relative" alignment={Alignment.End} bind:size={barWidth}>
+    {#if children}
+      {@render children()}
+    {:else}
+      Bar content
+    {/if}
   </ResizablePanel>
-  <div class="grow flex flex-col">
+  <div class="grow min-w-0 flex flex-col">
     <Editor width={reactiveWindow.innerWidth - barWidth} height={reactiveWindow.innerHeight - panelHeight} />
     <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
       Panel

@@ -43,8 +43,14 @@
     [Orientation.Vertical]: "clientX",
   };
 
+  const ORIENTATION_TO_OPERATION: Record<Orientation, (a: number, b: number, c: number) => number> = {
+    [Orientation.Horizontal]: (a, b, c) => a - b + c,
+    [Orientation.Vertical]: (a, b, c) => a + b - c,
+  }
+
   const sizeProp = $derived(ORIENTATION_TO_STYLE[orientation]);
-  const coord = $derived(ORIENTATION_TO_COORD[orientation]); 
+  const coord = $derived(ORIENTATION_TO_COORD[orientation]);
+  const op = $derived(ORIENTATION_TO_OPERATION[orientation]);
 
   let start: Vec2;
 </script>
@@ -57,7 +63,7 @@
       start = { x: size, y: e[coord] };
     }}
     onMove={(e) => {
-      size = normalizeSize(start.y - e[coord] + start.x);
+      size = normalizeSize(op(start.y, e[coord], start.x));
     }}
   />
   {@render children()}

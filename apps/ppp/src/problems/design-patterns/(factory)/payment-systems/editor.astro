@@ -1,4 +1,10 @@
-<div id="editor-placeholder"></div>
+---
+import type { Lang } from '@/i18n'
+
+const lang = Astro.currentLocale as Lang
+
+---
+<div id="editor-placeholder" data-lang={lang}></div>
 
 <script>
   import { Language } from "@/shared/languages";

@@ -62,7 +62,9 @@
   class="absolute select-none z-50 h-full active:bg-primary hover:bg-primary/50"
 
   class:top-0={alignment === Alignment.Start}
+  class:left-0={alignment === Alignment.Start}
   class:bottom-0={alignment === Alignment.End}
+  class:right-0={alignment === Alignment.End}
 
   class:hover:cursor-col-resize={orientation === Orientation.Vertical}
   class:h-full={orientation === Orientation.Vertical}
