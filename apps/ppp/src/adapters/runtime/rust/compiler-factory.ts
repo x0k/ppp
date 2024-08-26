@@ -1,9 +1,9 @@
+import type { Compiler } from "libs/compiler";
 import type { Context } from "libs/context";
+import type { Writer } from "libs/io";
 import { COLOR_ENCODED } from "libs/logger";
 import { isErr } from "libs/result";
-import type { Writer } from "libs/io";
-import type { TestCompiler } from "testing";
-import { RustTestProgram, wasiRuntimeFactory } from "rust-runtime";
+import { RustProgram, wasiRuntimeFactory } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "rust-runtime/miri.wasm";
@@ -27,25 +27,10 @@ function loadLibs(ctx: Context) {
   );
 }
 
-export type GenerateOutputContentCode<I> = (input: I) => string;
-export type TransformResult<O> = (result: string) => O;
-
-export class RustTestCompilerFactory {
+export class RustCompilerFactory {
   constructor(protected readonly out: Writer) {}
 
-  async create<I, O>(
-    ctx: Context,
-    generateOutputContentCode: GenerateOutputContentCode<I>,
-    transformResult: TransformResult<O>
-  ): Promise<TestCompiler<I, O>> {
-    class TestProgram extends RustTestProgram<I, O> {
-      protected override generateOutputContentCode(input: I): string {
-        return generateOutputContentCode(input);
-      }
-      protected override transformResult(data: string): O {
-        return transformResult(data);
-      }
-    }
+  async create(ctx: Context): Promise<Compiler> {
     const [miri, libs] = await Promise.all([
       await WebAssembly.compileStreaming(
         fetch(miriWasmUrl, { signal: ctx.signal, cache: "force-cache" })
@@ -78,7 +63,7 @@ export class RustTestCompilerFactory {
         if (files.length !== 1) {
           throw new Error("Compilation of multiple files is not implemented");
         }
-        return new TestProgram(files[0].content, wasi, miri, "case_output");
+        return new RustProgram(files[0].content, wasi, miri);
       },
       [Symbol.dispose]() {},
     };

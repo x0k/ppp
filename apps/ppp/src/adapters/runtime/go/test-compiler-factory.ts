@@ -2,9 +2,10 @@ import { inContext, type Context } from "libs/context";
 import type { Writer } from "libs/io";
 import type { TestCompiler } from "testing";
 import {
-  createCompilerFactory,
+  makeCompilerFactory,
+  makeGoCompilerFactory,
+  makeGoEvaluatorFactory,
   GoTestProgram,
-  makeGoRuntimeFactory,
 } from "go-runtime";
 
 import wasmInit from "go-runtime/compiler.wasm?init";
@@ -23,9 +24,11 @@ export class GoTestCompilerFactory {
         return generateCaseExecutionCode(input);
       }
     }
-    const goRuntimeFactory = makeGoRuntimeFactory<O>(
-      await createCompilerFactory((imports) =>
-        inContext(ctx, wasmInit(imports))
+    const goEvaluatorFactory = makeGoEvaluatorFactory<O>(
+      makeGoCompilerFactory(
+        await makeCompilerFactory((imports) =>
+          inContext(ctx, wasmInit(imports))
+        )
       )
     );
     return {
@@ -34,7 +37,7 @@ export class GoTestCompilerFactory {
           throw new Error("Compilation of multiple files is not implemented");
         }
         return new TestProgram(
-          await goRuntimeFactory(ctx, this.out, files[0].content)
+          await goEvaluatorFactory(ctx, this.out, files[0].content)
         );
       },
       [Symbol.dispose]() {},

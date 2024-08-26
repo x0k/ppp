@@ -7,7 +7,7 @@ import type { Evaluator } from "./model";
 export abstract class GoTestProgram<I, O> implements TestProgram<I, O> {
   constructor(protected readonly program: Evaluator<O>) {}
 
-  abstract generateCaseExecutionCode(input: I): string
+  protected abstract generateCaseExecutionCode(input: I): string
 
   async run(ctx: Context, input: I): Promise<O> {
     const result = await this.program(
