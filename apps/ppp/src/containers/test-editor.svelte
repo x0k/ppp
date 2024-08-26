@@ -1,7 +1,6 @@
 <script lang="ts" module>
   import type { Component, Snippet } from "svelte";
   
-  import type { Lang } from '@/i18n';
   import { type Language } from "@/shared/languages";
   
   export interface Runtime<I, O> {
@@ -15,11 +14,12 @@
     contentId: string;
     testCases: TestCase<I, O>[];
     runtimes: Record<L, Runtime<I, O>>;
-    children?: Snippet;
+    children: Snippet;
   }
 </script>
 
 <script lang="ts" generics="Langs extends Language, Input, Output">
+  import Icon from '@iconify/svelte';
   import { editor } from 'monaco-editor';
   import { stringifyError } from 'libs/error';
   import { createLogger } from 'libs/logger';
@@ -28,7 +28,10 @@
   
   import { debouncedSave, immediateSave } from '@/lib/sync-storage.svelte';
   import { reactiveWindow } from '@/lib/reactive-window.svelte';
+  import { RESET_BUTTON_ID } from '@/shared';
+  import { ProblemCategory } from '@/shared/problems';
   import { LANGUAGE_TITLE } from '@/shared/languages'
+  import { getProblemCategoryLabel, useTranslations, type Lang } from '@/i18n';
   import { MONACO_LANGUAGE_ID } from '@/adapters/monaco';
   import { createSyncStorage } from '@/adapters/storage';
   import ResizablePanel, { Alignment } from '@/components/resizable-panel.svelte';
@@ -37,6 +40,7 @@
   import { createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor2';
   
   const { pageLang, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
+  const t = useTranslations(pageLang);
 
   const languages = Object.keys(runtimes) as Langs[];
   if (languages.length === 0) {
@@ -172,12 +176,36 @@
 </script>
 
 <div class="h-screen flex">
-  <ResizablePanel class="relative" alignment={Alignment.End} bind:size={barWidth}>
-    {#if children}
-      {@render children()}
-    {:else}
-      Bar content
-    {/if}
+  <ResizablePanel class="relative h-full overflow-auto" alignment={Alignment.End} bind:size={barWidth}>
+    <div class="p-6">
+      <div class="flex gap-3 items-center mb-8">
+        <div>
+          3P
+        </div>
+        <div class="breadcrumbs">
+          <ul>
+            <li><a>{t(getProblemCategoryLabel(ProblemCategory.DesignPatterns))}</a></li>
+          </ul>
+        </div>
+        <div class="join ml-auto rounded">
+          <button class="btn btn-ghost join-item"
+            ><Icon icon="lucide:chevron-left" /></button
+          >
+          <button class="btn btn-ghost join-item"
+            ><Icon icon="lucide:chevron-right" /></button
+          >
+          <button class="btn btn-ghost join-item"
+            ><Icon icon="lucide:shuffle" /></button
+          >
+          <button id={RESET_BUTTON_ID} class="btn btn-ghost join-item"
+            ><Icon icon="lucide:rotate-ccw" /></button
+          >
+        </div>
+      </div>
+      <div class="prose prose-lg max-w-none">
+        {@render children()}
+      </div>
+    </div>
   </ResizablePanel>
   <div class="grow min-w-0 flex flex-col">
     <Editor width={reactiveWindow.innerWidth - barWidth} height={reactiveWindow.innerHeight - panelHeight} />

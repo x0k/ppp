@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 
 import Root from '@/layouts/root.astro'
-// import EditorProvider from '@/containers/editor-provider.astro';
+import EditorProvider from '@/containers/editor-provider.astro';
 
 export async function getStaticPaths() {
   const problems = await getCollection('problems');
@@ -16,7 +16,7 @@ const { Content } = await render(entry);
 ---
 
 <Root title={entry.data.title}>
-  <!-- <EditorProvider> -->
+  <EditorProvider>
     <Content />
-  <!-- </EditorProvider> -->
+  </EditorProvider>
 </Root>
