@@ -3,7 +3,6 @@
   import Icon from '@iconify/svelte';
 
   import type { Compiler } from "compiler";
-  import type { Writer } from "libs/io";
   import { createContext, type Context } from "libs/context";
   import { createLogger } from 'libs/logger';
   import { stringifyError } from 'libs/error';
@@ -159,6 +158,8 @@
       ctx = null;
     }
   }
+
+  let Description = $derived(RUNTIMES[describedLanguage].Description)
 </script>
 
 <div class="h-screen flex flex-col">
@@ -210,7 +211,7 @@
     </form>
     <h3 class="text-lg font-bold">{LANGUAGE_TITLE[describedLanguage]}</h3>
     <div class="flex flex-col items-start gap-2 py-4">
-      {RUNTIMES[describedLanguage].Description}
+      <Description />
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">

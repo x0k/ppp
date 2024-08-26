@@ -1,18 +1,9 @@
 <script lang="ts">
-  import { version } from "java-runtime/version";
+  import Info from "./info.svelte";
 </script>
 
 <p>
-  {version}
+  Class <code>Program</code> with a public static method <code>main</code> is required.
 </p>
 
-<p>
-  Your code is compiled by <code>Javac</code> and executed in
-  <a target="_blank" class="link" href="https://github.com/plasma-umass/doppio/"
-    >DoppioJVM</a
-  > in a web worker environment.
-</p>
-
-<p>
-  Public class <code>Test</code> is reserved.
-</p>
+<Info />
