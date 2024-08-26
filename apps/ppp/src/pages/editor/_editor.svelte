@@ -36,6 +36,9 @@
   const { lang: pageLang }: Props = $props();
 
   const languages = Object.keys(RUNTIMES) as Language[];
+  if (languages.length === 0) {
+    throw new Error("No test runner factories provided");
+  }
   const defaultLang = languages[0];
   const langStorage = createSyncStorage(
     localStorage,
@@ -108,12 +111,9 @@
   let executionTimeout = $state(executionTimeoutStorage.load());
   debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-  let descriptionDialogElement: HTMLDialogElement
-  let describedLanguage = $state(defaultLang);
-
   const terminalWriter = createTerminalWriter(terminal)
   const terminalLogger = createLogger(terminalWriter)
-  let compilerFactory = $derived(RUNTIMES[lang].compilerFactory);
+  let compilerFactory = $derived(runtime.compilerFactory);
   let isRunning = $state(false);
   let ctx: Context | null = null;
   let compiler: Compiler | null = null;
@@ -141,14 +141,14 @@
       if (compiler === null) {
         compiler = await compilerFactory(ctx, terminalWriter);
       }
-      const programm = await compiler.compile(ctx, [{
+      const program = await compiler.compile(ctx, [{
         filename: 'main',
         content: model.getValue()
       }])
       try {
-        await programm.run(ctx)
+        await program.run(ctx)
       } finally {
-        programm[Symbol.dispose]();
+        program[Symbol.dispose]();
       }
     } catch (err) {
       console.error(err);
@@ -159,6 +159,8 @@
     }
   }
 
+  let descriptionDialogElement: HTMLDialogElement
+  let describedLanguage = $state(defaultLang);
   let Description = $derived(RUNTIMES[describedLanguage].Description)
 </script>
 

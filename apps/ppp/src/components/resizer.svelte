@@ -21,7 +21,7 @@
     orientation?: Orientation;
     /**
      * @default Alignment.Start
-    */
+     */
     alignment?: Alignment;
   }
 

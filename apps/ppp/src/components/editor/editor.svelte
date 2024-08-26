@@ -61,7 +61,6 @@
   ));
 
   const model = editor.createModel("");
-
   $effect(() => {
     model.setValue(contentStorage.load());
     editor.setModelLanguage(model, MONACO_LANGUAGE_ID[lang]);

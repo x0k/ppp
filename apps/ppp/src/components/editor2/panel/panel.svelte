@@ -1,10 +1,9 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  
-  import type { Vec2 } from '@/lib/vec2';
+
   import { EditorPanelTab } from '@/shared/editor-panel-tab';
-  import Resizer, { Orientation } from '@/components/resizer.svelte';
-  
+  import ResizablePanel, { Orientation } from '@/components/resizable-panel.svelte';
+
   import { EditorPanelContext, setEditorPanelContext } from './context.svelte';
   
   const PANEL_BORDER_HEIGHT = 1;
@@ -24,24 +23,18 @@
     children
   }: Props = $props();
 
-  function normalizeHeight(height: number) {
+  function normalizeSize(height: number) {
     return Math.min(Math.max(height, MIN_PANEL_HEIGHT), maxHeight);
   }
-
-  let start: Vec2;
 
   setEditorPanelContext(new EditorPanelContext(EditorPanelTab.Output));
 </script>
 
-<div class="grow border-t border-base-100 relative bg-base-300 flex flex-col" style="height: {height}px;" >
-  <Resizer
-    orientation={Orientation.Horizontal}
-    onMoveStart={(e) => {
-      start = { x: $state.snapshot(height), y: e.clientY }
-    }}
-    onMove={(e) => {
-      height = normalizeHeight((start.y - e.clientY) + start.x)
-    }}
-  />
+<ResizablePanel
+  class="grow border-t border-base-100 relative bg-base-300 flex flex-col overflow-hidden"
+  orientation={Orientation.Horizontal}
+  bind:size={height}
+  {normalizeSize}
+>
   {@render children()}
-</div>
+</ResizablePanel>
