@@ -168,6 +168,9 @@ importers:
 
   packages/gleam-runtime:
     dependencies:
+      compiler:
+        specifier: workspace:*
+        version: link:../compiler
       libs:
         specifier: workspace:*
         version: link:../libs

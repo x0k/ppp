@@ -8,7 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "libs": "workspace:*"
+    "libs": "workspace:*",
+    "compiler": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.4.1",

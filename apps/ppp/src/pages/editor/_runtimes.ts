@@ -14,6 +14,16 @@ import JavaWorker from "@/adapters/runtime/java/worker?worker";
 import { makeDotnetCompiler } from '@/adapters/runtime/dotnet/compiler-factory'
 import { DESCRIPTIONS } from "@/adapters/runtime/descriptions";
 
+import phpProgram from './_program.php?raw';
+import tsProgram from './_program.ts?raw';
+import pythonProgram from './_program.py?raw';
+import jsProgram from './_program.js?raw';
+import goProgram from './_program.go?raw';
+import rustProgram from './_program.rs?raw';
+import gleamProgram from './_program.gleam?raw';
+import javaProgram from './_program.java?raw';
+import csProgram from './_program.cs?raw';
+
 interface Runtime {
   initialValue: string;
   compilerFactory: CompilerFactory;
@@ -22,47 +32,47 @@ interface Runtime {
 
 export const RUNTIMES: Record<Language, Runtime> = {
   [Language.PHP]: {
-    initialValue: "PHP",
+    initialValue: phpProgram,
     compilerFactory: makeRemoteCompilerFactory(PhpWorker),
     Description: DESCRIPTIONS[Language.PHP],
   },
   [Language.TypeScript]: {
-    initialValue: "TypeScript",
+    initialValue: tsProgram,
     compilerFactory: makeRemoteCompilerFactory(TsWorker),
     Description: DESCRIPTIONS[Language.TypeScript],
   },
   [Language.Python]: {
-    initialValue: "Python",
+    initialValue: pythonProgram,
     compilerFactory: makeRemoteCompilerFactory(PythonWorker),
     Description: DESCRIPTIONS[Language.Python],
   },
   [Language.JavaScript]: {
-    initialValue: "JavaScript",
+    initialValue: jsProgram,
     compilerFactory: makeRemoteCompilerFactory(JsWorker),
     Description: DESCRIPTIONS[Language.JavaScript],
   },
   [Language.Go]: {
-    initialValue: "Go",
+    initialValue: goProgram,
     compilerFactory: makeRemoteCompilerFactory(GoWorker),
     Description: DESCRIPTIONS[Language.Go],
   },
   [Language.Rust]: {
-    initialValue: "Rust",
+    initialValue: rustProgram,
     compilerFactory: makeRemoteCompilerFactory(RustWorker),
     Description: DESCRIPTIONS[Language.Rust],
   },
   [Language.Gleam]: {
-    initialValue: "Gleam",
+    initialValue: gleamProgram,
     compilerFactory: makeRemoteCompilerFactory(GleamWorker),
     Description: DESCRIPTIONS[Language.Gleam],
   },
   [Language.CSharp]: {
-    initialValue: "CSharp",
+    initialValue: csProgram,
     compilerFactory: makeDotnetCompiler,
     Description: DESCRIPTIONS[Language.CSharp],
   },
   [Language.Java]: {
-    initialValue: "Java",
+    initialValue: javaProgram,
     compilerFactory: makeRemoteCompilerFactory(JavaWorker),
     Description: DESCRIPTIONS[Language.Java],
   },

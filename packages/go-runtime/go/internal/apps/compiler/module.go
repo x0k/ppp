@@ -51,7 +51,7 @@ func New(jsConfig js.Value) js_adapters.Result {
 		return js_adapters.Resolve(js_compiler.New(compiler).CreateEvaluator(ctx, args[1].String()))
 	}))
 
-	root.Set("createExecuter", js_adapters.Async(func(args []js.Value) js_adapters.Promise {
+	root.Set("createExecutor", js_adapters.Async(func(args []js.Value) js_adapters.Promise {
 		if len(args) < 2 {
 			return js_adapters.ResolveErr(errors.New("Not enough arguments, expected 2"))
 		}
