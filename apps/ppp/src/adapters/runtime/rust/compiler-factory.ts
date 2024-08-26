@@ -1,8 +1,7 @@
-import type { Compiler } from "compiler";
 import type { Context } from "libs/context";
-import type { Writer } from "libs/io";
 import { COLOR_ENCODED } from "libs/logger";
 import { isErr } from "libs/result";
+import type { CompilerFactory } from "compiler";
 import { RustProgram, wasiRuntimeFactory } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
@@ -27,45 +26,41 @@ function loadLibs(ctx: Context) {
   );
 }
 
-export class RustCompilerFactory {
-  constructor(protected readonly out: Writer) {}
-
-  async create(ctx: Context): Promise<Compiler> {
-    const [miri, libs] = await Promise.all([
-      await WebAssembly.compileStreaming(
-        fetch(miriWasmUrl, { signal: ctx.signal, cache: "force-cache" })
-      ),
-      loadLibs(ctx),
-    ]);
-    const wasi = wasiRuntimeFactory(
-      this.out,
-      {
-        write: (text) => {
-          let r = this.out.write(COLOR_ENCODED.ERROR);
-          if (isErr(r)) {
-            return r;
-          }
-          const r2 = this.out.write(text);
-          if (isErr(r2)) {
-            return r2;
-          }
-          r = this.out.write(COLOR_ENCODED.RESET);
-          if (isErr(r)) {
-            return r;
-          }
-          return r2;
-        },
-      },
-      libs
-    );
-    return {
-      async compile(_, files) {
-        if (files.length !== 1) {
-          throw new Error("Compilation of multiple files is not implemented");
+export const makeRustCompiler: CompilerFactory = async (ctx, out) => {
+  const [miri, libs] = await Promise.all([
+    await WebAssembly.compileStreaming(
+      fetch(miriWasmUrl, { signal: ctx.signal, cache: "force-cache" })
+    ),
+    loadLibs(ctx),
+  ]);
+  const wasi = wasiRuntimeFactory(
+    out,
+    {
+      write: (text) => {
+        let r = out.write(COLOR_ENCODED.ERROR);
+        if (isErr(r)) {
+          return r;
         }
-        return new RustProgram(files[0].content, wasi, miri);
+        const r2 = out.write(text);
+        if (isErr(r2)) {
+          return r2;
+        }
+        r = out.write(COLOR_ENCODED.RESET);
+        if (isErr(r)) {
+          return r;
+        }
+        return r2;
       },
-      [Symbol.dispose]() {},
-    };
-  }
-}
+    },
+    libs
+  );
+  return {
+    async compile(_, files) {
+      if (files.length !== 1) {
+        throw new Error("Compilation of multiple files is not implemented");
+      }
+      return new RustProgram(files[0].content, wasi, miri);
+    },
+    [Symbol.dispose]() {},
+  };
+};

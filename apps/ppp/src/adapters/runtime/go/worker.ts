@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { GoCompilerFactory } from "./compiler-factory";
+import { makeGoCompiler } from "./compiler-factory";
 
-startCompilerActor(GoCompilerFactory);
+startCompilerActor(makeGoCompiler);

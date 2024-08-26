@@ -1,23 +1,18 @@
-import type { Compiler } from "compiler";
-import { inContext, type Context } from "libs/context";
-import type { Writer } from "libs/io";
+import { inContext } from "libs/context";
+import type { CompilerFactory } from "compiler";
 import { phpCompilerFactory, PHPProgram } from "php-runtime";
 
-export class PhpCompilerFactory {
-  constructor(protected readonly out: Writer) {}
-
-  async create(ctx: Context): Promise<Compiler> {
-    const php = await inContext(ctx, phpCompilerFactory());
-    return {
-      compile: async (ctx, files) => {
-        if (files.length !== 1) {
-          throw new Error("Compilation of multiple files is not implemented");
-        }
-        return new PHPProgram(files[0].content, php, this.out);
-      },
-      [Symbol.dispose]() {
-        php[Symbol.dispose]();
-      },
-    };
-  }
-}
+export const makePhpCompiler: CompilerFactory = async (ctx, out) => {
+  const php = await inContext(ctx, phpCompilerFactory());
+  return {
+    async compile(_, files) {
+      if (files.length !== 1) {
+        throw new Error("Compilation of multiple files is not implemented");
+      }
+      return new PHPProgram(files[0].content, php, out);
+    },
+    [Symbol.dispose]() {
+      php[Symbol.dispose]();
+    },
+  };
+};

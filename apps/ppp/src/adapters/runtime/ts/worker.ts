@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { TsCompilerFactory } from "./compiler-factory";
+import { makeTsCompiler } from "./compiler-factory";
 
-startCompilerActor(TsCompilerFactory);
+startCompilerActor(makeTsCompiler);

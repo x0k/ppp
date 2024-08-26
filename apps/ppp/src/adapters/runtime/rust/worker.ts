@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { RustCompilerFactory } from "./compiler-factory";
+import { makeRustCompiler } from "./compiler-factory";
 
-startCompilerActor(RustCompilerFactory);
+startCompilerActor(makeRustCompiler);

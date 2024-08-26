@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { PhpCompilerFactory } from "./compiler-factory";
+import { makePhpCompiler } from "./compiler-factory";
 
-startCompilerActor(PhpCompilerFactory);
+startCompilerActor(makePhpCompiler);

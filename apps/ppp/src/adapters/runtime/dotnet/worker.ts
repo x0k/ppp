@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { DotnetCompilerFactory } from "./compiler-factory";
+import { makeDotnetCompiler } from "./compiler-factory";
 
-startCompilerActor(DotnetCompilerFactory);
+startCompilerActor(makeDotnetCompiler);

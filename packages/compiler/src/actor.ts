@@ -9,7 +9,7 @@ import {
   type OutgoingMessage,
 } from "libs/actor";
 
-import type { Compiler, File, Program } from "./compiler.js";
+import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
 import { createContext, inContext, type Context } from "libs/context";
 import type { Writer } from "libs/io";
 import { ok } from "libs/result";
@@ -33,12 +33,6 @@ type CompilerActorEvent = WriteEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
-export interface CompilerFactory {
-  create(ctx: Context): Promise<Compiler>;
-}
-
-type CompilerFactoryConstructor = new (out: Writer) => CompilerFactory;
-
 class CompilerActor extends Actor<Handlers, string> {
   private ctx: Context = createContext();
   private compiler: Compiler | null = null;
@@ -46,7 +40,7 @@ class CompilerActor extends Actor<Handlers, string> {
 
   constructor(
     connection: Connection<Incoming, Outgoing>,
-    CompilerFactory: CompilerFactoryConstructor
+    compilerFactory: CompilerFactory
   ) {
     const handlers: Handlers = {
       init: async () => {
@@ -61,7 +55,7 @@ class CompilerActor extends Actor<Handlers, string> {
             return ok(buffer.length);
           },
         };
-        this.compiler = await new CompilerFactory(out).create(this.ctx);
+        this.compiler = await compilerFactory(this.ctx, out);
       },
       compile: async (files) => {
         if (this.compiler === null) {
@@ -99,12 +93,12 @@ class CompilerActor extends Actor<Handlers, string> {
 }
 
 export function startCompilerActor(
-  CompilerFactory: CompilerFactoryConstructor
+  compilerFactory: CompilerFactory
 ) {
   const connection = new WorkerConnection<Incoming, Outgoing>(
     self as unknown as Worker
   );
-  const actor = new CompilerActor(connection, CompilerFactory);
+  const actor = new CompilerActor(connection, compilerFactory);
   const stopConnection = connection.start();
   const stopActor = actor.start();
   return () => {
@@ -117,7 +111,7 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export function makeRemoteTestCompilerFactory(Worker: WorkerConstructor) {
+export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
   return async (ctx: Context, out: Writer): Promise<Compiler> => {
     const worker = new Worker();
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);

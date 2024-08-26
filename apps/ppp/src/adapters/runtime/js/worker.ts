@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { JsCompilerFactory } from "./compiler-factory";
+import { makeJsCompiler } from "./compiler-factory";
 
-startCompilerActor(JsCompilerFactory);
+startCompilerActor(makeJsCompiler);

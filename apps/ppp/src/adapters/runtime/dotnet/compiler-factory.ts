@@ -3,13 +3,12 @@ import {
   type CompilerModuleImports,
   type DotnetModule,
   DotnetProgram,
-  DotnetCompilerFactory as CompilerFactory,
+  DotnetCompilerFactory,
   DotnetRuntimeFactory,
 } from "dotnet-runtime";
-import type { Compiler } from "compiler";
-import { inContext, type Context } from "libs/context";
-import type { Writer } from "libs/io";
-import { createLogger, redirect, type Logger } from "libs/logger";
+import type { CompilerFactory } from "compiler";
+import { inContext } from "libs/context";
+import { createLogger, redirect } from "libs/logger";
 import { patch } from "libs/patcher";
 
 const dotnetUrl = new URL(
@@ -211,45 +210,36 @@ export const LIBS = [
   "netstandard.dll",
 ];
 
-export class DotnetCompilerFactory {
-  protected readonly log: Logger;
-  protected readonly patchedConsole: Console;
-  constructor(out: Writer) {
-    this.log = createLogger(out);
-    this.patchedConsole = redirect(globalThis.console, this.log);
-  }
+export const makeDotnetCompiler: CompilerFactory = async (ctx, out) => {
+  const log = createLogger(out);
+  const patchedConsole = redirect(globalThis.console, log);
 
-  async create(ctx: Context): Promise<Compiler> {
-    const { dotnet } = await inContext(
+  const { dotnet } = await inContext(ctx, import(/* @vite-ignore */ dotnetUrl));
+  const consolePatch = patch(globalThis, "console", patchedConsole);
+  try {
+    const compilerModule: DotnetModule<
+      CompilerModuleImports,
+      CompilerModuleExports
+    > = await inContext(ctx, dotnet.create());
+    const compiler = await inContext(
       ctx,
-      import(/* @vite-ignore */ dotnetUrl)
+      new DotnetCompilerFactory(log, compilerModule).create(
+        precompiledLibsIndexUrl,
+        LIBS
+      )
     );
-    const consolePatch = patch(globalThis, "console", this.patchedConsole);
-    try {
-      const compilerModule: DotnetModule<
-        CompilerModuleImports,
-        CompilerModuleExports
-      > = await inContext(ctx, dotnet.create());
-      const compiler = await inContext(
-        ctx,
-        new CompilerFactory(this.log, compilerModule).create(
-          precompiledLibsIndexUrl,
-          LIBS
-        )
-      );
-      const runtimeFactory = new DotnetRuntimeFactory(compiler);
-      return {
-        async compile(_, files) {
-          if (files.length !== 1) {
-            throw new Error("Compilation of multiple files is not implemented");
-          }
-          const runtime = runtimeFactory.create(files[0].content);
-          return new DotnetProgram(runtime);
-        },
-        [Symbol.dispose]() {},
-      };
-    } finally {
-      consolePatch[Symbol.dispose]();
-    }
+    const runtimeFactory = new DotnetRuntimeFactory(compiler);
+    return {
+      async compile(_, files) {
+        if (files.length !== 1) {
+          throw new Error("Compilation of multiple files is not implemented");
+        }
+        const runtime = runtimeFactory.create(files[0].content);
+        return new DotnetProgram(runtime);
+      },
+      [Symbol.dispose]() {},
+    };
+  } finally {
+    consolePatch[Symbol.dispose]();
   }
-}
+};

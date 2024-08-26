@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { JavaCompilerFactory } from "./compiler-factory";
+import { makeJavaCompiler } from "./compiler-factory";
 
-startCompilerActor(JavaCompilerFactory);
+startCompilerActor(makeJavaCompiler);

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Component } from "svelte";
   import { editor } from "monaco-editor";
   import Icon from '@iconify/svelte';
 
@@ -29,30 +28,13 @@
   import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor2/panel";
   import { CheckBox, Number } from '@/components/editor2/controls';
 
+  import { RUNTIMES } from './_runtimes'
+
   interface Props {
     lang: Lang
   }
 
   const { lang: pageLang }: Props = $props();
-
-  type CompilerFactory = (ctx: Context, out: Writer) => Promise<Compiler>;
-  interface Runtime {
-    initialValue: string;
-    compilerFactory: CompilerFactory;
-    Description: Component;
-  }
-
-  const RUNTIMES: Record<Language, Runtime> = {
-    [Language.PHP]: { initialValue: "PHP" },
-    [Language.TypeScript]: { initialValue: "TypeScript" },
-    [Language.Python]: { initialValue: "Python" },
-    [Language.JavaScript]: { initialValue: "JavaScript" },
-    [Language.Go]: { initialValue: "Go" },
-    [Language.Rust]: { initialValue: "Rust" },
-    [Language.Gleam]: { initialValue: "Gleam" },
-    [Language.CSharp]: { initialValue: "CSharp" },
-    [Language.Java]: { initialValue: "Java" },
-  };
 
   const languages = Object.keys(RUNTIMES) as Language[];
   const defaultLang = languages[0];

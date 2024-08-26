@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { GleamCompilerFactory } from "./compiler-factory";
+import { makeGleamCompiler } from "./compiler-factory";
 
-startCompilerActor(GleamCompilerFactory);
+startCompilerActor(makeGleamCompiler);

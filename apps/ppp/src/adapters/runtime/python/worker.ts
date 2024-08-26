@@ -1,5 +1,5 @@
 import { startCompilerActor } from "compiler/actor";
 
-import { PythonCompilerFactory } from "./compiler-factory";
+import { makePythonCompiler } from "./compiler-factory";
 
-startCompilerActor(PythonCompilerFactory);
+startCompilerActor(makePythonCompiler);
