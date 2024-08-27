@@ -14,6 +14,7 @@
   import { Label, type Lang } from '@/i18n';
   import { createSyncStorage } from "@/adapters/storage";
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
+  import { DESCRIPTIONS } from '@/adapters/runtime/descriptions'
   import Dropdown from '@/components/dropdown.svelte';
   import {
     Editor,
@@ -35,7 +36,7 @@
 
   const { lang: pageLang }: Props = $props();
 
-  const languages = Object.keys(RUNTIMES) as Language[];
+  const languages = Object.keys(RUNTIMES).sort() as Language[];
   if (languages.length === 0) {
     throw new Error("No test runner factories provided");
   }
@@ -162,7 +163,7 @@
 
   let descriptionDialogElement: HTMLDialogElement
   let describedLanguage = $state(defaultLang);
-  let Description = $derived(RUNTIMES[describedLanguage].Description)
+  let Description = $derived(DESCRIPTIONS[describedLanguage])
 </script>
 
 <div class="h-screen flex flex-col overflow-hidden">

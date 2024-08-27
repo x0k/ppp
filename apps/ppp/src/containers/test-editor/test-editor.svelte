@@ -29,7 +29,7 @@
   const { pageLang, problemCategory, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
   const t = useTranslations(pageLang);
 
-  const languages = Object.keys(runtimes) as Langs[];
+  const languages = Object.keys(runtimes).sort() as Langs[];
   if (languages.length === 0) {
     throw new Error("No test runner factories provided");
   }
