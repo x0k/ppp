@@ -14,8 +14,8 @@
     "testing": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^5.4.1",
-    "vite-plugin-dts": "^4.0.3"
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:"
   },
   "exports": {
     ".": "./dist/index.js",

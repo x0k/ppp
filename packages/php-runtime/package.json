@@ -8,15 +8,15 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@php-wasm/universal": "^0.9.30",
-    "@php-wasm/web": "^0.9.30",
+    "@php-wasm/universal": "^0.9.32",
+    "@php-wasm/web": "^0.9.32",
     "libs": "workspace:*",
     "compiler": "workspace:*",
     "testing": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^5.4.1",
-    "vite-plugin-dts": "^4.0.3"
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:"
   },
   "exports": {
     ".": "./dist/index.js",
