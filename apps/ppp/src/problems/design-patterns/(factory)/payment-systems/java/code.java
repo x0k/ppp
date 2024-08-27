@@ -4,8 +4,8 @@ enum SystemType {
   CAT_BANK
 }
 
-class Payment {
-  public static int execute(SystemType type, int base, int amount) {
+class Solution {
+  public static int payment(SystemType type, int base, int amount) {
     throw new RuntimeException("Not implemented");
   }
 }

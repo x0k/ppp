@@ -23,7 +23,7 @@ export const factory: TestCompilerFactory<Input, Output> =
       return goTestCompilerFactory.create(
         ctx,
         ({ paymentSystem, amount, base }) =>
-          `payment.Payment(payment.SystemType(${GO_PAYMENT_SYSTEM_TYPES[paymentSystem]}), ${base}, ${amount})`
+          `solution.Payment(solution.SystemType(${GO_PAYMENT_SYSTEM_TYPES[paymentSystem]}), ${base}, ${amount})`
       );
     }
   );

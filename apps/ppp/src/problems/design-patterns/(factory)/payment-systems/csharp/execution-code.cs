@@ -1,8 +1,8 @@
 var args = JsonSerializer.Deserialize<Args>(jsonArguments);
 var type = args.SystemType switch {
-  "paypal" => payment.SystemType.PayPal,
-  "webmoney" => payment.SystemType.WebMoney,
-  "catbank" => payment.SystemType.CatBank,
+  "paypal" => SystemType.PayPal,
+  "webmoney" => SystemType.WebMoney,
+  "catbank" => SystemType.CatBank,
   _ => throw new System.Exception("Unknown payment type")
 };
-var result = payment.Payment.Execute(type, args.Base, args.Amount);
+var result = Solution.Payment(type, args.Base, args.Amount);

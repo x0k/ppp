@@ -25,7 +25,7 @@ export const factory: TestCompilerFactory<Input, Output> =
   static native int getBase();
   static native int getAmount();
   static native void saveResult(int result);`,
-        mainMethodBody: `saveResult(Payment.execute(
+        mainMethodBody: `saveResult(Solution.payment(
       SystemType.valueOf(getSystemType()),
       getBase(),
       getAmount()

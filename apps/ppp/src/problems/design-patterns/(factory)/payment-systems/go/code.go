@@ -1,4 +1,4 @@
-package payment
+package solution
 
 type SystemType int
 
