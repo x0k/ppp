@@ -2,8 +2,9 @@
   import type { Snippet } from "svelte";
 
   import { Language } from "@/shared/languages";
+  import { ProblemCategory } from '@/shared/problems';
   import type { Lang } from "@/i18n";
-  import Editor from "@/containers/test-editor.svelte";
+  import { TestEditor } from "@/containers/test-editor";
 
   import { testCases } from "./tests-data";
   import { jsCode, jsFactory } from "./js";
@@ -24,8 +25,9 @@
   const { pageLang, children }: Props = $props();
 </script>
 
-<Editor
+<TestEditor
   contentId={location.pathname}
+  problemCategory={ProblemCategory.DesignPatterns}
   {pageLang}
   {children}
   {testCases}

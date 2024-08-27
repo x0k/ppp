@@ -168,7 +168,7 @@
 <div class="h-screen flex flex-col overflow-hidden">
   <Editor width={reactiveWindow.innerWidth} height={reactiveWindow.innerHeight - panelHeight} />
   <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
-    <div class="flex flex-wrap items-center gap-3 p-1">
+    <div class="flex flex-wrap items-center gap-1 p-1">
       <RunButton {isRunning} onClick={handleRun} />
       <Tabs>
         <Tab tab={EditorPanelTab.Output} />

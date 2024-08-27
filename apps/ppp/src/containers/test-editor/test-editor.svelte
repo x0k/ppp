@@ -1,23 +1,3 @@
-<script lang="ts" module>
-  import { type Snippet } from "svelte";
-  
-  import { type Language } from "@/shared/languages";
-  import { type Lang } from '@/i18n';
-  
-  export interface Runtime<I, O> {
-    initialValue: string;
-    testCompilerFactory: TestCompilerFactory<I, O>;
-  }
-  
-  export interface Props<L extends Language, I, O> {
-    pageLang: Lang;
-    contentId: string;
-    testCases: TestCase<I, O>[];
-    runtimes: Record<L, Runtime<I, O>>;
-    children: Snippet;
-  }
-</script>
-
 <script lang="ts" generics="Langs extends Language, Input, Output">
   import { untrack } from 'svelte'
   import Icon from '@iconify/svelte';
@@ -25,24 +5,28 @@
   import { stringifyError } from 'libs/error';
   import { createLogger } from 'libs/logger';
   import { type Context, createContext } from 'libs/context';
-  import { runTests, type TestCase, type TestCompiler, type TestCompilerFactory } from "testing";
+  import { runTests, type TestCompiler } from "testing";
   
   import { debouncedSave, immediateSave } from '@/lib/sync-storage.svelte';
   import { reactiveWindow } from '@/lib/reactive-window.svelte';
-  import { ProblemCategory } from '@/shared/problems';
-  import { LANGUAGE_TITLE, LANGUAGE_ICONS } from '@/shared/languages'
+  import { ProblemCategory, problemCategoryPage } from '@/shared/problems';
+  import { LANGUAGE_TITLE, LANGUAGE_ICONS, Language } from '@/shared/languages'
   import { EditorPanelTab } from '@/shared/editor-panel-tab';
   import { getProblemCategoryLabel, useTranslations, Label } from '@/i18n';
   import { MONACO_LANGUAGE_ID } from '@/adapters/monaco';
   import { createSyncStorage } from '@/adapters/storage';
   import { DESCRIPTIONS } from '@/adapters/runtime/test-descriptions'
+  import Logo from '@/components/logo.svelte';
   import Dropdown from '@/components/dropdown.svelte';
   import ResizablePanel from '@/components/resizable-panel.svelte';
   import { Editor, VimStatus, RunButton, createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor';
   import { Panel, PanelToggle, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
   import { CheckBox, Number } from '@/components/editor/controls';
 
-  const { pageLang, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
+  import type { Props } from './model';
+  import { getRelativeLocaleUrl } from 'astro:i18n';
+
+  const { pageLang, problemCategory, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
   const t = useTranslations(pageLang);
 
   const languages = Object.keys(runtimes) as Langs[];
@@ -91,12 +75,13 @@
 
   const { terminal, fitAddon } = createTerminal();
 
-  setEditorContext(new EditorContext(
+  const editorContext = new EditorContext(
     pageLang,
     model,
     terminal,
     fitAddon,
-  ))
+  )
+  setEditorContext(editorContext)
 
   const editorWidthStorage = createSyncStorage(
     localStorage,
@@ -201,6 +186,11 @@
     }
   }
 
+  function handleReset() {
+    model.setValue(runtime.initialValue)
+    editorContext.editor?.focus()
+  }
+
   let descriptionDialogElement: HTMLDialogElement
   let describedLanguage = $state(defaultLang)
   let Description = $derived(DESCRIPTIONS[describedLanguage])
@@ -210,12 +200,10 @@
   <div class="h-full overflow-auto" style="width: {reactiveWindow.innerWidth - editorWidth}px">
     <div class="p-6">
       <div class="flex gap-3 items-center mb-8">
-        <div>
-          3P
-        </div>
+        <Logo lang={pageLang} />
         <div class="breadcrumbs">
           <ul>
-            <li><a>{t(getProblemCategoryLabel(ProblemCategory.DesignPatterns))}</a></li>
+            <li><a href={getRelativeLocaleUrl(pageLang, problemCategoryPage(problemCategory))} >{t(getProblemCategoryLabel(problemCategory))}</a></li>
           </ul>
         </div>
         <div class="join ml-auto rounded">
@@ -228,7 +216,7 @@
           <button class="btn btn-ghost join-item"
             ><Icon icon="lucide:shuffle" /></button
           >
-          <button class="btn btn-ghost join-item"
+          <button onclick={handleReset} class="btn btn-ghost join-item"
             ><Icon icon="lucide:rotate-ccw" /></button
           >
         </div>
@@ -241,7 +229,7 @@
   <ResizablePanel normalizeSize={normalizeWidth} class="relative grow min-w-0 flex flex-col overflow-hidden" bind:size={editorWidth}>
     <Editor width={editorWidth} height={reactiveWindow.innerHeight - panelHeight} />
     <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
-      <div class="flex flex-wrap items-center gap-3 p-1">
+      <div class="flex flex-wrap items-center gap-1 p-1">
         <RunButton {isRunning} onClick={handleRun} />
         <Tabs>
           <Tab tab={EditorPanelTab.Output} />
