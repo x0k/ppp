@@ -1,8 +1,8 @@
 export enum Language {
-  PHP = "php",
-  Python = "python",
-  TypeScript = "typescript",
   JavaScript = "javascript",
+  TypeScript = "typescript",
+  Python = "python",
+  PHP = "php",
   Go = "go",
   Rust = "rust",
   Gleam = "gleam",
