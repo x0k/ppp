@@ -1,4 +1,6 @@
 import { Page, TITLE } from "./shared";
+import { ProblemCategory } from "./shared/problems";
+import { EditorPanelTab } from "./shared/editor-panel-tab";
 
 export enum Lang {
   EN = "en",
@@ -16,17 +18,47 @@ export function getNextLang(lang: Lang): Lang {
 
 export enum Label {
   MainPage = "page:main",
-  ProblemPage = "page:problem",
+  ProblemsPage = "page:problems",
+  EditorPage = "page:editor",
+  ProblemsCategoryDesignPatterns = "problems:category:design-patterns",
+  EditorPanelTabTests = "editor:panel:tab:tests",
+  EditorPanelTabOutput = "editor:panel:tab:output",
+  EditorPanelTabSettings = "editor:panel:tab:settings",
+  EditorSettingsVimMode = "editor:settings:vim-mode",
+  EditorRunButton = "editor:button:run",
+  EditorStopButton = "editor:button:stop",
+  EditorSettingsExecutionTimeout = "editor:settings:execution-timeout",
+  EditorSettingsExecutionTimeoutAlt = "editor:settings:execution-timeout-alt",
 }
 
 const strings: Record<Lang, Record<Label, string>> = {
   [Lang.EN]: {
     [Label.MainPage]: TITLE,
-    [Label.ProblemPage]: "Problem",
+    [Label.ProblemsPage]: "Problems",
+    [Label.EditorPage]: "Editor",
+    [Label.ProblemsCategoryDesignPatterns]: "Design Patterns",
+    [Label.EditorPanelTabTests]: "Tests",
+    [Label.EditorPanelTabOutput]: "Output",
+    [Label.EditorPanelTabSettings]: "Settings",
+    [Label.EditorSettingsVimMode]: "Vim mode",
+    [Label.EditorRunButton]: "Run",
+    [Label.EditorStopButton]: "Stop",
+    [Label.EditorSettingsExecutionTimeout]: "Execution timeout (ms)",
+    [Label.EditorSettingsExecutionTimeoutAlt]: "Use zero to disable",
   },
   [Lang.RU]: {
     [Label.MainPage]: TITLE,
-    [Label.ProblemPage]: "Задача",
+    [Label.ProblemsPage]: "Проблемы",
+    [Label.EditorPage]: "Редактор",
+    [Label.ProblemsCategoryDesignPatterns]: "Паттерны проектирования",
+    [Label.EditorPanelTabTests]: "Тесты",
+    [Label.EditorPanelTabOutput]: "Вывод",
+    [Label.EditorPanelTabSettings]: "Настройки",
+    [Label.EditorSettingsVimMode]: "Режим Vim",
+    [Label.EditorRunButton]: "Запустить",
+    [Label.EditorStopButton]: "Остановить",
+    [Label.EditorSettingsExecutionTimeout]: "Таймаут выполнения (мс)",
+    [Label.EditorSettingsExecutionTimeoutAlt]: "Используйте ноль для отключения",
   },
 };
 
@@ -36,9 +68,28 @@ export function useTranslations(lang: Lang) {
 
 const PAGE_TO_LABEL: Record<Page, Label> = {
   [Page.Main]: Label.MainPage,
-  [Page.Problem]: Label.ProblemPage,
+  [Page.Problems]: Label.ProblemsPage,
+  [Page.Editor]: Label.EditorPage,
 };
 
 export function getPageLabel(page: Page): Label {
   return PAGE_TO_LABEL[page];
+}
+
+const PROBLEM_CATEGORY_TO_LABEL: Record<ProblemCategory, Label> = {
+  [ProblemCategory.DesignPatterns]: Label.ProblemsCategoryDesignPatterns,
+};
+
+export function getProblemCategoryLabel(category: ProblemCategory): Label {
+  return PROBLEM_CATEGORY_TO_LABEL[category];
+}
+
+const EDITOR_PANEL_TAB_TO_LABEL: Record<EditorPanelTab, Label> = {
+  [EditorPanelTab.Tests]: Label.EditorPanelTabTests,
+  [EditorPanelTab.Output]: Label.EditorPanelTabOutput,
+  [EditorPanelTab.Settings]: Label.EditorPanelTabSettings,
+};
+
+export function getEditorPanelTabLabel(tab: EditorPanelTab): Label {
+  return EDITOR_PANEL_TAB_TO_LABEL[tab];
 }

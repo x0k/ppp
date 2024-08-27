@@ -1,11 +1,4 @@
-export enum Tab {
-  Tests = "tests",
-  Output = "output",
-  Settings = "settings",
-}
-
-export const TAB_TITLES: Record<Tab, string> = {
-  [Tab.Tests]: "Tests",
-  [Tab.Output]: "Output",
-  [Tab.Settings]: "Settings",
-};
+export const PANEL_BORDER_HEIGHT = 1;
+export const PANEL_HEADER_VERTICAL_PADDING = 4 * 2;
+export const MIN_PANEL_HEIGHT =
+  32 + PANEL_HEADER_VERTICAL_PADDING + PANEL_BORDER_HEIGHT;

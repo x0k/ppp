@@ -1,0 +1,15 @@
+---
+import type { Lang } from '@/i18n'
+import Root from '@/layouts/root.astro'
+import EditorProvider from '@/containers/editor-provider.astro'
+
+import SvelteEditor from './_editor.svelte'
+
+const lang = Astro.currentLocale as Lang
+---
+
+<Root title="Editor">
+  <EditorProvider>
+    <SvelteEditor lang={lang} client:only="svelte" />
+  </EditorProvider>
+</Root>

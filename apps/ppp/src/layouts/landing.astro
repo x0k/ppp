@@ -1,5 +1,5 @@
 ---
-import RootLayout from "@/components/root-layout.astro";
+import Root from "./root.astro";
 
 interface Props {
   title: string;
@@ -8,13 +8,14 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<RootLayout title={title} >
+<Root title={title}>
+  <slot name="nav" />
   <div class="flex justify-center">
     <main
-      class="p-6 pb-10 w-full lg:max-w-[900px] max-w-[100vw]"
+      class="p-6 pb-10 w-full lg:max-w-4xl max-w-[100vw]"
       transition:animate="slide"
     >
       <slot />
     </main>
   </div>
-</RootLayout>
+</Root>

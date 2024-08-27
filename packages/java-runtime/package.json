@@ -11,6 +11,7 @@
     "browserfs": "^1.4.3",
     "doppiojvm": "^0.5.0",
     "libs": "workspace:*",
+    "compiler": "workspace:*",
     "testing": "workspace:*"
   },
   "devDependencies": {

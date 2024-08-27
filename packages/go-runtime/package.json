@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "libs": "workspace:*",
+    "compiler": "workspace:*",
     "testing": "workspace:*"
   },
   "devDependencies": {

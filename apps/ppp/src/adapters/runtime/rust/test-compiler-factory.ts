@@ -13,16 +13,6 @@ const libsUrls = import.meta.glob("/node_modules/rust-runtime/dist/lib/*", {
   import: "default",
 }) as Record<string, string>;
 
-export interface RustUniversalFactoryData<I, O> {
-  RustTestProgram: typeof RustTestProgram;
-  wasiRuntimeFactory: typeof wasiRuntimeFactory;
-  makeTestProgramCompiler: (
-    ctx: Context,
-    generateOutputContentCode: (input: I) => string,
-    transformResult: (result: string) => O
-  ) => Promise<TestCompiler<I, O>>;
-}
-
 // TODO: manual cache for large assets
 function loadLibs(ctx: Context) {
   return Promise.all(

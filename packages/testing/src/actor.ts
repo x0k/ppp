@@ -12,11 +12,11 @@ import {
 } from "libs/actor";
 import { stringifyError } from "libs/error";
 import { compileJsModule } from "libs/js";
-import type { File } from "libs/compiler";
+import type { File } from "compiler";
 import type { Writer } from "libs/io";
 import { ok } from "libs/result";
 
-import type { TestProgram, TestCompiler } from "./model.js";
+import type { TestProgram, TestCompiler } from "./testing.js";
 
 export interface InitConfig {
   universalFactoryFunction: string;
@@ -60,7 +60,7 @@ export type TestCompilerFactory<D, I, O> = (
 
 class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
   private ctx: Context = createContext();
-  private testProgramCompiler: TestCompiler<I, O> | null = null;
+  private testCompiler: TestCompiler<I, O> | null = null;
   private testProgram: TestProgram<I, O> | null = null;
 
   constructor(
@@ -83,17 +83,17 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
             return ok(buffer.length);
           },
         };
-        this.testProgramCompiler = await superFactory(
+        this.testCompiler = await superFactory(
           this.ctx,
           out,
           universalFactory
         );
       },
       compile: async (files) => {
-        if (this.testProgramCompiler === null) {
+        if (this.testCompiler === null) {
           throw new Error("Test runner not initialized");
         }
-        this.testProgram = await this.testProgramCompiler.compile(
+        this.testProgram = await this.testCompiler.compile(
           this.ctx,
           files
         );
@@ -115,10 +115,12 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
         return this.testProgram.run(this.ctx, input);
       },
       dispose: () => {
-        if (!this.testProgram) {
-          return;
+        if (this.testProgram !== null) {
+          this.testProgram[Symbol.dispose]();
         }
-        this.testProgram[Symbol.dispose]();
+        if (this.testCompiler !== null) {
+          this.testCompiler[Symbol.dispose]();
+        }
       },
     };
     super(connection, handlers, stringifyError);

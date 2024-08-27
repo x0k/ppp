@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
 import type { Result } from "libs/result";
-import type { Writer } from 'libs/io'
+import type { Writer } from "libs/io";
 
 export enum LogLevel {
   Disabled = -8,
@@ -21,27 +21,35 @@ export interface CompilerConfig {
   stderr: Writer;
 }
 
-export type Executor<R> = (
+export type Evaluator<O> = (
   signal: AbortSignal,
   code: string
-) => Promise<Result<R, string>>;
+) => Promise<Result<O, string>>;
+
+export type Executor = (signal: AbortSignal) => Promise<Result<0, string>>;
 
 export interface Compiler {
-  compile<R>(
+  createEvaluator<O>(
     signal: AbortSignal,
     code: string
-  ): Promise<Result<Executor<R>, string>>;
+  ): Promise<Result<Evaluator<O>, string>>;
+  createExecutor(
+    signal: AbortSignal,
+    code: string
+  ): Promise<Result<Executor, string>>;
 }
 
 export type CompilerFactory = (
   config: CompilerConfig
 ) => Result<Compiler, string>;
 
-export type GoRuntimeFactory<O> = (
+export type GoCompilerFactory = (out: Writer) => Compiler;
+
+export type GoProgramFactory<R> = (
   ctx: Context,
   out: Writer,
   code: string
-) => Promise<Executor<O>>;
+) => Promise<R>;
 
 export const DEFAULT_GLOBAL_COMPILER_INIT_FUNCTION_NAME =
   "__compiler_init_function";

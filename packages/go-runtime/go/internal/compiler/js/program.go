@@ -24,8 +24,8 @@ func New(
 	}
 }
 
-func (c *JsCompiler) Compile(ctx context.Context, code string) js_adapters.Result {
-	p, err := c.compiler.Compile(ctx, code)
+func (c *JsCompiler) CreateEvaluator(ctx context.Context, code string) js_adapters.Result {
+	p, err := c.compiler.Prepare(ctx, code)
 	if err != nil {
 		return js_adapters.Err(err)
 	}
@@ -35,11 +35,30 @@ func (c *JsCompiler) Compile(ctx context.Context, code string) js_adapters.Resul
 		}
 		ctx, cancel := js_adapters.WithAbortSignal(context.Background(), args[0])
 		defer cancel()
-		v, err := p.Exec(ctx, args[1].String())
+		v, err := p.Eval(ctx, args[1].String())
 		if err != nil {
 			return js_adapters.ResolveErr(err)
 		}
 		return js_adapters.ResolveOk(vert.ValueOf(v.Interface()))
+	})
+	return js_adapters.Ok(exec.Value)
+}
+
+func (c *JsCompiler) CreateExecuter(ctx context.Context, code string) js_adapters.Result {
+	p, err := c.compiler.Compile(ctx, code)
+	if err != nil {
+		return js_adapters.Err(err)
+	}
+	exec := js_adapters.Async(func(args []js.Value) js_adapters.Promise {
+		if len(args) < 1 {
+			return js_adapters.ResolveErr(errors.New("Not enough arguments, expected 1"))
+		}
+		ctx, cancel := js_adapters.WithAbortSignal(context.Background(), args[0])
+		defer cancel()
+		if err := p.Exec(ctx); err != nil {
+			return js_adapters.ResolveErr(err)
+		}
+		return js_adapters.ResolveOk(js.ValueOf(0))
 	})
 	return js_adapters.Ok(exec.Value)
 }

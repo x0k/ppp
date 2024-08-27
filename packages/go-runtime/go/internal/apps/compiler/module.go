@@ -34,7 +34,7 @@ func New(jsConfig js.Value) js_adapters.Result {
 
 	root := js_adapters.ObjectConstructor.New()
 
-	root.Set("compile", js_adapters.Async(func(args []js.Value) js_adapters.Promise {
+	root.Set("createEvaluator", js_adapters.Async(func(args []js.Value) js_adapters.Promise {
 		if len(args) < 2 {
 			return js_adapters.ResolveErr(errors.New("Not enough arguments, expected 2"))
 		}
@@ -48,7 +48,24 @@ func New(jsConfig js.Value) js_adapters.Result {
 		if err != nil {
 			return js_adapters.ResolveErr(err)
 		}
-		return js_adapters.Resolve(js_compiler.New(compiler).Compile(ctx, args[1].String()))
+		return js_adapters.Resolve(js_compiler.New(compiler).CreateEvaluator(ctx, args[1].String()))
+	}))
+
+	root.Set("createExecutor", js_adapters.Async(func(args []js.Value) js_adapters.Promise {
+		if len(args) < 2 {
+			return js_adapters.ResolveErr(errors.New("Not enough arguments, expected 2"))
+		}
+		ctx, cancel := js_adapters.WithAbortSignal(context.Background(), args[0])
+		defer cancel()
+
+		compiler, err := compiler.New(
+			js_adapters.NewWriter(*cfg.Stdout.Write),
+			js_adapters.NewWriter(*cfg.Stderr.Write),
+		)
+		if err != nil {
+			return js_adapters.ResolveErr(err)
+		}
+		return js_adapters.Resolve(js_compiler.New(compiler).CreateExecuter(ctx, args[1].String()))
 	}))
 
 	return js_adapters.Ok(root)

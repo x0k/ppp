@@ -1,17 +1,43 @@
-import "./vendor/wasm_exec.js";
+import { COLOR_ENCODED, createLogger, redirect } from "libs/logger";
+import { isErr } from "libs/result";
 
-import { DEFAULT_GLOBAL_COMPILER_INIT_FUNCTION_NAME, type CompilerFactory } from "./model.js";
+import {
+  LogLevel,
+  type CompilerFactory,
+  type GoCompilerFactory,
+} from "./model";
 
-export async function createCompilerFactory(
-  instantiate: (
-    importObject: WebAssembly.Imports
-  ) => Promise<WebAssembly.Instance>,
-  globalCompilerInitFunctionName = DEFAULT_GLOBAL_COMPILER_INIT_FUNCTION_NAME
-): Promise<CompilerFactory> {
-  const go = new Go();
-  go.argv.push(globalCompilerInitFunctionName);
-  void go.run(await instantiate(go.importObject));
-  // @ts-ignore
-  const factory = globalThis[globalCompilerInitFunctionName] as CompilerFactory;
-  return factory;
+export function makeGoCompilerFactory(
+  makeCompiler: CompilerFactory
+): GoCompilerFactory {
+  return (out) => {
+    const compiler = makeCompiler({
+      logger: {
+        level: LogLevel.Info,
+        console: redirect(globalThis.console, createLogger(out)),
+      },
+      stdout: out,
+      stderr: {
+        write(text) {
+          let r = out.write(COLOR_ENCODED.ERROR);
+          if (isErr(r)) {
+            return r;
+          }
+          const r2 = out.write(text);
+          if (isErr(r2)) {
+            return r2;
+          }
+          r = out.write(COLOR_ENCODED.RESET);
+          if (isErr(r)) {
+            return r;
+          }
+          return r2;
+        },
+      },
+    });
+    if (isErr(compiler)) {
+      throw new Error(compiler.error);
+    }
+    return compiler.value;
+  };
 }
