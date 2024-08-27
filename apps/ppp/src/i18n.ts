@@ -19,6 +19,7 @@ export function getNextLang(lang: Lang): Lang {
 export enum Label {
   MainPage = "page:main",
   ProblemsPage = "page:problems",
+  EditorPage = "page:editor",
   ProblemsCategoryDesignPatterns = "problems:category:design-patterns",
   EditorPanelTabTests = "editor:panel:tab:tests",
   EditorPanelTabOutput = "editor:panel:tab:output",
@@ -34,6 +35,7 @@ const strings: Record<Lang, Record<Label, string>> = {
   [Lang.EN]: {
     [Label.MainPage]: TITLE,
     [Label.ProblemsPage]: "Problems",
+    [Label.EditorPage]: "Editor",
     [Label.ProblemsCategoryDesignPatterns]: "Design Patterns",
     [Label.EditorPanelTabTests]: "Tests",
     [Label.EditorPanelTabOutput]: "Output",
@@ -47,6 +49,7 @@ const strings: Record<Lang, Record<Label, string>> = {
   [Lang.RU]: {
     [Label.MainPage]: TITLE,
     [Label.ProblemsPage]: "Проблемы",
+    [Label.EditorPage]: "Редактор",
     [Label.ProblemsCategoryDesignPatterns]: "Паттерны проектирования",
     [Label.EditorPanelTabTests]: "Тесты",
     [Label.EditorPanelTabOutput]: "Вывод",
@@ -66,6 +69,7 @@ export function useTranslations(lang: Lang) {
 const PAGE_TO_LABEL: Record<Page, Label> = {
   [Page.Main]: Label.MainPage,
   [Page.Problems]: Label.ProblemsPage,
+  [Page.Editor]: Label.EditorPage,
 };
 
 export function getPageLabel(page: Page): Label {

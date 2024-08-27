@@ -1,16 +1,6 @@
-<script lang="ts" module>
-  export enum Orientation {
-    Vertical = "vertical",
-    Horizontal = "horizontal",
-  }
-
-  export enum Alignment {
-    Start = "start",
-    End = "end",
-  }
-</script>
-
 <script lang="ts">
+  import { Alignment, Orientation } from './model';
+
   interface Props {
     onMove: (e: MouseEvent) => void;
     onMoveStart?: (e: MouseEvent) => void;

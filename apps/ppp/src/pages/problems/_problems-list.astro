@@ -1,0 +1,18 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+export interface Props {
+  problems: CollectionEntry<'problems'>[]
+}
+
+const { problems } = Astro.props
+---
+<ul>
+  {
+    problems.map((entry) => (
+      <li>
+        <a href={new URL(entry.id, Astro.url)}>{entry.data.title}</a>
+      </li>
+    ))
+  }
+</ul>

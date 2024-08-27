@@ -1,22 +1,54 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
-import Root from '@/layouts/root.astro'
-import EditorProvider from '@/containers/editor-provider.astro';
+import { PROBLEM_CATEGORIES, type ProblemCategory } from '@/shared/problems';
+
+import Problem from './_problem.astro';
+import Category from './_category.astro';
+
+interface Path {
+  params: {
+    slug: string
+  }
+}
+
+interface CategoryPath extends Path {
+  props: {
+    type: "category"
+    category: ProblemCategory
+    entries: CollectionEntry<'problems'>[]
+  }
+}
+
+interface ProblemPath extends Path {
+  props: {
+    type: "problem"
+    entry: CollectionEntry<'problems'>
+  }
+}
 
 export async function getStaticPaths() {
   const problems = await getCollection('problems');
-  return problems.map(entry => ({
-    params: { slug: entry.id }, props: { entry },
+  const categoriesPaths: CategoryPath[] = PROBLEM_CATEGORIES.map(category => ({
+    params: {
+      slug: category
+    },
+    props: {
+      type: "category",
+      category,
+      entries: problems.filter(entry => entry.id.includes(category)),
+    }
+  }))
+  const problemPaths: ProblemPath[] = problems.map(entry => ({
+    params: { slug: entry.id }, props: { type: "problem", entry },
   }));
+  return [...categoriesPaths, ...problemPaths];
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+const props = Astro.props
 ---
-
-<Root title={entry.data.title}>
-  <EditorProvider>
-    <Content />
-  </EditorProvider>
-</Root>
+{
+  props.type === "category"
+    ? <Category category={props.category} problems={props.entries} />
+    : <Problem entry={props.entry} />
+}

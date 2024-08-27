@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  export { Alignment, Orientation } from './resizer.svelte'
+  export { Alignment, Orientation } from './resizer'
 </script>
 
 <script lang="ts">
@@ -7,7 +7,7 @@
 
   import type { Vec2 } from '@/lib/vec2';
 
-  import Resizer, { Alignment, Orientation } from "./resizer.svelte";
+  import { Resizer, Alignment, Orientation } from "./resizer";
 
   interface Props {
     size: number;

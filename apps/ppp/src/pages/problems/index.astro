@@ -1,10 +1,12 @@
 ---
 import { getCollection } from 'astro:content'
 
+import { Page } from '@/shared';
 import Layout from '@/layouts/landing.astro'
 import Navigation from '@/containers/navigation.astro'
 import { type Lang, getPageLabel, useTranslations } from '@/i18n';
-import { Page } from '@/shared';
+
+import ProblemsList from './_problems-list.astro';
 
 const lang = Astro.currentLocale as Lang;
 const t = useTranslations(lang);
@@ -13,14 +15,6 @@ const problems = await getCollection("problems")
 
 ---
 <Layout title={t(getPageLabel(Page.Problems))}>
-  <Navigation slot="nav" currentPage={Page.Problems} />
-  <ul>
-    {
-      problems.map((entry) => (
-        <li>
-          <a href={new URL(entry.id, Astro.url)}>{entry.data.title}</a>
-        </li>
-      ))
-    }
-  </ul>
+  <Navigation slot="nav" currentSection={Page.Problems} />
+  <ProblemsList problems={problems} />
 </Layout>

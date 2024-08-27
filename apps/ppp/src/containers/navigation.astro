@@ -6,7 +6,7 @@ import { type Lang, useTranslations, getPageLabel } from '@/i18n';
 import Logo from '@/components/logo.svelte';
 
 export interface Props {
-  currentPage: Page
+  currentSection: Page
 }
 
 const lang = Astro.currentLocale as Lang;
@@ -15,5 +15,9 @@ const t = useTranslations(lang);
 
 <div class="navbar bg-base-100 max-w-4xl m-auto gap-3">
 	<Logo lang={lang} />
-	<a class="link link-hover" href={getRelativeLocaleUrl(lang, Page.Problems)}>{t(getPageLabel(Page.Problems))}</a></li>
+	<span class="grow" >
+		Programming Patterns Practice
+	</span>
+	<a class="link link-hover" href={getRelativeLocaleUrl(lang, Page.Editor)}>{t(getPageLabel(Page.Editor))}</a>
+	<a class="link link-hover" href={getRelativeLocaleUrl(lang, Page.Problems)}>{t(getPageLabel(Page.Problems))}</a>
 </div>
