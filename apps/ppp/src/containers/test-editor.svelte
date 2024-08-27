@@ -1,12 +1,12 @@
 <script lang="ts" module>
-  import type { Component, Snippet } from "svelte";
+  import { type Snippet } from "svelte";
   
   import { type Language } from "@/shared/languages";
+  import { type Lang } from '@/i18n';
   
   export interface Runtime<I, O> {
     initialValue: string;
     testCompilerFactory: TestCompilerFactory<I, O>;
-    Description: Component;
   }
   
   export interface Props<L extends Language, I, O> {
@@ -19,6 +19,7 @@
 </script>
 
 <script lang="ts" generics="Langs extends Language, Input, Output">
+  import { untrack } from 'svelte'
   import Icon from '@iconify/svelte';
   import { editor } from 'monaco-editor';
   import { stringifyError } from 'libs/error';
@@ -28,17 +29,19 @@
   
   import { debouncedSave, immediateSave } from '@/lib/sync-storage.svelte';
   import { reactiveWindow } from '@/lib/reactive-window.svelte';
-  import { RESET_BUTTON_ID } from '@/shared';
   import { ProblemCategory } from '@/shared/problems';
-  import { LANGUAGE_TITLE } from '@/shared/languages'
-  import { getProblemCategoryLabel, useTranslations, type Lang } from '@/i18n';
+  import { LANGUAGE_TITLE, LANGUAGE_ICONS } from '@/shared/languages'
+  import { EditorPanelTab } from '@/shared/editor-panel-tab';
+  import { getProblemCategoryLabel, useTranslations, Label } from '@/i18n';
   import { MONACO_LANGUAGE_ID } from '@/adapters/monaco';
   import { createSyncStorage } from '@/adapters/storage';
-  import ResizablePanel, { Alignment } from '@/components/resizable-panel.svelte';
-  import Editor from '@/components/editor2/editor.svelte';
-  import Panel from '@/components/editor2/panel/panel.svelte';
-  import { createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor2';
-  
+  import { DESCRIPTIONS } from '@/adapters/runtime/test-descriptions'
+  import Dropdown from '@/components/dropdown.svelte';
+  import ResizablePanel from '@/components/resizable-panel.svelte';
+  import { Editor, VimStatus, RunButton, createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor';
+  import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
+  import { CheckBox, Number } from '@/components/editor/controls';
+
   const { pageLang, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
   const t = useTranslations(pageLang);
 
@@ -54,6 +57,7 @@
   )
   const initialLang = langStorage.load();
   let lang = $state(initialLang in runtimes ? initialLang : defaultLang);
+  immediateSave(langStorage, () => lang);
   let runtime = $derived(runtimes[lang]);
   let contentStorage = $derived(
     createSyncStorage(
@@ -94,7 +98,34 @@
     fitAddon,
   ))
 
-  let barWidth = $state(Math.round(reactiveWindow.innerWidth / 3))
+  const editorWidthStorage = createSyncStorage(
+    localStorage,
+    "test-editor-width",
+    Math.round(reactiveWindow.innerWidth / 3 * 2)
+  )
+  let editorWidth = $state(editorWidthStorage.load())
+  debouncedSave(editorWidthStorage, () => editorWidth, 300)
+  const EDITOR_MIN_WIDTH = 5
+  function normalizeWidth(width: number, oldWidth: number) {
+    const windowWidth = reactiveWindow.innerWidth
+    const newEditorWidth = Math.max(EDITOR_MIN_WIDTH, Math.min(windowWidth, width))
+    const diff = windowWidth - newEditorWidth
+    if (diff < 300) {
+      return windowWidth
+    }
+    if (diff < 500) {
+      return oldWidth
+    }
+    return newEditorWidth
+  }
+  let lastWindowWidth = reactiveWindow.innerWidth;
+  $effect(() => {
+    const newWidth = reactiveWindow.innerWidth
+    untrack(() => {
+      editorWidth = normalizeWidth(editorWidth + newWidth - lastWindowWidth, editorWidth)
+    })
+    lastWindowWidth = newWidth
+  })
 
   const panelHeightStorage = createSyncStorage(
     localStorage,
@@ -172,11 +203,11 @@
 
   let descriptionDialogElement: HTMLDialogElement
   let describedLanguage = $state(defaultLang)
-  let Description = $derived(runtimes[describedLanguage].Description)
+  let Description = $derived(DESCRIPTIONS[describedLanguage])
 </script>
 
 <div class="h-screen flex">
-  <ResizablePanel class="relative h-full overflow-auto" alignment={Alignment.End} bind:size={barWidth}>
+  <div class="h-full overflow-auto" style="width: {reactiveWindow.innerWidth - editorWidth}px">
     <div class="p-6">
       <div class="flex gap-3 items-center mb-8">
         <div>
@@ -197,7 +228,7 @@
           <button class="btn btn-ghost join-item"
             ><Icon icon="lucide:shuffle" /></button
           >
-          <button id={RESET_BUTTON_ID} class="btn btn-ghost join-item"
+          <button class="btn btn-ghost join-item"
             ><Icon icon="lucide:rotate-ccw" /></button
           >
         </div>
@@ -206,13 +237,81 @@
         {@render children()}
       </div>
     </div>
-  </ResizablePanel>
-  <div class="grow min-w-0 flex flex-col">
-    <Editor width={reactiveWindow.innerWidth - barWidth} height={reactiveWindow.innerHeight - panelHeight} />
-    <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
-      Panel
-    </Panel>
   </div>
+  <ResizablePanel normalizeSize={normalizeWidth} class="relative grow min-w-0 flex flex-col" bind:size={editorWidth}>
+    <Editor width={editorWidth} height={reactiveWindow.innerHeight - panelHeight} />
+    <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
+      <div class="flex flex-wrap items-center gap-3 p-1">
+        <RunButton {isRunning} onClick={handleRun} />
+        <Tabs>
+          <Tab tab={EditorPanelTab.Output} />
+          <Tab tab={EditorPanelTab.Tests}>
+            {#snippet append()}
+              <div
+                class="badge"
+                class:hidden={lastTestId < 0}
+                class:badge-success={lastTestId === testCases.length}
+                class:badge-error={lastTestId < testCases.length && lastTestId >= 0}
+              >
+                {lastTestId}/{testCases.length}
+              </div>
+            {/snippet}
+          </Tab>
+          <Tab tab={EditorPanelTab.Settings} />
+        </Tabs>
+        <div class="grow"></div>
+        <VimStatus bind:vimState />
+        <Dropdown
+          bind:value={lang}
+          options={languages}
+        >
+          {#snippet preLabel(lang)}
+            <Icon icon={LANGUAGE_ICONS[lang]} />
+          {/snippet}
+          {#snippet label(lang)}
+            {LANGUAGE_TITLE[lang]}
+          {/snippet}
+          {#snippet postLabel(lang)}
+            <Icon onclick={(e) => {
+              describedLanguage = lang
+              e.stopPropagation()
+              descriptionDialogElement.showModal()
+            }} class="invisible group-hover:visible" icon="lucide:info" />
+          {/snippet}
+        </Dropdown>
+      </div>
+      <div class="grow flex flex-col overflow-hidden" >
+        <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />
+        <TabContent tab={EditorPanelTab.Tests}>
+          <div class="overflow-auto flex flex-col gap-4 p-4" >
+            {#each testCases as testCase, i}
+              <div>
+                <div class="flex items-center gap-2 pb-2">
+                  {#if lastTestId === i}
+                    <Icon icon="lucide:circle-x" class="text-error" />
+                  {:else if i < lastTestId}
+                    <Icon icon="lucide:circle-check" class="text-success" />
+                  {:else}
+                    <Icon icon="lucide:circle-dashed" />
+                  {/if}
+                  Case {i + 1}
+                </div>
+                <pre class="p-2 rounded bg-base-100"><code
+                    >{JSON.stringify(testCase.input, null, 2)}</code
+                  ></pre>
+              </div>
+            {/each}
+          </div>
+        </TabContent>
+        <TabContent tab={EditorPanelTab.Settings}>
+          <div class="overflow-auto flex flex-col gap-4 p-4">
+            <CheckBox title={Label.EditorSettingsVimMode} bind:value={vimState} />
+            <Number title={Label.EditorSettingsExecutionTimeout} alt={Label.EditorSettingsExecutionTimeoutAlt} bind:value={executionTimeout} />
+          </div>
+        </TabContent>
+      </div>
+    </Panel>
+  </ResizablePanel>
 </div>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->

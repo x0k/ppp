@@ -1,18 +1,18 @@
 <script lang="ts" generics="Input, Output">
   import Icon from "@iconify/svelte";
 
-  import type { TestData } from "testing";
+  import type { TestCase } from "testing";
 
   interface Props<I, O> {
-    testsData: TestData<I, O>[];
+    testsData: TestCase<I, O>[];
     lastTestId: number;
   }
 
-  const { testsData, lastTestId }: Props<Input, Output> = $props();
+  const { testsData: testCases, lastTestId }: Props<Input, Output> = $props();
 </script>
 
 <div class="overflow-auto flex flex-col gap-4 p-4">
-  {#each testsData as testData, i}
+  {#each testCases as testCase, i}
     <div>
       <div class="flex items-center gap-2 pb-2">
         {#if lastTestId === i}
@@ -25,7 +25,7 @@
         Case {i + 1}
       </div>
       <pre class="p-2 rounded bg-base-100"><code
-          >{JSON.stringify(testData.input, null, 2)}</code
+          >{JSON.stringify(testCase.input, null, 2)}</code
         ></pre>
     </div>
   {/each}

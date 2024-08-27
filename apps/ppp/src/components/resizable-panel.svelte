@@ -20,7 +20,7 @@
      * @default Alignment.Start
      */
     alignment?: Alignment;
-    normalizeSize?: (size: number) => number;
+    normalizeSize?: (size: number, old: number) => number;
     class?: string;
   }
 
@@ -30,7 +30,10 @@
     alignment = Alignment.Start,
     children,
     class: className,
-    normalizeSize = (size) => size,
+    normalizeSize = (size) => {
+      console.log(size)
+      return size
+    },
   }: Props = $props();
 
   const ORIENTATION_TO_STYLE: Record<Orientation, "height" | "width"> = {
@@ -43,14 +46,23 @@
     [Orientation.Vertical]: "clientX",
   };
 
-  const ORIENTATION_TO_OPERATION: Record<Orientation, (a: number, b: number, c: number) => number> = {
-    [Orientation.Horizontal]: (a, b, c) => a - b + c,
-    [Orientation.Vertical]: (a, b, c) => a + b - c,
+  type Op = (a: number, b: number, c: number) => number
+  const op1: Op = (a, b, c) => a - b + c
+  const op2: Op = (a, b, c) => a + b - c
+  const ORIENTATION_TO_OPERATION: Record<Orientation, Record<Alignment, Op>> = {
+    [Orientation.Horizontal]: {
+      [Alignment.Start]: op1,
+      [Alignment.End]: op2,
+    },
+    [Orientation.Vertical]: {
+      [Alignment.Start]: op1,
+      [Alignment.End]: op2,
+    },
   }
 
   const sizeProp = $derived(ORIENTATION_TO_STYLE[orientation]);
   const coord = $derived(ORIENTATION_TO_COORD[orientation]);
-  const op = $derived(ORIENTATION_TO_OPERATION[orientation]);
+  const op = $derived(ORIENTATION_TO_OPERATION[orientation][alignment]);
 
   let start: Vec2;
 </script>
@@ -63,7 +75,7 @@
       start = { x: size, y: e[coord] };
     }}
     onMove={(e) => {
-      size = normalizeSize(op(start.y, e[coord], start.x));
+      size = normalizeSize(op(start.y, e[coord], start.x), size);
     }}
   />
   {@render children()}

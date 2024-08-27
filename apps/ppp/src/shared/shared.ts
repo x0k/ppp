@@ -4,5 +4,3 @@ export enum Page {
 }
 
 export const TITLE = "Programming Patterns Practice";
-
-export const RESET_BUTTON_ID = "editor-reset-button";

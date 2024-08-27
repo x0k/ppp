@@ -1,14 +1,9 @@
----
-import type { Lang } from '@/i18n'
+<script lang="ts">
+  import type { Snippet } from "svelte";
 
-const lang = Astro.currentLocale as Lang
-
----
-<div id="editor-placeholder" data-lang={lang}></div>
-
-<script>
   import { Language } from "@/shared/languages";
-  import { mountEditor } from "@/components/editor-wrapper";
+  import type { Lang } from "@/i18n";
+  import Editor from "@/containers/test-editor.svelte";
 
   import { testCases } from "./tests-data";
   import { jsCode, jsFactory } from "./js";
@@ -19,44 +14,57 @@ const lang = Astro.currentLocale as Lang
   import { rustCode, rustFactory } from "./rust";
   import { gleamCode, gleamFactory } from "./gleam";
   import { csCode, csFactory } from "./csharp";
-  import { javaCode, javaFactory } from './java'
+  import { javaCode, javaFactory } from "./java";
 
-  mountEditor(testCases, {
+  interface Props {
+    pageLang: Lang;
+    children: Snippet;
+  }
+
+  const { pageLang, children }: Props = $props();
+</script>
+
+<Editor
+  contentId={location.pathname}
+  {pageLang}
+  {children}
+  {testCases}
+  runtimes={{
     [Language.JavaScript]: {
       initialValue: jsCode,
-      factory: jsFactory,
+      testCompilerFactory: jsFactory,
     },
     [Language.TypeScript]: {
       initialValue: tsCode,
-      factory: tsFactory,
+      testCompilerFactory: tsFactory,
     },
     [Language.PHP]: {
       initialValue: phpCode,
-      factory: phpFactory,
+      testCompilerFactory: phpFactory,
     },
     [Language.Python]: {
       initialValue: pyCode,
-      factory: pyFactory,
+      testCompilerFactory: pyFactory,
     },
     [Language.Go]: {
       initialValue: goCode,
-      factory: goFactory,
+      testCompilerFactory: goFactory,
     },
     [Language.Rust]: {
       initialValue: rustCode,
-      factory: rustFactory,
+      testCompilerFactory: rustFactory,
     },
     [Language.Gleam]: {
       initialValue: gleamCode,
-      factory: gleamFactory,
+      testCompilerFactory: gleamFactory,
     },
     [Language.CSharp]: {
       initialValue: csCode,
-      factory: csFactory,
+      testCompilerFactory: csFactory,
     },
     [Language.Java]: {
       initialValue: javaCode,
-      factory: javaFactory
-    }
-  });
-</script>
+      testCompilerFactory: javaFactory,
+    },
+  }}
+/>

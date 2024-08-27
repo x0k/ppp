@@ -23,9 +23,9 @@
     createTerminal,
     createTerminalWriter,
     RunButton,
-  } from "@/components/editor2";
-  import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor2/panel";
-  import { CheckBox, Number } from '@/components/editor2/controls';
+  } from "@/components/editor";
+  import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
+  import { CheckBox, Number } from '@/components/editor/controls';
 
   import { RUNTIMES } from './_runtimes'
 
@@ -47,6 +47,7 @@
   );
   const initialLang = langStorage.load();
   let lang = $state(initialLang in RUNTIMES ? initialLang : defaultLang);
+  immediateSave(langStorage, () => lang);
   let runtime = $derived(RUNTIMES[lang]);
   let contentStorage = $derived(
     createSyncStorage(
@@ -194,13 +195,15 @@
         {/snippet}
       </Dropdown>
     </div>
-    <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />
-    <TabContent tab={EditorPanelTab.Settings}>
-      <div class="overflow-auto flex flex-col gap-4 p-4">
-        <CheckBox title={Label.EditorSettingsVimMode} bind:value={vimState} />
-        <Number title={Label.EditorSettingsExecutionTimeout} alt={Label.EditorSettingsExecutionTimeoutAlt} bind:value={executionTimeout} />
-      </div>
-    </TabContent>
+    <div class="grow flex flex-col overflow-hidden">
+      <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />
+      <TabContent tab={EditorPanelTab.Settings}>
+        <div class="overflow-auto flex flex-col gap-4 p-4">
+          <CheckBox title={Label.EditorSettingsVimMode} bind:value={vimState} />
+          <Number title={Label.EditorSettingsExecutionTimeout} alt={Label.EditorSettingsExecutionTimeoutAlt} bind:value={executionTimeout} />
+        </div>
+      </TabContent>
+    </div>
   </Panel>
 </div>
 
