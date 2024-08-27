@@ -30,10 +30,7 @@
     alignment = Alignment.Start,
     children,
     class: className,
-    normalizeSize = (size) => {
-      console.log(size)
-      return size
-    },
+    normalizeSize = (size) => size,
   }: Props = $props();
 
   const ORIENTATION_TO_STYLE: Record<Orientation, "height" | "width"> = {

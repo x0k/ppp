@@ -39,7 +39,7 @@
   import Dropdown from '@/components/dropdown.svelte';
   import ResizablePanel from '@/components/resizable-panel.svelte';
   import { Editor, VimStatus, RunButton, createTerminal, createTerminalWriter, EditorContext, setEditorContext } from '@/components/editor';
-  import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
+  import { Panel, PanelToggle, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
   import { CheckBox, Number } from '@/components/editor/controls';
 
   const { pageLang, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
@@ -238,7 +238,7 @@
       </div>
     </div>
   </div>
-  <ResizablePanel normalizeSize={normalizeWidth} class="relative grow min-w-0 flex flex-col" bind:size={editorWidth}>
+  <ResizablePanel normalizeSize={normalizeWidth} class="relative grow min-w-0 flex flex-col overflow-hidden" bind:size={editorWidth}>
     <Editor width={editorWidth} height={reactiveWindow.innerHeight - panelHeight} />
     <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
       <div class="flex flex-wrap items-center gap-3 p-1">
@@ -279,6 +279,7 @@
             }} class="invisible group-hover:visible" icon="lucide:info" />
           {/snippet}
         </Dropdown>
+        <PanelToggle bind:panelHeight maxPanelHeight={reactiveWindow.innerHeight} />
       </div>
       <div class="grow flex flex-col overflow-hidden" >
         <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />

@@ -24,7 +24,7 @@
     createTerminalWriter,
     RunButton,
   } from "@/components/editor";
-  import { Panel, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
+  import { Panel, Tab, Tabs, TerminalTab, TabContent, PanelToggle } from "@/components/editor/panel";
   import { CheckBox, Number } from '@/components/editor/controls';
 
   import { RUNTIMES } from './_runtimes'
@@ -165,7 +165,7 @@
   let Description = $derived(RUNTIMES[describedLanguage].Description)
 </script>
 
-<div class="h-screen flex flex-col">
+<div class="h-screen flex flex-col overflow-hidden">
   <Editor width={reactiveWindow.innerWidth} height={reactiveWindow.innerHeight - panelHeight} />
   <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
     <div class="flex flex-wrap items-center gap-3 p-1">
@@ -194,6 +194,7 @@
           }} class="invisible group-hover:visible" icon="lucide:info" />
         {/snippet}
       </Dropdown>
+      <PanelToggle bind:panelHeight maxPanelHeight={reactiveWindow.innerHeight} />
     </div>
     <div class="grow flex flex-col overflow-hidden">
       <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />

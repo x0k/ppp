@@ -5,11 +5,7 @@
   import ResizablePanel, { Orientation } from '@/components/resizable-panel.svelte';
 
   import { EditorPanelContext, setEditorPanelContext } from './context.svelte';
-  
-  const PANEL_BORDER_HEIGHT = 1;
-  const PANEL_HEADER_VERTICAL_PADDING = 4 * 2;
-  const MIN_PANEL_HEIGHT =
-    32 + PANEL_HEADER_VERTICAL_PADDING + PANEL_BORDER_HEIGHT;
+  import { MIN_PANEL_HEIGHT } from './model';
   
   interface Props {
     height: number
@@ -18,7 +14,7 @@
   }
 
   let {
-    height = $bindable(MIN_PANEL_HEIGHT),
+    height = $bindable(),
     maxHeight,
     children
   }: Props = $props();
