@@ -22,7 +22,7 @@ export class PythonTestCompilerFactory {
     ctx: Context,
     generateCaseExecutionCode: GenerateCaseExecutionCode<I>
   ): Promise<TestCompiler<I, O>> {
-    class TestRunner extends PyTestProgram<I, O> {
+    class TestProgram extends PyTestProgram<I, O> {
       protected override caseExecutionCode(data: I): string {
         return generateCaseExecutionCode(data);
       }
@@ -42,7 +42,7 @@ export class PythonTestCompilerFactory {
         if (files.length !== 1) {
           throw new Error("Compilation of multiple files is not implemented");
         }
-        return new TestRunner(pyRuntime, files[0].content);
+        return new TestProgram(pyRuntime, files[0].content);
       },
       [Symbol.dispose]() {},
     };

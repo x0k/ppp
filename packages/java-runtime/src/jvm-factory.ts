@@ -1,6 +1,5 @@
 import { Context, inContext } from "libs/context";
-import { COLOR_ENCODED } from "libs/logger";
-import { Writer } from "libs/io";
+import { makeErrorWriter, Writer } from "libs/io";
 
 import { createJVM, JVM } from "./jvm";
 import { process } from "./process.js";
@@ -8,6 +7,7 @@ import { process } from "./process.js";
 export type JVMFactory = (ctx: Context) => Promise<[JVM, Disposable]>;
 
 export function makeJVMFactory(writer: Writer): JVMFactory {
+  const errorWriter = makeErrorWriter(writer);
   return async (ctx) => {
     const jvm = await inContext(
       ctx,
@@ -17,11 +17,7 @@ export function makeJVMFactory(writer: Writer): JVMFactory {
       })
     );
     const onStdout = (data: Uint8Array) => writer.write(data);
-    const onStderr = (data: Uint8Array) => {
-      writer.write(COLOR_ENCODED.ERROR);
-      writer.write(data);
-      writer.write(COLOR_ENCODED.RESET);
-    };
+    const onStderr = (data: Uint8Array) => errorWriter.write(data);
     // process.initializeTTYs();
     process.stdout.on("data", onStdout);
     process.stderr.on("data", onStderr);

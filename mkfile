@@ -188,6 +188,18 @@ dotnet/:
     popd
   popd
 
+ruby/:
+  pushd packages/ruby-runtime
+  b:
+    pnpm run build
+  p/:
+    pushd probe
+    i:
+      bun install
+      cp node_modules/@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm public/
+    bun run index.ts
+    popd
+
 java/:
   pushd packages/java-runtime
   b:
