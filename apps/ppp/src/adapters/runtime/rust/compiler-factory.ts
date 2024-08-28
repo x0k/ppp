@@ -1,11 +1,10 @@
 import type { Context } from "libs/context";
-import { COLOR_ENCODED } from "libs/logger";
-import { isErr } from "libs/result";
 import type { CompilerFactory } from "compiler";
 import { RustProgram, wasiRuntimeFactory } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "rust-runtime/miri.wasm";
+import { makeErrorWriter } from 'libs/io';
 
 const libsUrls = import.meta.glob("/node_modules/rust-runtime/dist/lib/*", {
   eager: true,
@@ -35,23 +34,7 @@ export const makeRustCompiler: CompilerFactory = async (ctx, out) => {
   ]);
   const wasi = wasiRuntimeFactory(
     out,
-    {
-      write: (text) => {
-        let r = out.write(COLOR_ENCODED.ERROR);
-        if (isErr(r)) {
-          return r;
-        }
-        const r2 = out.write(text);
-        if (isErr(r2)) {
-          return r2;
-        }
-        r = out.write(COLOR_ENCODED.RESET);
-        if (isErr(r)) {
-          return r;
-        }
-        return r2;
-      },
-    },
+    makeErrorWriter(out),
     libs
   );
   return {

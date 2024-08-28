@@ -1,7 +1,5 @@
 import type { Context } from "libs/context";
-import { COLOR_ENCODED } from "libs/logger";
-import { isErr } from "libs/result";
-import type { Writer } from "libs/io";
+import { makeErrorWriter, type Writer } from "libs/io";
 import type { TestCompiler } from "testing";
 import { RustTestProgram, wasiRuntimeFactory } from "rust-runtime";
 
@@ -54,23 +52,7 @@ export class RustTestCompilerFactory {
     ]);
     const wasi = wasiRuntimeFactory(
       this.out,
-      {
-        write: (text) => {
-          let r = this.out.write(COLOR_ENCODED.ERROR);
-          if (isErr(r)) {
-            return r;
-          }
-          const r2 = this.out.write(text);
-          if (isErr(r2)) {
-            return r2;
-          }
-          r = this.out.write(COLOR_ENCODED.RESET);
-          if (isErr(r)) {
-            return r;
-          }
-          return r2;
-        },
-      },
+      makeErrorWriter(this.out),
       libs
     );
     return {

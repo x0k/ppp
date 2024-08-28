@@ -1,4 +1,4 @@
-import { COLOR_ENCODED, createLogger, redirect } from "libs/logger";
+import { createLogger, redirect } from "libs/logger";
 import { isErr } from "libs/result";
 
 import {
@@ -6,6 +6,7 @@ import {
   type CompilerFactory,
   type GoCompilerFactory,
 } from "./model";
+import { makeErrorWriter } from 'libs/io';
 
 export function makeGoCompilerFactory(
   makeCompiler: CompilerFactory
@@ -17,23 +18,7 @@ export function makeGoCompilerFactory(
         console: redirect(globalThis.console, createLogger(out)),
       },
       stdout: out,
-      stderr: {
-        write(text) {
-          let r = out.write(COLOR_ENCODED.ERROR);
-          if (isErr(r)) {
-            return r;
-          }
-          const r2 = out.write(text);
-          if (isErr(r2)) {
-            return r2;
-          }
-          r = out.write(COLOR_ENCODED.RESET);
-          if (isErr(r)) {
-            return r;
-          }
-          return r2;
-        },
-      },
+      stderr: makeErrorWriter(out),
     });
     if (isErr(compiler)) {
       throw new Error(compiler.error);

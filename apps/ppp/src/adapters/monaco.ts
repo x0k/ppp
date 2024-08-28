@@ -21,6 +21,7 @@ export const MONACO_LANGUAGE_ID: Record<Language, string> = {
   [Language.Gleam]: Language.Gleam,
   [Language.CSharp]: "csharp",
   [Language.Java]: "java",
+  [Language.Ruby]: "ruby",
 };
 
 const LANGUAGE_ID_SCOPE_NAME = {

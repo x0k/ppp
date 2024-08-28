@@ -8,6 +8,7 @@ export enum Language {
   Gleam = "gleam",
   CSharp = "csharp",
   Java = "java",
+  Ruby = "ruby",
 }
 
 export const LANGUAGES = Object.values(Language);
@@ -22,6 +23,7 @@ export const LANGUAGE_TITLE: Record<Language, string> = {
   [Language.Gleam]: "Gleam",
   [Language.CSharp]: "CSharp",
   [Language.Java]: "Java",
+  [Language.Ruby]: "Ruby",
 };
 
 export const LANGUAGE_ICONS: Record<Language, string> = {
@@ -34,4 +36,5 @@ export const LANGUAGE_ICONS: Record<Language, string> = {
   [Language.Gleam]: "vscode-icons:file-type-gleam",
   [Language.CSharp]: "vscode-icons:file-type-csharp",
   [Language.Java]: "vscode-icons:file-type-java",
+  [Language.Ruby]: "vscode-icons:file-type-ruby",
 };

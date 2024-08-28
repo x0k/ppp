@@ -16,6 +16,7 @@
   import { gleamCode, gleamFactory } from "./gleam";
   import { csCode, csFactory } from "./csharp";
   import { javaCode, javaFactory } from "./java";
+  import { rubyCode, rubyFactory } from './ruby'
 
   interface Props {
     pageLang: Lang;
@@ -67,6 +68,10 @@
     [Language.Java]: {
       initialValue: javaCode,
       testCompilerFactory: javaFactory,
+    },
+    [Language.Ruby]: {
+      initialValue: rubyCode,
+      testCompilerFactory: rubyFactory,
     },
   }}
 />

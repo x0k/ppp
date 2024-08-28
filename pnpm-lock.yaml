@@ -109,6 +109,9 @@ importers:
       python-runtime:
         specifier: workspace:*
         version: link:../../packages/python-runtime
+      ruby-runtime:
+        specifier: workspace:*
+        version: link:../../packages/ruby-runtime
       rust-runtime:
         specifier: workspace:*
         version: link:../../packages/rust-runtime

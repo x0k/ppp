@@ -10,6 +10,7 @@ import GoWorker from "@/adapters/runtime/go/worker?worker";
 import RustWorker from "@/adapters/runtime/rust/worker?worker";
 import GleamWorker from "@/adapters/runtime/gleam/worker?worker";
 import JavaWorker from "@/adapters/runtime/java/worker?worker";
+import RubyWorker from "@/adapters/runtime/ruby/worker?worker";
 import { makeDotnetCompiler } from '@/adapters/runtime/dotnet/compiler-factory'
 
 import phpProgram from './_program.php?raw';
@@ -21,6 +22,7 @@ import rustProgram from './_program.rs?raw';
 import gleamProgram from './_program.gleam?raw';
 import javaProgram from './_program.java?raw';
 import csProgram from './_program.cs?raw';
+import rubyProgram from './_program.rb?raw';
 
 interface Runtime {
   initialValue: string;
@@ -63,5 +65,9 @@ export const RUNTIMES: Record<Language, Runtime> = {
   [Language.Java]: {
     initialValue: javaProgram,
     compilerFactory: makeRemoteCompilerFactory(JavaWorker),
+  },
+  [Language.Ruby]: {
+    initialValue: rubyProgram,
+    compilerFactory: makeRemoteCompilerFactory(RubyWorker),
   },
 };

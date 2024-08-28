@@ -36,7 +36,8 @@
     "python-runtime": "workspace:*",
     "rust-runtime": "workspace:*",
     "typescript-runtime": "workspace:*",
-    "java-runtime": "workspace:*"
+    "java-runtime": "workspace:*",
+    "ruby-runtime": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.208",
