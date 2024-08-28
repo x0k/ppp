@@ -1,0 +1,28 @@
+{
+  "name": "ruby-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.3.0",
+    "@ruby/wasm-wasi": "^2.6.2",
+    "compiler": "workspace:*",
+    "libs": "workspace:*",
+    "testing": "workspace:*"
+  },
+  "devDependencies": {
+    "@ruby/3.3-wasm-wasi": "^2.6.2",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vite-plugin-static-copy": "catalog:"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js",
+    "./ruby.wasm": "./dist/ruby.wasm"
+  }
+}

@@ -16,9 +16,7 @@ export abstract class PyTestProgram<I, O> implements TestProgram<I, O> {
     protected readonly code: string
   ) {}
 
-  protected caseExecutionCode(input: I): string {
-    throw new Error("Not implemented");
-  }
+  protected abstract caseExecutionCode(input: I): string;
 
   protected transformCode(input: I): string {
     return `${this.code}\n${this.caseExecutionCode(input)}`;
