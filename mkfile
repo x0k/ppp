@@ -207,8 +207,11 @@ clang/:
     d/:
       make:
         rm -rf build/cmake-3.11.0
+      llvm:
+        rm -rf build/llvm-Release
     b:
       nix develop ../../..#clang --command bash -xe <<EOF
+      llvm-clang-build-env
       ./build.py -a
       EOF
     popd

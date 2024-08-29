@@ -19,43 +19,96 @@
     }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs {
+        inherit system;
+        config = {
+          permittedInsecurePackages = [ "python-2.7.18.8" ];
+        };
+      };
       pkgs-old = import nixpkgs-old {
         inherit system;
         config.allowInsecure = true;
       };
+      pkgs-very-old = import (pkgs.fetchFromGitHub {
+        owner = "NixOS";
+        repo = "nixpkgs";
+        rev = "19.09";
+        sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
+      }) { inherit system; };
       f =
         with fenix.packages.${system};
         combine [
           stable.toolchain
           targets.wasm32-unknown-unknown.stable.rust-std
         ];
+      oldGcc = pkgs-very-old.gcc5;
       fhs = pkgs.buildFHSUserEnv {
         name = "llvm-clang-build-env";
         targetPkgs =
-          pkgs: with pkgs-old; [
-            gcc
+          pkgs:
+          (with pkgs; [
+            time
+            oldGcc
             cmake
             ninja
-            python3
+            python27Full
             nodejs
             ncurses
             ncurses.dev
             unzip
             boost
+            openssl
             openssl.dev
             glibc
             glibc.dev
             libxml2
+            libxml2.dev
             libffi
+            libffi.dev
             zlib
+            zlib.dev
             libedit
-          ];
+            readline
+            readline.dev
+          ]);
         profile = ''
-          export CC=gcc
-          export CXX=g++
-          export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
-          export hardeningDisable=all
+          export CC=${oldGcc}/bin/gcc
+          export CXX=${oldGcc}/bin/g++
+          export LD_LIBRARY_PATH=${
+            pkgs.lib.makeLibraryPath [
+              oldGcc.cc.lib
+              pkgs.glibc
+              pkgs.ncurses
+              pkgs.readline
+              pkgs.openssl
+              pkgs.zlib
+              pkgs.libxml2
+              pkgs.libffi
+            ]
+          }:$LD_LIBRARY_PATH
+          export CPATH=${
+            pkgs.lib.makeSearchPathOutput "dev" "include" [
+              oldGcc.cc
+              pkgs.glibc
+              pkgs.ncurses
+              pkgs.readline
+              pkgs.openssl
+              pkgs.zlib
+              pkgs.libxml2
+              pkgs.libffi
+            ]
+          }
+          export LIBRARY_PATH=$LD_LIBRARY_PATH
+          export PATH=${
+            pkgs.lib.makeBinPath [
+              oldGcc
+              pkgs.cmake
+              pkgs.ninja
+              pkgs.python27Full
+              pkgs.nodejs
+            ]
+          }:$PATH
+          export CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
         '';
         runScript = "bash";
       };
