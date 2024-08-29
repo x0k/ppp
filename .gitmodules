@@ -8,3 +8,6 @@
 [submodule "packages/java-runtime/doppio"]
 	path = packages/java-runtime/doppio
 	url = https://github.com/plasma-umass/doppio.git
+[submodule "packages/clang-runtime/clang"]
+	path = packages/clang-runtime/clang
+	url = git@github.com:x0k/cib.git

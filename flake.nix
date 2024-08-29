@@ -30,6 +30,35 @@
           stable.toolchain
           targets.wasm32-unknown-unknown.stable.rust-std
         ];
+      fhs = pkgs.buildFHSUserEnv {
+        name = "llvm-clang-build-env";
+        targetPkgs =
+          pkgs: with pkgs-old; [
+            gcc
+            cmake
+            ninja
+            python3
+            nodejs
+            ncurses
+            ncurses.dev
+            unzip
+            boost
+            openssl.dev
+            glibc
+            glibc.dev
+            libxml2
+            libffi
+            zlib
+            libedit
+          ];
+        profile = ''
+          export CC=gcc
+          export CXX=g++
+          export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
+          export hardeningDisable=all
+        '';
+        runScript = "bash";
+      };
     in
     {
       devShells.${system} = {
@@ -71,6 +100,7 @@
             export PATH=$NPM_CONFIG_PREFIX/bin:$PATH
           '';
         };
+        clang = pkgs.mkShell { buildInputs = [ fhs ]; };
       };
     };
 }

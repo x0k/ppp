@@ -200,6 +200,20 @@ ruby/:
     bun run index.ts
     popd
 
+clang/:
+  pushd packages/clang-runtime
+  clang/:
+    pushd clang
+    d/:
+      make:
+        rm -rf build/cmake-3.11.0
+    b:
+      nix develop ../../..#clang --command bash -xe <<EOF
+      ./build.py -a
+      EOF
+    popd
+  popd
+
 java/:
   pushd packages/java-runtime
   b:
