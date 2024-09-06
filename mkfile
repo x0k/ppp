@@ -76,30 +76,6 @@ go/:
     popd
   popd
 
-rust/:
-  pushd packages/rust-runtime
-  p:
-    bun run probe/index.ts
-  b:
-    pnpm run build
-  artifacts: compiler/*
-  compiler/:
-    pushd rust
-    sdk:
-      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
-        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
-        tar -xzvf wasi-sdk-20.0-linux.tar.gz
-      fi
-    install:
-      LD_LIBRARY_PATH="$NIX_LD_LIBRARY_PATH" ./x.py install
-    copy:
-      cp dist/bin/miri.wasm ../public
-      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
-    cleanup:
-      rm -rf wasi-sdk-20.0* build dist
-    popd
-  popd
-
 gleam/:
   pushd packages/gleam-runtime
   p:
@@ -201,19 +177,43 @@ ruby/:
     popd
 
 clang/:
+  env:
+    nix develop .#clang
   pushd packages/clang-runtime
   clang/:
-    pushd clang
-    d/:
-      make:
-        rm -rf build/cmake-3.11.0
-      llvm:
-        rm -rf build/llvm-Release
-    b:
-      nix develop ../../..#clang --command bash -xe <<EOF
-      llvm-clang-build-env
-      ./build.py -a
+    image/:
+      rm:
+        docker rmi $(cat .docker_image_id)
+      docker build -q . > .docker_image_id
+    build:
+      docker run --user $(id -u):$(id -g) -it --rm \
+        -v ./clang:/opt/clang -w /opt/clang \
+        $(cat .docker_image_id) ./build.py -a
+  popd
+
+rust/:
+  pushd packages/rust-runtime
+  p:
+    bun run probe/index.ts
+  b:
+    pnpm run build
+  artifacts: compiler/*
+  compiler/:
+    pushd rust
+    sdk:
+      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
+        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+        tar -xzvf wasi-sdk-20.0-linux.tar.gz
+      fi
+    install:
+      nix develop ../../..#rust --command bash -xe <<EOF
+      ./x.py install
       EOF
+    copy:
+      cp dist/bin/miri.wasm ../public
+      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
+    cleanup:
+      rm -rf wasi-sdk-20.0* build dist
     popd
   popd
 
