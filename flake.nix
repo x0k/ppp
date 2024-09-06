@@ -27,7 +27,9 @@
       };
       pkgs-old = import nixpkgs-old {
         inherit system;
-        config.allowInsecure = true;
+        config = {
+          permittedInsecurePackages = [ "nodejs-12.22.12" ];
+        };
       };
       # pkgs-very-old = import (pkgs.fetchFromGitHub {
       #   owner = "NixOS";

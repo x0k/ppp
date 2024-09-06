@@ -177,18 +177,15 @@ ruby/:
     popd
 
 clang/:
-  env:
-    nix develop .#clang
   pushd packages/clang-runtime
+  artifacts: clang/*
   clang/:
-    image/:
-      rm:
-        docker rmi $(cat .docker_image_id)
-      docker build -q . > .docker_image_id
+    pushd clang
     build:
-      docker run --user $(id -u):$(id -g) -it --rm \
-        -v ./clang:/opt/clang -w /opt/clang \
-        $(cat .docker_image_id) ./build.py -a
+      nix develop ../../..#clang --command bash -xe <<EOF
+      ./build.py -a
+      EOF
+    popd
   popd
 
 rust/:
@@ -225,7 +222,7 @@ java/:
   jvm/:
     pushd doppio
     build/:
-      NIXPKGS_ALLOW_INSECURE=1 nix develop ../../..#java --impure --command bash -xe <<EOF
+      nix develop ../../..#java --command bash -xe <<EOF
       install:
         npm install -g grunt-cli yarn
         SKIP_YARN_COREPACK_CHECK=1 yarn install
