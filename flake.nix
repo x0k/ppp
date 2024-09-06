@@ -86,31 +86,69 @@
           '';
         };
         clang = pkgs.mkShell {
-          buildInputs = [
-            pkgs.time
-            pkgs.gcc6
-            # pkgs.cmake
-            # pkgs.ninja
-            # pkgs.python27Full
-            # pkgs.nodejs
-            # pkgs.ncurses
+          buildInputs = with pkgs; [
+            pkgs-old.gcc6
+            time
+            cmake
+            ninja
+            python27Full
+            nodejs
+            ncurses
+            unzip
+            boost
+            openssl
+            glibc
+            libxml2
+            libffi
+            zlib
+            libedit
+            readline
             # pkgs.ncurses.dev
-            # pkgs.unzip
-            # pkgs.boost
-            # pkgs.openssl
             # pkgs.openssl.dev
-            # pkgs.glibc
             # pkgs.glibc.dev
-            # pkgs.libxml2
             # pkgs.libxml2.dev
-            # pkgs.libffi
             # pkgs.libffi.dev
-            # pkgs.zlib
             # pkgs.zlib.dev
-            # pkgs.libedit
-            # pkgs.readline
             # pkgs.readline.dev
           ];
+          shellHook = ''
+            export PATH=${pkgs-old.gcc6}/bin:$PATH
+            export CC=${pkgs-old.gcc6}/bin/gcc
+            export CXX=${pkgs-old.gcc6}/bin/g++
+            export LD_LIBRARY_PATH=${
+              pkgs.lib.makeLibraryPath (
+                with pkgs;
+                [
+                  pkgs-old.gcc6.cc.lib
+                  glibc
+                  ncurses
+                  readline
+                  openssl
+                  zlib
+                  libxml2
+                  libffi
+                ]
+              )
+            }:$LD_LIBRARY_PATH
+            export LIBRARY_PATH=$LD_LIBRARY_PATH
+            export CPATH=${
+              pkgs.lib.makeSearchPathOutput "dev" "include" (
+                with pkgs;
+                [
+                  pkgs-old.gcc6.cc
+                  glibc
+                  ncurses
+                  readline
+                  openssl
+                  zlib
+                  libxml2
+                  libffi
+                ]
+              )
+            }
+            export PATH=${pkgs.stdenv.cc}/bin:$PATH
+          '';
+
         };
       };
     };
