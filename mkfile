@@ -178,14 +178,21 @@ ruby/:
 
 clang/:
   pushd packages/clang-runtime
-  artifacts: clang/*
-  clang/:
-    pushd clang
+  image/:
+    rm:
+      docker rmi $(cat .docker_image_id)
     build:
-      nix develop ../../..#clang --command bash -xe <<EOF
-      ./build.py -a
-      EOF
-    popd
+      docker build -q . > .docker_image_id
+  build:
+    docker run --user $(id -u):$(id -g) -it --rm \
+      -v ./clang:/opt/clang -w /opt/clang \
+      -v ./tmp:/home -e "HOME=/home" \
+      $(cat .docker_image_id) ./build.py -a
+  buildt:
+    docker run --user $(id -u):$(id -g) -it --rm \
+      -v ./clang:/opt/clang -w /opt/clang \
+      -v ./tmp:/home -e "HOME=/home" \
+      $(cat .docker_image_id) ./repos/emscripten/emcc -v
   popd
 
 rust/:
@@ -203,9 +210,7 @@ rust/:
         tar -xzvf wasi-sdk-20.0-linux.tar.gz
       fi
     install:
-      nix develop ../../..#rust --command bash -xe <<EOF
-      ./x.py install
-      EOF
+      nix develop ../../..#rust --command bash -xe -c "./x.py install"
     copy:
       cp dist/bin/miri.wasm ../public
       cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/

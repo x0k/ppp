@@ -9,6 +9,7 @@ git clone https://github.com/x0k/ppp.git
 git submodule update --init
 ````
 
+Docker is required to build the clang runtime.
 Artifacts saved in the repository must be created in the nix development environment.
 
 ```console
