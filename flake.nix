@@ -8,7 +8,6 @@
     };
     mk.url = "github:x0k/mk";
   };
-
   outputs =
     {
       self,
@@ -19,11 +18,24 @@
     }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs {
+        inherit system;
+        config = {
+          permittedInsecurePackages = [ "python-2.7.18.8" ];
+        };
+      };
       pkgs-old = import nixpkgs-old {
         inherit system;
-        config.allowInsecure = true;
+        config = {
+          permittedInsecurePackages = [ "nodejs-12.22.12" ];
+        };
       };
+      # pkgs-very-old = import (pkgs.fetchFromGitHub {
+      #   owner = "NixOS";
+      #   repo = "nixpkgs";
+      #   rev = "19.09";
+      #   sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
+      # }) { inherit system; };
       f =
         with fenix.packages.${system};
         combine [
@@ -41,20 +53,21 @@
             pkgs.pnpm
             pkgs.go_1_23
             pkgs.python3
-            pkgs.gcc
-            pkgs.curl
-            pkgs.libiconv
-            pkgs.ninja
-            pkgs.cmake
             f
-            pkgs.llvmPackages.bintools
             pkgs.wasm-pack
             pkgs.gleam
             pkgs.dotnet-sdk_8
-            pkgs.nodePackages.grunt-cli
-            pkgs.jdk8
           ];
-          NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+        };
+        rust = pkgs.mkShell {
+          buildInputs = [
+            pkgs.gcc
+            pkgs.ninja
+            pkgs.cmake
+            pkgs.llvmPackages.bintools
+            pkgs.libiconv
+          ];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.stdenv.cc.cc
             pkgs.xz
             pkgs.zlib
