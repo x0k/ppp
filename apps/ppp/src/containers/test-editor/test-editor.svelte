@@ -1,4 +1,5 @@
 <script lang="ts" generics="Langs extends Language, Input, Output">
+  import { getRelativeLocaleUrl } from 'astro:i18n';
   import { untrack } from 'svelte'
   import Icon from '@iconify/svelte';
   import { editor } from 'monaco-editor';
@@ -9,7 +10,7 @@
   
   import { debouncedSave, immediateSave } from '@/lib/sync-storage.svelte';
   import { reactiveWindow } from '@/lib/reactive-window.svelte';
-  import { ProblemCategory, problemCategoryPage } from '@/shared/problems';
+  import { problemCategoryPage } from '@/shared/problems';
   import { LANGUAGE_TITLE, LANGUAGE_ICONS, Language } from '@/shared/languages'
   import { EditorPanelTab } from '@/shared/editor-panel-tab';
   import { getProblemCategoryLabel, useTranslations, Label } from '@/i18n';
@@ -23,8 +24,7 @@
   import { Panel, PanelToggle, Tab, Tabs, TerminalTab, TabContent } from "@/components/editor/panel";
   import { CheckBox, Number } from '@/components/editor/controls';
 
-  import type { Props } from './model';
-  import { getRelativeLocaleUrl } from 'astro:i18n';
+  import { DESCRIPTION_PANEL_FLIP_POINT, DESCRIPTION_PANEL_MIN_WIDTH, EDITOR_MIN_WIDTH, type Props } from './model';
 
   const { pageLang, problemCategory, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> = $props();
   const t = useTranslations(pageLang);
@@ -90,16 +90,18 @@
   )
   let editorWidth = $state(editorWidthStorage.load())
   debouncedSave(editorWidthStorage, () => editorWidth, 300)
-  const EDITOR_MIN_WIDTH = 5
-  function normalizeWidth(width: number, oldWidth: number) {
+  function normalizeWidth(width: number) {
     const windowWidth = reactiveWindow.innerWidth
     const newEditorWidth = Math.max(EDITOR_MIN_WIDTH, Math.min(windowWidth, width))
     const diff = windowWidth - newEditorWidth
-    if (diff < 300) {
+    if (windowWidth < DESCRIPTION_PANEL_MIN_WIDTH) {
+      return newEditorWidth
+    }
+    if (diff < DESCRIPTION_PANEL_FLIP_POINT) {
       return windowWidth
     }
-    if (diff < 500) {
-      return oldWidth
+    if (diff < DESCRIPTION_PANEL_MIN_WIDTH) {
+      return windowWidth - DESCRIPTION_PANEL_MIN_WIDTH
     }
     return newEditorWidth
   }
@@ -107,7 +109,7 @@
   $effect(() => {
     const newWidth = reactiveWindow.innerWidth
     untrack(() => {
-      editorWidth = normalizeWidth(editorWidth + newWidth - lastWindowWidth, editorWidth)
+      editorWidth = normalizeWidth(editorWidth + newWidth - lastWindowWidth)
     })
     lastWindowWidth = newWidth
   })
