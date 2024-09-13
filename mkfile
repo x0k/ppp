@@ -223,6 +223,8 @@ java/:
   pushd packages/java-runtime
   b:
     pnpm run build
+  c:
+    pnpm run check
   artifacts: jvm/*
   jvm/:
     pushd doppio

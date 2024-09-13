@@ -8,7 +8,6 @@
     };
     mk.url = "github:x0k/mk";
   };
-
   outputs =
     {
       self,

@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.3",
-    "@astrojs/mdx": "^3.1.4",
+    "@astrojs/mdx": "^3.1.5",
     "@astrojs/svelte": "^5.7.0",
     "@astrojs/tailwind": "^5.1.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "astro": "^4.14.5",
+    "astro": "^4.15.4",
     "astro-icon": "^1.1.1",
     "libs": "workspace:*",
     "monaco-editor": "^0.51.0",
@@ -40,13 +40,13 @@
     "ruby-runtime": "workspace:*"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.1.208",
+    "@iconify-json/lucide": "^1.2.3",
     "@iconify/svelte": "^4.0.2",
-    "@tailwindcss/typography": "^0.5.14",
+    "@tailwindcss/typography": "^0.5.15",
     "@types/color": "^3.0.6",
     "color": "^4.2.3",
     "daisyui": "^4.12.10",
-    "svelte": "5.0.0-next.240",
+    "svelte": "5.0.0-next.244",
     "vite-plugin-cross-origin-isolation": "^0.1.6",
     "vite-plugin-static-copy": "catalog:"
   }

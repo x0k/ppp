@@ -18,3 +18,7 @@ export interface Props<L extends Language, I, O> {
   runtimes: Record<L, Runtime<I, O>>;
   children: Snippet;
 }
+
+export const EDITOR_MIN_WIDTH = 5
+export const DESCRIPTION_PANEL_MIN_WIDTH = 600
+export const DESCRIPTION_PANEL_FLIP_POINT = DESCRIPTION_PANEL_MIN_WIDTH / 2
