@@ -85,7 +85,6 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly initialise_panic_hook: (a: number) => void;
-  readonly reset_filesystem: (a: number) => void;
   readonly delete_project: (a: number) => void;
   readonly write_module: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly write_file: (a: number, b: number, c: number, d: number, e: number) => void;
@@ -95,6 +94,7 @@ export interface InitOutput {
   readonly read_compiled_javascript: (a: number, b: number, c: number, d: number) => void;
   readonly read_compiled_erlang: (a: number, b: number, c: number, d: number) => void;
   readonly pop_warning: (a: number, b: number) => void;
+  readonly reset_filesystem: (a: number) => void;
   readonly reset_warnings: (a: number) => void;
   readonly ring_core_0_17_8_bn_mul_mont: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
@@ -109,18 +109,18 @@ export type SyncInitInput = BufferSource | WebAssembly.Module;
 * Instantiates the given `module`, which can either be bytes or
 * a precompiled `WebAssembly.Module`.
 *
-* @param {SyncInitInput} module
+* @param {{ module: SyncInitInput }} module - Passing `SyncInitInput` directly is deprecated.
 *
 * @returns {InitOutput}
 */
-export function initSync(module: SyncInitInput): InitOutput;
+export function initSync(module: { module: SyncInitInput } | SyncInitInput): InitOutput;
 
 /**
 * If `module_or_path` is {RequestInfo} or {URL}, makes a request and
 * for everything else, calls `WebAssembly.instantiate` directly.
 *
-* @param {InitInput | Promise<InitInput>} module_or_path
+* @param {{ module_or_path: InitInput | Promise<InitInput> }} module_or_path - Passing `InitInput` directly is deprecated.
 *
 * @returns {Promise<InitOutput>}
 */
-export default function __wbg_init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
+export default function __wbg_init (module_or_path?: { module_or_path: InitInput | Promise<InitInput> } | InitInput | Promise<InitInput>): Promise<InitOutput>;
