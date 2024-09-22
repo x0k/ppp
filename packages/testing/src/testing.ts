@@ -1,4 +1,4 @@
-import deepEqual from "fast-deep-equal";
+import { deepEqual } from "fast-equals";
 
 import type { Writer } from "libs/io";
 import type { Logger } from "libs/logger";
@@ -29,7 +29,7 @@ export interface TestCompiler<I, O> extends Disposable {
 
 export type TestCompilerFactory<I, O> = (
   ctx: Context,
-  out: Writer,
+  out: Writer
 ) => Promise<TestCompiler<I, O>>;
 
 export async function runTests<I, O>(
