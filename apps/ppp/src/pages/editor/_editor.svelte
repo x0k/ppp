@@ -194,6 +194,16 @@
             descriptionDialogElement.showModal()
           }} class="invisible group-hover:visible" icon="lucide:info" />
         {/snippet}
+        {#snippet children()}
+          <li>
+            <a target="_blank" href="https://github.com/x0k/ppp" >
+              <Icon icon="lucide:github" />
+              <span class="font-[sans-serif]">
+                GitHub
+              </span>
+            </a>
+          </li>
+        {/snippet}
       </Dropdown>
       <PanelToggle bind:panelHeight maxPanelHeight={reactiveWindow.innerHeight} />
     </div>

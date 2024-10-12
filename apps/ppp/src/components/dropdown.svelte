@@ -7,6 +7,7 @@
     label?: Snippet<[T]>;
     preLabel?: Snippet<[T]>;
     postLabel?: Snippet<[T]>;
+    children?: Snippet;
   }
 
   let {
@@ -15,6 +16,7 @@
     label,
     preLabel,
     postLabel,
+    children,
   }: Props = $props();
 
   let detailsElement: HTMLDetailsElement;
@@ -82,6 +84,7 @@
           </button>
         </li>
       {/each}
+      {@render children?.()}
     </ul>
   </div>
 </details>
