@@ -8,8 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@php-wasm/universal": "^0.9.42",
-    "@php-wasm/web": "^0.9.42",
+    "@php-wasm/universal": "^0.9.46",
+    "@php-wasm/web": "^0.9.46",
     "libs": "workspace:*",
     "compiler": "workspace:*",
     "testing": "workspace:*"

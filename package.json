@@ -4,7 +4,7 @@
   "author": "Krasilnikov Roman",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.6.0",
+  "packageManager": "pnpm@9.12.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
@@ -15,12 +15,12 @@
   "devDependencies": {
     "@total-typescript/tsconfig": "^1.0.4",
     "only-allow": "^1.2.1",
-    "turbo": "^2.1.2",
-    "typescript": "^5.6.2"
+    "turbo": "^2.1.3",
+    "typescript": "^5.6.3"
   },
   "pnpm": {
     "overrides": {
-      "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6"
+      "@sveltejs/vite-plugin-svelte": "^4.0.0-next.8"
     },
     "patchedDependencies": {
       "browserfs@1.4.3": "patches/browserfs@1.4.3.patch",
