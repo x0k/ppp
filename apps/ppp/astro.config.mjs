@@ -63,7 +63,4 @@ export default defineConfig({
       ru: "en",
     },
   },
-  experimental: {
-    contentLayer: true,
-  },
 });
