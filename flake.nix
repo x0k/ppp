@@ -42,6 +42,22 @@
           stable.toolchain
           targets.wasm32-unknown-unknown.stable.rust-std
         ];
+      clangBuild = derivation {
+        name = "clang";
+        inherit system;
+        builder = "${pkgs.bash}/bin/bash";
+        src = ./packages/clang-runtime;
+        cu = pkgs.coreutils;
+        gcc = pkgs.gcc6;
+        args = [
+          "-c"
+          ''
+            $cu/bin/mkdir -p $out/lib
+            $cu/bin/ls -l $gcc/bin
+            $gcc/bin/gcc --version > $out/test
+          ''
+        ];
+      };
     in
     {
       devShells.${system} = {
@@ -83,6 +99,9 @@
             export NPM_CONFIG_PREFIX=~/.npm-global
             export PATH=$NPM_CONFIG_PREFIX/bin:$PATH
           '';
+        };
+        clang = pkgs.mkShell {
+          buildInputs = [ clangBuild ];
         };
       };
     };
