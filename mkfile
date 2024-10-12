@@ -153,6 +153,7 @@ dotnet/:
       rm -rf bin obj
     popd
   workloads:
+    # TODO: Fix this block
     for workload in "${uninstalled_workloads[@]}"; do
       sudo dotnet workload uninstall "${workload}"
     done
