@@ -28,10 +28,12 @@ interface Handlers {
 type Incoming = IncomingMessage<Handlers>;
 
 interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
+interface InitLoadingMessage extends EventMessage<"startLoading", number> {}
+interface LoadedMessage extends EventMessage<"loaded", string> {}
 
-type CompilerActorEvent = WriteEventMessage;
+type CompilerActorEvent = WriteEventMessage | InitLoadingMessage | LoadedMessage;
 
-type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
+type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent 
 
 class CompilerActor extends Actor<Handlers, string> {
   private ctx: Context = createContext();
@@ -117,6 +119,8 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
     const stopConnection = connection.start();
     const log = createLogger(out);
+    let total = 0
+    let done = 0
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       log,
       connection,
@@ -126,6 +130,15 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
         },
         write: (text) => {
           out.write(text);
+        },
+        loaded: (element) => {
+          done += 1
+          log.info(`[worker] Loaded: ${element} (${done}/${total})`);
+        },
+        startLoading: (amount) => {
+          total = amount
+          done = 0
+          log.info(`[worker] Start loading: ${amount} components`);
         },
       }
     );
