@@ -58,6 +58,9 @@
             pkgs.gleam
             pkgs.dotnet-sdk_8
           ];
+          shellHook = ''
+            source <(COMPLETE=bash mk)
+          '';
         };
         rust = pkgs.mkShell {
           buildInputs = [
