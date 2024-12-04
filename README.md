@@ -1,5 +1,7 @@
 # Programming Patterns Practice
 
+Web-based platform for solving design-oriented programming challenges.
+
 ## Development
 
 Clone the repository:
