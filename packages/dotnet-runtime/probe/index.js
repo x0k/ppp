@@ -209,7 +209,7 @@ if (status !== 0) {
   throw new Error("Init failed");
 }
 
-status = exports.Compiler.Compile([
+status = await exports.Compiler.Compile([
   `using System;
   namespace ppp
   {
@@ -241,14 +241,16 @@ status = exports.Compiler.Compile([
   `,
 ]);
 if (status !== 0) {
-  throw new Error("Compilation failed");
+  throw new Error(`Compilation failed: ${status}`);
 }
 
-status = exports.Compiler.Run("test.Program", "Test", [JSON.stringify([1, 2])]);
+status = await exports.Compiler.Run("test.Program", "Test", [JSON.stringify([1, 2])]);
 if (status !== 0) {
   throw new Error("Run failed");
 }
 
-const result = exports.Compiler.GetResultAsString();
+const result = await exports.Compiler.GetResultAsString();
 
 console.log(result);
+
+await exports.Compiler.DisposeAssembly();

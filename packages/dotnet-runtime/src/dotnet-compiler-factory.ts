@@ -17,10 +17,10 @@ export interface CompilerModuleImports {
 export interface CompilerModuleExports {
   Compiler: {
     Init: (precompiledLibsIndexUrl: string, libs: string[]) => Promise<number>;
-    Compile: (code: string[]) => number;
-    Run: (typeFullName: string, methodName: string, args: string[]) => number;
-    GetResultAsString: () => string | null;
-    DisposeAssembly: () => void;
+    Compile: (code: string[]) => Promise<number>;
+    Run: (typeFullName: string, methodName: string, args: string[]) => Promise<number>;
+    GetResultAsString: () => Promise<string | null>;
+    DisposeAssembly: () => Promise<void>;
   };
 }
 

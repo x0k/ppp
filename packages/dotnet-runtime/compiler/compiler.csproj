@@ -1,17 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.WebAssembly">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CompressionEnabled>false</CompressionEnabled>
+		<!-- <RunAOTCompilation>true</RunAOTCompilation> -->
     <WasmEnableThreads>true</WasmEnableThreads>
-    <!-- <PublishTrimmed>false</PublishTrimmed> -->
+    <Nullable>enable</Nullable>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <TrimmerRootAssembly Include="System.Text.Json" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.10.0" />
-    <PackageReference Include="Microsoft.JSInterop" Version="8.0.6" />
-    <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="8.0.6" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.12.0" />
+    <PackageReference Include="Microsoft.JSInterop" Version="9.0.0" />
+    <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="9.0.0" />
     <PackageReference Include="WebAssembly" Version="1.2.1" />
   </ItemGroup>
 </Project>

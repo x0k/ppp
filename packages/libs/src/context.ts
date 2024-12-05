@@ -55,6 +55,7 @@ export function withTimeout(ctx: Context, timeoutInMs: number): Context {
     leaf.cancel();
   };
   ctx.signal.addEventListener("abort", cancel);
+  // TODO: Use `AbortSignal.timeout()`
   setTimeout(cancel, timeoutInMs);
   return {
     ...leaf,
