@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
     nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
     fenix = {
       url = "github:nix-community/fenix";
