@@ -317,8 +317,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       '@ruby/wasm-wasi':
-        specifier: ^2.6.2
-        version: 2.6.2
+        specifier: ^2.7.0
+        version: 2.7.0
       compiler:
         specifier: workspace:*
         version: link:../compiler
@@ -330,8 +330,8 @@ importers:
         version: link:../testing
     devDependencies:
       '@ruby/3.3-wasm-wasi':
-        specifier: ^2.6.2
-        version: 2.6.2
+        specifier: ^2.7.0
+        version: 2.7.0
       vite:
         specifier: 'catalog:'
         version: 6.0.2(@types/node@22.5.5)(jiti@1.21.6)(yaml@2.5.1)
@@ -1092,11 +1092,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@ruby/3.3-wasm-wasi@2.6.2':
-    resolution: {integrity: sha512-HyJ3nIlciQ1FnF2RBKEHwMKtCzgbD1EjCxiCFntpoN6VLAVZNJe/uTsTj4XZRcUPov272fg33YERhiu/abtffQ==}
+  '@ruby/3.3-wasm-wasi@2.7.0':
+    resolution: {integrity: sha512-6lwI7+YSUVHCA7FX+kQyApqJVPEj2767w+5y0Fp88/Sp84IemTHinw1eEtsUh8V7HQ13etEOn8hd65xmqwhKMA==}
 
-  '@ruby/wasm-wasi@2.6.2':
-    resolution: {integrity: sha512-+y8uCYbtvDZZEU8VxM9JX6KoZJTvfmcEhRTIXdkxXwp/NFR7EE21pBEVYU+zzhCyKxRbmXp83BeTAYZuxe++HQ==}
+  '@ruby/wasm-wasi@2.7.0':
+    resolution: {integrity: sha512-XJoK+kEMtc5CfCiPEI5ovN/D7nQJC9VwbQGuFIGIba0dzuq0XcPQug3O5KtT/1u3D9i8ThfCNMZpfHGu8/0cKw==}
 
   '@rushstack/node-core-library@5.10.0':
     resolution: {integrity: sha512-2pPLCuS/3x7DCd7liZkqOewGM0OzLyCacdvOe8j6Yrx9LkETGnxul1t7603bIaB8nUAooORcct9fFDOQMbWAgw==}
@@ -4404,11 +4404,11 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.24.0':
     optional: true
 
-  '@ruby/3.3-wasm-wasi@2.6.2':
+  '@ruby/3.3-wasm-wasi@2.7.0':
     dependencies:
-      '@ruby/wasm-wasi': 2.6.2
+      '@ruby/wasm-wasi': 2.7.0
 
-  '@ruby/wasm-wasi@2.6.2':
+  '@ruby/wasm-wasi@2.7.0':
     dependencies:
       '@bjorn3/browser_wasi_shim': 0.3.0
       tslib: 2.7.0
