@@ -1,3 +1,3 @@
-import { dependencies } from "../package.json";
+import pkg from "../package.json" with { type: "json" }
 
-export const version = dependencies['typescript']
+export const version = pkg.dependencies['typescript']
