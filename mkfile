@@ -119,7 +119,7 @@ dotnet/:
     pnpm run build
   artifacts: compiler/build
   workloads:
-    workloads=("wasm-experimental")
+    workloads=("wasm-experimental" "wasm-tools")
     installed_workloads=$(dotnet workload list | awk 'NR>3 && NF>0 && !/^Use/ {print $1}')
     uninstalled_workloads=()
     for workload in "${workloads[@]}"; do
@@ -132,23 +132,25 @@ dotnet/:
     done
   compiler/: workloads
     build: release copy cleanup
+      TARGET=Release
     dev: compile link
+      TARGET=Debug
     pushd compiler
     compile:
-      dotnet build /p:WasmNativeDebugSymbols=true 
-    link:
-      rm -rf ../src/vendor/compiler
-      ln -s $(pwd)/bin/Debug/net9.0/wwwroot/_framework ../src/vendor/compiler
-      rm -rf ../src/vendor/lib
-      ln -s $(pwd)/bin/Debug/net9.0/ ../src/vendor/lib
+      dotnet build /p:WasmNativeDebugSymbols=true
     release:
       dotnet publish
+    link:
+      rm -rf ../src/vendor/compiler
+      ln -s $(pwd)/bin/${TARGET}/net9.0/wwwroot/_framework ../src/vendor/compiler
+      rm -rf ../src/vendor/lib
+      ln -s $(pwd)/bin/${TARGET}/net9.0/ ../src/vendor/lib
     copy:
       rm -rf ../src/vendor/compiler
-      rsync -r ./bin/Release/net9.0/publish/wwwroot/_framework/ ../src/vendor/compiler --delete
+      rsync -r ./bin/${TARGET}/net9.0/wwwroot/_framework/ ../src/vendor/compiler --delete
       rm -rf ../src/vendor/lib
       mkdir -p ../src/vendor/lib
-      cp ./bin/Release/net9.0/*.dll ../src/vendor/lib/
+      cp ./bin/${TARGET}/net9.0/*.dll ../src/vendor/lib/
     cleanup:
       rm -rf bin obj
     popd
