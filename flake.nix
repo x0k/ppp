@@ -56,7 +56,7 @@
             f
             pkgs.wasm-pack
             pkgs.gleam
-            pkgs.dotnet-sdk_8
+            pkgs.dotnet-sdk_9
           ];
           shellHook = ''
             source <(COMPLETE=bash mk)

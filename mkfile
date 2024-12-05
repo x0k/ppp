@@ -119,7 +119,7 @@ dotnet/:
     pnpm run build
   artifacts: compiler/build
   workloads:
-    workloads=("wasm-tools")
+    workloads=("wasm-experimental")
     installed_workloads=$(dotnet workload list | awk 'NR>3 && NF>0 && !/^Use/ {print $1}')
     uninstalled_workloads=()
     for workload in "${workloads[@]}"; do
@@ -138,22 +138,21 @@ dotnet/:
       dotnet build /p:WasmNativeDebugSymbols=true 
     link:
       rm -rf ../src/vendor/compiler
-      ln -s $(pwd)/bin/Debug/net8.0/wwwroot/_framework ../src/vendor/compiler
+      ln -s $(pwd)/bin/Debug/net9.0/wwwroot/_framework ../src/vendor/compiler
       rm -rf ../src/vendor/lib
-      ln -s $(pwd)/bin/Debug/net8.0/ ../src/vendor/lib
+      ln -s $(pwd)/bin/Debug/net9.0/ ../src/vendor/lib
     release:
       dotnet publish
     copy:
       rm -rf ../src/vendor/compiler
-      rsync -r ./bin/Release/net8.0/publish/wwwroot/_framework/ ../src/vendor/compiler --delete
+      rsync -r ./bin/Release/net9.0/publish/wwwroot/_framework/ ../src/vendor/compiler --delete
       rm -rf ../src/vendor/lib
       mkdir -p ../src/vendor/lib
-      cp ./bin/Release/net8.0/*.dll ../src/vendor/lib/
+      cp ./bin/Release/net9.0/*.dll ../src/vendor/lib/
     cleanup:
       rm -rf bin obj
     popd
   workloads:
-    # TODO: Fix this block
     for workload in "${uninstalled_workloads[@]}"; do
       sudo dotnet workload uninstall "${workload}"
     done

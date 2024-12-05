@@ -11,7 +11,7 @@ export class DotnetTestProgram<I, O> implements TestProgram<I, O> {
   ) {}
 
   async run(_: Context, input: I): Promise<O> {
-    const status = this.runtime.Run(
+    const status = await this.runtime.Run(
       this.typeFullName,
       this.methodName,
       this.convertToArgs(input)
@@ -30,8 +30,8 @@ export class DotnetTestProgram<I, O> implements TestProgram<I, O> {
     return [JSON.stringify(input)];
   }
 
-  protected getResult(): O {
-    const result = this.runtime.GetResultAsString();
+  protected async getResult(): Promise<O> {
+    const result = await this.runtime.GetResultAsString();
     if (result === null) {
       throw new Error("GetResultAsString failed");
     }
