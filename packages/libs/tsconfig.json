@@ -3,7 +3,11 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "lib": ["ES2022", "ESNext.Disposable", "DOM"],
+    "lib": [
+      "DOM",
+      "ES2022",
+      "ESNext.Disposable",
+    ],
     "noUncheckedIndexedAccess": false,
   },
 }
