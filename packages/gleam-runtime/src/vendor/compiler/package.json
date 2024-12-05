@@ -4,7 +4,7 @@
   "collaborators": [
     "Louis Pilfold <louis@lpil.uk>"
   ],
-  "version": "1.5.1",
+  "version": "1.6.3",
   "license": "SEE LICENSE IN LICENCE",
   "files": [
     "gleam_wasm_bg.wasm",
