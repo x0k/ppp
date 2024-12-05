@@ -295,8 +295,8 @@ importers:
         specifier: workspace:*
         version: link:../libs
       pyodide:
-        specifier: ^0.26.2
-        version: 0.26.2
+        specifier: ^0.26.4
+        version: 0.26.4
       testing:
         specifier: workspace:*
         version: link:../testing
@@ -2883,8 +2883,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  pyodide@0.26.2:
-    resolution: {integrity: sha512-8VCRdFX83gBsWs6XP2rhG8HMaB+JaVyyav4q/EMzoV8fXH8HN6T5IISC92SNma6i1DRA3SVXA61S1rJcB8efgA==}
+  pyodide@0.26.4:
+    resolution: {integrity: sha512-z2CHsjVlhhJi5tYBF0AYAfNEPo3zq/z+xOpFtk1tweJkRaTqU4UK/7pLvo8DBU2VDPH31vB3pSI+8fnoqrVrFg==}
     engines: {node: '>=18.0.0'}
 
   qs@6.11.0:
@@ -6751,7 +6751,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  pyodide@0.26.2:
+  pyodide@0.26.4:
     dependencies:
       ws: 8.18.0
     transitivePeerDependencies:
