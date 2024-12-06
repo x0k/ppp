@@ -234,7 +234,7 @@ export const makeDotnetCompiler: CompilerFactory = async (ctx, out) => {
         if (files.length !== 1) {
           throw new Error("Compilation of multiple files is not implemented");
         }
-        const runtime = await runtimeFactory.create(files[0].content);
+        const runtime = runtimeFactory.create(files[0].content);
         return new DotnetProgram(runtime);
       },
       [Symbol.dispose]() {},

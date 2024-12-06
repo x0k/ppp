@@ -65,7 +65,7 @@ public partial class Compiler
 
     [JSExport]
     [RequiresUnreferencedCode("Calls System.AppDomain.Load(Byte[])")]
-    internal static async Task<int> Compile(string[] code)
+    internal static int Compile(string[] code)
     {
         if (references == null)
         {
@@ -114,7 +114,7 @@ public partial class Compiler
 
     [JSExport]
     [RequiresUnreferencedCode("Calls System.Reflection.Assembly.GetExportedTypes()")]
-    internal static async Task<int> Run(string typeFullName, string methodName, string[] arguments)
+    internal static int Run(string typeFullName, string methodName, string[] arguments)
     {
         if (assembly == null)
         {
@@ -139,7 +139,7 @@ public partial class Compiler
     }
 
     [JSExport]
-    internal static async Task<string> GetResultAsString()
+    internal static string GetResultAsString()
     {
         if (executionResult is string result)
         {
@@ -149,7 +149,7 @@ public partial class Compiler
     }
 
     [JSExport]
-    internal static async Task DisposeAssembly() {
+    internal static void DisposeAssembly() {
         assembly = null;
         executionResult = null;
     }

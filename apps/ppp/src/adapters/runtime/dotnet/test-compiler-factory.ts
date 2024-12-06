@@ -255,7 +255,7 @@ export class DotnetTestCompilerFactory {
           if (files.length !== 1) {
             throw new Error("Compilation of multiple files is not implemented");
           }
-          const runtime = await runtimeFactory.create(
+          const runtime = runtimeFactory.create(
             files[0].content,
             executionCode
           );
