@@ -1,18 +1,46 @@
-import type { TestCompilerFactory } from "testing";
-import { makeExecutionCode } from "dotnet-runtime";
+import { makeRemoteTestCompilerFactory } from "testing/actor";
 
-import { DotnetTestCompilerFactory } from "@/adapters/runtime/dotnet/test-compiler-factory";
+import Worker from "@/adapters/runtime/dotnet/test-worker?worker";
+
+// Only type imports are allowed
+
+import type { TestCompilerFactory } from "testing";
+
+import type { DotnetTestWorkerConfig } from "@/adapters/runtime/dotnet/test-worker";
 
 import type { Input, Output } from "../tests-data";
 
-import definitions from "./definitions.cs?raw";
-import executionCode from "./execution-code.cs?raw";
+export const factory: TestCompilerFactory<Input, Output> =
+  makeRemoteTestCompilerFactory(
+    Worker,
+    (
+      ctx,
+      { dotnetTestCompilerFactory, makeExecutionCode }: DotnetTestWorkerConfig
+    ) => {
+      const definitions = `struct Args {
+  [JsonPropertyName("base")]
+  public int Base { get; set; }
+  [JsonPropertyName("amount")]
+  public int Amount { get; set; }
 
-export const factory: TestCompilerFactory<Input, Output> = async (ctx, out) => {
-  return new DotnetTestCompilerFactory(out).create(ctx, {
-    executionCode: makeExecutionCode({
-      additionalDefinitions: definitions,
-      executionCode: executionCode,
-    }),
-  });
+  [JsonPropertyName("paymentSystem")]
+  public string SystemType { get; set; }
+}`;
+      const executionCode = `var args = JsonSerializer.Deserialize<Args>(jsonArguments);
+var type = args.SystemType switch {
+  "paypal" => SystemType.PayPal,
+  "webmoney" => SystemType.WebMoney,
+  "catbank" => SystemType.CatBank,
+  _ => throw new System.Exception("Unknown payment type")
 };
+var result = Solution.Payment(type, args.Base, args.Amount);
+
+`;
+      return dotnetTestCompilerFactory.create(ctx, {
+        executionCode: makeExecutionCode({
+          additionalDefinitions: definitions,
+          executionCode,
+        }),
+      });
+    }
+  );

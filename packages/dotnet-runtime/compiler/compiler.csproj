@@ -4,7 +4,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CompressionEnabled>false</CompressionEnabled>
 		<!-- <RunAOTCompilation>true</RunAOTCompilation> -->
-    <WasmEnableThreads>true</WasmEnableThreads>
+    <!-- <WasmEnableThreads>true</WasmEnableThreads> -->
     <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>full</TrimMode>

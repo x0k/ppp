@@ -11,7 +11,7 @@ import RustWorker from "@/adapters/runtime/rust/worker?worker";
 import GleamWorker from "@/adapters/runtime/gleam/worker?worker";
 import JavaWorker from "@/adapters/runtime/java/worker?worker";
 import RubyWorker from "@/adapters/runtime/ruby/worker?worker";
-import { makeDotnetCompiler } from '@/adapters/runtime/dotnet/compiler-factory'
+import DotnetWorker from '@/adapters/runtime/dotnet/worker?worker';
 
 import phpProgram from './_program.php?raw';
 import tsProgram from './_program.ts?raw';
@@ -60,7 +60,7 @@ export const RUNTIMES: Record<Language, Runtime> = {
   },
   [Language.CSharp]: {
     initialValue: csProgram,
-    compilerFactory: makeDotnetCompiler,
+    compilerFactory: makeRemoteCompilerFactory(DotnetWorker),
   },
   [Language.Java]: {
     initialValue: javaProgram,

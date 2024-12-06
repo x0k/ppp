@@ -10,7 +10,7 @@
 
 <p>
   Your code is compiled by the Roslyn compiler (compiled to WebAssembly with a
-  several .NET assemblies) and is executed in the context of the current page.
+  several .NET assemblies) and is executed in a web worker environment.
 </p>
 
 <p>Available libraries:</p>
