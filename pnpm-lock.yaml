@@ -317,7 +317,7 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       '@ruby/wasm-wasi':
-        specifier: ^2.7.0
+        specifier: ^2.7.1
         version: 2.7.1
       compiler:
         specifier: workspace:*
@@ -329,8 +329,8 @@ importers:
         specifier: workspace:*
         version: link:../testing
     devDependencies:
-      '@ruby/3.3-wasm-wasi':
-        specifier: ^2.7.0
+      '@ruby/3.4-wasm-wasi':
+        specifier: ^2.7.1
         version: 2.7.1
       vite:
         specifier: 'catalog:'
@@ -1104,8 +1104,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@ruby/3.3-wasm-wasi@2.7.1':
-    resolution: {integrity: sha512-j8k5MKQfTMuTOAObpd1pCJZmbbX7zkQzNQIQYSYDHQNs9/6RGz/p0XnoWdyO6cEFQCfewvYZoGUHTtJLKgpkUA==}
+  '@ruby/3.4-wasm-wasi@2.7.1':
+    resolution: {integrity: sha512-uPRvWNL0eR3nYV1iiuJ/QBREUCqc3QKQIJw1iDmuLjiWsftqPfLxN6t0cEtF5mOGh90EZG/NptJoJ4SlJrfzHw==}
 
   '@ruby/wasm-wasi@2.7.1':
     resolution: {integrity: sha512-2f4NqiJuFoeYiXNr60PH3TbH5c+z/xP2Hq36Av2yahp05AaLDyJxWZwr9EGmfoFsmVTmeDdEW2KjPTfpue6xeg==}
@@ -4567,7 +4567,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.24.0':
     optional: true
 
-  '@ruby/3.3-wasm-wasi@2.7.1':
+  '@ruby/3.4-wasm-wasi@2.7.1':
     dependencies:
       '@ruby/wasm-wasi': 2.7.1
 

@@ -34,7 +34,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm",
+          src: "node_modules/@ruby/3.4-wasm-wasi/dist/ruby+stdlib.wasm",
           dest: ".",
           rename: "ruby.wasm",
         },
