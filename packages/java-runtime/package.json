@@ -15,7 +15,7 @@
     "testing": "workspace:*"
   },
   "devDependencies": {
-    "esbuild": "~0.24.0"
+    "esbuild": "~0.24.2"
   },
   "exports": {
     ".": "./dist/index.js",
