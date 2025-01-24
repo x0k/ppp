@@ -56,6 +56,9 @@
             f
             pkgs.wasm-pack
             pkgs.gleam
+            pkgs.clang_14
+            pkgs.glibc_multi
+            pkgs.cargo-binutils
             pkgs.dotnet-sdk_9
           ];
           shellHook = ''
