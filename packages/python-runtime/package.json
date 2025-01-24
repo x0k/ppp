@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "libs": "workspace:*",
-    "pyodide": "^0.26.4",
+    "pyodide": "^0.27.2",
     "compiler": "workspace:*",
     "testing": "workspace:*"
   },
