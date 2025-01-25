@@ -45,6 +45,7 @@
           # ];
           buildInputs = [
             mk.packages.${system}.default
+            pkgs.zip
             pkgs.curl
             pkgs.nodejs
             pkgs.bun
