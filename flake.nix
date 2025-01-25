@@ -47,7 +47,7 @@
             mk.packages.${system}.default
             pkgs.zip
             pkgs.curl
-            pkgs.nodejs
+            pkgs.nodejs_23
             pkgs.bun
             pkgs.pnpm
             pkgs.go_1_23
