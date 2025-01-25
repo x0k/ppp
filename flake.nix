@@ -2,10 +2,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
     nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     mk.url = "github:x0k/mk";
   };
   outputs =
@@ -14,7 +10,6 @@
       nixpkgs,
       nixpkgs-old,
       mk,
-      fenix,
     }:
     let
       system = "x86_64-linux";
@@ -36,29 +31,18 @@
       #   rev = "19.09";
       #   sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
       # }) { inherit system; };
-      f =
-        with fenix.packages.${system};
-        combine [
-          stable.toolchain
-          targets.wasm32-unknown-unknown.stable.rust-std
-        ];
     in
     {
       devShells.${system} = {
         default = pkgs.mkShell {
           buildInputs = [
             mk.packages.${system}.default
+            pkgs.curl
             pkgs.nodejs
             pkgs.bun
             pkgs.pnpm
             pkgs.go_1_23
-            pkgs.python3
-            f
-            pkgs.wasm-pack
             pkgs.gleam
-            pkgs.clang_14
-            pkgs.glibc_multi
-            pkgs.cargo-binutils
             pkgs.dotnet-sdk_9
           ];
           shellHook = ''

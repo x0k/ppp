@@ -86,12 +86,17 @@ gleam/:
     pnpm run build
   artifacts: compiler/* stdlib/*
   compiler/:
-    pushd gleam/compiler-wasm
-    build:
-      CC=clang CXX=clang++ wasm-pack build --release --target web
+    version="v1.7.0"
+    name="gleam-${version}-browser"
+    download:
+      if [ ! -f "${name}.tar.gz" ]; then
+        curl -L -C - -O "https://github.com/gleam-lang/gleam/releases/download/${version}/${name}.tar.gz"
+        mkdir -p "${name}"
+        tar -xzvf "${name}.tar.gz" --directory "${name}"
+      fi
     copy:
-      mkdir -p ../../src/vendor/compiler
-      cp -r pkg/* ../../src/vendor/compiler/
+      mkdir -p src/vendor/compiler
+      cp -r $name/* src/vendor/compiler/
     # Remove link to wasm file to prevent
     # Asset embedding by Vite
     refine:
@@ -99,10 +104,9 @@ gleam/:
           /^async function __wbg_init/!{
               /^}/!d
           }
-      }' ../../src/vendor/compiler/gleam_wasm.js
+      }' src/vendor/compiler/gleam_wasm.js    
     cleanup:
-      rm -rf ../target pkg
-    popd
+      rm -rf ${name}*
   stdlib/:
     pushd gleamstd
     build:
@@ -191,7 +195,7 @@ rust/:
     pushd rust
     sdk:
       if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
-        wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+        curl -L -C - -O https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
         tar -xzvf wasi-sdk-20.0-linux.tar.gz
       fi
     install:

@@ -2,9 +2,6 @@
 	path = packages/rust-runtime/rust
 	url = git@github.com:x0k/rust.git
 	branch = miri-wasm
-[submodule "packages/gleam-runtime/gleam"]
-	path = packages/gleam-runtime/gleam
-	url = https://github.com/gleam-lang/gleam.git
 [submodule "packages/java-runtime/doppio"]
 	path = packages/java-runtime/doppio
 	url = https://github.com/plasma-umass/doppio.git
