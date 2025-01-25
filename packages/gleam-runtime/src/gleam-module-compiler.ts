@@ -20,7 +20,7 @@ export class GleamModuleCompiler {
     protected readonly precompiledStdlibIndexUrl: string,
     compilerModule: WebAssembly.Module
   ) {
-    initSync(compilerModule);
+    initSync({ module: compilerModule });
     initialise_panic_hook(false);
   }
 
