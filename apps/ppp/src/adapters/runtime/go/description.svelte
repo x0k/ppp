@@ -3,7 +3,7 @@
 </script>
 
 <p>
-  Go {version}
+  Go
 </p>
 
 <p>
@@ -11,7 +11,7 @@
     target="_blank"
     class="link"
     href="https://github.com/traefik/yaegi">Yaegi</a
-  > (compiled to WebAssembly with stdlib) in a web worker environment.
+  > (compiled in WebAssembly with stdlib using go{version}) in a web worker environment.
 </p>
 
 <p>
