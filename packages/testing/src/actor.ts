@@ -1,4 +1,9 @@
-import { createContext, inContext, type Context } from "libs/context";
+import {
+  createContext,
+  inContext,
+  withCancel,
+  type Context,
+} from "libs/context";
 import { createLogger } from "libs/logger";
 import {
   Actor,
@@ -59,7 +64,7 @@ export type TestCompilerFactory<D, I, O> = (
 ) => Promise<TestCompiler<I, O>>;
 
 class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
-  private ctx: Context = createContext();
+  private ctxWithCancel = withCancel(createContext());
   private testCompiler: TestCompiler<I, O> | null = null;
   private testProgram: TestProgram<I, O> | null = null;
 
@@ -67,6 +72,10 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
     superFactory: TestCompilerFactory<D, I, O>
   ) {
+    const cancel = () => {
+      this.ctxWithCancel[1]();
+      this.ctxWithCancel = withCancel(createContext())
+    }
     const handlers: Handlers<I, O> = {
       init: async ({ universalFactoryFunction }) => {
         const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
@@ -83,24 +92,28 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
             return ok(buffer.length);
           },
         };
-        this.testCompiler = await superFactory(
-          this.ctx,
-          out,
-          universalFactory
-        );
+        try {
+          this.testCompiler = await superFactory(
+            this.ctxWithCancel[0],
+            out,
+            universalFactory
+          );
+        } finally {
+          cancel()
+        }
       },
       compile: async (files) => {
         if (this.testCompiler === null) {
           throw new Error("Test runner not initialized");
         }
-        this.testProgram = await this.testCompiler.compile(
-          this.ctx,
-          files
-        );
-      },
-      cancel: () => {
-        this.ctx.cancel();
-        this.ctx = createContext();
+        try {
+          this.testProgram = await this.testCompiler.compile(
+            this.ctxWithCancel[0],
+            files
+          );
+        } finally {
+          cancel()
+        }
       },
       test: (input) => {
         if (!this.testProgram) {
@@ -112,8 +125,13 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
           });
           throw err;
         }
-        return this.testProgram.run(this.ctx, input);
+        try {
+          return this.testProgram.run(this.ctxWithCancel[0], input);
+        } finally {
+          cancel()
+        }
       },
+      cancel,
       dispose: () => {
         if (this.testProgram !== null) {
           this.testProgram[Symbol.dispose]();
@@ -128,18 +146,15 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
 }
 
 export function startTestCompilerActor<D, I = unknown, O = unknown>(
+  ctx: Context,
   superFactory: TestCompilerFactory<D, I, O>
 ) {
   const connection = new WorkerConnection<Incoming<I, O>, Outgoing<I, O>>(
     self as unknown as Worker
   );
+  connection.start(ctx);
   const actor = new TestCompilerActor(connection, superFactory);
-  const stopConnection = connection.start();
-  const stopActor = actor.start();
-  return () => {
-    stopActor();
-    stopConnection();
-  };
+  actor.start(ctx);
 }
 
 interface WorkerConstructor {
@@ -155,9 +170,10 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
     const connection = new WorkerConnection<Outgoing<I, O>, Incoming<I, O>>(
       worker
     );
-    const stopConnection = connection.start();
+    connection.start(ctx);
     const log = createLogger(out);
     const remote = startRemote<Handlers<I, O>, string, TestingActorEvent>(
+      ctx,
       log,
       connection,
       {
@@ -169,14 +185,10 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
         },
       }
     );
-    const dispose = () => {
-      remote[Symbol.dispose]();
-      stopConnection();
-      worker.terminate();
-    };
-    const cancelSubscription = ctx.onCancel(() => {
+    const cancelRemote = () => {
       remote.cancel();
-    });
+    };
+    ctx.signal.addEventListener("abort", cancelRemote);
     try {
       await inContext(
         ctx,
@@ -185,27 +197,23 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
         })
       );
     } catch (err) {
-      dispose();
+      worker.terminate();
       throw err;
     } finally {
-      cancelSubscription[Symbol.dispose]();
+      ctx.signal.removeEventListener("abort", cancelRemote);
     }
     return {
       async compile(ctx, files) {
-        const cancelSubscription = ctx.onCancel(() => {
-          remote.cancel();
-        });
+        ctx.signal.addEventListener("abort", cancelRemote);
         try {
           await inContext(ctx, remote.compile(files));
           return {
             async run(ctx, input) {
-              const cancelSubscription = ctx.onCancel(() => {
-                remote.cancel();
-              });
+              ctx.signal.addEventListener("abort", cancelRemote);
               try {
                 return await inContext(ctx, remote.test(input));
               } finally {
-                cancelSubscription[Symbol.dispose]();
+                ctx.signal.removeEventListener("abort", cancelRemote);
               }
             },
             [Symbol.dispose]() {
@@ -213,10 +221,10 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
             },
           };
         } finally {
-          cancelSubscription[Symbol.dispose]();
+          ctx.signal.removeEventListener("abort", cancelRemote);
         }
       },
-      [Symbol.dispose]: dispose,
+      [Symbol.dispose]: worker.terminate.bind(worker),
     };
   };
 }

@@ -1,3 +1,4 @@
+import type { Context } from '../context.js';
 import type { Logger } from "../logger.js";
 import { neverError } from "../error.js";
 import { isOk } from "../result.js";
@@ -23,6 +24,7 @@ export function startRemote<
   E,
   Event extends EventMessage<string, any>
 >(
+  ctx: Context,
   log: Logger,
   connection: Connection<OutgoingMessage<H, E> | Event, IncomingMessage<H>>,
   eventHandlers: {
@@ -40,7 +42,7 @@ export function startRemote<
     RequestId,
     DeferredPromise<ReturnType<H[keyof H]>, E>
   >();
-  const unsubscribe = connection.onMessage((msg) => {
+  connection.onMessage(ctx, (msg) => {
     switch (msg.type) {
       case MessageType.Response: {
         const { id, result } = msg;
@@ -75,9 +77,6 @@ export function startRemote<
     {},
     {
       get(_, prop) {
-        if (prop === Symbol.dispose) {
-          return unsubscribe;
-        }
         const request = prop as keyof H;
         return (arg: Parameters<H[typeof request]>[0]) => {
           const id = lastId++ as RequestId;
@@ -100,5 +99,5 @@ export function startRemote<
     [K in keyof H]: Parameters<H[K]>["length"] extends 0
       ? () => Promise<ReturnType<H[K]>>
       : (arg: Parameters<H[K]>[0]) => Promise<ReturnType<H[K]>>;
-  } & Disposable;
+  };
 }

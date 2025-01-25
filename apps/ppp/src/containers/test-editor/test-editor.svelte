@@ -5,7 +5,7 @@
   import { editor } from 'monaco-editor';
   import { stringifyError } from 'libs/error';
   import { createLogger } from 'libs/logger';
-  import { type Context, createContext } from 'libs/context';
+  import { type Context, createContext, withCancel, withTimeout } from 'libs/context';
   import { runTests, type TestCompiler } from "testing";
   
   import { debouncedSave, immediateSave } from '@/lib/sync-storage.svelte';
@@ -143,7 +143,7 @@
   let testCompilerFactory = $derived(runtime.testCompilerFactory)
   let isRunning = $state(false)
   let lastTestId = $state(-1)
-  let ctx: Context | null = null
+  let compilerCtxWithCancel = withCancel(createContext())
   let testCompiler: TestCompiler<Input, Output> | null = null
   $effect(() => {
     testCompilerFactory;
@@ -153,29 +153,35 @@
       if (testCompiler === null) {
         return
       }
+      compilerCtxWithCancel[1]()
+      compilerCtxWithCancel = withCancel(createContext())
       testCompiler[Symbol.dispose]();
       testCompiler = null;
     }
   })
-
+  let programCtxWithCancel = withCancel(compilerCtxWithCancel[0])
+  const cancelProgram = () => {
+    programCtxWithCancel[1]()
+    programCtxWithCancel = withCancel(compilerCtxWithCancel[0])
+  }
   async function handleRun() {
     if (isRunning) {
-      ctx?.cancel();
+      cancelProgram()
       return;
     }
-    ctx = createContext(executionTimeout)
+    const programCtxWithTimeout = withTimeout(programCtxWithCancel[0], executionTimeout)
     isRunning = true;
     terminal.clear()
     try {
       if (testCompiler === null) {
-        testCompiler = await testCompilerFactory(ctx, terminalWriter);
+        testCompiler = await testCompilerFactory(compilerCtxWithCancel[0], terminalWriter);
       }
-      const testProgram = await testCompiler.compile(ctx, [{
+      const testProgram = await testCompiler.compile(programCtxWithTimeout, [{
         filename: "main",
         content: model.getValue(),
       }])
       try {
-        lastTestId = await runTests(ctx, terminalLogger, testProgram, testCases);
+        lastTestId = await runTests(programCtxWithTimeout, terminalLogger, testProgram, testCases);
       } finally {
         testProgram[Symbol.dispose]();
       }
@@ -184,7 +190,7 @@
       terminalLogger.error(stringifyError(err));
     } finally {
       isRunning = false;
-      ctx = null;
+      cancelProgram()
     }
   }
 

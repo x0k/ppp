@@ -4,7 +4,7 @@ import { makeErrorWriter, Writer } from "libs/io";
 import { createJVM, JVM } from "./jvm";
 import { process } from "./process.js";
 
-export type JVMFactory = (ctx: Context) => Promise<[JVM, Disposable]>;
+export type JVMFactory = (ctx: Context) => Promise<JVM>;
 
 export function makeJVMFactory(writer: Writer): JVMFactory {
   const errorWriter = makeErrorWriter(writer);
@@ -21,14 +21,12 @@ export function makeJVMFactory(writer: Writer): JVMFactory {
     // process.initializeTTYs();
     process.stdout.on("data", onStdout);
     process.stderr.on("data", onStderr);
-    return [
-      jvm,
-      {
-        [Symbol.dispose]: () => {
-          process.stdout.removeListener("data", onStdout);
-          process.stderr.removeListener("data", onStderr);
-        },
-      },
-    ];
+    const unsub = () => {
+      ctx.signal.removeEventListener("abort", unsub);
+      process.stdout.removeListener("data", onStdout);
+      process.stderr.removeListener("data", onStderr);
+    };
+    ctx.signal.addEventListener("abort", unsub);
+    return jvm;
   };
 }

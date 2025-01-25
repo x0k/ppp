@@ -11,7 +11,10 @@ export class PHPProgram implements Program {
   ) {}
 
   async run(ctx: Context): Promise<void> {
-    const exitSubscription = ctx.onCancel(() => this.php.exit(137));
+    const stopPHP = () => {
+      this.php.exit(137)
+    }
+    ctx.signal.addEventListener('abort', stopPHP)
     try {
       const response = await this.php.run({ code: this.code });
       const text = response.bytes;
@@ -22,7 +25,7 @@ export class PHPProgram implements Program {
         throw new Error(response.errors);
       }
     } finally {
-      exitSubscription[Symbol.dispose]();
+      ctx.signal.removeEventListener('abort', stopPHP)
     }
   }
 

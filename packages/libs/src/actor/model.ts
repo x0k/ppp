@@ -1,5 +1,6 @@
 import type { Brand, AnyKey } from "../type.js";
 import type { Result } from "../result.js";
+import type { Context } from '../context.js';
 
 export enum MessageType {
   Event = "event",
@@ -33,7 +34,7 @@ export interface ResponseMessage<R>
 }
 
 export interface Connection<Incoming, Outgoing> {
-  onMessage: (handler: (message: Incoming) => void) => () => void;
+  onMessage: (ctx: Context, handler: (message: Incoming) => void) => void;
   send: (message: Outgoing) => void;
 }
 

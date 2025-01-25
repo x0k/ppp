@@ -1,3 +1,4 @@
+import type { Context } from '../context.js';
 import { err, ok, type Result } from "../result.js";
 import { neverError } from "../error.js";
 
@@ -28,8 +29,8 @@ export class Actor<H extends Handlers, E> {
     protected readonly caseError: (error: any) => E
   ) {}
 
-  start() {
-    return this.connection.onMessage(this.handleMessage.bind(this));
+  start(ctx: Context) {
+    this.connection.onMessage(ctx, this.handleMessage.bind(this));
   }
 
   private async handleMessage(msg: IncomingMessage<H>) {

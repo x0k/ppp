@@ -1,5 +1,6 @@
 import { startCompilerActor } from "compiler/actor";
+import { createContext } from 'libs/context';
 
 import { makeRustCompiler } from "./compiler-factory";
 
-startCompilerActor(makeRustCompiler);
+startCompilerActor(createContext(), makeRustCompiler);

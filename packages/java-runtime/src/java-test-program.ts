@@ -10,8 +10,9 @@ export abstract class JavaTestProgram<I, O> implements TestProgram<I, O> {
   ) {}
 
   async run(ctx: Context, input: I): Promise<O> {
-    const [jvm, jvmDispose] = await this.jvmFactory(ctx);
-    const dispose = ctx.onCancel(() => jvm.halt(1));
+    const jvm = await this.jvmFactory(ctx);
+    const stopJVM = () => jvm.halt(1);
+    ctx.signal.addEventListener('abort', stopJVM)
     try {
       jvm.registerNatives({
         [this.className]: this.getNatives(input),
@@ -23,8 +24,7 @@ export abstract class JavaTestProgram<I, O> implements TestProgram<I, O> {
         throw new Error("Run failed");
       }
     } finally {
-      dispose[Symbol.dispose]();
-      jvmDispose[Symbol.dispose]();
+      ctx.signal.removeEventListener('abort', stopJVM)
     }
     return this.getResult();
   }

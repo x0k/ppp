@@ -1,4 +1,5 @@
 import { startTestCompilerActor } from "testing/actor";
+import { createContext } from "libs/context";
 
 import { PythonTestCompilerFactory } from "./test-compiler-factory";
 
@@ -6,8 +7,10 @@ export interface PythonTestWorkerConfig {
   pythonTestCompilerFactory: PythonTestCompilerFactory;
 }
 
-startTestCompilerActor<PythonTestWorkerConfig>((ctx, out, factory) =>
-  factory(ctx, {
-    pythonTestCompilerFactory: new PythonTestCompilerFactory(out),
-  })
+startTestCompilerActor<PythonTestWorkerConfig>(
+  createContext(),
+  (ctx, out, factory) =>
+    factory(ctx, {
+      pythonTestCompilerFactory: new PythonTestCompilerFactory(out),
+    })
 );

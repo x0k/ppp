@@ -40,7 +40,7 @@ export async function runTests<I, O>(
 ) {
   let i = 0;
   for (; i < testsCases.length; i++) {
-    if (ctx.canceled) {
+    if (ctx.signal.aborted) {
       log.error("Test canceled by user");
       return i;
     }

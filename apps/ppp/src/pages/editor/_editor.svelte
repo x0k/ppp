@@ -1,21 +1,26 @@
 <script lang="ts">
   import { editor } from "monaco-editor";
-  import Icon from '@iconify/svelte';
+  import Icon from "@iconify/svelte";
 
   import type { Compiler } from "compiler";
-  import { createContext, type Context } from "libs/context";
-  import { createLogger } from 'libs/logger';
-  import { stringifyError } from 'libs/error';
+  import {
+    createContext,
+    withCancel,
+    withTimeout,
+    type Context,
+  } from "libs/context";
+  import { createLogger } from "libs/logger";
+  import { stringifyError } from "libs/error";
 
-  import { reactiveWindow } from '@/lib/reactive-window.svelte'
+  import { reactiveWindow } from "@/lib/reactive-window.svelte";
   import { debouncedSave, immediateSave } from "@/lib/sync-storage.svelte";
   import { Language, LANGUAGE_ICONS, LANGUAGE_TITLE } from "@/shared/languages";
-  import { EditorPanelTab } from '@/shared/editor-panel-tab';
-  import { Label, type Lang } from '@/i18n';
+  import { EditorPanelTab } from "@/shared/editor-panel-tab";
+  import { Label, type Lang } from "@/i18n";
   import { createSyncStorage } from "@/adapters/storage";
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
-  import { DESCRIPTIONS } from '@/adapters/runtime/descriptions'
-  import Dropdown from '@/components/dropdown.svelte';
+  import { DESCRIPTIONS } from "@/adapters/runtime/descriptions";
+  import Dropdown from "@/components/dropdown.svelte";
   import {
     Editor,
     EditorContext,
@@ -25,13 +30,20 @@
     createTerminalWriter,
     RunButton,
   } from "@/components/editor";
-  import { Panel, Tab, Tabs, TerminalTab, TabContent, PanelToggle } from "@/components/editor/panel";
-  import { CheckBox, Number } from '@/components/editor/controls';
+  import {
+    Panel,
+    Tab,
+    Tabs,
+    TerminalTab,
+    TabContent,
+    PanelToggle,
+  } from "@/components/editor/panel";
+  import { CheckBox, Number } from "@/components/editor/controls";
 
-  import { RUNTIMES } from './_runtimes'
+  import { RUNTIMES } from "./_runtimes";
 
   interface Props {
-    lang: Lang
+    lang: Lang;
   }
 
   const { lang: pageLang }: Props = $props();
@@ -82,12 +94,7 @@
 
   const { terminal, fitAddon } = createTerminal();
 
-  setEditorContext(new EditorContext(
-    pageLang,
-    model,
-    terminal,
-    fitAddon,
-  ));
+  setEditorContext(new EditorContext(pageLang, model, terminal, fitAddon));
 
   const panelHeightStorage = createSyncStorage(
     localStorage,
@@ -109,15 +116,15 @@
     localStorage,
     "editor-execution-timeout",
     60000
-  )
+  );
   let executionTimeout = $state(executionTimeoutStorage.load());
   debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-  const terminalWriter = createTerminalWriter(terminal)
-  const terminalLogger = createLogger(terminalWriter)
+  const terminalWriter = createTerminalWriter(terminal);
+  const terminalLogger = createLogger(terminalWriter);
   let compilerFactory = $derived(runtime.compilerFactory);
   let isRunning = $state(false);
-  let ctx: Context | null = null;
+  let compilerCtxWithCancel = withCancel(createContext());
   let compiler: Compiler | null = null;
   $effect(() => {
     compilerFactory;
@@ -125,30 +132,45 @@
     compiler = null;
     return () => {
       if (compiler === null) {
-        return
+        return;
       }
+      compilerCtxWithCancel[1]();
+      compilerCtxWithCancel = withCancel(createContext());
       compiler[Symbol.dispose]();
-      compiler = null
+      compiler = null;
     };
-  })
+  });
+  let programCtxWithCancel = withCancel(compilerCtxWithCancel[0]);
+  const cancelProgram = () => {
+    programCtxWithCancel[1]()
+    programCtxWithCancel = withCancel(compilerCtxWithCancel[0])
+  }
   async function handleRun() {
     if (isRunning) {
-      ctx?.cancel();
+      cancelProgram()
       return;
     }
-    ctx = createContext(executionTimeout);
+    const programCtxWithTimeout = withTimeout(
+      programCtxWithCancel[0],
+      executionTimeout
+    );
     isRunning = true;
     terminal.clear();
     try {
       if (compiler === null) {
-        compiler = await compilerFactory(ctx, terminalWriter);
+        compiler = await compilerFactory(
+          compilerCtxWithCancel[0],
+          terminalWriter
+        );
       }
-      const program = await compiler.compile(ctx, [{
-        filename: 'main',
-        content: model.getValue()
-      }])
+      const program = await compiler.compile(programCtxWithTimeout, [
+        {
+          filename: "main",
+          content: model.getValue(),
+        },
+      ]);
       try {
-        await program.run(ctx)
+        await program.run(programCtxWithTimeout);
       } finally {
         program[Symbol.dispose]();
       }
@@ -157,17 +179,20 @@
       terminalLogger.error(stringifyError(err));
     } finally {
       isRunning = false;
-      ctx = null;
+      cancelProgram()
     }
   }
 
-  let descriptionDialogElement: HTMLDialogElement
+  let descriptionDialogElement: HTMLDialogElement;
   let describedLanguage = $state(defaultLang);
-  let Description = $derived(DESCRIPTIONS[describedLanguage])
+  let Description = $derived(DESCRIPTIONS[describedLanguage]);
 </script>
 
 <div class="h-screen flex flex-col overflow-hidden">
-  <Editor width={reactiveWindow.innerWidth} height={reactiveWindow.innerHeight - panelHeight} />
+  <Editor
+    width={reactiveWindow.innerWidth}
+    height={reactiveWindow.innerHeight - panelHeight}
+  />
   <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
     <div class="flex flex-wrap items-center gap-1 p-1">
       <RunButton {isRunning} onClick={handleRun} />
@@ -177,10 +202,7 @@
       </Tabs>
       <div class="grow"></div>
       <VimStatus bind:vimState />
-      <Dropdown
-        bind:value={lang}
-        options={languages}
-      >
+      <Dropdown bind:value={lang} options={languages}>
         {#snippet preLabel(lang)}
           <Icon icon={LANGUAGE_ICONS[lang]} />
         {/snippet}
@@ -188,31 +210,44 @@
           {LANGUAGE_TITLE[lang]}
         {/snippet}
         {#snippet postLabel(lang)}
-          <Icon onclick={(e) => {
-            describedLanguage = lang
-            e.stopPropagation()
-            descriptionDialogElement.showModal()
-          }} class="invisible group-hover:visible" icon="lucide:info" />
+          <Icon
+            onclick={(e) => {
+              describedLanguage = lang;
+              e.stopPropagation();
+              descriptionDialogElement.showModal();
+            }}
+            class="invisible group-hover:visible"
+            icon="lucide:info"
+          />
         {/snippet}
         {#snippet children()}
           <li>
-            <a target="_blank" href="https://github.com/x0k/ppp" >
+            <a target="_blank" href="https://github.com/x0k/ppp">
               <Icon icon="lucide:github" />
-              <span class="font-[sans-serif]">
-                GitHub
-              </span>
+              <span class="font-[sans-serif]"> GitHub </span>
             </a>
           </li>
         {/snippet}
       </Dropdown>
-      <PanelToggle bind:panelHeight maxPanelHeight={reactiveWindow.innerHeight} />
+      <PanelToggle
+        bind:panelHeight
+        maxPanelHeight={reactiveWindow.innerHeight}
+      />
     </div>
     <div class="grow flex flex-col overflow-hidden">
-      <TerminalTab width={reactiveWindow.innerWidth} height={panelHeight} class="grow ml-4 mt-4" />
+      <TerminalTab
+        width={reactiveWindow.innerWidth}
+        height={panelHeight}
+        class="grow ml-4 mt-4"
+      />
       <TabContent tab={EditorPanelTab.Settings}>
         <div class="overflow-auto flex flex-col gap-4 p-4">
           <CheckBox title={Label.EditorSettingsVimMode} bind:value={vimState} />
-          <Number title={Label.EditorSettingsExecutionTimeout} alt={Label.EditorSettingsExecutionTimeoutAlt} bind:value={executionTimeout} />
+          <Number
+            title={Label.EditorSettingsExecutionTimeout}
+            alt={Label.EditorSettingsExecutionTimeoutAlt}
+            bind:value={executionTimeout}
+          />
         </div>
       </TabContent>
     </div>
@@ -221,10 +256,16 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<dialog bind:this={descriptionDialogElement} class="modal" onclick={(e) => e.stopPropagation()}>
+<dialog
+  bind:this={descriptionDialogElement}
+  class="modal"
+  onclick={(e) => e.stopPropagation()}
+>
   <div class="modal-box max-w-2xl w-full">
     <form method="dialog">
-      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+        >✕</button
+      >
     </form>
     <h3 class="text-lg font-bold">{LANGUAGE_TITLE[describedLanguage]}</h3>
     <div class="flex flex-col items-start gap-2 py-4">

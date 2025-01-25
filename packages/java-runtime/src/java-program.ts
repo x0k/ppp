@@ -10,8 +10,11 @@ export class JavaProgram implements Program {
   ) {}
 
   async run(ctx: Context): Promise<void> {
-    const [jvm, jvmDispose] = await this.jvmFactory(ctx);
-    const dispose = ctx.onCancel(() => jvm.halt(1));
+    const jvm = await this.jvmFactory(ctx);
+    const stopJVM = () => {
+      jvm.halt(1)
+    }
+    ctx.signal.addEventListener('abort', stopJVM)
     try {
       const code = await new Promise<number>((resolve) =>
         jvm.runClass(this.className, [], resolve)
@@ -20,8 +23,7 @@ export class JavaProgram implements Program {
         throw new Error("Run failed");
       }
     } finally {
-      dispose[Symbol.dispose]();
-      jvmDispose[Symbol.dispose]();
+      ctx.signal.removeEventListener('abort', stopJVM)
     }
   }
 

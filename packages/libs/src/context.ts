@@ -1,65 +1,24 @@
 export interface Context {
-  signal: AbortSignal;
-  canceled: boolean;
-  cancel(): void;
-  onCancel(cb: () => void): Disposable;
+  readonly signal: AbortSignal;
 }
 
-export function createContext(timeoutInMs = 0): Context {
+export function createContext(): Context {
+  return new AbortController();
+}
+
+export function withCancel(ctx: Context): [Context, () => void] {
   const ctrl = new AbortController();
-  if (timeoutInMs > 0) {
-    setTimeout(() => ctrl.abort(), timeoutInMs);
-  }
-  return {
-    get canceled() {
-      return ctrl.signal.aborted;
+  return [
+    {
+      signal: AbortSignal.any([ctx.signal, ctrl.signal]),
     },
-    get signal() {
-      return ctrl.signal;
-    },
-    onCancel(cb) {
-      ctrl.signal.addEventListener("abort", cb);
-      return {
-       [Symbol.dispose]: () => ctrl.signal.removeEventListener("abort", cb)
-      }
-    },
-    cancel() {
-      ctrl.abort();
-    },
-  };
-}
-
-export function withCancel(ctx: Context): Context {
-  if (ctx.canceled) {
-    return ctx;
-  }
-  const leaf = createContext();
-  const cancel = () => {
-    ctx.signal.removeEventListener("abort", cancel);
-    leaf.cancel();
-  };
-  ctx.signal.addEventListener("abort", cancel);
-  return {
-    ...leaf,
-    cancel,
-  };
+    ctrl.abort.bind(ctrl),
+  ];
 }
 
 export function withTimeout(ctx: Context, timeoutInMs: number): Context {
-  if (ctx.canceled) {
-    return ctx;
-  }
-  const leaf = createContext();
-  const cancel = () => {
-    ctx.signal.removeEventListener("abort", cancel);
-    leaf.cancel();
-  };
-  ctx.signal.addEventListener("abort", cancel);
-  // TODO: Use `AbortSignal.timeout()`
-  setTimeout(cancel, timeoutInMs);
   return {
-    ...leaf,
-    cancel,
+    signal: AbortSignal.any([ctx.signal, AbortSignal.timeout(timeoutInMs)]),
   };
 }
 
@@ -67,13 +26,16 @@ export const CANCELED_ERROR = new Error("Context canceled");
 
 export function inContext<T>(ctx: Context, promise: Promise<T>): Promise<T> {
   return new Promise((resolve, reject) => {
-    if (ctx.canceled) {
+    if (ctx.signal.aborted) {
       reject(CANCELED_ERROR);
       return;
     }
-    const disposable = ctx.onCancel(() => {
+    const cancel = () => {
       reject(CANCELED_ERROR);
+    };
+    ctx.signal.addEventListener("abort", cancel);
+    promise.then(resolve, reject).finally(() => {
+      ctx.signal.removeEventListener("abort", cancel);
     });
-    promise.then(resolve, reject).finally(disposable[Symbol.dispose]);
   });
 }

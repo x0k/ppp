@@ -10,7 +10,12 @@ import {
 } from "libs/actor";
 
 import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
-import { createContext, inContext, type Context } from "libs/context";
+import {
+  createContext,
+  inContext,
+  withCancel,
+  type Context,
+} from "libs/context";
 import type { Writer } from "libs/io";
 import { ok } from "libs/result";
 import { stringifyError } from "libs/error";
@@ -34,7 +39,7 @@ type CompilerActorEvent = WriteEventMessage;
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
 class CompilerActor extends Actor<Handlers, string> {
-  private ctx: Context = createContext();
+  private ctxWithCancel = withCancel(createContext());
   private compiler: Compiler | null = null;
   private program: Program | null = null;
 
@@ -42,6 +47,10 @@ class CompilerActor extends Actor<Handlers, string> {
     connection: Connection<Incoming, Outgoing>,
     compilerFactory: CompilerFactory
   ) {
+    const cancel = () => {
+      this.ctxWithCancel[1]();
+      this.ctxWithCancel = withCancel(createContext());
+    };
     const handlers: Handlers = {
       init: async () => {
         const out: Writer = {
@@ -55,13 +64,24 @@ class CompilerActor extends Actor<Handlers, string> {
             return ok(buffer.length);
           },
         };
-        this.compiler = await compilerFactory(this.ctx, out);
+        try {
+          this.compiler = await compilerFactory(this.ctxWithCancel[0], out);
+        } finally {
+          cancel();
+        }
       },
       compile: async (files) => {
         if (this.compiler === null) {
           throw new Error("Compiler not initialized");
         }
-        this.program = await this.compiler.compile(this.ctx, files);
+        try {
+          this.program = await this.compiler.compile(
+            this.ctxWithCancel[0],
+            files
+          );
+        } finally {
+          cancel()
+        }
       },
       run: async () => {
         if (this.program === null) {
@@ -73,12 +93,13 @@ class CompilerActor extends Actor<Handlers, string> {
           });
           throw err;
         }
-        await this.program.run(this.ctx);
+        try {
+          await this.program.run(this.ctxWithCancel[0]);
+        } finally {
+          cancel()
+        }
       },
-      cancel: () => {
-        this.ctx.cancel();
-        this.ctx = createContext();
-      },
+      cancel,
       dispose: () => {
         if (this.program !== null) {
           this.program[Symbol.dispose]();
@@ -93,18 +114,15 @@ class CompilerActor extends Actor<Handlers, string> {
 }
 
 export function startCompilerActor(
+  ctx: Context,
   compilerFactory: CompilerFactory
 ) {
   const connection = new WorkerConnection<Incoming, Outgoing>(
     self as unknown as Worker
   );
+  connection.start(ctx);
   const actor = new CompilerActor(connection, compilerFactory);
-  const stopConnection = connection.start();
-  const stopActor = actor.start();
-  return () => {
-    stopActor();
-    stopConnection();
-  };
+  actor.start(ctx);
 }
 
 interface WorkerConstructor {
@@ -115,9 +133,10 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
   return async (ctx: Context, out: Writer): Promise<Compiler> => {
     const worker = new Worker();
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
-    const stopConnection = connection.start();
+    connection.start(ctx);
     const log = createLogger(out);
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
+      ctx,
       log,
       connection,
       {
@@ -129,38 +148,30 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
         },
       }
     );
-    const dispose = () => {
-      remote[Symbol.dispose]();
-      stopConnection();
-      worker.terminate();
-    };
-    const cancelSubscription = ctx.onCancel(() => {
+    const cancelRemote = () => {
       remote.cancel();
-    });
+    };
+    ctx.signal.addEventListener("abort", cancelRemote);
     try {
       await inContext(ctx, remote.init());
     } catch (err) {
-      dispose();
+      worker.terminate();
       throw err;
     } finally {
-      cancelSubscription[Symbol.dispose]();
+      ctx.signal.removeEventListener("abort", cancelRemote);
     }
     return {
       async compile(ctx, files) {
-        const cancelSubscription = ctx.onCancel(() => {
-          remote.cancel();
-        });
+        ctx.signal.addEventListener("abort", cancelRemote);
         try {
           await inContext(ctx, remote.compile(files));
           return {
             async run(ctx) {
-              const cancelSubscription = ctx.onCancel(() => {
-                remote.cancel();
-              });
+              ctx.signal.addEventListener("abort", cancelRemote);
               try {
                 await inContext(ctx, remote.run());
               } finally {
-                cancelSubscription[Symbol.dispose]();
+                ctx.signal.removeEventListener("abort", cancelRemote);
               }
             },
             [Symbol.dispose]: () => {
@@ -168,10 +179,10 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
             },
           };
         } finally {
-          cancelSubscription[Symbol.dispose]();
+          ctx.signal.removeEventListener("abort", cancelRemote);
         }
       },
-      [Symbol.dispose]: dispose,
+      [Symbol.dispose]: worker.terminate.bind(worker),
     };
   };
 }

@@ -35,7 +35,10 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 
   async run(ctx: Context, input: I): Promise<O> {
     const code = this.transformCode(input);
-    const exitSubscription = ctx.onCancel(() => this.php.exit(137));
+    const stopPHP = () => {
+      this.php.exit(137);
+    }
+    ctx.signal.addEventListener('abort', stopPHP)
     try {
       const response = await this.php.run({ code });
       const text = response.bytes;
@@ -46,7 +49,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
         throw new Error(response.errors);
       }
     } finally {
-      exitSubscription[Symbol.dispose]();
+      ctx.signal.removeEventListener('abort', stopPHP)
     }
     if (this.result === undefined) {
       throw new Error("No result");

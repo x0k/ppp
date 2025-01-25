@@ -1,3 +1,5 @@
+import type { Context } from "../context.js";
+
 import type { Connection } from "./model.js";
 
 export class WorkerConnection<Incoming, Outgoing>
@@ -7,25 +9,26 @@ export class WorkerConnection<Incoming, Outgoing>
 
   constructor(private readonly worker: Worker) {}
 
-  start() {
-    const onMsg = (e: MessageEvent) => {
-      for (const handler of this.handlers) {
-        handler(e.data);
-      }
-    };
-    this.worker.addEventListener("message", onMsg);
-    return () => {
-      this.worker.removeEventListener("message", onMsg);
-    };
+  start(ctx: Context) {
+    this.worker.addEventListener(
+      "message",
+      (e) => {
+        for (const handler of this.handlers) {
+          handler(e.data);
+        }
+      },
+      ctx
+    );
   }
 
   send(message: Outgoing) {
     this.worker.postMessage(message);
   }
 
-  onMessage(handler: (message: Incoming) => void) {
+  onMessage(ctx: Context, handler: (message: Incoming) => void) {
     this.handlers.add(handler);
-    return () => {
+    const unsub = () => {
+      ctx.signal.removeEventListener("abort", unsub);
       this.handlers.delete(handler);
     };
   }
