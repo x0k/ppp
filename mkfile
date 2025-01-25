@@ -134,7 +134,7 @@ dotnet/:
         fi
     done
     for workload in "${uninstalled_workloads[@]}"; do
-        sudo dotnet workload install "${workload}"
+        dotnet workload install "${workload}"
     done
   compiler/: workloads
     build: release copy cleanup
@@ -160,10 +160,10 @@ dotnet/:
     cleanup:
       rm -rf bin obj
     popd
-  workloads:
-    for workload in "${uninstalled_workloads[@]}"; do
-      sudo dotnet workload uninstall "${workload}"
-    done
+  # workloads:
+  #   for workload in "${uninstalled_workloads[@]}"; do
+  #     dotnet workload uninstall "${workload}"
+  #   done
   p:
     pushd probe
     rsync -r ../src/vendor/compiler/ ./compiler/ --delete

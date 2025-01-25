@@ -35,6 +35,14 @@
     {
       devShells.${system} = {
         default = pkgs.mkShell {
+          # NOTE: this is required for NixOS (configuration.nix)
+          # programs.nix-ld.enable = true;
+          # programs.nix-ld.libraries = with pkgs; [
+          #   libcxx      # Provides libc++.so.1
+          #   zlib
+          #   openssl
+          #   glibc
+          # ];
           buildInputs = [
             mk.packages.${system}.default
             pkgs.curl
@@ -43,7 +51,8 @@
             pkgs.pnpm
             pkgs.go_1_23
             pkgs.gleam
-            pkgs.dotnet-sdk_9
+            pkgs.python314
+            pkgs.dotnetCorePackages.dotnet_9.sdk
           ];
           shellHook = ''
             source <(COMPLETE=bash mk)
