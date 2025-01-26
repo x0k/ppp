@@ -201,7 +201,7 @@
       executionTimeout
     );
     status = "running";
-    terminal.clear();
+    terminal.reset();
     try {
       if (testCompiler === null) {
         testCompiler = await testCompilerFactory(

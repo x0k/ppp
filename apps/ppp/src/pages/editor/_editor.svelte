@@ -8,7 +8,6 @@
     createRecoverableContext,
     withCancel,
     withTimeout,
-    type Context,
   } from "libs/context";
   import { createLogger } from "libs/logger";
   import { stringifyError } from "libs/error";
@@ -155,7 +154,7 @@
       executionTimeout
     );
     status = "running";
-    terminal.clear();
+    terminal.reset();
     try {
       if (compiler === null) {
         compiler = await compilerFactory(
