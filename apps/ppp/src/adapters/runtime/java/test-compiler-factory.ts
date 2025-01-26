@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import type { Writer } from "libs/io";
+import { makeErrorWriter, type Writer } from "libs/io";
 import type { TestCompiler } from "testing";
 
 import {
@@ -23,7 +23,10 @@ export interface Options<I, O> {
 }
 
 export class JavaTestCompilerFactory {
-  constructor(private readonly writer: Writer) {}
+  protected stderr: Writer;
+  constructor(private readonly writer: Writer) {
+    this.stderr = makeErrorWriter(writer);
+  }
   async create<I, O>(
     ctx: Context,
     {
@@ -33,7 +36,7 @@ export class JavaTestCompilerFactory {
       nativesFactory,
     }: Options<I, O>
   ): Promise<TestCompiler<I, O>> {
-    const jvmFactory = makeJVMFactory(this.writer);
+    const jvmFactory = makeJVMFactory(this.writer, this.stderr);
     const libZipData = await fetch(libZipUrl, {
       signal: ctx.signal,
       cache: "force-cache",
@@ -44,7 +47,7 @@ export class JavaTestCompilerFactory {
       `/home/${className}.java`,
       fs
     );
-    class TestProgram extends JavaTestProgram<I, O> {
+    class TestProgram extends JavaTestProgram<I, O> implements Disposable {
       private output?: O;
       private saveOutput(output: O) {
         this.output = output;
@@ -58,6 +61,9 @@ export class JavaTestCompilerFactory {
           throw new Error("No output");
         }
         return this.output;
+      }
+      [Symbol.dispose]() {
+        this.output = undefined;
       }
     }
     return {
@@ -78,7 +84,12 @@ public class ${className} {
   }
 }`
         );
-        return new TestProgram(className, jvmFactory);
+        const program = new TestProgram(className, jvmFactory);
+        const disposable = ctx.onCancel(() => {
+          disposable[Symbol.dispose]();
+          program[Symbol.dispose]()
+        });
+        return program
       },
     };
   }

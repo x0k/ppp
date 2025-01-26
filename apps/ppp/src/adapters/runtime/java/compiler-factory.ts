@@ -1,3 +1,4 @@
+import { makeErrorWriter } from "libs/io";
 import {
   initFs,
   JavaCompiler,
@@ -12,7 +13,8 @@ import libZipUrl from "java-runtime/doppio.zip";
 const CLASSNAME = "Program";
 
 export const makeJavaCompiler: CompilerFactory = async (ctx, out) => {
-  const jvmFactory = makeJVMFactory(out);
+  const stderr = makeErrorWriter(out);
+  const jvmFactory = makeJVMFactory(out, stderr);
   const libZipData = await fetch(libZipUrl, {
     signal: ctx.signal,
     cache: "force-cache",

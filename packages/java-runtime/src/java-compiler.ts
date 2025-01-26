@@ -1,4 +1,4 @@
-import { Context } from "libs/context";
+import { Context, withCancel } from "libs/context";
 
 import { FSModule } from "./fs";
 import { JVMFactory } from "./jvm-factory";
@@ -12,7 +12,8 @@ export class JavaCompiler {
 
   async compile(ctx: Context, code: string) {
     this.fs.writeFileSync(this.classPath, code);
-    const jvm = await this.jvmFactory(ctx);
+    const [jvmCtx, cancel] = withCancel(ctx);
+    const jvm = await this.jvmFactory(jvmCtx);
     return new Promise<void>((resolve, reject) => {
       jvm.runClass("util.Javac", [this.classPath], (code) => {
         if (code === 0) {
@@ -21,6 +22,6 @@ export class JavaCompiler {
           reject(new Error("Compilation failed"));
         }
       });
-    });
+    }).finally(cancel);
   }
 }
