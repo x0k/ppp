@@ -22,10 +22,6 @@ export class DotnetTestProgram<I, O> implements TestProgram<I, O> {
     return this.getResult();
   }
 
-  [Symbol.dispose](): void {
-    this.runtime.DisposeAssembly();
-  }
-
   protected convertToArgs(input: I): string[] {
     return [JSON.stringify(input)];
   }

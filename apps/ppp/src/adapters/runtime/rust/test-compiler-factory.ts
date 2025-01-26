@@ -50,11 +50,7 @@ export class RustTestCompilerFactory {
       ),
       loadLibs(ctx),
     ]);
-    const wasi = wasiRuntimeFactory(
-      this.out,
-      makeErrorWriter(this.out),
-      libs
-    );
+    const wasi = wasiRuntimeFactory(this.out, makeErrorWriter(this.out), libs);
     return {
       async compile(_, files) {
         if (files.length !== 1) {
@@ -62,7 +58,6 @@ export class RustTestCompilerFactory {
         }
         return new TestProgram(files[0].content, wasi, miri, "case_output");
       },
-      [Symbol.dispose]() {},
     };
   }
 }

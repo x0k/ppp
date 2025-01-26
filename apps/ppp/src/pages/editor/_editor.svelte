@@ -5,6 +5,7 @@
   import type { Compiler } from "compiler";
   import {
     createContext,
+    createRecoverableContext,
     withCancel,
     withTimeout,
     type Context,
@@ -123,31 +124,25 @@
   const terminalWriter = createTerminalWriter(terminal);
   const terminalLogger = createLogger(terminalWriter);
   let compilerFactory = $derived(runtime.compilerFactory);
-  let isRunning = $state(false);
-  let compilerCtxWithCancel = withCancel(createContext());
   let compiler: Compiler | null = null;
+  const compilerCtxWithCancel = createRecoverableContext(() => {
+    compiler = null;
+    return withCancel(createContext());
+  });
+  $effect(() => () => compilerCtxWithCancel[2][Symbol.dispose]());
   $effect(() => {
     compilerFactory;
-    isRunning = false;
-    compiler = null;
-    return () => {
-      if (compiler === null) {
-        return;
-      }
-      compilerCtxWithCancel[1]();
-      compilerCtxWithCancel = withCancel(createContext());
-      compiler[Symbol.dispose]();
-      compiler = null;
-    };
+    compilerCtxWithCancel[1]();
   });
-  let programCtxWithCancel = withCancel(compilerCtxWithCancel[0]);
-  const cancelProgram = () => {
-    programCtxWithCancel[1]()
-    programCtxWithCancel = withCancel(compilerCtxWithCancel[0])
-  }
+  let isRunning = $state(false);
+  let programCtxWithCancel = createRecoverableContext(() => {
+    isRunning = false;
+    return withCancel(compilerCtxWithCancel[0]);
+  });
+  $effect(() => () => programCtxWithCancel[2][Symbol.dispose]());
   async function handleRun() {
     if (isRunning) {
-      cancelProgram()
+      programCtxWithCancel[1]();
       return;
     }
     const programCtxWithTimeout = withTimeout(
@@ -169,17 +164,12 @@
           content: model.getValue(),
         },
       ]);
-      try {
-        await program.run(programCtxWithTimeout);
-      } finally {
-        program[Symbol.dispose]();
-      }
+      await program.run(programCtxWithTimeout);
     } catch (err) {
       console.error(err);
       terminalLogger.error(stringifyError(err));
     } finally {
-      isRunning = false;
-      cancelProgram()
+      programCtxWithCancel[1]();
     }
   }
 

@@ -40,7 +40,6 @@ export class RubyTestCompilerFactory {
         await inContext(ctx, rubyVm.evalAsync(files[0].content));
         return new TestProgram(rubyVm);
       },
-      [Symbol.dispose]() {},
     };
   }
 }

@@ -42,8 +42,6 @@ export class RustProgram implements Program {
     }
   }
 
-  [Symbol.dispose](): void {}
-
   protected get rootDir(): OpenDirectory {
     const dir = this.wasi.fds[5];
     assertOpenDir(dir);

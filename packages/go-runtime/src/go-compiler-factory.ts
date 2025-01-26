@@ -1,12 +1,12 @@
 import { createLogger, redirect } from "libs/logger";
 import { isErr } from "libs/result";
+import { makeErrorWriter } from 'libs/io';
 
 import {
   LogLevel,
   type CompilerFactory,
   type GoCompilerFactory,
 } from "./model";
-import { makeErrorWriter } from 'libs/io';
 
 export function makeGoCompilerFactory(
   makeCompiler: CompilerFactory

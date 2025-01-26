@@ -215,31 +215,26 @@ export const makeDotnetCompiler: CompilerFactory = async (ctx, out) => {
   const patchedConsole = redirect(globalThis.console, log);
 
   const { dotnet } = await inContext(ctx, import(/* @vite-ignore */ dotnetUrl));
-  const consolePatch = patch(globalThis, "console", patchedConsole);
-  try {
-    const compilerModule: DotnetModule<
-      CompilerModuleImports,
-      CompilerModuleExports
-    > = await inContext(ctx, dotnet.create());
-    const compiler = await inContext(
-      ctx,
-      new DotnetCompilerFactory(log, compilerModule).create(
-        precompiledLibsIndexUrl,
-        LIBS
-      )
-    );
-    const runtimeFactory = new DotnetRuntimeFactory(compiler);
-    return {
-      async compile(_, files) {
-        if (files.length !== 1) {
-          throw new Error("Compilation of multiple files is not implemented");
-        }
-        const runtime = runtimeFactory.create(files[0].content);
-        return new DotnetProgram(runtime);
-      },
-      [Symbol.dispose]() {},
-    };
-  } finally {
-    consolePatch[Symbol.dispose]();
-  }
+  using _ = patch(globalThis, "console", patchedConsole);
+  const compilerModule: DotnetModule<
+    CompilerModuleImports,
+    CompilerModuleExports
+  > = await inContext(ctx, dotnet.create());
+  const compiler = await inContext(
+    ctx,
+    new DotnetCompilerFactory(log, compilerModule).create(
+      precompiledLibsIndexUrl,
+      LIBS
+    )
+  );
+  const runtimeFactory = new DotnetRuntimeFactory(compiler);
+  return {
+    async compile(_, files) {
+      if (files.length !== 1) {
+        throw new Error("Compilation of multiple files is not implemented");
+      }
+      const runtime = runtimeFactory.create(ctx, files[0].content);
+      return new DotnetProgram(runtime);
+    },
+  };
 };

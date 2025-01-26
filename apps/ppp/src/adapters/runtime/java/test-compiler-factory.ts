@@ -80,7 +80,6 @@ public class ${className} {
         );
         return new TestProgram(className, jvmFactory);
       },
-      [Symbol.dispose]() {},
     };
   }
 }

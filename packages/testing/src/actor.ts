@@ -1,5 +1,6 @@
 import {
   createContext,
+  createRecoverableContext,
   inContext,
   withCancel,
   type Context,
@@ -17,7 +18,7 @@ import {
 } from "libs/actor";
 import { stringifyError } from "libs/error";
 import { compileJsModule } from "libs/js";
-import type { File } from "compiler";
+import type { Compiler, File, Program } from "compiler";
 import type { Writer } from "libs/io";
 import { ok } from "libs/result";
 
@@ -29,11 +30,14 @@ export interface InitConfig {
 
 interface Handlers<I, O> {
   [key: string]: any;
-  init(config: InitConfig): Promise<void>;
+  initialize(config: InitConfig): Promise<void>;
+  destroy(): void;
+
   compile(files: File[]): Promise<void>;
+  stopCompile(): void;
+
   test(data: I): Promise<O>;
-  cancel(): void;
-  dispose(): void;
+  stopTest(): void;
 }
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
@@ -63,21 +67,25 @@ export type TestCompilerFactory<D, I, O> = (
   universalFactory: UniversalFactory<D, I, O>
 ) => Promise<TestCompiler<I, O>>;
 
-class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
-  private ctxWithCancel = withCancel(createContext());
-  private testCompiler: TestCompiler<I, O> | null = null;
-  private testProgram: TestProgram<I, O> | null = null;
+class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implements Disposable {
+  protected compiler: TestCompiler<I, O> | null = null;
+  protected compilerCtx = createRecoverableContext(() => {
+    this.compiler = null
+    return withCancel(createContext())
+  })
+  protected program: TestProgram<I, O> | null = null
+  protected programCtx = createRecoverableContext(() => {
+    this.program = null
+    return withCancel(this.compilerCtx[0])
+  })
+  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx[0]))
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
     superFactory: TestCompilerFactory<D, I, O>
   ) {
-    const cancel = () => {
-      this.ctxWithCancel[1]();
-      this.ctxWithCancel = withCancel(createContext())
-    }
     const handlers: Handlers<I, O> = {
-      init: async ({ universalFactoryFunction }) => {
+      initialize: async({ universalFactoryFunction }) => {
         const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
           universalFactoryFunction
         );
@@ -92,31 +100,29 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
             return ok(buffer.length);
           },
         };
-        try {
-          this.testCompiler = await superFactory(
-            this.ctxWithCancel[0],
-            out,
-            universalFactory
-          );
-        } finally {
-          cancel()
-        }
+        this.compiler = await superFactory(
+          this.compilerCtx[0],
+          out,
+          universalFactory
+        );
+      },
+      destroy: () => {
+        this.compilerCtx[1]()
       },
       compile: async (files) => {
-        if (this.testCompiler === null) {
+        if (this.compiler === null) {
           throw new Error("Test runner not initialized");
         }
-        try {
-          this.testProgram = await this.testCompiler.compile(
-            this.ctxWithCancel[0],
-            files
-          );
-        } finally {
-          cancel()
-        }
+        this.program = await this.compiler.compile(
+          this.programCtx[0],
+          files
+        );
       },
-      test: (input) => {
-        if (!this.testProgram) {
+      stopCompile: () => {
+        this.programCtx[1]()
+      },
+      test: async(input) => {
+        if (this.program === null) {
           const err = new Error("Test runner not initialized");
           connection.send({
             type: MessageType.Event,
@@ -126,22 +132,24 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> {
           throw err;
         }
         try {
-          return this.testProgram.run(this.ctxWithCancel[0], input);
+          return this.program.run(this.runCtx[0], input);
         } finally {
-          cancel()
+          this.runCtx[1]()
         }
       },
-      cancel,
-      dispose: () => {
-        if (this.testProgram !== null) {
-          this.testProgram[Symbol.dispose]();
-        }
-        if (this.testCompiler !== null) {
-          this.testCompiler[Symbol.dispose]();
-        }
+      stopTest: () => {
+        this.runCtx[1]()
       },
     };
     super(connection, handlers, stringifyError);
+  }
+
+  [Symbol.dispose] (): void {
+    this.compiler = null;
+    this.compilerCtx[2][Symbol.dispose]()
+    this.program = null;
+    this.programCtx[2][Symbol.dispose]()
+    this.runCtx[2][Symbol.dispose]()
   }
 }
 
@@ -154,6 +162,10 @@ export function startTestCompilerActor<D, I = unknown, O = unknown>(
   );
   connection.start(ctx);
   const actor = new TestCompilerActor(connection, superFactory);
+  const disposable = ctx.onCancel(() => {
+    disposable[Symbol.dispose]()
+    actor[Symbol.dispose]()
+  })
   actor.start(ctx);
 }
 
@@ -167,6 +179,10 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
 ) {
   return async (ctx: Context, out: Writer): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
+    const disposable = ctx.onCancel(() => {
+      disposable[Symbol.dispose]()
+      worker.terminate()
+    })
     const connection = new WorkerConnection<Outgoing<I, O>, Incoming<I, O>>(
       worker
     );
@@ -185,46 +201,21 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
         },
       }
     );
-    const cancelRemote = () => {
-      remote.cancel();
-    };
-    ctx.signal.addEventListener("abort", cancelRemote);
-    try {
-      await inContext(
-        ctx,
-        remote.init({
-          universalFactoryFunction: universalFactory.toString(),
-        })
-      );
-    } catch (err) {
-      worker.terminate();
-      throw err;
-    } finally {
-      ctx.signal.removeEventListener("abort", cancelRemote);
-    }
+    using _ = ctx.onCancel(() => remote.destroy())
+    await remote.initialize({
+      universalFactoryFunction: universalFactory.toString(),
+    });
     return {
       async compile(ctx, files) {
-        ctx.signal.addEventListener("abort", cancelRemote);
-        try {
-          await inContext(ctx, remote.compile(files));
-          return {
-            async run(ctx, input) {
-              ctx.signal.addEventListener("abort", cancelRemote);
-              try {
-                return await inContext(ctx, remote.test(input));
-              } finally {
-                ctx.signal.removeEventListener("abort", cancelRemote);
-              }
-            },
-            [Symbol.dispose]() {
-              void remote.dispose();
-            },
-          };
-        } finally {
-          ctx.signal.removeEventListener("abort", cancelRemote);
+        using _ = ctx.onCancel(() => remote.stopCompile())
+        await inContext(ctx, remote.compile(files));
+        return {
+          async run(ctx, input) {
+            using _ = ctx.onCancel(() => remote.stopTest())
+            return await inContext(ctx, remote.test(input));
+          }
         }
       },
-      [Symbol.dispose]: worker.terminate.bind(worker),
     };
   };
 }

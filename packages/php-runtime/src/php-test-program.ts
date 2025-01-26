@@ -33,23 +33,15 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
     this.result = this.transformResult(result);
   }
 
-  async run(ctx: Context, input: I): Promise<O> {
+  async run(_: Context, input: I): Promise<O> {
     const code = this.transformCode(input);
-    const stopPHP = () => {
-      this.php.exit(137);
+    const response = await this.php.run({ code });
+    const text = response.bytes;
+    if (text.byteLength > 0) {
+      this.writer.write(new Uint8Array(text));
     }
-    ctx.signal.addEventListener('abort', stopPHP)
-    try {
-      const response = await this.php.run({ code });
-      const text = response.bytes;
-      if (text.byteLength > 0) {
-        this.writer.write(new Uint8Array(text));
-      }
-      if (response.errors) {
-        throw new Error(response.errors);
-      }
-    } finally {
-      ctx.signal.removeEventListener('abort', stopPHP)
+    if (response.errors) {
+      throw new Error(response.errors);
     }
     if (this.result === undefined) {
       throw new Error("No result");
@@ -57,7 +49,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
     return this.result;
   }
 
-  [Symbol.dispose](): void {
+  [Symbol.dispose]() {
     this.result = undefined;
     // TODO: Remove on message callback
   }

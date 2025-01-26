@@ -44,8 +44,6 @@ export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
     return this.readResult();
   }
 
-  [Symbol.dispose](): void {}
-
   protected get stdin(): Fd {
     return this.wasi.fds[0];
   }

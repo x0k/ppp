@@ -40,7 +40,6 @@ export class GoTestCompilerFactory {
           await goEvaluatorFactory(ctx, this.out, files[0].content)
         );
       },
-      [Symbol.dispose]() {},
     };
   }
 }

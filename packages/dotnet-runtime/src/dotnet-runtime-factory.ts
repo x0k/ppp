@@ -1,11 +1,17 @@
+import type { Context } from 'libs/context';
+
 import type { DotnetCompiler } from "./dotnet-compiler-factory";
 
-export type DotnetRuntime = Omit<DotnetCompiler, "Compile">;
+export type DotnetRuntime = Omit<DotnetCompiler, "Compile" | "DisposeAssembly">;
 
 export class DotnetRuntimeFactory {
   constructor(protected readonly compiler: DotnetCompiler) {}
 
-  create(...code: string[]): DotnetRuntime {
+  create(ctx: Context, ...code: string[]): DotnetRuntime {
+    const disposable = ctx.onCancel(() => {
+      disposable[Symbol.dispose]()
+      this.compiler.DisposeAssembly()
+    })
     const status = this.compiler.Compile(code);
     if (status !== 0) {
       throw new Error("Compilation failed");

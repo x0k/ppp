@@ -39,6 +39,5 @@ export const makeGleamCompiler: CompilerFactory = async (ctx, out) => {
       }
       return new GleamProgram(jsModule as GleamModule, patchedConsole);
     },
-    [Symbol.dispose]() {},
   };
 };

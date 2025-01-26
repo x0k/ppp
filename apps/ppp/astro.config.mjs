@@ -23,6 +23,9 @@ export default defineConfig({
     worker: {
       format: "es",
     },
+    esbuild: {
+      target: "es2022",
+    },
     build: {
       rollupOptions: {
         external: ["sharp"],

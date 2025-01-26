@@ -1,4 +1,4 @@
-import { inContext, type Context } from 'libs/context';
+import type { Context } from 'libs/context';
 import type { Writer } from "libs/io";
 import { phpCompilerFactory, PHPTestProgram } from "php-runtime";
 import type { TestCompiler } from "testing";
@@ -17,16 +17,18 @@ export class PhpTestCompilerFactory {
         return generateCaseExecutionCode(data);
       }
     }
-    const php = await inContext(ctx, phpCompilerFactory());
+    const php = await phpCompilerFactory(ctx);
     return {
-      compile: async (_, files) => {
+      compile: async (ctx, files) => {
         if (files.length !== 1) {
           throw new Error("Compilation of multiple files is not implemented");
         }
-        return new TestProgram(this.out, php, files[0].content);
-      },
-      [Symbol.dispose]() {
-        php[Symbol.dispose]();
+        const program = new TestProgram(this.out, php, files[0].content);
+        const disposable = ctx.onCancel(() => {
+          disposable[Symbol.dispose]()
+          program[Symbol.dispose]()
+        })
+        return program
       },
     };
   }

@@ -44,6 +44,5 @@ export const makeRustCompiler: CompilerFactory = async (ctx, out) => {
       }
       return new RustProgram(files[0].content, wasi, miri);
     },
-    [Symbol.dispose]() {},
   };
 };

@@ -21,12 +21,12 @@ export function makeJVMFactory(writer: Writer): JVMFactory {
     // process.initializeTTYs();
     process.stdout.on("data", onStdout);
     process.stderr.on("data", onStderr);
-    const unsub = () => {
-      ctx.signal.removeEventListener("abort", unsub);
+    const disposable = ctx.onCancel(() => {
+      disposable[Symbol.dispose]()
+      jvm.halt(1);
       process.stdout.removeListener("data", onStdout);
       process.stderr.removeListener("data", onStderr);
-    };
-    ctx.signal.addEventListener("abort", unsub);
+    })
     return jvm;
   };
 }

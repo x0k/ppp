@@ -11,6 +11,4 @@ export class RubyProgram implements Program {
   async run(ctx: Context): Promise<void> {
     await inContext(ctx, this.rubyVm.evalAsync(this.code));
   }
-
-  [Symbol.dispose](): void {}
 }

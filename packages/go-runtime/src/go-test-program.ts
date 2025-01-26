@@ -19,6 +19,4 @@ export abstract class GoTestProgram<I, O> implements TestProgram<I, O> {
     }
     return result.value;
   }
-
-  [Symbol.dispose](): void {}
 }

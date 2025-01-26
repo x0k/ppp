@@ -48,7 +48,6 @@ export class GleamTestCompilerFactory {
         const jsCode = compiler.compile(files[0].content);
         return new TestProgram(await compileJsModule(jsCode), this.patchedConsole);
       },
-      [Symbol.dispose]() {},
     };
   }
 }

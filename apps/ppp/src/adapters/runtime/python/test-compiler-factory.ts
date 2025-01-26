@@ -44,7 +44,6 @@ export class PythonTestCompilerFactory {
         }
         return new TestProgram(pyRuntime, files[0].content);
       },
-      [Symbol.dispose]() {},
     };
   }
 }

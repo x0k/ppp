@@ -11,8 +11,6 @@ export abstract class RubyTestProgram<I, O> implements TestProgram<I, O> {
     );
   }
 
-  [Symbol.dispose](): void {}
-
   protected abstract caseExecutionCode(input: I): string;
 
   protected transformResult(result: RbValue): O {

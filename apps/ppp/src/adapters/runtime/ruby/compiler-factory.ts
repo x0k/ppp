@@ -18,6 +18,5 @@ export const makeRubyCompiler: CompilerFactory = async (ctx, out) => {
       const vm = await createRubyVM(ctx, out, errorWriter, rubyWasmModule);
       return new RubyProgram(files[0].content, vm);
     },
-    [Symbol.dispose]() {},
   };
 };

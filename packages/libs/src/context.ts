@@ -1,25 +1,45 @@
 export interface Context {
   readonly signal: AbortSignal;
+  onCancel(action: () => void): Disposable;
+}
+
+function noop() {}
+
+function createContextFromSignal(signal: AbortSignal): Context {
+  return {
+    signal,
+    onCancel(action) {
+      if (signal.aborted) {
+        action();
+        return { [Symbol.dispose]: noop };
+      }
+      signal.addEventListener("abort", action);
+      return {
+        [Symbol.dispose]() {
+          signal.removeEventListener("abort", action);
+        },
+      };
+    },
+  };
 }
 
 export function createContext(): Context {
-  return new AbortController();
+  const ctrl = new AbortController();
+  return createContextFromSignal(ctrl.signal);
 }
 
 export function withCancel(ctx: Context): [Context, () => void] {
   const ctrl = new AbortController();
-  return [
-    {
-      signal: AbortSignal.any([ctx.signal, ctrl.signal]),
-    },
-    ctrl.abort.bind(ctrl),
-  ];
+  const signal = AbortSignal.any([ctx.signal, ctrl.signal]);
+  return [createContextFromSignal(signal), ctrl.abort.bind(ctrl)];
 }
 
 export function withTimeout(ctx: Context, timeoutInMs: number): Context {
-  return {
-    signal: AbortSignal.any([ctx.signal, AbortSignal.timeout(timeoutInMs)]),
-  };
+  const signal = AbortSignal.any([
+    ctx.signal,
+    AbortSignal.timeout(timeoutInMs),
+  ]);
+  return createContextFromSignal(signal);
 }
 
 export const CANCELED_ERROR = new Error("Context canceled");
@@ -39,3 +59,22 @@ export function inContext<T>(ctx: Context, promise: Promise<T>): Promise<T> {
     });
   });
 }
+
+export function createRecoverableContext(
+  contextFactory: () => [Context, () => void],
+): [Context, () => void, Disposable] {
+  const ctxWithCancel = contextFactory()
+  const recoverable: [Context, () => void, Disposable] = [
+    ctxWithCancel[0],
+    ctxWithCancel[1],
+    ctxWithCancel[0].onCancel(function handleCancel() {
+      recoverable[2][Symbol.dispose]()
+      const [ctx, cancel] = contextFactory()
+      recoverable[0] = ctx
+      recoverable[1] = cancel
+      recoverable[2] = ctx.onCancel(handleCancel)
+    })
+  ]
+  return recoverable
+}
+

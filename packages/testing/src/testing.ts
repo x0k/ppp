@@ -19,11 +19,11 @@ export function testCase<I, O>(
   });
 }
 
-export interface TestProgram<I, O> extends Disposable {
+export interface TestProgram<I, O> {
   run: (ctx: Context, input: I) => Promise<O>;
 }
 
-export interface TestCompiler<I, O> extends Disposable {
+export interface TestCompiler<I, O> {
   compile: (ctx: Context, files: File[]) => Promise<TestProgram<I, O>>;
 }
 

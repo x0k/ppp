@@ -15,6 +15,5 @@ export const makeTsCompiler: CompilerFactory = async (_, out) => {
         patchedConsole
       );
     },
-    [Symbol.dispose]() {},
   };
 };

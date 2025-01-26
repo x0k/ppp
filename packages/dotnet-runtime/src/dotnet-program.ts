@@ -12,8 +12,4 @@ export class DotnetProgram implements Program {
       throw new Error("Run failed");
     }
   }
-
-  [Symbol.dispose](): void {
-    this.runtime.DisposeAssembly();
-  }
 }

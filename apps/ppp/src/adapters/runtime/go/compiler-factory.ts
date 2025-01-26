@@ -22,6 +22,5 @@ export const makeGoCompiler: CompilerFactory = async (ctx, out) => {
       }
       return new GoProgram(await goExecutorFactory(ctx, out, files[0].content));
     },
-    [Symbol.dispose]() {},
   };
 };

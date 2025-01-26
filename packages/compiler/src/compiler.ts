@@ -1,7 +1,7 @@
 import type { Context } from 'libs/context';
 import type { Writer } from 'libs/io';
 
-export interface Program extends Disposable {
+export interface Program {
   run: (ctx: Context) => Promise<void>;
 }
 
@@ -10,7 +10,7 @@ export interface File {
   content: string;
 }
 
-export interface Compiler extends Disposable {
+export interface Compiler {
   compile: (ctx: Context, files: File[]) => Promise<Program>;
 }
 

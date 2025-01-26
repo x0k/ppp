@@ -155,7 +155,6 @@
       }
       compilerCtxWithCancel[1]()
       compilerCtxWithCancel = withCancel(createContext())
-      testCompiler[Symbol.dispose]();
       testCompiler = null;
     }
   })
@@ -180,11 +179,7 @@
         filename: "main",
         content: model.getValue(),
       }])
-      try {
-        lastTestId = await runTests(programCtxWithTimeout, terminalLogger, testProgram, testCases);
-      } finally {
-        testProgram[Symbol.dispose]();
-      }
+      lastTestId = await runTests(programCtxWithTimeout, terminalLogger, testProgram, testCases);
     } catch (err) {
       console.error(err);
       terminalLogger.error(stringifyError(err));

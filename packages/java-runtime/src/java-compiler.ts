@@ -13,11 +13,7 @@ export class JavaCompiler {
   async compile(ctx: Context, code: string) {
     this.fs.writeFileSync(this.classPath, code);
     const jvm = await this.jvmFactory(ctx);
-    const stopJVM = () => {
-      jvm.halt(1);
-    };
-    ctx.signal.addEventListener("abort", stopJVM);
-    return await new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       jvm.runClass("util.Javac", [this.classPath], (code) => {
         if (code === 0) {
           resolve();
@@ -25,8 +21,6 @@ export class JavaCompiler {
           reject(new Error("Compilation failed"));
         }
       });
-    }).finally(() => {
-      ctx.signal.removeEventListener("abort", stopJVM);
     });
   }
 }

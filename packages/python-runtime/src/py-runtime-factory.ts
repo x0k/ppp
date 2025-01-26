@@ -32,7 +32,7 @@ export const pyRuntimeFactory = async (
   ) => Promise<WebAssembly.WebAssemblyInstantiatedSource>,
   stdLibUrl: string
 ): Promise<PyodideInterface> => {
-  const globalPatch = patch(
+  using _ = patch(
     globalThis,
     "_createPyodideModule",
     function (settings: EmscriptenSettings) {
@@ -49,18 +49,14 @@ export const pyRuntimeFactory = async (
       });
     }
   );
-  try {
-    return await inContext(
-      ctx,
-      loadPyodide({
-        indexURL: "intentionally-missing-index-url",
-        stdLibURL: stdLibUrl,
-        lockFileURL: lockFilerUrl,
-        stdout: log.debug.bind(log),
-        stderr: log.error.bind(log),
-      })
-    );
-  } finally {
-    globalPatch[Symbol.dispose]();
-  }
+  return await inContext(
+    ctx,
+    loadPyodide({
+      indexURL: "intentionally-missing-index-url",
+      stdLibURL: stdLibUrl,
+      lockFileURL: lockFilerUrl,
+      stdout: log.debug.bind(log),
+      stderr: log.error.bind(log),
+    })
+  );
 };

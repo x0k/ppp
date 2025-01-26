@@ -27,9 +27,9 @@ export class WorkerConnection<Incoming, Outgoing>
 
   onMessage(ctx: Context, handler: (message: Incoming) => void) {
     this.handlers.add(handler);
-    const unsub = () => {
-      ctx.signal.removeEventListener("abort", unsub);
+    const disposable = ctx.onCancel(() => {
+      disposable[Symbol.dispose]();
       this.handlers.delete(handler);
-    };
+    });
   }
 }

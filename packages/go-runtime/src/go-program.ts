@@ -13,6 +13,4 @@ export class GoProgram implements Program {
       throw new Error(result.error);
     }
   }
-
-  [Symbol.dispose](): void {}
 }

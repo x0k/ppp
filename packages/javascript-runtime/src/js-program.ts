@@ -8,14 +8,8 @@ export class JsProgram implements Program {
     protected readonly patchedConsole: Console
   ) {}
 
-  async run(_: Context): Promise<void> {
-    const consolePatch = patch(globalThis, "console", this.patchedConsole);
-    try {
-      eval(this.code);
-    } finally {
-      consolePatch[Symbol.dispose]();
-    }
+  async run(_ctx: Context): Promise<void> {
+    using _ = patch(globalThis, "console", this.patchedConsole);
+    eval(this.code);
   }
-
-  [Symbol.dispose](): void {}
 }

@@ -1,7 +1,7 @@
 import type { Context } from "libs/context";
 import type { TestProgram } from "testing";
 
-import type { JVMFactory } from './jvm-factory.js';
+import type { JVMFactory } from "./jvm-factory.js";
 
 export abstract class JavaTestProgram<I, O> implements TestProgram<I, O> {
   constructor(
@@ -11,25 +11,17 @@ export abstract class JavaTestProgram<I, O> implements TestProgram<I, O> {
 
   async run(ctx: Context, input: I): Promise<O> {
     const jvm = await this.jvmFactory(ctx);
-    const stopJVM = () => jvm.halt(1);
-    ctx.signal.addEventListener('abort', stopJVM)
-    try {
-      jvm.registerNatives({
-        [this.className]: this.getNatives(input),
-      });
-      const code = await new Promise<number>((resolve) =>
-        jvm.runClass(this.className, [], resolve)
-      );
-      if (code !== 0) {
-        throw new Error("Run failed");
-      }
-    } finally {
-      ctx.signal.removeEventListener('abort', stopJVM)
+    jvm.registerNatives({
+      [this.className]: this.getNatives(input),
+    });
+    const code = await new Promise<number>((resolve) =>
+      jvm.runClass(this.className, [], resolve)
+    );
+    if (code !== 0) {
+      throw new Error("Run failed");
     }
     return this.getResult();
   }
-
-  [Symbol.dispose](): void {}
 
   protected abstract getNatives(input: I): Record<string, Function>;
   protected abstract getResult(): O;

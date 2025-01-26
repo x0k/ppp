@@ -26,6 +26,5 @@ export const makePythonCompiler: CompilerFactory = async (ctx, out) => {
       }
       return new PyProgram(files[0].content, pyRuntime);
     },
-    [Symbol.dispose]() {},
   };
 };

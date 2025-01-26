@@ -27,6 +27,5 @@ export const makeJavaCompiler: CompilerFactory = async (ctx, out) => {
       await compiler.compile(ctx, files[0].content);
       return new JavaProgram(CLASSNAME, jvmFactory);
     },
-    [Symbol.dispose]() {},
   };
 };

@@ -11,6 +11,5 @@ export const makeJsCompiler: CompilerFactory = async (_, out) => {
       }
       return new JsProgram(files[0].content, patchedConsole);
     },
-    [Symbol.dispose]() {},
   };
 };

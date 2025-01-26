@@ -11,21 +11,11 @@ export class JavaProgram implements Program {
 
   async run(ctx: Context): Promise<void> {
     const jvm = await this.jvmFactory(ctx);
-    const stopJVM = () => {
-      jvm.halt(1)
-    }
-    ctx.signal.addEventListener('abort', stopJVM)
-    try {
-      const code = await new Promise<number>((resolve) =>
-        jvm.runClass(this.className, [], resolve)
-      );
-      if (code !== 0) {
-        throw new Error("Run failed");
-      }
-    } finally {
-      ctx.signal.removeEventListener('abort', stopJVM)
+    const code = await new Promise<number>((resolve) =>
+      jvm.runClass(this.className, [], resolve)
+    );
+    if (code !== 0) {
+      throw new Error("Run failed");
     }
   }
-
-  [Symbol.dispose](): void {}
 }

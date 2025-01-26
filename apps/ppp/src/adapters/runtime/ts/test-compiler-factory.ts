@@ -32,7 +32,6 @@ export class TsTestCompilerFactory {
           this.patchedConsole
         );
       },
-      [Symbol.dispose]() {},
     };
   }
 }

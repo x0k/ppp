@@ -31,7 +31,6 @@ export class JsTestCompilerFactory {
           this.patchedConsole
         );
       },
-      [Symbol.dispose]() {},
     };
   }
 }

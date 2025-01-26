@@ -11,6 +11,4 @@ export class PyProgram implements Program {
   async run(ctx: Context): Promise<void> {
     await inContext(ctx, this.python.runPythonAsync(this.code));
   }
-
-  [Symbol.dispose](): void {}
 }
