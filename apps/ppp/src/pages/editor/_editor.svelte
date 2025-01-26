@@ -30,6 +30,7 @@
     createTerminal,
     createTerminalWriter,
     RunButton,
+    type ProcessStatus,
   } from "@/components/editor";
   import {
     Panel,
@@ -124,6 +125,7 @@
   const terminalWriter = createTerminalWriter(terminal);
   const terminalLogger = createLogger(terminalWriter);
   let compilerFactory = $derived(runtime.compilerFactory);
+  let status = $state<ProcessStatus>("stopped");
   let compiler: Compiler | null = null;
   const compilerCtxWithCancel = createRecoverableContext(() => {
     compiler = null;
@@ -133,23 +135,26 @@
   $effect(() => {
     compilerFactory;
     compilerCtxWithCancel[1]();
+    status = "stopped";
   });
-  let isRunning = $state(false);
-  let programCtxWithCancel = createRecoverableContext(() => {
-    isRunning = false;
-    return withCancel(compilerCtxWithCancel[0]);
-  });
+  const programCtxWithCancel = createRecoverableContext(() =>
+    withCancel(compilerCtxWithCancel[0])
+  );
   $effect(() => () => programCtxWithCancel[2][Symbol.dispose]());
+
   async function handleRun() {
-    if (isRunning) {
-      programCtxWithCancel[1]();
+    if (status === "running") {
+      // At the moment, programs do not know how to stop
+      // So the only way to stop them is to kill the worker
+      // But in the future we can use `programCtxWithCancel[1]` to stop programs normally
+      compilerCtxWithCancel[1]();
       return;
     }
     const programCtxWithTimeout = withTimeout(
       programCtxWithCancel[0],
       executionTimeout
     );
-    isRunning = true;
+    status = "running";
     terminal.clear();
     try {
       if (compiler === null) {
@@ -170,6 +175,7 @@
       terminalLogger.error(stringifyError(err));
     } finally {
       programCtxWithCancel[1]();
+      status = "stopped";
     }
   }
 
@@ -185,7 +191,7 @@
   />
   <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
     <div class="flex flex-wrap items-center gap-1 p-1">
-      <RunButton {isRunning} onClick={handleRun} />
+      <RunButton {status} onClick={handleRun} />
       <Tabs>
         <Tab tab={EditorPanelTab.Output} />
         <Tab tab={EditorPanelTab.Settings} />

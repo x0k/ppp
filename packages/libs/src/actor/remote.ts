@@ -1,4 +1,4 @@
-import type { Context } from '../context.js';
+import { CanceledError, type Context } from '../context.js';
 import type { Logger } from "../logger.js";
 import { neverError } from "../error.js";
 import { isOk } from "../result.js";
@@ -32,16 +32,23 @@ export function startRemote<
       e: Extract<Event, EventMessage<K, any>>["payload"]
     ) => void;
   } & {
-    [K in ErrorEventMessage<E>["event"]]: (
-      e: ErrorEventMessage<E>["payload"]
+    [K in ErrorEventMessage<E | CanceledError>["event"]]: (
+      e: ErrorEventMessage<E | CanceledError>["payload"]
     ) => void;
   }
 ) {
   let lastId = 0;
   const promises = new Map<
     RequestId,
-    DeferredPromise<ReturnType<H[keyof H]>, E>
+    DeferredPromise<ReturnType<H[keyof H]>, E | CanceledError>
   >();
+  const disposable = ctx.onCancel(() => {
+    disposable[Symbol.dispose]()
+    for (const [, p] of promises) {
+      p.reject(new CanceledError())
+    }
+    promises.clear()
+  })
   connection.onMessage(ctx, (msg) => {
     switch (msg.type) {
       case MessageType.Response: {

@@ -10,7 +10,7 @@ import type { Writer } from "libs/io";
 
 import { contents, dir } from "./wasi.js";
 
-export function wasiRuntimeFactory(
+export function createWASI(
   stdout: Writer,
   stderr: Writer,
   libs: [string, ArrayBuffer][]
@@ -46,7 +46,7 @@ export function wasiRuntimeFactory(
           "x86_64-unknown-linux-gnu": dir({
             lib: new Directory(
               libs.map(
-                ([lib, buffler]) => [lib, new File(buffler)] as [string, File]
+                ([lib, buffer]) => [lib, new File(buffer)] as [string, File]
               )
             ),
           }),

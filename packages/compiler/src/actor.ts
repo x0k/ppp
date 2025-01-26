@@ -9,9 +9,9 @@ import {
   type OutgoingMessage,
 } from "libs/actor";
 import {
+  CanceledError,
   createContext,
   createRecoverableContext,
-  inContext,
   withCancel,
   type Context,
 } from "libs/context";
@@ -154,7 +154,7 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
       connection,
       {
         error: (err) => {
-          log.error(err);
+          log.error(err instanceof CanceledError ? err.message : err);
         },
         write: (text) => {
           out.write(text);
@@ -166,11 +166,11 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     return {
       async compile(ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile())
-        await inContext(ctx, remote.compile(files));
+        await remote.compile(files);
         return {
           async run(ctx) {
             using _ = ctx.onCancel(() => remote.stopRun())
-            await inContext(ctx, remote.run());
+            await remote.run();
           }
         };
       },

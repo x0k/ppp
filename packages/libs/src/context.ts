@@ -42,16 +42,20 @@ export function withTimeout(ctx: Context, timeoutInMs: number): Context {
   return createContextFromSignal(signal);
 }
 
-export const CANCELED_ERROR = new Error("Context canceled");
+export class CanceledError extends Error {
+  constructor() {
+    super('Context is canceled')
+  }
+}
 
 export function inContext<T>(ctx: Context, promise: Promise<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     if (ctx.signal.aborted) {
-      reject(CANCELED_ERROR);
+      reject(new CanceledError());
       return;
     }
     const cancel = () => {
-      reject(CANCELED_ERROR);
+      reject(new CanceledError());
     };
     ctx.signal.addEventListener("abort", cancel);
     promise.then(resolve, reject).finally(() => {

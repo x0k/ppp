@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
 import type { CompilerFactory } from "compiler";
-import { RustProgram, wasiRuntimeFactory } from "rust-runtime";
+import { RustProgram, createWASI } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "rust-runtime/miri.wasm";
@@ -32,7 +32,7 @@ export const makeRustCompiler: CompilerFactory = async (ctx, out) => {
     ),
     loadLibs(ctx),
   ]);
-  const wasi = wasiRuntimeFactory(
+  const wasi = createWASI(
     out,
     makeErrorWriter(out),
     libs

@@ -27,6 +27,7 @@ export enum Label {
   EditorSettingsVimMode = "editor:settings:vim-mode",
   EditorRunButton = "editor:button:run",
   EditorStopButton = "editor:button:stop",
+  EditorForceStopButton = "editor:button:force-stop",
   EditorSettingsExecutionTimeout = "editor:settings:execution-timeout",
   EditorSettingsExecutionTimeoutAlt = "editor:settings:execution-timeout-alt",
 }
@@ -43,6 +44,7 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.EditorSettingsVimMode]: "Vim mode",
     [Label.EditorRunButton]: "Run",
     [Label.EditorStopButton]: "Stop",
+    [Label.EditorForceStopButton]: "Force stop",
     [Label.EditorSettingsExecutionTimeout]: "Execution timeout (ms)",
     [Label.EditorSettingsExecutionTimeoutAlt]: "Use zero to disable",
   },
@@ -57,6 +59,7 @@ const strings: Record<Lang, Record<Label, string>> = {
     [Label.EditorSettingsVimMode]: "Режим Vim",
     [Label.EditorRunButton]: "Запустить",
     [Label.EditorStopButton]: "Остановить",
+    [Label.EditorForceStopButton]: "Остановить принудительно",
     [Label.EditorSettingsExecutionTimeout]: "Таймаут выполнения (мс)",
     [Label.EditorSettingsExecutionTimeoutAlt]: "Используйте ноль для отключения",
   },

@@ -1,7 +1,7 @@
 import {
+  CanceledError,
   createContext,
   createRecoverableContext,
-  inContext,
   withCancel,
   type Context,
 } from "libs/context";
@@ -18,9 +18,9 @@ import {
 } from "libs/actor";
 import { stringifyError } from "libs/error";
 import { compileJsModule } from "libs/js";
-import type { Compiler, File, Program } from "compiler";
 import type { Writer } from "libs/io";
 import { ok } from "libs/result";
+import type { File } from "compiler";
 
 import type { TestProgram, TestCompiler } from "./testing.js";
 
@@ -194,7 +194,7 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       connection,
       {
         error: (err) => {
-          log.error(err);
+          log.error(err instanceof CanceledError ? err.message : err);
         },
         write: (text) => {
           out.write(text);
@@ -208,11 +208,11 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
     return {
       async compile(ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile())
-        await inContext(ctx, remote.compile(files));
+        await remote.compile(files);
         return {
           async run(ctx, input) {
             using _ = ctx.onCancel(() => remote.stopTest())
-            return await inContext(ctx, remote.test(input));
+            return await remote.test(input);
           }
         }
       },
