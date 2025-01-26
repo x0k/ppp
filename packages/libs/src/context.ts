@@ -1,9 +1,9 @@
+import { noop } from './function.js';
+
 export interface Context {
   readonly signal: AbortSignal;
   onCancel(action: () => void): Disposable;
 }
-
-function noop() {}
 
 function createContextFromSignal(signal: AbortSignal): Context {
   return {
@@ -44,7 +44,7 @@ export function withTimeout(ctx: Context, timeoutInMs: number): Context {
 
 export class CanceledError extends Error {
   constructor() {
-    super('Context is canceled')
+    super("Context is canceled");
   }
 }
 
@@ -64,21 +64,25 @@ export function inContext<T>(ctx: Context, promise: Promise<T>): Promise<T> {
   });
 }
 
-export function createRecoverableContext(
-  contextFactory: () => [Context, () => void],
-): [Context, () => void, Disposable] {
-  const ctxWithCancel = contextFactory()
-  const recoverable: [Context, () => void, Disposable] = [
-    ctxWithCancel[0],
-    ctxWithCancel[1],
-    ctxWithCancel[0].onCancel(function handleCancel() {
-      recoverable[2][Symbol.dispose]()
-      const [ctx, cancel] = contextFactory()
-      recoverable[0] = ctx
-      recoverable[1] = cancel
-      recoverable[2] = ctx.onCancel(handleCancel)
-    })
-  ]
-  return recoverable
+export interface RecoverableContext extends Disposable {
+  ref: Context;
+  cancel: () => void;
 }
 
+export function createRecoverableContext(
+  contextFactory: () => [Context, () => void]
+): RecoverableContext {
+  let [ref, cancel] = contextFactory();
+  const disposable = ref.onCancel(function handleCancel() {
+    [ref, cancel] = contextFactory();
+    recoverable.ref = ref;
+    recoverable.cancel = cancel;
+    recoverable[Symbol.dispose] = ref.onCancel(handleCancel)[Symbol.dispose];
+  });
+  const recoverable: RecoverableContext = {
+    ref,
+    cancel,
+    [Symbol.dispose]: disposable[Symbol.dispose],
+  };
+  return recoverable;
+}

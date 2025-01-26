@@ -11,6 +11,7 @@
   "author": "Krasilnikov Roman",
   "license": "ISC",
   "exports": {
+    "./function": "./dist/function.js",
     "./actor": "./dist/actor/index.js",
     "./context": "./dist/context.js",
     "./error": "./dist/error.js",

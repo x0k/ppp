@@ -51,9 +51,9 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
   protected program: Program | null = null
   protected programCtx = createRecoverableContext(() => {
     this.program = null
-    return withCancel(this.compilerCtx[0])
+    return withCancel(this.compilerCtx.ref)
   })
-  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx[0]))
+  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx.ref))
 
   constructor(
     connection: Connection<Incoming, Outgoing>,
@@ -72,19 +72,19 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
             return ok(buffer.length);
           },
         };
-        this.compiler = await compilerFactory(this.compilerCtx[0], out);
+        this.compiler = await compilerFactory(this.compilerCtx.ref, out);
       },
       destroy: () => {
-        this.compilerCtx[1]()
+        this.compilerCtx.cancel()
       },
       compile: async (files) => {
         if (this.compiler === null) {
           throw new Error("Compiler not initialized");
         }
-        this.program = await this.compiler.compile(this.programCtx[0], files);
+        this.program = await this.compiler.compile(this.programCtx.ref, files);
       },
       stopCompile: () => {
-        this.programCtx[1]()
+        this.programCtx.cancel()
       },
       run: async () => {
         if (this.program === null) {
@@ -97,13 +97,13 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
           throw err;
         }
         try {
-          await this.program.run(this.runCtx[0]);
+          await this.program.run(this.runCtx.ref);
         } finally {
-          this.runCtx[1]();
+          this.runCtx.cancel();
         }
       },
       stopRun: () => {
-        this.runCtx[1]();
+        this.runCtx.cancel();
       },
     };
     super(connection, handlers, stringifyError);
@@ -111,10 +111,10 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
 
   [Symbol.dispose] (): void {
     this.compiler = null;
-    this.compilerCtx[2][Symbol.dispose]()
+    this.compilerCtx[Symbol.dispose]()
     this.program = null;
-    this.programCtx[2][Symbol.dispose]()
-    this.runCtx[2][Symbol.dispose]()
+    this.programCtx[Symbol.dispose]()
+    this.runCtx[Symbol.dispose]()
   }
 }
 

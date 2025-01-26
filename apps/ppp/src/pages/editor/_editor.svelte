@@ -126,31 +126,31 @@
   let compilerFactory = $derived(runtime.compilerFactory);
   let status = $state<ProcessStatus>("stopped");
   let compiler: Compiler | null = null;
-  const compilerCtxWithCancel = createRecoverableContext(() => {
+  const compilerCtx = createRecoverableContext(() => {
     compiler = null;
     return withCancel(createContext());
   });
-  $effect(() => () => compilerCtxWithCancel[2][Symbol.dispose]());
+  $effect(() => () => compilerCtx[Symbol.dispose]());
   $effect(() => {
     compilerFactory;
-    compilerCtxWithCancel[1]();
+    compilerCtx.cancel();
     status = "stopped";
   });
-  const programCtxWithCancel = createRecoverableContext(() =>
-    withCancel(compilerCtxWithCancel[0])
+  const programCtx = createRecoverableContext(() =>
+    withCancel(compilerCtx.ref)
   );
-  $effect(() => () => programCtxWithCancel[2][Symbol.dispose]());
+  $effect(() => () => programCtx[Symbol.dispose]());
 
   async function handleRun() {
     if (status === "running") {
       // At the moment, programs do not know how to stop
       // So the only way to stop them is to kill the worker
       // But in the future we can use `programCtxWithCancel[1]` to stop programs normally
-      compilerCtxWithCancel[1]();
+      compilerCtx.cancel();
       return;
     }
     const programCtxWithTimeout = withTimeout(
-      programCtxWithCancel[0],
+      programCtx.ref,
       executionTimeout
     );
     status = "running";
@@ -158,7 +158,7 @@
     try {
       if (compiler === null) {
         compiler = await compilerFactory(
-          compilerCtxWithCancel[0],
+          compilerCtx.ref,
           terminalWriter
         );
       }
@@ -173,7 +173,7 @@
       console.error(err);
       terminalLogger.error(stringifyError(err));
     } finally {
-      programCtxWithCancel[1]();
+      programCtx.cancel();
       status = "stopped";
     }
   }

@@ -76,9 +76,9 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
   protected program: TestProgram<I, O> | null = null
   protected programCtx = createRecoverableContext(() => {
     this.program = null
-    return withCancel(this.compilerCtx[0])
+    return withCancel(this.compilerCtx.ref)
   })
-  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx[0]))
+  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx.ref))
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
@@ -101,27 +101,27 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
           },
         };
         this.compiler = await superFactory(
-          this.compilerCtx[0],
+          this.compilerCtx.ref,
           out,
           universalFactory
         );
       },
       destroy: () => {
-        this.compilerCtx[1]()
+        this.compilerCtx.cancel()
       },
       compile: async (files) => {
         if (this.compiler === null) {
           throw new Error("Test runner not initialized");
         }
         this.program = await this.compiler.compile(
-          this.programCtx[0],
+          this.programCtx.ref,
           files
         );
       },
       stopCompile: () => {
-        this.programCtx[1]()
+        this.programCtx.cancel()
       },
-      test: async(input) => {
+      test: async (input) => {
         if (this.program === null) {
           const err = new Error("Test runner not initialized");
           connection.send({
@@ -132,13 +132,13 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
           throw err;
         }
         try {
-          return this.program.run(this.runCtx[0], input);
+          return await this.program.run(this.runCtx.ref, input);
         } finally {
-          this.runCtx[1]()
+          this.runCtx.cancel()
         }
       },
       stopTest: () => {
-        this.runCtx[1]()
+        this.runCtx.cancel()
       },
     };
     super(connection, handlers, stringifyError);
@@ -146,10 +146,10 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
 
   [Symbol.dispose] (): void {
     this.compiler = null;
-    this.compilerCtx[2][Symbol.dispose]()
+    this.compilerCtx[Symbol.dispose]()
     this.program = null;
-    this.programCtx[2][Symbol.dispose]()
-    this.runCtx[2][Symbol.dispose]()
+    this.programCtx[Symbol.dispose]()
+    this.runCtx[Symbol.dispose]()
   }
 }
 

@@ -175,29 +175,29 @@
   let status = $state<ProcessStatus>("stopped");
   let lastTestId = $state(-1);
   let testCompiler: TestCompiler<Input, Output> | null = null;
-  const compilerCtxWithCancel = createRecoverableContext(() => {
+  const compilerCtx = createRecoverableContext(() => {
     testCompiler = null;
     lastTestId = -1
     return withCancel(createContext());
   });
-  $effect(() => () => compilerCtxWithCancel[2][Symbol.dispose]());
+  $effect(() => () => compilerCtx[Symbol.dispose]());
   $effect(() => {
     testCompilerFactory;
-    compilerCtxWithCancel[1]();
+    compilerCtx.cancel();
     status = "stopped";
   });
-  const programCtxWithCancel = createRecoverableContext(() =>
-    withCancel(compilerCtxWithCancel[0])
+  const programCtx = createRecoverableContext(() =>
+    withCancel(compilerCtx.ref)
   );
-  $effect(() => () => programCtxWithCancel[2][Symbol.dispose]());
+  $effect(() => () => programCtx[Symbol.dispose]());
   
   async function handleRun() {
     if (status === "running") {
-      compilerCtxWithCancel[1]();
+      compilerCtx.cancel();
       return;
     }
     const programCtxWithTimeout = withTimeout(
-      programCtxWithCancel[0],
+      programCtx.ref,
       executionTimeout
     );
     status = "running";
@@ -205,7 +205,7 @@
     try {
       if (testCompiler === null) {
         testCompiler = await testCompilerFactory(
-          compilerCtxWithCancel[0],
+          compilerCtx.ref,
           terminalWriter
         );
       }
@@ -225,7 +225,7 @@
       console.error(err);
       terminalLogger.error(stringifyError(err));
     } finally {
-      programCtxWithCancel[1]();
+      programCtx.cancel();
       status = "stopped";
     }
   }
