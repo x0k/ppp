@@ -1,6 +1,6 @@
 import type { PHP } from "@php-wasm/universal";
 
-import type { Writer } from "libs/io";
+import type { Streams } from "libs/io";
 import type { Context } from "libs/context";
 import type { TestProgram } from "testing";
 
@@ -8,7 +8,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
   private result?: O;
 
   constructor(
-    protected readonly writer: Writer,
+    protected readonly streams: Streams,
     protected readonly php: PHP,
     protected readonly code: string
   ) {
@@ -38,7 +38,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
     const response = await this.php.run({ code });
     const text = response.bytes;
     if (text.byteLength > 0) {
-      this.writer.write(new Uint8Array(text));
+      this.streams.out.write(new Uint8Array(text));
     }
     if (response.errors) {
       throw new Error(response.errors);

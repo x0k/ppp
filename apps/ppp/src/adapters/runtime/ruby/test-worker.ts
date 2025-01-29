@@ -1,5 +1,5 @@
-import { startTestCompilerActor } from "testing/actor";
 import { createContext } from "libs/context";
+import { startTestCompilerActor } from "testing/actor";
 
 import { RubyTestCompilerFactory } from "./test-compiler-factory";
 
@@ -9,8 +9,8 @@ export interface RubyTestWorkerConfig {
 
 startTestCompilerActor<RubyTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      rubyTestCompilerFactory: new RubyTestCompilerFactory(out),
+      rubyTestCompilerFactory: new RubyTestCompilerFactory(streams),
     })
 );

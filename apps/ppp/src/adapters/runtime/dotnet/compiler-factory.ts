@@ -6,7 +6,7 @@ import {
   DotnetCompilerFactory,
   DotnetRuntimeFactory,
 } from "dotnet-runtime";
-import type { CompilerFactory } from "compiler";
+import type { CompilerFactory, Program } from "compiler";
 import { inContext } from "libs/context";
 import { createLogger, redirect } from "libs/logger";
 import { patch } from "libs/patcher";
@@ -210,8 +210,8 @@ export const LIBS = [
   "netstandard.dll",
 ];
 
-export const makeDotnetCompiler: CompilerFactory = async (ctx, out) => {
-  const log = createLogger(out);
+export const makeDotnetCompiler: CompilerFactory<Program> = async (ctx, streams) => {
+  const log = createLogger(streams.out);
   const patchedConsole = redirect(globalThis.console, log);
 
   const { dotnet } = await inContext(ctx, import(/* @vite-ignore */ dotnetUrl));

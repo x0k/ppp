@@ -1,4 +1,4 @@
-import type { CompilerFactory } from "compiler";
+import type { CompilerFactory, Program } from "compiler";
 import { makeRemoteCompilerFactory } from "compiler/actor";
 
 import { Language } from "@/shared/languages";
@@ -26,7 +26,7 @@ import rubyProgram from './_program.rb?raw';
 
 interface Runtime {
   initialValue: string;
-  compilerFactory: CompilerFactory;
+  compilerFactory: CompilerFactory<Program>;
 }
 
 export const RUNTIMES: Record<Language, Runtime> = {

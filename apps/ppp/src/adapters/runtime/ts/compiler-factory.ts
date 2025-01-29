@@ -1,10 +1,10 @@
-import { JsProgram } from "javascript-runtime";
-import type { CompilerFactory } from "compiler";
 import { redirect, createLogger } from "libs/logger";
+import type { CompilerFactory, Program } from "compiler";
+import { JsProgram } from "javascript-runtime";
 import { compileTsModule } from "typescript-runtime";
 
-export const makeTsCompiler: CompilerFactory = async (_, out) => {
-  const patchedConsole = redirect(globalThis.console, createLogger(out));
+export const makeTsCompiler: CompilerFactory<Program> = async (_, streams) => {
+  const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
   return {
     async compile (_, files) {
       if (files.length !== 1) {

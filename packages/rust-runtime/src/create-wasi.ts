@@ -6,13 +6,12 @@ import {
   File,
   Directory,
 } from "@bjorn3/browser_wasi_shim";
-import type { Writer } from "libs/io";
+import type { Streams } from "libs/io";
 
 import { contents, dir } from "./wasi.js";
 
 export function createWASI(
-  stdout: Writer,
-  stderr: Writer,
+  streams: Streams,
   libs: [string, ArrayBuffer][]
 ): WASI {
   const env: string[] = [];
@@ -64,8 +63,8 @@ export function createWASI(
     new ConsoleStdout(() => {
       throw new Error("Stdin is not implemented");
     }),
-    new ConsoleStdout(stdout.write.bind(stdout)),
-    new ConsoleStdout(stderr.write.bind(stderr)),
+    new ConsoleStdout(streams.out.write.bind(streams.out)),
+    new ConsoleStdout(streams.err.write.bind(streams.err)),
     tmpDir,
     sysrootDir,
     rootDir,

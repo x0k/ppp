@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import { makeErrorWriter, type Writer } from "libs/io";
+import type { Streams } from "libs/io";
 import type { TestCompiler } from "testing";
 
 import {
@@ -23,10 +23,7 @@ export interface Options<I, O> {
 }
 
 export class JavaTestCompilerFactory {
-  protected stderr: Writer;
-  constructor(private readonly writer: Writer) {
-    this.stderr = makeErrorWriter(writer);
-  }
+  constructor(private readonly streams: Streams) {}
   async create<I, O>(
     ctx: Context,
     {
@@ -36,7 +33,7 @@ export class JavaTestCompilerFactory {
       nativesFactory,
     }: Options<I, O>
   ): Promise<TestCompiler<I, O>> {
-    const jvmFactory = makeJVMFactory(this.writer, this.stderr);
+    const jvmFactory = makeJVMFactory(this.streams);
     const libZipData = await fetch(libZipUrl, {
       signal: ctx.signal,
       cache: "force-cache",

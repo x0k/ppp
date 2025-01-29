@@ -1,6 +1,6 @@
 <script lang="ts" generics="Langs extends Language, Input, Output">
   import { getRelativeLocaleUrl } from "astro:i18n";
-  import { untrack } from "svelte";
+  import { onDestroy, untrack } from "svelte";
   import Icon from "@iconify/svelte";
   import { editor } from "monaco-editor";
   import { stringifyError } from "libs/error";
@@ -30,7 +30,6 @@
     VimStatus,
     RunButton,
     createTerminal,
-    createTerminalWriter,
     EditorContext,
     setEditorContext,
     type ProcessStatus,
@@ -106,7 +105,8 @@
     };
   });
 
-  const { terminal, fitAddon } = createTerminal();
+  const { terminal, fitAddon, streams } = createTerminal();
+  onDestroy(streams[Symbol.dispose])
 
   const editorContext = new EditorContext(pageLang, model, terminal, fitAddon);
   setEditorContext(editorContext);
@@ -169,8 +169,7 @@
   let executionTimeout = $state(executionTimeoutStorage.load());
   debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-  const terminalWriter = createTerminalWriter(terminal);
-  const terminalLogger = createLogger(terminalWriter);
+  const terminalLogger = createLogger(streams.out);
   let testCompilerFactory = $derived(runtime.testCompilerFactory);
   let status = $state<ProcessStatus>("stopped");
   let lastTestId = $state(-1);
@@ -206,7 +205,7 @@
       if (testCompiler === null) {
         testCompiler = await testCompilerFactory(
           compilerCtx.ref,
-          terminalWriter
+          streams
         );
       }
       const testProgram = await testCompiler.compile(programCtxWithTimeout, [

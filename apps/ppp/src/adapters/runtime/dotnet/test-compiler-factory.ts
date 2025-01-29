@@ -1,6 +1,6 @@
 import { inContext, type Context } from "libs/context";
 import { createLogger, redirect, type Logger } from "libs/logger";
-import type { Writer } from "libs/io";
+import type { Streams, Writer } from "libs/io";
 import { patch } from "libs/patcher";
 import type { TestCompiler } from "testing";
 import {
@@ -220,8 +220,8 @@ export interface Options {
 export class DotnetTestCompilerFactory {
   protected readonly log: Logger;
   protected readonly patchedConsole: Console;
-  constructor(out: Writer) {
-    this.log = createLogger(out);
+  constructor(streams: Streams) {
+    this.log = createLogger(streams.out);
     this.patchedConsole = redirect(globalThis.console, this.log);
   }
   async create<I, O>(

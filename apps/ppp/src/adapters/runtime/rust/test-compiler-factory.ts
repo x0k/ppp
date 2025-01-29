@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import { makeErrorWriter, type Writer } from "libs/io";
+import type { Streams } from "libs/io";
 import type { TestCompiler } from "testing";
 import { RustTestProgram, createWASI } from "rust-runtime";
 
@@ -29,7 +29,7 @@ export type GenerateOutputContentCode<I> = (input: I) => string;
 export type TransformResult<O> = (result: string) => O;
 
 export class RustTestCompilerFactory {
-  constructor(protected readonly out: Writer) {}
+  constructor(protected readonly streams: Streams) {}
 
   async create<I, O>(
     ctx: Context,
@@ -50,7 +50,7 @@ export class RustTestCompilerFactory {
       ),
       loadLibs(ctx),
     ]);
-    const wasi = createWASI(this.out, makeErrorWriter(this.out), libs);
+    const wasi = createWASI(this.streams, libs);
     return {
       async compile(_, files) {
         if (files.length !== 1) {

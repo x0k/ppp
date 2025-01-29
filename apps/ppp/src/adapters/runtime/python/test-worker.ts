@@ -9,8 +9,8 @@ export interface PythonTestWorkerConfig {
 
 startTestCompilerActor<PythonTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      pythonTestCompilerFactory: new PythonTestCompilerFactory(out),
+      pythonTestCompilerFactory: new PythonTestCompilerFactory(streams),
     })
 );

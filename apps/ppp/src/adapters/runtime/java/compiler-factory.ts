@@ -1,20 +1,18 @@
-import { makeErrorWriter } from "libs/io";
 import {
   initFs,
   JavaCompiler,
   JavaProgram,
   makeJVMFactory,
 } from "java-runtime";
-import type { CompilerFactory } from "compiler";
+import type { CompilerFactory, Program } from "compiler";
 
 // @ts-expect-error vite url import
 import libZipUrl from "java-runtime/doppio.zip";
 
 const CLASSNAME = "Program";
 
-export const makeJavaCompiler: CompilerFactory = async (ctx, out) => {
-  const stderr = makeErrorWriter(out);
-  const jvmFactory = makeJVMFactory(out, stderr);
+export const makeJavaCompiler: CompilerFactory<Program> = async (ctx, streams) => {
+  const jvmFactory = makeJVMFactory(streams);
   const libZipData = await fetch(libZipUrl, {
     signal: ctx.signal,
     cache: "force-cache",

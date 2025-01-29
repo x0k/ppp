@@ -1,5 +1,5 @@
 import { inContext, type Context } from "libs/context";
-import type { Writer } from "libs/io";
+import type { Streams } from "libs/io";
 import type { TestCompiler } from "testing";
 import {
   makeCompilerFactory,
@@ -13,7 +13,7 @@ import wasmInit from "go-runtime/compiler.wasm?init";
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
 export class GoTestCompilerFactory {
-  constructor(protected readonly out: Writer) {}
+  constructor(protected readonly streams: Streams) {}
 
   async create<I, O>(
     ctx: Context,
@@ -37,7 +37,7 @@ export class GoTestCompilerFactory {
           throw new Error("Compilation of multiple files is not implemented");
         }
         return new TestProgram(
-          await goEvaluatorFactory(ctx, this.out, files[0].content)
+          await goEvaluatorFactory(ctx, this.streams, files[0].content)
         );
       },
     };

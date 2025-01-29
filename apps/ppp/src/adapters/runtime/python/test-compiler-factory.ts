@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import type { Writer } from "libs/io";
+import type { Streams } from "libs/io";
 import { createLogger, type Logger } from "libs/logger";
 import type { TestCompiler } from "testing";
 import { pyRuntimeFactory, PyTestProgram } from "python-runtime";
@@ -14,8 +14,8 @@ export type GenerateCaseExecutionCode<I> = (input: I) => string;
 export class PythonTestCompilerFactory {
   protected readonly log: Logger;
 
-  constructor(out: Writer) {
-    this.log = createLogger(out);
+  constructor(streams: Streams) {
+    this.log = createLogger(streams.out);
   }
 
   async create<I, O>(

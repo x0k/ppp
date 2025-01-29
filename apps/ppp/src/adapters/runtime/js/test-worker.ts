@@ -1,7 +1,7 @@
+import { createContext } from "libs/context";
 import { startTestCompilerActor } from "testing/actor";
 
 import { JsTestCompilerFactory } from "./test-compiler-factory";
-import { createContext } from "libs/context";
 
 export interface JsTestWorkerConfig {
   jsTestCompilerFactory: JsTestCompilerFactory;
@@ -9,8 +9,8 @@ export interface JsTestWorkerConfig {
 
 startTestCompilerActor<JsTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      jsTestCompilerFactory: new JsTestCompilerFactory(out),
+      jsTestCompilerFactory: new JsTestCompilerFactory(streams),
     })
 );

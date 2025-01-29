@@ -1,4 +1,4 @@
-import type { Writer } from "libs/io";
+import type { Streams, Writer } from "libs/io";
 import { compileJsModule } from "libs/js";
 import { createLogger, redirect } from "libs/logger";
 import type { TestCompiler } from "testing";
@@ -10,8 +10,8 @@ export type InvokeTestMethod<M, I, O> = (m: M, input: I) => Promise<O>;
 export class TsTestCompilerFactory {
   protected readonly patchedConsole: Console;
 
-  constructor(out: Writer) {
-    this.patchedConsole = redirect(globalThis.console, createLogger(out));
+  constructor(streams: Streams) {
+    this.patchedConsole = redirect(globalThis.console, createLogger(streams.out));
   }
 
   create<M, I, O>(

@@ -2,8 +2,8 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal, type ITheme } from "@xterm/xterm";
 import type { Theme } from "daisyui";
 import themes from "daisyui/src/theming/themes";
-import type { Writer } from "libs/io";
-import { ok } from "libs/result";
+import type { Streams, Writer } from "libs/io";
+import { makeErrorWriter } from "libs/logger";
 
 function makeTerminalTheme(themeName: Theme): ITheme {
   const theme = themes[themeName];
@@ -21,14 +21,30 @@ export function createTerminal() {
   });
   const fitAddon = new FitAddon();
   terminal.loadAddon(fitAddon);
-  return { terminal, fitAddon };
-}
-
-export function createTerminalWriter(terminal: Terminal): Writer {
-  return {
+  const out: Writer = {
     write(data) {
       terminal.write(data);
-      return ok(data.length);
     },
   };
+  let input = "";
+  const disposable = terminal.onData((data) => {
+    terminal.write(data);
+    input += data;
+  });
+  const encoder = new TextEncoder();
+  const streams: Streams & Disposable = {
+    out,
+    err: makeErrorWriter(out),
+    in: {
+      read() {
+        const bytes = encoder.encode(input);
+        input = "";
+        return bytes;
+      },
+    },
+    [Symbol.dispose]() {
+      disposable.dispose();
+    },
+  };
+  return { terminal, fitAddon, streams };
 }

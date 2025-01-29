@@ -9,8 +9,8 @@ export interface GleamTestWorkerConfig {
 
 startTestCompilerActor<GleamTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      gleamTestCompilerFactory: new GleamTestCompilerFactory(out),
+      gleamTestCompilerFactory: new GleamTestCompilerFactory(streams),
     })
 );

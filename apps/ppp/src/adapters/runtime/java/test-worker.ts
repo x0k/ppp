@@ -11,9 +11,9 @@ export interface JavaTestWorkerConfig {
 
 startTestCompilerActor<JavaTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      javaTestCompilerFactory: new JavaTestCompilerFactory(out),
+      javaTestCompilerFactory: new JavaTestCompilerFactory(streams),
       util,
     })
 );

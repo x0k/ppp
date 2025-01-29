@@ -2,7 +2,7 @@
   import { editor } from "monaco-editor";
   import Icon from "@iconify/svelte";
 
-  import type { Compiler } from "compiler";
+  import type { Compiler, Program } from "compiler";
   import {
     createContext,
     createRecoverableContext,
@@ -27,7 +27,6 @@
     setEditorContext,
     VimStatus,
     createTerminal,
-    createTerminalWriter,
     RunButton,
     type ProcessStatus,
   } from "@/components/editor";
@@ -42,6 +41,7 @@
   import { CheckBox, Number } from "@/components/editor/controls";
 
   import { RUNTIMES } from "./_runtimes";
+  import { onDestroy } from 'svelte';
 
   interface Props {
     lang: Lang;
@@ -93,7 +93,8 @@
     };
   });
 
-  const { terminal, fitAddon } = createTerminal();
+  const { terminal, fitAddon, streams } = createTerminal();
+  onDestroy(() => streams[Symbol.dispose]())
 
   setEditorContext(new EditorContext(pageLang, model, terminal, fitAddon));
 
@@ -121,11 +122,10 @@
   let executionTimeout = $state(executionTimeoutStorage.load());
   debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-  const terminalWriter = createTerminalWriter(terminal);
-  const terminalLogger = createLogger(terminalWriter);
+  const terminalLogger = createLogger(streams.out);
   let compilerFactory = $derived(runtime.compilerFactory);
   let status = $state<ProcessStatus>("stopped");
-  let compiler: Compiler | null = null;
+  let compiler: Compiler<Program> | null = null;
   const compilerCtx = createRecoverableContext(() => {
     compiler = null;
     return withCancel(createContext());
@@ -159,7 +159,7 @@
       if (compiler === null) {
         compiler = await compilerFactory(
           compilerCtx.ref,
-          terminalWriter
+          streams,
         );
       }
       const program = await compiler.compile(programCtxWithTimeout, [

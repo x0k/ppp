@@ -9,8 +9,8 @@ export interface TsTestWorkerConfig {
 
 startTestCompilerActor<TsTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      tsTestCompilerFactory: new TsTestCompilerFactory(out),
+      tsTestCompilerFactory: new TsTestCompilerFactory(streams),
     })
 );

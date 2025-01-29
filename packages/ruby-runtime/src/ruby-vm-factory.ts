@@ -1,12 +1,11 @@
 import { RubyVM } from '@ruby/wasm-wasi'
 import { Fd, PreopenDirectory, WASI, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
 import { inContext, type Context } from 'libs/context';
-import type { Writer } from 'libs/io';
+import type { Streams } from 'libs/io';
 
 export async function createRubyVM (
   ctx: Context,
-  stdout: Writer,
-  stderr: Writer,
+  streams: Streams,
   wasmModule: WebAssembly.Module,
 ) {
   const args: string[] = []
@@ -16,8 +15,8 @@ export async function createRubyVM (
     new ConsoleStdout(()=> {
       throw new Error("Stdin is not implemented")
     }),
-    new ConsoleStdout(stdout.write.bind(stdout)),
-    new ConsoleStdout(stderr.write.bind(stderr)),
+    new ConsoleStdout(streams.out.write.bind(streams.out)),
+    new ConsoleStdout(streams.err.write.bind(streams.err)),
     new PreopenDirectory("/", new Map()),
   ]
   const wasi = new WASI(args, env, fds, { debug: false })

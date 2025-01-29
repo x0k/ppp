@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
 import type { Result } from "libs/result";
-import type { Writer } from "libs/io";
+import type { Streams, Writer } from "libs/io";
 
 export enum LogLevel {
   Disabled = -8,
@@ -43,11 +43,11 @@ export type CompilerFactory = (
   config: CompilerConfig
 ) => Result<Compiler, string>;
 
-export type GoCompilerFactory = (out: Writer) => Compiler;
+export type GoCompilerFactory = (streams: Streams) => Compiler;
 
 export type GoProgramFactory<R> = (
   ctx: Context,
-  out: Writer,
+  streams: Streams,
   code: string
 ) => Promise<R>;
 

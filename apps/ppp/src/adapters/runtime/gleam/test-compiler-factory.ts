@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import type { Writer } from "libs/io";
+import type { Streams, Writer } from "libs/io";
 import { createLogger, redirect } from "libs/logger";
 import { compileJsModule } from "libs/js";
 import type { TestCompiler } from "testing";
@@ -20,8 +20,8 @@ export class GleamTestCompilerFactory {
 
   protected readonly patchedConsole: Console;
 
-  constructor(protected readonly out: Writer) {
-    this.patchedConsole = redirect(globalThis.console, createLogger(out));
+  constructor(protected readonly streams: Streams) {
+    this.patchedConsole = redirect(globalThis.console, createLogger(streams.out));
   }
 
   async create<M, I, O>(
@@ -34,7 +34,7 @@ export class GleamTestCompilerFactory {
       }
     }
     const compiler = new GleamModuleCompiler(
-      this.out,
+      this.streams.out,
       precompiledGleamStdlibIndexUrl,
       await WebAssembly.compileStreaming(
         fetch(compilerWasmUrl, { signal: ctx.signal })

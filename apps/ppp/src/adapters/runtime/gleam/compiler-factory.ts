@@ -1,5 +1,5 @@
 import { redirect, createLogger } from "libs/logger";
-import type { CompilerFactory } from "compiler";
+import type { CompilerFactory, Program } from "compiler";
 import {
   GleamModuleCompiler,
   type GleamModule,
@@ -15,10 +15,10 @@ const precompiledGleamStdlibIndexUrl = new URL(
   globalThis.location.origin
 ).toString();
 
-export const makeGleamCompiler: CompilerFactory = async (ctx, out) => {
-  const patchedConsole = redirect(globalThis.console, createLogger(out));
+export const makeGleamCompiler: CompilerFactory<Program> = async (ctx, streams) => {
+  const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
   const compiler = new GleamModuleCompiler(
-    out,
+    streams.out,
     precompiledGleamStdlibIndexUrl,
     await WebAssembly.compileStreaming(
       fetch(compilerWasmUrl, { signal: ctx.signal })

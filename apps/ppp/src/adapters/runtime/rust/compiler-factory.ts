@@ -1,10 +1,9 @@
 import type { Context } from "libs/context";
-import type { CompilerFactory } from "compiler";
+import type { CompilerFactory, Program } from "compiler";
 import { RustProgram, createWASI } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset
 import miriWasmUrl from "rust-runtime/miri.wasm";
-import { makeErrorWriter } from 'libs/io';
 
 const libsUrls = import.meta.glob("/node_modules/rust-runtime/dist/lib/*", {
   eager: true,
@@ -25,18 +24,17 @@ function loadLibs(ctx: Context) {
   );
 }
 
-export const makeRustCompiler: CompilerFactory = async (ctx, out) => {
+export const makeRustCompiler: CompilerFactory<Program> = async (
+  ctx,
+  streams
+) => {
   const [miri, libs] = await Promise.all([
     await WebAssembly.compileStreaming(
       fetch(miriWasmUrl, { signal: ctx.signal, cache: "force-cache" })
     ),
     loadLibs(ctx),
   ]);
-  const wasi = createWASI(
-    out,
-    makeErrorWriter(out),
-    libs
-  );
+  const wasi = createWASI(streams, libs);
   return {
     async compile(_, files) {
       if (files.length !== 1) {

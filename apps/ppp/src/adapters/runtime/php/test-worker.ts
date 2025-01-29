@@ -9,8 +9,8 @@ export interface PhpTestWorkerConfig {
 
 startTestCompilerActor<PhpTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      phpTestCompilerFactory: new PhpTestCompilerFactory(out),
+      phpTestCompilerFactory: new PhpTestCompilerFactory(streams),
     })
 );

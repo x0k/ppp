@@ -1,5 +1,5 @@
-import type { CompilerFactory } from "compiler";
 import { createLogger } from "libs/logger";
+import type { CompilerFactory, Program } from "compiler";
 import { PyProgram, pyRuntimeFactory } from "python-runtime";
 
 // @ts-ignore
@@ -7,8 +7,8 @@ import wasmUrl from "python-runtime/pyodide.wasm";
 // @ts-ignore
 import stdlibUrl from "python-runtime/python-stdlib.zip";
 
-export const makePythonCompiler: CompilerFactory = async (ctx, out) => {
-  const log = createLogger(out);
+export const makePythonCompiler: CompilerFactory<Program> = async (ctx, streams) => {
+  const log = createLogger(streams.out);
   const pyRuntime = await pyRuntimeFactory(
     ctx,
     log,

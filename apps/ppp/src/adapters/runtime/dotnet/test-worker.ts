@@ -11,9 +11,9 @@ export interface DotnetTestWorkerConfig {
 
 startTestCompilerActor<DotnetTestWorkerConfig>(
   createContext(),
-  (ctx, out, factory) =>
+  (ctx, streams, factory) =>
     factory(ctx, {
-      dotnetTestCompilerFactory: new DotnetTestCompilerFactory(out),
+      dotnetTestCompilerFactory: new DotnetTestCompilerFactory(streams),
       makeExecutionCode,
     })
 );
