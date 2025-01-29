@@ -15,16 +15,16 @@ import {
   withCancel,
   type Context,
 } from "libs/context";
-import type { Writer } from "libs/io";
-import { ok } from "libs/result";
-import { stringifyError } from "libs/error";
+import type { Streams } from "libs/io";
+import { neverError, stringifyError } from "libs/error";
 import { createLogger } from "libs/logger";
 
 import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
+import { SharedQueue, createSharedStreamsClient, createSharedStreamsServer, type NotificationType } from 'libs/sync';
 
 interface Handlers {
   [key: string]: any;
-  initialize(): Promise<void>;
+  initialize(buffer: SharedArrayBuffer | ArrayBuffer): Promise<void>;
   destroy(): void;
 
   compile(files: File[]): Promise<void>;
@@ -36,14 +36,14 @@ interface Handlers {
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
+interface NotificationEventMessage extends EventMessage<"notification", NotificationType> {}
 
-type CompilerActorEvent = WriteEventMessage;
+type CompilerActorEvent = NotificationEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
 class CompilerActor extends Actor<Handlers, string> implements Disposable {
-  protected compiler: Compiler | null = null;
+  protected compiler: Compiler<Program> | null = null;
   protected compilerCtx = createRecoverableContext(() => {
     this.compiler = null
     return withCancel(createContext())
@@ -57,22 +57,19 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
 
   constructor(
     connection: Connection<Incoming, Outgoing>,
-    compilerFactory: CompilerFactory
+    compilerFactory: CompilerFactory<Program>
   ) {
     const handlers: Handlers = {
-      initialize: async () => {
-        const out: Writer = {
-          write(buffer) {
-            // TODO: synchronously wait for response
-            connection.send({
-              type: MessageType.Event,
-              event: "write",
-              payload: buffer,
-            });
-            return ok(buffer.length);
-          },
-        };
-        this.compiler = await compilerFactory(this.compilerCtx.ref, out);
+      initialize: async (buffer: SharedArrayBuffer) => {
+        const sharedQueue = new SharedQueue(buffer)
+        const streams = createSharedStreamsClient(sharedQueue, (type) => {
+          connection.send({
+            type: MessageType.Event,
+            event: "notification",
+            payload: type,
+          })
+        })
+        this.compiler = await compilerFactory(this.compilerCtx.ref, streams);
       },
       destroy: () => {
         this.compilerCtx.cancel()
@@ -120,7 +117,7 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
 
 export function startCompilerActor(
   ctx: Context,
-  compilerFactory: CompilerFactory
+  compilerFactory: CompilerFactory<Program>
 ) {
   const connection = new WorkerConnection<Incoming, Outgoing>(
     self as unknown as Worker
@@ -139,7 +136,7 @@ interface WorkerConstructor {
 }
 
 export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
-  return async (ctx: Context, out: Writer): Promise<Compiler> => {
+  return async (ctx: Context, streams: Streams): Promise<Compiler<Program>> => {
     const worker = new Worker();
     const disposable = ctx.onCancel(() => {
       disposable[Symbol.dispose]()
@@ -147,22 +144,37 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     })
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
     connection.start(ctx);
-    const log = createLogger(out);
+    const log = createLogger(streams.out);
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       ctx,
       log,
       connection,
       {
-        error: (err) => {
-          log.error(err instanceof CanceledError ? err.message : err);
+        notification(type) {
+          switch (type) {
+            case "i-want-to-read":
+              // TODO: await for the data
+              server.write()
+              break;
+            case "i-wrote-something":
+              server.read();
+              break;
+            default:
+              throw neverError(type, "unknown notification type")
+          }
         },
-        write: (text) => {
-          out.write(text);
+        error(err) {
+          log.error(err instanceof CanceledError ? err.message : err);
         },
       }
     );
     using _ = ctx.onCancel(() => remote.destroy())
-    await remote.initialize();
+    const Buffer = window.SharedArrayBuffer
+      ? SharedArrayBuffer
+      : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024 * 10)
+    await remote.initialize(buffer);
+    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     return {
       async compile(ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile())

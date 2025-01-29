@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "Krasilnikov Roman",
@@ -21,6 +22,12 @@
     "./result": "./dist/result.js",
     "./type": "./dist/type.js",
     "./io": "./dist/io.js",
-    "./js": "./dist/js.js"
+    "./js": "./dist/js.js",
+    "./sync": "./dist/sync/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
   }
 }

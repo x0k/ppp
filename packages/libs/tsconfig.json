@@ -10,4 +10,5 @@
     ],
     "noUncheckedIndexedAccess": false,
   },
+  "exclude": ["vitest.config.ts", "dist"]
 }

@@ -22,11 +22,7 @@ const lang = Astro.currentLocale;
     />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    {
-      import.meta.env.PROD && (
-        <script src={`${import.meta.env.BASE_URL}/enable-threads.js`} />
-      )
-    }
+    <script is:inline src={`${import.meta.env.BASE_URL}/enable-threads.js`} />
     <script
       data-goatcounter="https://ppp.counter.x0k.online/count"
       async

@@ -1,9 +1,8 @@
 import { deepEqual } from "fast-equals";
 
-import type { Writer } from "libs/io";
 import type { Logger } from "libs/logger";
 import type { Context } from "libs/context";
-import type { File } from "compiler";
+import type { Compiler, CompilerFactory } from "compiler";
 
 export interface TestCase<I, O> {
   input: I;
@@ -23,14 +22,9 @@ export interface TestProgram<I, O> {
   run: (ctx: Context, input: I) => Promise<O>;
 }
 
-export interface TestCompiler<I, O> {
-  compile: (ctx: Context, files: File[]) => Promise<TestProgram<I, O>>;
-}
+export type TestCompiler<I, O> = Compiler<TestProgram<I, O>>
 
-export type TestCompilerFactory<I, O> = (
-  ctx: Context,
-  out: Writer
-) => Promise<TestCompiler<I, O>>;
+export type TestCompilerFactory<I, O> = CompilerFactory<TestProgram<I, O>>
 
 export async function runTests<I, O>(
   ctx: Context,

@@ -27,6 +27,16 @@ export const COLOR_ENCODED: Record<keyof typeof COLOR, Uint8Array> = {
   RESET: encoder.encode(COLOR.RESET),
 }
 
+export function makeErrorWriter(out: Writer): Writer {
+  return {
+    write (data) {
+      out.write(COLOR_ENCODED.ERROR)
+      out.write(data)
+      out.write(COLOR_ENCODED.RESET)
+    },
+  }
+}
+
 export function createLogger(writer: Writer, textEncoder = encoder): Logger {
   return {
     debug(text) {

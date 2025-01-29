@@ -16,15 +16,16 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "libs/actor";
-import { stringifyError } from "libs/error";
+import { neverError, stringifyError } from "libs/error";
 import { compileJsModule } from "libs/js";
-import type { Writer } from "libs/io";
-import { ok } from "libs/result";
+import type { Streams } from "libs/io";
+import { createSharedStreamsClient, createSharedStreamsServer, SharedQueue, type NotificationType } from 'libs/sync';
 import type { File } from "compiler";
 
 import type { TestProgram, TestCompiler } from "./testing.js";
 
 export interface InitConfig {
+  buffer: ArrayBuffer | SharedArrayBuffer;
   universalFactoryFunction: string;
 }
 
@@ -42,7 +43,7 @@ interface Handlers<I, O> {
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
-interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
+interface WriteEventMessage extends EventMessage<"notification", NotificationType> {}
 
 type TestingActorEvent = WriteEventMessage;
 
@@ -61,9 +62,9 @@ export type UniversalFactory<D, I, O> = (
   data: D
 ) => Promise<TestCompiler<I, O>>;
 
-export type TestCompilerFactory<D, I, O> = (
+export type TestCompilerSuperFactory<D, I, O> = (
   ctx: Context,
-  out: Writer,
+  streams: Streams,
   universalFactory: UniversalFactory<D, I, O>
 ) => Promise<TestCompiler<I, O>>;
 
@@ -82,27 +83,24 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
-    superFactory: TestCompilerFactory<D, I, O>
+    superFactory: TestCompilerSuperFactory<D, I, O>
   ) {
     const handlers: Handlers<I, O> = {
-      initialize: async({ universalFactoryFunction }) => {
+      initialize: async({ universalFactoryFunction, buffer }) => {
         const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
           universalFactoryFunction
         );
-        const out: Writer = {
-          write(buffer) {
-            // TODO: synchronously wait for response
-            connection.send({
-              type: MessageType.Event,
-              event: "write",
-              payload: buffer,
-            });
-            return ok(buffer.length);
-          },
-        };
+        const sharedQueue = new SharedQueue(buffer)
+        const client = createSharedStreamsClient(sharedQueue, (type) => {
+          connection.send({
+            type: MessageType.Event,
+            event: "notification",
+            payload: type
+          })
+        })
         this.compiler = await superFactory(
           this.compilerCtx.ref,
-          out,
+          client,
           universalFactory
         );
       },
@@ -155,7 +153,7 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
 
 export function startTestCompilerActor<D, I = unknown, O = unknown>(
   ctx: Context,
-  superFactory: TestCompilerFactory<D, I, O>
+  superFactory: TestCompilerSuperFactory<D, I, O>
 ) {
   const connection = new WorkerConnection<Incoming<I, O>, Outgoing<I, O>>(
     self as unknown as Worker
@@ -177,7 +175,7 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
   Worker: WorkerConstructor,
   universalFactory: UniversalFactory<D, I, O>
 ) {
-  return async (ctx: Context, out: Writer): Promise<TestCompiler<I, O>> => {
+  return async (ctx: Context, streams: Streams): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
     const disposable = ctx.onCancel(() => {
       disposable[Symbol.dispose]()
@@ -187,24 +185,40 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       worker
     );
     connection.start(ctx);
-    const log = createLogger(out);
+    const log = createLogger(streams.out);
     const remote = startRemote<Handlers<I, O>, string, TestingActorEvent>(
       ctx,
       log,
       connection,
       {
-        error: (err) => {
-          log.error(err instanceof CanceledError ? err.message : err);
+        notification(type) {
+          switch (type) {
+            case "i-want-to-read":
+              // TODO: await for the data
+              server.write()
+              break;
+            case "i-wrote-something":
+              server.read();
+              break;
+            default:
+              throw neverError(type, "unknown notification type")
+          }
         },
-        write: (text) => {
-          out.write(text);
+        error(err) {
+          log.error(err instanceof CanceledError ? err.message : err);
         },
       }
     );
     using _ = ctx.onCancel(() => remote.destroy())
+    const Buffer = window.SharedArrayBuffer
+      ? SharedArrayBuffer
+      : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024 * 10)
     await remote.initialize({
       universalFactoryFunction: universalFactory.toString(),
+      buffer
     });
+    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     return {
       async compile(ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile())
