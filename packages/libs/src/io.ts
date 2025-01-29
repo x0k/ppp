@@ -1,30 +1,25 @@
 import { COLOR_ENCODED } from './logger.js';
-import { isErr, type Result } from './result.js';
 
 export interface Writer {
-  write(data: Uint8Array): Result<number, number>;
+  write(data: Uint8Array): void
 }
 
 export interface Reader {
-  read(p: Uint8Array): Result<number, number>;
+  read(): Uint8Array;
+}
+
+export interface Streams {
+  in: Reader
+  out: Writer
+  err: Writer
 }
 
 export function makeErrorWriter(out: Writer): Writer {
   return {
     write (data) {
-      let r = out.write(COLOR_ENCODED.ERROR)
-      if (isErr(r)) {
-        return r
-      }
-      const r2 = out.write(data)
-      if (isErr(r2)) {
-        return r2
-      }
-      r = out.write(COLOR_ENCODED.RESET)
-      if (isErr(r)) {
-        return r
-      }
-      return r2
+      out.write(COLOR_ENCODED.ERROR)
+      out.write(data)
+      out.write(COLOR_ENCODED.RESET)
     },
   }
 }
