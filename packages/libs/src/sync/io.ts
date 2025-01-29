@@ -16,9 +16,17 @@ export function createSharedStreamsClient(
   return {
     in: {
       read() {
-        notify("i-want-to-read");
-        const r = queue.blockingRead();
-        return r.next().value.bytes;
+        while (true) {
+          notify("i-want-to-read");
+          const r = queue.blockingRead();
+          const bytes = r.next().value.bytes;
+          // TODO: Maybe we need to introduce a special bytes sequence
+          // to represent the empty result?
+          // Currently i think that the empty result is useless
+          if (bytes.length > 0) {
+            return bytes
+          }
+        }
       },
     },
     // NOTE: We can read something (i.e. amount of written bytes) from the server
