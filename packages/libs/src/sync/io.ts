@@ -4,10 +4,26 @@ import type { SharedQueue } from "./shared-queue.js";
 
 export type NotificationType = "i-want-to-read" | "i-wrote-something";
 
+export const EOF_SEQUENCE = new Uint8Array([0xff, 0xfe, 0xfd]);
+
+function isArraysEqual<T>(arr1: ArrayLike<T>, arr2: ArrayLike<T>) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 enum StreamType {
   Out = 1,
   Err = 2,
 }
+
+const EMPTY_ARRAY = new Uint8Array();
 
 export function createSharedStreamsClient(
   queue: SharedQueue,
@@ -20,12 +36,13 @@ export function createSharedStreamsClient(
           notify("i-want-to-read");
           const r = queue.blockingRead();
           const bytes = r.next().value.bytes;
-          // TODO: Maybe we need to introduce a special bytes sequence
-          // to represent the empty result?
-          // Currently i think that the empty result is useless
-          if (bytes.length > 0) {
-            return bytes
+          if (bytes.length === 0) {
+            continue;
           }
+          if (isArraysEqual(bytes, EOF_SEQUENCE)) {
+            return EMPTY_ARRAY;
+          }
+          return bytes;
         }
       },
     },
