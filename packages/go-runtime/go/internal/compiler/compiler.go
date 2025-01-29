@@ -17,6 +17,7 @@ type Compiler struct {
 }
 
 func New(
+	stdin io.Reader,
 	stdout io.Writer,
 	stderr io.Writer,
 ) (*Compiler, error) {
@@ -24,6 +25,7 @@ func New(
 		BuildTags: []string{
 			"wasm", "js",
 		},
+		Stdin:  stdin,
 		Stdout: stdout,
 		Stderr: stderr,
 	})

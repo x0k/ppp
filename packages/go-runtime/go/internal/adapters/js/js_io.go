@@ -3,7 +3,7 @@
 package js_adapters
 
 import (
-	"errors"
+	"io"
 	"syscall/js"
 )
 
@@ -33,9 +33,28 @@ func (w *Writer) Write(p []byte) (int, error) {
 		w.buffer = Uint8ArrayConstructor.New(w.bufferLen)
 	}
 	js.CopyBytesToJS(w.buffer, p)
-	r := ResultFromJs(w.write.Invoke(w.buffer.Call("subarray", 0, pLen)))
-	if r.ok {
-		return pLen, nil
+	w.write.Invoke(w.buffer.Call("subarray", 0, pLen))
+	return pLen, nil
+}
+
+type Reader struct {
+	read js.Value
+}
+
+func NewReader(
+	read js.Value,
+) *Reader {
+	return &Reader{
+		read: read,
 	}
-	return r.error.Int(), errors.New("failed to write")
+}
+
+func (r *Reader) Read(buffer []byte) (int, error) {
+	d := r.read.Invoke()
+	n := js.CopyBytesToGo(buffer, d)
+	var err error
+	if n == 0 {
+		err = io.EOF
+	}
+	return n, err
 }

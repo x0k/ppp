@@ -42,6 +42,7 @@ func New(jsConfig js.Value) js_adapters.Result {
 		defer cancel()
 
 		compiler, err := compiler.New(
+			js_adapters.NewReader(*cfg.Stdin.Read),
 			js_adapters.NewWriter(*cfg.Stdout.Write),
 			js_adapters.NewWriter(*cfg.Stderr.Write),
 		)
@@ -59,6 +60,7 @@ func New(jsConfig js.Value) js_adapters.Result {
 		defer cancel()
 
 		compiler, err := compiler.New(
+			js_adapters.NewReader(*cfg.Stdin.Read),
 			js_adapters.NewWriter(*cfg.Stdout.Write),
 			js_adapters.NewWriter(*cfg.Stderr.Write),
 		)

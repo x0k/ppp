@@ -16,6 +16,7 @@ export function makeGoCompilerFactory(
         level: LogLevel.Info,
         console: redirect(globalThis.console, createLogger(streams.out)),
       },
+      stdin: streams.in,
       stdout: streams.out,
       stderr: streams.err,
     });

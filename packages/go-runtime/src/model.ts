@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
 import type { Result } from "libs/result";
-import type { Streams, Writer } from "libs/io";
+import type { Reader, Streams, Writer } from "libs/io";
 
 export enum LogLevel {
   Disabled = -8,
@@ -17,6 +17,7 @@ export interface LoggerConfig {
 
 export interface CompilerConfig {
   logger: LoggerConfig;
+  stdin: Reader;
   stdout: Writer;
   stderr: Writer;
 }

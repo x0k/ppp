@@ -1,11 +1,11 @@
 // @ts-ignore
 import WASM_PATH from "../assets/compiler.wasm";
 
-import { LogLevel, createCompilerFactory } from "../src/index.js";
+import { LogLevel, makeCompilerFactory } from "../src/index.js";
 
 const wasmFile = Bun.file(WASM_PATH);
 
-const makeCompiler = await createCompilerFactory(
+const makeCompiler = await makeCompilerFactory(
   async (imports) =>
     (
       await WebAssembly.instantiate(await wasmFile.arrayBuffer(), imports)
@@ -17,16 +17,19 @@ const compiler = makeCompiler({
     level: LogLevel.Debug,
     console: globalThis.console,
   },
+  stdin: {
+    read() {
+      return new Uint8Array()
+    }
+  },
   stdout: {
     write(s) {
       console.log(s);
-      return null;
     },
   },
   stderr: {
     write(s) {
       console.error(s);
-      return null;
     },
   },
 });
@@ -35,7 +38,7 @@ if (!compiler.ok) {
 }
 
 const ctrl = new AbortController();
-const executor = await compiler.value.compile<string>(
+const executor = await compiler.value.createEvaluator<string>(
   ctrl.signal,
   `package main
 func Test() string {

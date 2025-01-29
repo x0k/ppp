@@ -13,8 +13,13 @@ type WriterConfig struct {
 	Write *js.Value `js:"write"`
 }
 
+type ReaderConfig struct {
+	Read *js.Value `js:"read"`
+}
+
 type CompilerConfig struct {
 	Logger LoggerConfig `js:"logger"`
+	Stdin  ReaderConfig `js:"stdin"`
 	Stdout WriterConfig `js:"stdout"`
 	Stderr WriterConfig `js:"stderr"`
 }
