@@ -4,7 +4,7 @@ import { Terminal, type ITheme } from "@xterm/xterm";
 import type { Theme } from "daisyui";
 import themes from "daisyui/src/theming/themes";
 import type { Streams, Writer } from "libs/io";
-import { makeErrorWriter } from "libs/logger";
+import { BACKSPACE, makeErrorWriter } from "libs/logger";
 
 function makeTerminalTheme(themeName: Theme): ITheme {
   const theme = themes[themeName];
@@ -36,7 +36,6 @@ export function createTerminal() {
   const encoder = new TextEncoder();
   let buffer = new Uint8Array(1024);
   let offset = 0;
-  const backspaceBytes = encoder.encode('\x7f')
   const emptyArray = new Uint8Array()
   const disposable = terminal.onData((data) => {
     let input: Uint8Array;
@@ -50,7 +49,7 @@ export function createTerminal() {
       if (offset > 0) {
         offset--
       }
-      handleData(backspaceBytes)
+      handleData(BACKSPACE)
       return
     }
     terminal.write(data);

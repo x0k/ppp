@@ -19,6 +19,8 @@ export const COLOR = {
 
 const encoder = new TextEncoder();
 
+export const BACKSPACE = encoder.encode('\x7f')
+
 export const COLOR_ENCODED: Record<keyof typeof COLOR, Uint8Array> = {
   DEBUG: encoder.encode(COLOR.DEBUG),
   INFO: encoder.encode(COLOR.INFO),

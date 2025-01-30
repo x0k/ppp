@@ -17,7 +17,7 @@ import {
 } from "libs/context";
 import type { Streams } from "libs/io";
 import { stringifyError } from "libs/error";
-import { createLogger } from "libs/logger";
+import { BACKSPACE, createLogger } from "libs/logger";
 import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from 'libs/sync';
 
 import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
@@ -36,9 +36,11 @@ interface Handlers {
 
 type Incoming = IncomingMessage<Handlers>;
 
+interface ReadEventMessage extends EventMessage<"read", undefined> {}
+
 interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
 
-type CompilerActorEvent = WriteEventMessage;
+type CompilerActorEvent = WriteEventMessage | ReadEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
@@ -64,6 +66,11 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
         const sharedQueue = new SharedQueue(buffer)
         const streams = createSharedStreamsClient(
           sharedQueue,
+          () => connection.send({
+            type: MessageType.Event,
+            event: "read",
+            payload: undefined
+          }),
           (type, data) => connection.send({
             type: MessageType.Event,
             event: "write",
@@ -142,13 +149,23 @@ interface WorkerConstructor {
 export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
   return async (ctx: Context, streams: Streams): Promise<Compiler<Program>> => {
     const worker = new Worker();
+    let read = -1
     const sub = streams.in.onData((data) => {
-      if (data.length !== 0) {
+      if (read === -1) {
         return
       }
-      server.write()
-      // Will write an empty array for EOF
-      server.write()
+      if (data.length === 0) {
+        server.write(read)
+        // EOF
+        server.write(0)
+        read = -1
+      }
+      if (data === BACKSPACE) {
+        // TODO: What to do with non-ASCII characters?
+        read -= 1;
+      } else {
+        read += data.length
+      }
     })
     const disposable = ctx.onCancel(() => {
       disposable[Symbol.dispose]()
@@ -163,6 +180,9 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
       log,
       connection,
       {
+        read() {
+          read = 0;
+        },
         write({ type, data }) {
           server.onClientWrite(type, data)
         },

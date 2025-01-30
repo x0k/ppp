@@ -5,7 +5,7 @@ import {
   withCancel,
   type Context,
 } from "libs/context";
-import { createLogger } from "libs/logger";
+import { BACKSPACE, createLogger } from "libs/logger";
 import {
   Actor,
   MessageType,
@@ -43,9 +43,11 @@ interface Handlers<I, O> {
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
+interface ReadEventMessage extends EventMessage<"read", undefined> {}
+
 interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
 
-type TestingActorEvent = WriteEventMessage;
+type TestingActorEvent = WriteEventMessage | ReadEventMessage;
 
 type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
@@ -93,6 +95,11 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
         const sharedQueue = new SharedQueue(buffer)
         const client = createSharedStreamsClient(
           sharedQueue,
+          () => connection.send({
+            type: MessageType.Event,
+            event: "read",
+            payload: undefined,
+          }),
           (type, data) => connection.send({
             type: MessageType.Event,
             event: "write",
@@ -181,13 +188,23 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
 ) {
   return async (ctx: Context, streams: Streams): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
+    let read = -1
     const sub = streams.in.onData((data) => {
-      if (data.length !== 0) {
+      if (read === -1) {
         return
       }
-      server.write()
-      // Will write an empty array for EOF
-      server.write()
+      if (data.length === 0) {
+        server.write(read)
+        // EOF
+        server.write(0)
+        read = -1
+      }
+      if (data === BACKSPACE) {
+        // TODO: What to do with non-ASCII characters?
+        read -= 1;
+      } else {
+        read += data.length
+      }
     })
     const disposable = ctx.onCancel(() => {
       disposable[Symbol.dispose]()
@@ -204,6 +221,9 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       log,
       connection,
       {
+        read() {
+          read = 0;
+        },
         write({ type, data }) {
           server.onClientWrite(type, data)
         },
