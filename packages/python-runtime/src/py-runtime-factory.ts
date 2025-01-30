@@ -2,10 +2,10 @@ import { loadPyodide, type PyodideInterface } from "pyodide";
 import lockFilerUrl from "pyodide/pyodide-lock.json?url";
 import "pyodide/pyodide.asm.js";
 
-import type { Logger } from "libs/logger";
 import { inContext, type Context } from "libs/context";
 import { patch } from "libs/patcher";
 import { stringifyError } from "libs/error";
+import type { Streams } from 'libs/io';
 
 interface EmscriptenSettings {
   readonly instantiateWasm?: (
@@ -25,7 +25,7 @@ const originalCreatePyodideModule = globalThis._createPyodideModule;
 
 export const pyRuntimeFactory = async (
   ctx: Context,
-  log: Logger,
+  streams: Streams,
   wasmInstance: (
     ctx: Context,
     imports: WebAssembly.Imports
@@ -43,20 +43,39 @@ export const pyRuntimeFactory = async (
             ({ instance, module }) => {
               callback(instance, module);
             },
-            (e) => log.error(stringifyError(e))
+            (e) => {
+              const text = stringifyError(e)
+              const encoder = new TextEncoder()
+              streams.err.write(encoder.encode(text))
+            }
           );
         },
       });
     }
   );
-  return await inContext(
+  const pyodide = await inContext(
     ctx,
     loadPyodide({
       indexURL: "intentionally-missing-index-url",
       stdLibURL: stdLibUrl,
       lockFileURL: lockFilerUrl,
-      stdout: log.debug.bind(log),
-      stderr: log.error.bind(log),
     })
   );
+  pyodide.setStdin({
+    stdin: streams.in.read.bind(streams.in),
+    autoEOF: false
+  })
+  pyodide.setStdout({
+    write(data) {
+      streams.out.write(data)
+      return data.length
+    }
+  })
+  pyodide.setStderr({
+    write(data) {
+      streams.err.write(data)
+      return data.length
+    }
+  })
+  return pyodide
 };

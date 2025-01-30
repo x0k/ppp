@@ -1,4 +1,3 @@
-import { createLogger } from "libs/logger";
 import type { CompilerFactory, Program } from "compiler";
 import { PyProgram, pyRuntimeFactory } from "python-runtime";
 
@@ -8,10 +7,9 @@ import wasmUrl from "python-runtime/pyodide.wasm";
 import stdlibUrl from "python-runtime/python-stdlib.zip";
 
 export const makePythonCompiler: CompilerFactory<Program> = async (ctx, streams) => {
-  const log = createLogger(streams.out);
   const pyRuntime = await pyRuntimeFactory(
     ctx,
-    log,
+    streams,
     (ctx, imports) =>
       WebAssembly.instantiateStreaming(
         fetch(wasmUrl, { signal: ctx.signal }),

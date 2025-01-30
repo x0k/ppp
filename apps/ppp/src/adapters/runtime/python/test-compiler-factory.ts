@@ -1,6 +1,5 @@
 import type { Context } from "libs/context";
 import type { Streams } from "libs/io";
-import { createLogger, type Logger } from "libs/logger";
 import type { TestCompiler } from "testing";
 import { pyRuntimeFactory, PyTestProgram } from "python-runtime";
 
@@ -12,11 +11,7 @@ import stdlibUrl from "python-runtime/python-stdlib.zip";
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
 export class PythonTestCompilerFactory {
-  protected readonly log: Logger;
-
-  constructor(streams: Streams) {
-    this.log = createLogger(streams.out);
-  }
+  constructor(protected readonly streams: Streams) {}
 
   async create<I, O>(
     ctx: Context,
@@ -29,7 +24,7 @@ export class PythonTestCompilerFactory {
     }
     const pyRuntime = await pyRuntimeFactory(
       ctx,
-      this.log,
+      this.streams,
       (ctx, imports) =>
         WebAssembly.instantiateStreaming(
           fetch(wasmUrl, { signal: ctx.signal }),
