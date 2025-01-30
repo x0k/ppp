@@ -1,6 +1,6 @@
 <script lang="ts" generics="Langs extends Language, Input, Output">
   import { getRelativeLocaleUrl } from "astro:i18n";
-  import { onDestroy, untrack } from "svelte";
+  import { untrack } from "svelte";
   import Icon from "@iconify/svelte";
   import { editor } from "monaco-editor";
   import { stringifyError } from "libs/error";
@@ -106,7 +106,6 @@
   });
 
   const { terminal, fitAddon, streams } = createTerminal();
-  onDestroy(streams[Symbol.dispose])
 
   const editorContext = new EditorContext(pageLang, model, terminal, fitAddon);
   setEditorContext(editorContext);

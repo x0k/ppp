@@ -41,7 +41,6 @@
   import { CheckBox, Number } from "@/components/editor/controls";
 
   import { RUNTIMES } from "./_runtimes";
-  import { onDestroy } from 'svelte';
 
   interface Props {
     lang: Lang;
@@ -94,7 +93,6 @@
   });
 
   const { terminal, fitAddon, streams } = createTerminal();
-  onDestroy(() => streams[Symbol.dispose]())
 
   setEditorContext(new EditorContext(pageLang, model, terminal, fitAddon));
 

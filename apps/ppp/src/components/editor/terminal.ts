@@ -1,9 +1,11 @@
+import { onDestroy } from "svelte";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal, type ITheme } from "@xterm/xterm";
 import type { Theme } from "daisyui";
 import themes from "daisyui/src/theming/themes";
 import type { Streams, Writer } from "libs/io";
 import { makeErrorWriter } from "libs/logger";
+import { EOF_SEQUENCE } from "libs/sync";
 
 function makeTerminalTheme(themeName: Theme): ITheme {
   const theme = themes[themeName];
@@ -27,23 +29,34 @@ export function createTerminal() {
     },
   };
   let input = "";
+  let eof = false;
   const disposable = terminal.onData((data) => {
+    if (data === "\x04") {
+      eof = true;
+      terminal.write("<EOF>");
+      return;
+    }
     terminal.write(data);
+    if (eof) {
+      return;
+    }
     input += data;
   });
+  onDestroy(() => disposable.dispose());
   const encoder = new TextEncoder();
-  const streams: Streams & Disposable = {
+  const streams: Streams = {
     out,
     err: makeErrorWriter(out),
     in: {
       read() {
+        if (eof && input === "") {
+          eof = false;
+          return EOF_SEQUENCE;
+        }
         const bytes = encoder.encode(input);
         input = "";
         return bytes;
       },
-    },
-    [Symbol.dispose]() {
-      disposable.dispose();
     },
   };
   return { terminal, fitAddon, streams };
