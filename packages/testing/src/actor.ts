@@ -16,10 +16,10 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "libs/actor";
-import { neverError, stringifyError } from "libs/error";
+import { stringifyError } from "libs/error";
 import { compileJsModule } from "libs/js";
 import type { Streams } from "libs/io";
-import { createSharedStreamsClient, createSharedStreamsServer, SharedQueue, type NotificationType } from 'libs/sync';
+import { createSharedStreamsClient, createSharedStreamsServer, SharedQueue, StreamType } from 'libs/sync';
 import type { File } from "compiler";
 
 import type { TestProgram, TestCompiler } from "./testing.js";
@@ -43,9 +43,11 @@ interface Handlers<I, O> {
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
-interface WriteEventMessage extends EventMessage<"notification", NotificationType> {}
+interface InputRequestEventMessage extends EventMessage<"inputRequest", undefined> {}
 
-type TestingActorEvent = WriteEventMessage;
+interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
+
+type TestingActorEvent = WriteEventMessage | InputRequestEventMessage;
 
 type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
@@ -91,11 +93,23 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
           universalFactoryFunction
         );
         const sharedQueue = new SharedQueue(buffer)
-        const client = createSharedStreamsClient(sharedQueue, (type) => {
+        const client = createSharedStreamsClient(
+          sharedQueue,
+          () => {
+            connection.send({
+              type: MessageType.Event,
+              event: "inputRequest",
+              payload: undefined
+            })
+          },
+          (type, data) => {
           connection.send({
             type: MessageType.Event,
-            event: "notification",
-            payload: type
+            event: "write",
+            payload: {
+              type,
+              data
+            }
           })
         })
         this.compiler = await superFactory(
@@ -191,18 +205,11 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       log,
       connection,
       {
-        notification(type) {
-          switch (type) {
-            case "i-want-to-read":
-              // TODO: await for the data
-              server.write()
-              break;
-            case "i-wrote-something":
-              server.read();
-              break;
-            default:
-              throw neverError(type, "unknown notification type")
-          }
+        inputRequest() {
+          server.write()
+        },
+        write({ type, data }) {
+          server.onClientWrite(type, data)
         },
         error(err) {
           log.error(err instanceof CanceledError ? err.message : err);

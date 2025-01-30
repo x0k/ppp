@@ -20,6 +20,8 @@ libs/:
   pushd packages/libs
   b:
     pnpm run build
+  t:
+    pnpm run test
   popd
 
 compiler/:

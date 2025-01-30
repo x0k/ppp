@@ -2,8 +2,6 @@ import type { Streams, Writer } from "../io.js";
 
 import type { SharedQueue } from "./shared-queue.js";
 
-export type NotificationType = "i-want-to-read" | "i-wrote-something";
-
 export const EOF_SEQUENCE = new Uint8Array([0xff, 0xfe, 0xfd]);
 
 function isArraysEqual<T>(arr1: ArrayLike<T>, arr2: ArrayLike<T>) {
@@ -18,7 +16,7 @@ function isArraysEqual<T>(arr1: ArrayLike<T>, arr2: ArrayLike<T>) {
   return true;
 }
 
-enum StreamType {
+export enum StreamType {
   Out = 1,
   Err = 2,
 }
@@ -26,16 +24,19 @@ enum StreamType {
 const EMPTY_ARRAY = new Uint8Array();
 
 export function createSharedStreamsClient(
-  queue: SharedQueue,
-  notify: (type: NotificationType) => void
+  inputQueue: SharedQueue,
+  readRequest: () => void,
+  write: (stream: StreamType, data: Uint8Array) => void
 ): Streams {
   return {
     in: {
       read() {
         while (true) {
-          notify("i-want-to-read");
-          const r = queue.blockingRead();
+          readRequest();
+          const r = inputQueue.blockingRead();
           const bytes = r.next().value.bytes;
+          // NOTE: The generator must be exhausted
+          r.next()
           if (bytes.length === 0) {
             continue;
           }
@@ -46,29 +47,21 @@ export function createSharedStreamsClient(
         }
       },
     },
-    // NOTE: We can read something (i.e. amount of written bytes) from the server
-    // but the user may not have `SharedArrayBuffer`, so don't block on writes
     out: {
       write(data) {
-        queue.pushUint(StreamType.Out);
-        queue.pushBytes(data);
-        queue.commit();
-        notify("i-wrote-something");
+        write(StreamType.Out, data)
       },
     },
     err: {
       write(data) {
-        queue.pushUint(StreamType.Err);
-        queue.pushBytes(data);
-        queue.commit();
-        notify("i-wrote-something");
+        write(StreamType.Err, data)
       },
     },
   };
 }
 
 export function createSharedStreamsServer(
-  queue: SharedQueue,
+  inputQueue: SharedQueue,
   streams: Streams
 ) {
   const writers: Record<StreamType, Writer> = {
@@ -76,16 +69,12 @@ export function createSharedStreamsServer(
     [StreamType.Err]: streams.err,
   };
   return {
-    read() {
-      const g = queue.read();
-      for (const item of g) {
-        const type = item.uint as StreamType;
-        writers[type].write(g.next().value.bytes);
-      }
+    onClientWrite(type: StreamType, data: Uint8Array) {
+      writers[type].write(data);
     },
     write() {
-      queue.pushBytes(streams.in.read());
-      queue.commit();
+      inputQueue.pushBytes(streams.in.read());
+      inputQueue.commit();
     },
   };
 }

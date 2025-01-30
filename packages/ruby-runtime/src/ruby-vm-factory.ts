@@ -3,6 +3,8 @@ import { Fd, PreopenDirectory, WASI, ConsoleStdout } from "@bjorn3/browser_wasi_
 import { inContext, type Context } from 'libs/context';
 import type { Streams } from 'libs/io';
 
+import { Stdin } from './stdin';
+
 export async function createRubyVM (
   ctx: Context,
   streams: Streams,
@@ -12,9 +14,7 @@ export async function createRubyVM (
   const env: string[] = []
 
   const fds: Fd[] = [
-    new ConsoleStdout(()=> {
-      throw new Error("Stdin is not implemented")
-    }),
+    new Stdin(streams.in.read.bind(streams.in)),
     new ConsoleStdout(streams.out.write.bind(streams.out)),
     new ConsoleStdout(streams.err.write.bind(streams.err)),
     new PreopenDirectory("/", new Map()),

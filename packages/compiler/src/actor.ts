@@ -18,9 +18,9 @@ import {
 import type { Streams } from "libs/io";
 import { neverError, stringifyError } from "libs/error";
 import { createLogger } from "libs/logger";
+import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from 'libs/sync';
 
 import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
-import { SharedQueue, createSharedStreamsClient, createSharedStreamsServer, type NotificationType } from 'libs/sync';
 
 interface Handlers {
   [key: string]: any;
@@ -36,9 +36,11 @@ interface Handlers {
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface NotificationEventMessage extends EventMessage<"notification", NotificationType> {}
+interface InputRequestEventMessage extends EventMessage<"inputRequest", undefined> {}
 
-type CompilerActorEvent = NotificationEventMessage;
+interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
+
+type CompilerActorEvent = WriteEventMessage | InputRequestEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
@@ -62,11 +64,23 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
     const handlers: Handlers = {
       initialize: async (buffer: SharedArrayBuffer) => {
         const sharedQueue = new SharedQueue(buffer)
-        const streams = createSharedStreamsClient(sharedQueue, (type) => {
+        const streams = createSharedStreamsClient(
+          sharedQueue,
+          () => {
+            connection.send({
+              type: MessageType.Event,
+              event: "inputRequest",
+              payload: undefined
+            })
+          },
+          (type, data) => {
           connection.send({
             type: MessageType.Event,
-            event: "notification",
-            payload: type,
+            event: "write",
+            payload: {
+              type,
+              data
+            }
           })
         })
         this.compiler = await compilerFactory(this.compilerCtx.ref, streams);
@@ -150,18 +164,11 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
       log,
       connection,
       {
-        notification(type) {
-          switch (type) {
-            case "i-want-to-read":
-              // TODO: await for the data
-              server.write()
-              break;
-            case "i-wrote-something":
-              server.read();
-              break;
-            default:
-              throw neverError(type, "unknown notification type")
-          }
+        inputRequest() {
+          server.write()
+        },
+        write({ type, data }) {
+          server.onClientWrite(type, data)
         },
         error(err) {
           log.error(err instanceof CanceledError ? err.message : err);
@@ -172,7 +179,7 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     const Buffer = window.SharedArrayBuffer
       ? SharedArrayBuffer
       : ArrayBuffer;
-    const buffer = new Buffer(1024 * 1024 * 10)
+    const buffer = new Buffer(1024 * 1024)
     await remote.initialize(buffer);
     const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     return {

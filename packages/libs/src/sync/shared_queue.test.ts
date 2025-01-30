@@ -53,4 +53,18 @@ describe("SharedQueue Tests", () => {
     expect(gen.next().value.bytes).toEqual(a);
     expect(gen.next().value.bytes).toEqual(b);
   });
+
+  it("Should work with empty byte arrays", () => {
+    const empty = new Uint8Array()
+    w.pushBytes(empty)
+    w.commit()
+    for (const item of r.read()) {
+      expect(item.bytes).toEqual(empty)
+    }
+    w.pushBytes(empty)
+    w.commit()
+    for (const item of r.read()) {
+      expect(item.bytes).toEqual(empty)
+    }
+  })
 });
