@@ -9,6 +9,7 @@ import {
 import type { Streams } from "libs/io";
 
 import { contents, dir } from "./wasi.js";
+import { Stdin } from "./stdin";
 
 export function createWASI(
   streams: Streams,
@@ -60,9 +61,7 @@ export function createWASI(
     })
   );
   const descriptors: Array<Fd> = [
-    new ConsoleStdout(() => {
-      throw new Error("Stdin is not implemented");
-    }),
+    new Stdin(streams.in.read.bind(streams.in)),
     new ConsoleStdout(streams.out.write.bind(streams.out)),
     new ConsoleStdout(streams.err.write.bind(streams.err)),
     tmpDir,
