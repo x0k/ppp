@@ -4,6 +4,7 @@ export interface Writer {
 
 export interface Reader {
   read(): Uint8Array;
+  onData(handler: (data: Uint8Array) => void): Disposable
 }
 
 export interface Streams {

@@ -43,11 +43,9 @@ interface Handlers<I, O> {
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
-interface InputRequestEventMessage extends EventMessage<"inputRequest", undefined> {}
-
 interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
 
-type TestingActorEvent = WriteEventMessage | InputRequestEventMessage;
+type TestingActorEvent = WriteEventMessage;
 
 type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
@@ -95,15 +93,7 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
         const sharedQueue = new SharedQueue(buffer)
         const client = createSharedStreamsClient(
           sharedQueue,
-          () => {
-            connection.send({
-              type: MessageType.Event,
-              event: "inputRequest",
-              payload: undefined
-            })
-          },
-          (type, data) => {
-          connection.send({
+          (type, data) => connection.send({
             type: MessageType.Event,
             event: "write",
             payload: {
@@ -111,7 +101,7 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
               data
             }
           })
-        })
+        )
         this.compiler = await superFactory(
           this.compilerCtx.ref,
           client,
@@ -191,8 +181,17 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
 ) {
   return async (ctx: Context, streams: Streams): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
+    const sub = streams.in.onData((data) => {
+      if (data.length !== 0) {
+        return
+      }
+      server.write()
+      // Will write an empty array for EOF
+      server.write()
+    })
     const disposable = ctx.onCancel(() => {
       disposable[Symbol.dispose]()
+      sub[Symbol.dispose]()
       worker.terminate()
     })
     const connection = new WorkerConnection<Outgoing<I, O>, Incoming<I, O>>(
@@ -205,9 +204,6 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       log,
       connection,
       {
-        inputRequest() {
-          server.write()
-        },
         write({ type, data }) {
           server.onClientWrite(type, data)
         },

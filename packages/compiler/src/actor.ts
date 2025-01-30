@@ -16,7 +16,7 @@ import {
   type Context,
 } from "libs/context";
 import type { Streams } from "libs/io";
-import { neverError, stringifyError } from "libs/error";
+import { stringifyError } from "libs/error";
 import { createLogger } from "libs/logger";
 import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from 'libs/sync';
 
@@ -36,11 +36,9 @@ interface Handlers {
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface InputRequestEventMessage extends EventMessage<"inputRequest", undefined> {}
-
 interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
 
-type CompilerActorEvent = WriteEventMessage | InputRequestEventMessage;
+type CompilerActorEvent = WriteEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
@@ -66,15 +64,7 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
         const sharedQueue = new SharedQueue(buffer)
         const streams = createSharedStreamsClient(
           sharedQueue,
-          () => {
-            connection.send({
-              type: MessageType.Event,
-              event: "inputRequest",
-              payload: undefined
-            })
-          },
-          (type, data) => {
-          connection.send({
+          (type, data) => connection.send({
             type: MessageType.Event,
             event: "write",
             payload: {
@@ -82,7 +72,7 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
               data
             }
           })
-        })
+        )
         this.compiler = await compilerFactory(this.compilerCtx.ref, streams);
       },
       destroy: () => {
@@ -152,8 +142,17 @@ interface WorkerConstructor {
 export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
   return async (ctx: Context, streams: Streams): Promise<Compiler<Program>> => {
     const worker = new Worker();
+    const sub = streams.in.onData((data) => {
+      if (data.length !== 0) {
+        return
+      }
+      server.write()
+      // Will write an empty array for EOF
+      server.write()
+    })
     const disposable = ctx.onCancel(() => {
       disposable[Symbol.dispose]()
+      sub[Symbol.dispose]()
       worker.terminate()
     })
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
@@ -164,9 +163,6 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
       log,
       connection,
       {
-        inputRequest() {
-          server.write()
-        },
         write({ type, data }) {
           server.onClientWrite(type, data)
         },

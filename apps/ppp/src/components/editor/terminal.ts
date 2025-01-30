@@ -5,7 +5,6 @@ import type { Theme } from "daisyui";
 import themes from "daisyui/src/theming/themes";
 import type { Streams, Writer } from "libs/io";
 import { makeErrorWriter } from "libs/logger";
-import { EOF_SEQUENCE } from "libs/sync";
 
 function makeTerminalTheme(themeName: Theme): ITheme {
   const theme = themes[themeName];
@@ -28,34 +27,60 @@ export function createTerminal() {
       terminal.write(data);
     },
   };
-  let input = "";
-  let eof = false;
+  const handlers = new Set<(data: Uint8Array) => void>();
+  function handleData(data: Uint8Array) {
+    for (const handler of handlers) {
+      handler(data);
+    }
+  }
+  const encoder = new TextEncoder();
+  let buffer = new Uint8Array(1024);
+  let offset = 0;
+  const backspaceBytes = encoder.encode('\x7f')
+  const emptyArray = new Uint8Array()
   const disposable = terminal.onData((data) => {
-    if (data === "\x04") {
-      eof = true;
-      terminal.write("<EOF>");
+    let input: Uint8Array;
+    if (data === "\r") {
+      terminal.write("\r\n");
+      handleData(emptyArray);
       return;
+    }
+    if (data === '\x7f') { // Backspace
+      terminal.write('\b \b')
+      if (offset > 0) {
+        offset--
+      }
+      handleData(backspaceBytes)
+      return
     }
     terminal.write(data);
-    if (eof) {
-      return;
+    input = encoder.encode(data);
+    if (offset + input.length > buffer.length) {
+      const next = new Uint8Array((offset + input.length) * 2);
+      next.set(buffer);
+      buffer = next;
     }
-    input += data;
+    buffer.set(input, offset);
+    offset += input.length;
+    handleData(input)
   });
   onDestroy(() => disposable.dispose());
-  const encoder = new TextEncoder();
   const streams: Streams = {
     out,
     err: makeErrorWriter(out),
     in: {
       read() {
-        if (eof && input === "") {
-          eof = false;
-          return EOF_SEQUENCE;
-        }
-        const bytes = encoder.encode(input);
-        input = "";
-        return bytes;
+        const chunk = buffer.subarray(0, offset);
+        offset = 0;
+        return chunk;
+      },
+      onData(handler) {
+        handlers.add(handler);
+        return {
+          [Symbol.dispose]() {
+            handlers.delete(handler);
+          },
+        };
       },
     },
   };
