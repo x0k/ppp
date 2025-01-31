@@ -1,13 +1,10 @@
 import { onDestroy } from "svelte";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal, type ITheme } from "@xterm/xterm";
-import type { Theme } from "daisyui";
-import themes from "daisyui/src/theming/themes";
 import type { Streams, Writer } from "libs/io";
 import { BACKSPACE, makeErrorWriter } from "libs/logger";
 
-export function makeTerminalTheme(themeName: Theme): ITheme {
-  const theme = themes[themeName];
+export function makeTerminalTheme(): ITheme {
   return {
     background: "oklch(23.1012% 0 0 / 1)",
   };
@@ -18,7 +15,7 @@ export interface TerminalConfig {
 }
 
 export function createTerminal({
-  theme = makeTerminalTheme("business"),
+  theme = makeTerminalTheme(),
 }: TerminalConfig = {}) {
   const terminal = new Terminal({
     theme,

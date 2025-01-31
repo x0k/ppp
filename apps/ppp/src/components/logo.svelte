@@ -11,7 +11,7 @@
   const { lang }: Props = $props();
 </script>
 
-<a href={getRelativeLocaleUrl(lang, Page.Main)} class="avatar placeholder">
+<a href={getRelativeLocaleUrl(lang, Page.Main)} class="avatar avatar-placeholder">
   <div class="bg-base-300 text-neutral-content rounded-md w-12">
     <span class="text-xl">3P</span>
   </div>

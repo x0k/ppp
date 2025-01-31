@@ -39,6 +39,7 @@
 </span>
 
 <style>
+  @reference "../../../styles/global.css";
   .tab-with-badge {
     @apply flex gap-2 items-center;
   }
