@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/mdx": "4.0.7",
+    "@astrojs/mdx": "4.0.8",
     "@astrojs/svelte": "7.0.4",
     "@astrojs/tailwind": "^5.1.5",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "astro": "5.1.9",
+    "astro": "5.2.1",
     "astro-icon": "^1.1.5",
     "dotnet-runtime": "workspace:*",
     "gleam-runtime": "workspace:*",
@@ -38,13 +38,13 @@
     "typescript-runtime": "workspace:*"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.24",
+    "@iconify-json/lucide": "^1.2.25",
     "@iconify/svelte": "^4.2.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/color": "^4.2.0",
     "color": "^4.2.3",
     "daisyui": "^4.12.23",
-    "svelte": "5.19.2",
+    "svelte": "5.19.6",
     "vite-plugin-cross-origin-isolation": "^0.1.6",
     "vite-plugin-static-copy": "catalog:"
   }
