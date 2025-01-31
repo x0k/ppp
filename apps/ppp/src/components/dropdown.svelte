@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends string">
-  import type { Snippet } from 'svelte';
+  import type { Snippet } from "svelte";
 
   interface Props {
     value: T;
@@ -23,14 +23,14 @@
 
   $effect(() => {
     const handler = (event: MouseEvent) => {
-      const withinBoundaries = event.composedPath().includes(detailsElement)
+      const withinBoundaries = event.composedPath().includes(detailsElement);
       if (!withinBoundaries) {
-        detailsElement.open = false
+        detailsElement.open = false;
       }
-    }
-    document.addEventListener('click', handler)
-    return () => document.removeEventListener('click', handler)
-  })
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  });
 </script>
 
 <details bind:this={detailsElement} class="dropdown dropdown-top dropdown-end">
@@ -44,17 +44,16 @@
   <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
   <div
     tabindex="0"
-    class="dropdown-content bg-base-200 text-base-content rounded-box max-h-[calc(100vh-10rem)] w-43 overflow-y-auto border border-white/5 shadow-2xl outline outline-1 outline-black/5"
+    class="dropdown-content bg-base-200 text-base-content rounded-box max-h-[calc(100vh-10rem)] overflow-y-auto border border-white/5 shadow-2xl outline-1 outline-black/5"
   >
     <ul class="menu menu-sm gap-1">
       {#each options as option (option)}
         <li>
           <button
-            class="group"
-            class:active={value == option}
+            class={["group", value === option && "menu-active"]}
             onclick={() => {
               value = option;
-              detailsElement.open = false
+              detailsElement.open = false;
             }}
           >
             <!-- {#if $t("__code", {}, option, false) !== "__code"}

@@ -27,7 +27,7 @@
 </script>
 
 <ResizablePanel
-  class="grow border-t border-base-100 relative bg-base-300 flex flex-col"
+  class="grow border-t border-base-100 relative bg-base-200 flex flex-col"
   orientation={Orientation.Horizontal}
   bind:size={height}
   normalizeSize={normalizeHeight}

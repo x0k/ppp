@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Alignment, Orientation } from './model';
+  import { Alignment, Orientation } from "./model";
 
   interface Props {
     onMove: (e: MouseEvent) => void;
@@ -49,18 +49,13 @@
 
 <div
   bind:this={resizerElement}
-  class="absolute select-none z-50 h-full active:bg-primary hover:bg-primary/50"
-
-  class:top-0={alignment === Alignment.Start}
-  class:left-0={alignment === Alignment.Start}
-  class:bottom-0={alignment === Alignment.End}
-  class:right-0={alignment === Alignment.End}
-
-  class:hover:cursor-col-resize={orientation === Orientation.Vertical}
-  class:h-full={orientation === Orientation.Vertical}
-  class:w-1={orientation === Orientation.Vertical}
-
-  class:hover:cursor-row-resize={orientation === Orientation.Horizontal}
-  class:w-full={orientation === Orientation.Horizontal}
-  class:h-1={orientation === Orientation.Horizontal}
+  class={[
+    "absolute select-none z-50 active:bg-primary hover:bg-primary/50",
+    alignment === Alignment.Start && "top-0 left-0",
+    alignment === Alignment.End && "bottom-0 right-0",
+    orientation === Orientation.Horizontal &&
+      "h-1 w-full hover:cursor-row-resize",
+    orientation === Orientation.Vertical &&
+      "h-full w-1 hover:cursor-col-resize",
+  ]}
 ></div>

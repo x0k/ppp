@@ -25,9 +25,11 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <span
   role="tab"
-  class="tab"
-  class:tab-with-badge={append}
-  class:tab-active={isSelected}
+  class={[
+    "tab",
+    append && "tab-with-badge",
+    isSelected && "tab-active"
+  ]}
   onclick={() => {
     ctx.selectedTab = tab
   }}
@@ -39,7 +41,7 @@
 </span>
 
 <style>
-  @reference "../../../styles/global.css";
+  @reference "../../../global.css";
   .tab-with-badge {
     @apply flex gap-2 items-center;
   }

@@ -44,6 +44,8 @@
 
 <div
   bind:this={termElement}
-  class={className}
-  class:hidden={!isTerminalSelected}
+  class={[
+    className,
+    !isTerminalSelected && "hidden"
+  ]}
 ></div>

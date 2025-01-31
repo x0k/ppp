@@ -261,16 +261,16 @@
           </ul>
         </div>
         <div class="join ml-auto rounded">
-          <button class="btn btn-ghost join-item"
+          <button class="btn btn-ghost btn-lg join-item"
             ><Icon icon="lucide:chevron-left" /></button
           >
-          <button class="btn btn-ghost join-item"
+          <button class="btn btn-ghost btn-lg join-item"
             ><Icon icon="lucide:chevron-right" /></button
           >
-          <button class="btn btn-ghost join-item"
+          <button class="btn btn-ghost btn-lg join-item"
             ><Icon icon="lucide:shuffle" /></button
           >
-          <button onclick={handleReset} class="btn btn-ghost join-item"
+          <button onclick={handleReset} class="btn btn-ghost btn-lg join-item"
             ><Icon icon="lucide:rotate-ccw" /></button
           >
         </div>
@@ -297,11 +297,12 @@
           <Tab tab={EditorPanelTab.Tests}>
             {#snippet append()}
               <div
-                class="badge"
-                class:hidden={lastTestId < 0}
-                class:badge-success={lastTestId === testCases.length}
-                class:badge-error={lastTestId < testCases.length &&
-                  lastTestId >= 0}
+                class={[
+                  "badge rounded-xs",
+                  lastTestId < 0 && "hidden",
+                  lastTestId < testCases.length && lastTestId >= 0 && "badge-error",
+                  lastTestId === testCases.length && "badge-success",
+                ]}
               >
                 {lastTestId}/{testCases.length}
               </div>

@@ -6,7 +6,7 @@ import { BACKSPACE, makeErrorWriter } from "libs/logger";
 
 export function makeTerminalTheme(): ITheme {
   return {
-    background: "oklch(23.1012% 0 0 / 1)",
+    background: "oklch(22.648% 0 0)",
   };
 }
 

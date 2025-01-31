@@ -13,6 +13,7 @@
 </div>
 
 <style>
+  @reference "../../../global.css";
   .panel-tabs :global {
     @apply uppercase;
     .tab:not(.tab-active) {

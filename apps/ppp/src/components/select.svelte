@@ -9,7 +9,7 @@
   let { value = $bindable(), options, class: className, labels }: Props = $props();
 </script>
 
-<select class="select {className}" bind:value>
+<select class={["select", className]} bind:value>
   {#each options as option (option)}
     <option value={option}>{labels?.[option] ?? option}</option>
   {/each}

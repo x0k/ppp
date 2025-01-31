@@ -1,5 +1,5 @@
 ---
-import "../styles/global.css";
+import "../global.css";
 
 interface Props {
   title: string;
@@ -12,7 +12,7 @@ const lang = Astro.currentLocale;
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="business">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     {description && <meta name="description" content={description} />}
