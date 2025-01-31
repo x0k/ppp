@@ -6,22 +6,32 @@ import themes from "daisyui/src/theming/themes";
 import type { Streams, Writer } from "libs/io";
 import { BACKSPACE, makeErrorWriter } from "libs/logger";
 
-function makeTerminalTheme(themeName: Theme): ITheme {
+export function makeTerminalTheme(themeName: Theme): ITheme {
   const theme = themes[themeName];
   return {
     background: "oklch(23.1012% 0 0 / 1)",
   };
 }
 
-export function createTerminal() {
+export interface TerminalConfig {
+  theme?: ITheme;
+}
+
+export function createTerminal({
+  theme = makeTerminalTheme("business"),
+}: TerminalConfig = {}) {
   const terminal = new Terminal({
-    theme: makeTerminalTheme("business"),
+    theme,
     fontFamily: "monospace",
     convertEol: true,
     rows: 1,
   });
   const fitAddon = new FitAddon();
   terminal.loadAddon(fitAddon);
+  return { terminal, fitAddon };
+}
+
+export function createStreams(terminal: Terminal): Streams {
   const out: Writer = {
     write(data) {
       terminal.write(data);
@@ -36,24 +46,24 @@ export function createTerminal() {
   const encoder = new TextEncoder();
   let buffer = new Uint8Array(1024);
   let offset = 0;
-  const emptyArray = new Uint8Array()
+  const emptyArray = new Uint8Array();
   const disposable = terminal.onData((data) => {
-    let input: Uint8Array;
     if (data === "\r") {
       terminal.write("\r\n");
       handleData(emptyArray);
       return;
     }
-    if (data === '\x7f') { // Backspace
-      terminal.write('\b \b')
+    // Backspace
+    if (data === "\x7f") {
+      terminal.write("\b \b");
       if (offset > 0) {
-        offset--
+        offset--;
       }
-      handleData(BACKSPACE)
-      return
+      handleData(BACKSPACE);
+      return;
     }
     terminal.write(data);
-    input = encoder.encode(data);
+    const input = encoder.encode(data);
     if (offset + input.length > buffer.length) {
       const next = new Uint8Array((offset + input.length) * 2);
       next.set(buffer);
@@ -61,10 +71,10 @@ export function createTerminal() {
     }
     buffer.set(input, offset);
     offset += input.length;
-    handleData(input)
+    handleData(input);
   });
   onDestroy(() => disposable.dispose());
-  const streams: Streams = {
+  return {
     out,
     err: makeErrorWriter(out),
     in: {
@@ -83,5 +93,4 @@ export function createTerminal() {
       },
     },
   };
-  return { terminal, fitAddon, streams };
 }

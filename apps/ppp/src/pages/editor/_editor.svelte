@@ -2,7 +2,6 @@
   import { editor } from "monaco-editor";
   import Icon from "@iconify/svelte";
 
-  import type { Compiler, Program } from "compiler";
   import {
     createContext,
     createRecoverableContext,
@@ -11,6 +10,7 @@
   } from "libs/context";
   import { createLogger } from "libs/logger";
   import { stringifyError } from "libs/error";
+  import type { Compiler, Program } from "compiler";
 
   import { reactiveWindow } from "@/lib/reactive-window.svelte";
   import { debouncedSave, immediateSave } from "@/lib/sync-storage.svelte";
@@ -29,6 +29,7 @@
     createTerminal,
     RunButton,
     type ProcessStatus,
+    createStreams,
   } from "@/components/editor";
   import {
     Panel,
@@ -92,7 +93,8 @@
     };
   });
 
-  const { terminal, fitAddon, streams } = createTerminal();
+  const { terminal, fitAddon } = createTerminal();
+  const streams = createStreams(terminal)
 
   setEditorContext(new EditorContext(pageLang, model, terminal, fitAddon));
 

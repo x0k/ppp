@@ -33,6 +33,7 @@
     EditorContext,
     setEditorContext,
     type ProcessStatus,
+    createStreams,
   } from "@/components/editor";
   import {
     Panel,
@@ -105,7 +106,8 @@
     };
   });
 
-  const { terminal, fitAddon, streams } = createTerminal();
+  const { terminal, fitAddon } = createTerminal();
+  const streams = createStreams(terminal)
 
   const editorContext = new EditorContext(pageLang, model, terminal, fitAddon);
   setEditorContext(editorContext);
