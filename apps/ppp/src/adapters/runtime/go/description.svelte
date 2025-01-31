@@ -3,10 +3,6 @@
 </script>
 
 <p>
-  Go
-</p>
-
-<p>
   Your code is interpreted by <a
     target="_blank"
     class="link"
