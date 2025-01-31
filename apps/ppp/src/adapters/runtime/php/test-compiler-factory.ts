@@ -1,7 +1,7 @@
 import type { Context } from 'libs/context';
 import type { Streams } from "libs/io";
 import { phpCompilerFactory, PHPTestProgram } from "php-runtime";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 

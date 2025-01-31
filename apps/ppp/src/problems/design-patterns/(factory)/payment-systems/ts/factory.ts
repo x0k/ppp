@@ -1,10 +1,10 @@
-import { makeRemoteTestCompilerFactory } from "testing/actor";
+import { makeRemoteTestCompilerFactory } from "libs/testing/actor";
 
 import Worker from "@/adapters/runtime/ts/test-worker?worker";
 
 // Only type imports are allowed
 
-import type { TestCompilerFactory } from 'testing';
+import type { TestCompilerFactory } from 'libs/testing';
 
 import type { TsTestWorkerConfig } from "@/adapters/runtime/ts/test-worker";
 

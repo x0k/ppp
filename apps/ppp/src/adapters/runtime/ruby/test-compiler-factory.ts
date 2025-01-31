@@ -1,6 +1,6 @@
 import type { Streams, Writer } from "libs/io";
 import { inContext, type Context } from "libs/context";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 import { RubyTestProgram, createRubyVM } from "ruby-runtime";
 
 //@ts-expect-error .wasm is an asset

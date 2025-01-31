@@ -1,5 +1,5 @@
 import { type Snippet } from "svelte";
-import type { TestCase, TestCompilerFactory } from 'testing';
+import type { TestCase, TestCompilerFactory } from 'libs/testing';
 
 import { type Language } from "@/shared/languages";
 import { type ProblemCategory } from '@/shared/problems';

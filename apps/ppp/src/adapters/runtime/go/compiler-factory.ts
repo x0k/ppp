@@ -4,7 +4,7 @@ import {
   makeGoCompilerFactory,
   makeGoExecutorFactory,
 } from "go-runtime";
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { inContext } from "libs/context";
 
 import wasmInit from "go-runtime/compiler.wasm?init";

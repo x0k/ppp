@@ -1,4 +1,4 @@
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { RubyProgram, createRubyVM } from "ruby-runtime";
 
 // @ts-expect-error .wasm is an asset

@@ -1,5 +1,5 @@
 import type { OpenDirectory, WASI } from "@bjorn3/browser_wasi_shim";
-import type { Program } from "compiler";
+import type { Program } from "libs/compiler";
 import { inContext, type Context } from "libs/context";
 import { isErr } from "libs/result";
 

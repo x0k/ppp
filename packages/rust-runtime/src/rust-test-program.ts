@@ -1,6 +1,5 @@
 import { Fd, WASI, OpenDirectory, File } from "@bjorn3/browser_wasi_shim";
-import type { TestProgram } from "testing";
-
+import type { TestProgram } from "libs/testing";
 import { inContext, type Context } from "libs/context";
 import { isErr } from "libs/result";
 

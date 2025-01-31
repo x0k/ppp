@@ -12,18 +12,16 @@
   "author": "Krasilnikov Roman",
   "license": "ISC",
   "exports": {
-    "./function": "./dist/function.js",
+    "./sync": "./dist/sync/index.js",
     "./actor": "./dist/actor/index.js",
-    "./context": "./dist/context.js",
-    "./error": "./dist/error.js",
-    "./json": "./dist/json.js",
-    "./logger": "./dist/logger.js",
-    "./patcher": "./dist/patcher.js",
-    "./result": "./dist/result.js",
-    "./type": "./dist/type.js",
-    "./io": "./dist/io.js",
-    "./js": "./dist/js.js",
-    "./sync": "./dist/sync/index.js"
+    "./compiler": "./dist/compiler/index.js",
+    "./compiler/actor": "./dist/compiler/actor.js",
+    "./testing": "./dist/testing/index.js",
+    "./testing/actor": "./dist/testing/actor.js",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
   },
   "devDependencies": {
     "@types/node": "^22.12.0",

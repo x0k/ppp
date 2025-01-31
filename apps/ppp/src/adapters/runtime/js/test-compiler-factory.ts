@@ -1,7 +1,7 @@
 import type { Streams } from "libs/io";
 import { createLogger, redirect } from "libs/logger";
 import { compileJsModule } from "libs/js";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 import { JsTestProgram } from "javascript-runtime";
 
 export type InvokeTestMethod<M, I, O> = (m: M, input: I) => Promise<O>;

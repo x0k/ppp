@@ -1,7 +1,7 @@
 import { inContext, type Context } from "libs/context";
 import { patch } from "libs/patcher";
 
-import type { TestProgram } from "testing";
+import type { TestProgram } from "libs/testing";
 
 export abstract class JsTestProgram<M, I, O> implements TestProgram<I, O> {
   constructor(

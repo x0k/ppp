@@ -1,4 +1,4 @@
-import { testCase } from "testing";
+import { testCase } from "libs/testing";
 
 import { PaymentSystemType, payment } from "./reference";
 

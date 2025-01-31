@@ -1,8 +1,7 @@
-import { deepEqual } from "fast-equals";
-
-import type { Logger } from "libs/logger";
-import type { Context } from "libs/context";
-import type { Compiler, CompilerFactory } from "compiler";
+import type { Logger } from "../logger.js";
+import type { Context } from "../context.js";
+import type { Compiler, CompilerFactory } from "../compiler/index.js";
+import { isDeepEqual } from '../deep-equal.js';
 
 export interface TestCase<I, O> {
   input: I;
@@ -41,7 +40,7 @@ export async function runTests<I, O>(
     const testCase = testsCases[i];
     try {
       const result = await testProgram.run(ctx, testCase.input);
-      if (!deepEqual(result, testCase.output)) {
+      if (!isDeepEqual(result, testCase.output)) {
         log.error(
           `Test case failed, expected "${testCase.output}", but got "${result}"`
         );

@@ -10,7 +10,7 @@
   } from "libs/context";
   import { createLogger } from "libs/logger";
   import { stringifyError } from "libs/error";
-  import type { Compiler, Program } from "compiler";
+  import type { Compiler, Program } from "libs/compiler";
 
   import { reactiveWindow } from "@/lib/reactive-window.svelte";
   import { debouncedSave, immediateSave } from "@/lib/sync-storage.svelte";

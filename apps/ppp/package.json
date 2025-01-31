@@ -19,7 +19,6 @@
     "@xterm/xterm": "^5.5.0",
     "astro": "5.1.9",
     "astro-icon": "^1.1.5",
-    "compiler": "workspace:*",
     "dotnet-runtime": "workspace:*",
     "gleam-runtime": "workspace:*",
     "go-runtime": "workspace:*",
@@ -36,7 +35,6 @@
     "ruby-runtime": "workspace:*",
     "rust-runtime": "workspace:*",
     "tailwindcss": "^3.4.17",
-    "testing": "workspace:*",
     "typescript-runtime": "workspace:*"
   },
   "devDependencies": {

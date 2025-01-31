@@ -1,5 +1,5 @@
 import { createContext } from "libs/context";
-import { startTestCompilerActor } from "testing/actor";
+import { startTestCompilerActor } from "libs/testing/actor";
 
 import { RubyTestCompilerFactory } from "./test-compiler-factory";
 

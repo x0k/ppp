@@ -1,6 +1,6 @@
 import { type Context } from "libs/context";
 import { isErr } from "libs/result";
-import type { TestProgram } from "testing";
+import type { TestProgram } from "libs/testing";
 
 import type { Evaluator } from "./model";
 

@@ -4,7 +4,7 @@ import {
   JavaProgram,
   makeJVMFactory,
 } from "java-runtime";
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 
 // @ts-expect-error vite url import
 import libZipUrl from "java-runtime/doppio.zip";

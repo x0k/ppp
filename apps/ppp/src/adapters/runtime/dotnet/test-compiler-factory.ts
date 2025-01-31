@@ -2,7 +2,7 @@ import { inContext, type Context } from "libs/context";
 import { createLogger, redirect, type Logger } from "libs/logger";
 import type { Streams, Writer } from "libs/io";
 import { patch } from "libs/patcher";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 import {
   DotnetCompilerFactory,
   DotnetRuntimeFactory,

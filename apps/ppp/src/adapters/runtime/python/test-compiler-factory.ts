@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
 import type { Streams } from "libs/io";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 import { pyRuntimeFactory, PyTestProgram } from "python-runtime";
 
 // @ts-ignore

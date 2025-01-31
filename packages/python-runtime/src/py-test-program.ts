@@ -2,7 +2,7 @@ import { loadPyodide } from "pyodide";
 import type { PyProxy } from "pyodide/ffi";
 
 import { inContext, type Context } from "libs/context";
-import type { TestProgram } from "testing";
+import type { TestProgram } from "libs/testing";
 
 function isPyProxy(obj: any): obj is PyProxy {
   return typeof obj === "object" && obj;

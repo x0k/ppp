@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import type { TestProgram } from "testing";
+import type { TestProgram } from "libs/testing";
 
 import type { DotnetRuntime } from "./dotnet-runtime-factory";
 

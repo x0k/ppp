@@ -1,6 +1,6 @@
 import type { RubyVM, RbValue } from "@ruby/wasm-wasi";
 import { inContext, type Context } from "libs/context";
-import type { TestProgram } from "testing";
+import type { TestProgram } from "libs/testing";
 
 export abstract class RubyTestProgram<I, O> implements TestProgram<I, O> {
   constructor(protected readonly rubyVm: RubyVM) {}

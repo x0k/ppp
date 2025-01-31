@@ -8,8 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "libs": "workspace:*",
-    "compiler": "workspace:*"
+    "libs": "workspace:*"
   },
   "devDependencies": {
     "vite": "catalog:",

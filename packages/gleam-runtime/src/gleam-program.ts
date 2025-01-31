@@ -1,6 +1,6 @@
 import type { Context } from "libs/context";
 import { patch } from 'libs/patcher';
-import type { Program } from "compiler";
+import type { Program } from "libs/compiler";
 
 export interface GleamModule {
   main(): void | Promise<void>;

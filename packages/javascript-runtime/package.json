@@ -13,8 +13,6 @@
     ".": "./dist/index.js"
   },
   "dependencies": {
-    "libs": "workspace:*",
-    "compiler": "workspace:*",
-    "testing": "workspace:*"
+    "libs": "workspace:*"
   }
 }

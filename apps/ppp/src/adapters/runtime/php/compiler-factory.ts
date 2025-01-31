@@ -1,4 +1,4 @@
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { phpCompilerFactory, PHPProgram } from "php-runtime";
 
 export const makePhpCompiler: CompilerFactory<Program> = async (ctx, streams) => {

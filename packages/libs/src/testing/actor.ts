@@ -4,8 +4,11 @@ import {
   createRecoverableContext,
   withCancel,
   type Context,
-} from "libs/context";
-import { BACKSPACE, createLogger } from "libs/logger";
+} from "../context.js";
+import { BACKSPACE, createLogger } from "../logger.js";
+import { stringifyError } from "../error.js";
+import { compileJsModule } from "../js.js";
+import type { Streams } from "../io.js";
 import {
   Actor,
   MessageType,
@@ -15,12 +18,14 @@ import {
   type EventMessage,
   type IncomingMessage,
   type OutgoingMessage,
-} from "libs/actor";
-import { stringifyError } from "libs/error";
-import { compileJsModule } from "libs/js";
-import type { Streams } from "libs/io";
-import { createSharedStreamsClient, createSharedStreamsServer, SharedQueue, StreamType } from 'libs/sync';
-import type { File } from "compiler";
+} from "../actor/index.js";
+import {
+  createSharedStreamsClient,
+  createSharedStreamsServer,
+  SharedQueue,
+  StreamType
+} from '../sync/index.js';
+import type { File } from "../compiler/index.js";
 
 import type { TestProgram, TestCompiler } from "./testing.js";
 

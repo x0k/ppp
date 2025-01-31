@@ -8,9 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "libs": "workspace:*",
-    "compiler": "workspace:*",
-    "testing": "workspace:*"
+    "libs": "workspace:*"
   },
   "devDependencies": {
     "@types/golang-wasm-exec": "^1.15.2",

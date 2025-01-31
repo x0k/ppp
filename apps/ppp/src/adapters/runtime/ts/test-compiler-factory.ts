@@ -1,7 +1,7 @@
 import type { Streams, Writer } from "libs/io";
 import { compileJsModule } from "libs/js";
 import { createLogger, redirect } from "libs/logger";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 import { JsTestProgram } from "javascript-runtime";
 import { compileTsModule } from "typescript-runtime";
 

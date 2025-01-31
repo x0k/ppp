@@ -1,5 +1,5 @@
 import type { Context } from "libs/context";
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { RustProgram, createWASI } from "rust-runtime";
 
 // @ts-expect-error .wasm is an asset

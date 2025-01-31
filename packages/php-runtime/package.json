@@ -10,9 +10,7 @@
   "dependencies": {
     "@php-wasm/universal": "^0.9.46",
     "@php-wasm/web": "^0.9.46",
-    "libs": "workspace:*",
-    "compiler": "workspace:*",
-    "testing": "workspace:*"
+    "libs": "workspace:*"
   },
   "devDependencies": {
     "vite": "catalog:",

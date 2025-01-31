@@ -1,4 +1,4 @@
-import { startTestCompilerActor } from "testing/actor";
+import { startTestCompilerActor } from "libs/testing/actor";
 import { makeExecutionCode } from "dotnet-runtime";
 import { createContext } from "libs/context";
 

@@ -1,4 +1,4 @@
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { PyProgram, pyRuntimeFactory } from "python-runtime";
 
 // @ts-ignore

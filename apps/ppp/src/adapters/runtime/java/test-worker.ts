@@ -1,5 +1,5 @@
 import { util } from "java-runtime";
-import { startTestCompilerActor } from "testing/actor";
+import { startTestCompilerActor } from "libs/testing/actor";
 import { createContext } from "libs/context";
 
 import { JavaTestCompilerFactory } from "./test-compiler-factory";

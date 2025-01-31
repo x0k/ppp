@@ -1,7 +1,7 @@
 <script lang="ts" generics="Input, Output">
   import Icon from "@iconify/svelte";
 
-  import type { TestCase } from "testing";
+  import type { TestCase } from "libs/testing";
 
   interface Props<I, O> {
     testsData: TestCase<I, O>[];

@@ -1,5 +1,5 @@
-import type { CompilerFactory, Program } from "compiler";
-import { makeRemoteCompilerFactory } from "compiler/actor";
+import type { CompilerFactory, Program } from "libs/compiler";
+import { makeRemoteCompilerFactory } from "libs/compiler/actor";
 
 import { Language } from "@/shared/languages";
 import PhpWorker from "@/adapters/runtime/php/worker?worker";

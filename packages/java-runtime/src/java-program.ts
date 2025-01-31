@@ -1,4 +1,4 @@
-import { Program } from "compiler";
+import { Program } from "libs/compiler";
 import { Context } from "libs/context";
 
 import { JVMFactory } from "./jvm-factory";

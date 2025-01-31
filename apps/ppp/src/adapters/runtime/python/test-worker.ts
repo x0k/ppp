@@ -1,4 +1,4 @@
-import { startTestCompilerActor } from "testing/actor";
+import { startTestCompilerActor } from "libs/testing/actor";
 import { createContext } from "libs/context";
 
 import { PythonTestCompilerFactory } from "./test-compiler-factory";

@@ -1,7 +1,7 @@
 import type { PHP } from "@php-wasm/universal";
 import type { Context } from "libs/context";
 import type { Streams } from "libs/io";
-import type { Program } from "compiler";
+import type { Program } from "libs/compiler";
 
 export class PHPProgram implements Program {
   constructor(

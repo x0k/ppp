@@ -2,7 +2,7 @@ import type { Context } from "libs/context";
 import type { Streams, Writer } from "libs/io";
 import { createLogger, redirect } from "libs/logger";
 import { compileJsModule } from "libs/js";
-import type { TestCompiler } from "testing";
+import type { TestCompiler } from "libs/testing";
 import { JsTestProgram } from "javascript-runtime";
 import { GleamModuleCompiler } from "gleam-runtime";
 

@@ -1,5 +1,5 @@
 import { redirect, createLogger } from "libs/logger";
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { JsProgram } from "javascript-runtime";
 import { compileTsModule } from "typescript-runtime";
 

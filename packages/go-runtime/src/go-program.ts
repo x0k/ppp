@@ -1,4 +1,4 @@
-import type { Program } from "compiler";
+import type { Program } from "libs/compiler";
 import type { Context } from "libs/context";
 import { isErr } from "libs/result";
 

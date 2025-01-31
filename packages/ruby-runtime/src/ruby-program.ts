@@ -1,5 +1,5 @@
 import { RubyVM } from "@ruby/wasm-wasi";
-import type { Program } from "compiler";
+import type { Program } from "libs/compiler";
 import { inContext, type Context } from "libs/context";
 
 export class RubyProgram implements Program {

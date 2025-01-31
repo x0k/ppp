@@ -6,7 +6,7 @@ import {
   DotnetCompilerFactory,
   DotnetRuntimeFactory,
 } from "dotnet-runtime";
-import type { CompilerFactory, Program } from "compiler";
+import type { CompilerFactory, Program } from "libs/compiler";
 import { inContext } from "libs/context";
 import { createLogger, redirect } from "libs/logger";
 import { patch } from "libs/patcher";

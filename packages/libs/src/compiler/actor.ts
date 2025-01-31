@@ -7,18 +7,18 @@ import {
   type EventMessage,
   type IncomingMessage,
   type OutgoingMessage,
-} from "libs/actor";
+} from "../actor/index.js";
+import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from '../sync/index.js';
 import {
   CanceledError,
   createContext,
   createRecoverableContext,
   withCancel,
   type Context,
-} from "libs/context";
-import type { Streams } from "libs/io";
-import { stringifyError } from "libs/error";
-import { BACKSPACE, createLogger } from "libs/logger";
-import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from 'libs/sync';
+} from "../context.js";
+import type { Streams } from "../io.js";
+import { stringifyError } from "../error.js";
+import { BACKSPACE, createLogger } from "../logger.js";
 
 import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
 

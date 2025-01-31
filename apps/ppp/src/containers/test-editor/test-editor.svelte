@@ -11,7 +11,7 @@
     withCancel,
     withTimeout,
   } from "libs/context";
-  import { runTests, type TestCompiler } from "testing";
+  import { runTests, type TestCompiler } from "libs/testing";
 
   import { debouncedSave, immediateSave } from "@/lib/sync-storage.svelte";
   import { reactiveWindow } from "@/lib/reactive-window.svelte";
