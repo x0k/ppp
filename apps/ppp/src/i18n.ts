@@ -1,98 +1,24 @@
-import { Page, TITLE } from "./shared";
 import { ProblemCategory } from "./shared/problems";
-import { EditorPanelTab } from "./shared/editor-panel-tab";
+import { EditorPanelTab } from './shared/editor-panel-tab';
 
-export enum Lang {
-  EN = "en",
-  RU = "ru",
-}
+import { type Locale, localizePath } from "./paraglide/runtime";
+import * as m from './paraglide/messages'
 
-const NEXT_LANGUAGES: Record<Lang, Lang> = {
-  [Lang.EN]: Lang.RU,
-  [Lang.RU]: Lang.EN,
+export const NEXT_LANGUAGES: Record<Locale, Locale> = {
+  en: "ru",
+  ru: "en",
 };
 
-export function getNextLang(lang: Lang): Lang {
-  return NEXT_LANGUAGES[lang];
-}
-
-export enum Label {
-  MainPage = "page:main",
-  ProblemsPage = "page:problems",
-  EditorPage = "page:editor",
-  ProblemsCategoryDesignPatterns = "problems:category:design-patterns",
-  EditorPanelTabTests = "editor:panel:tab:tests",
-  EditorPanelTabOutput = "editor:panel:tab:output",
-  EditorPanelTabSettings = "editor:panel:tab:settings",
-  EditorSettingsVimMode = "editor:settings:vim-mode",
-  EditorRunButton = "editor:button:run",
-  EditorStopButton = "editor:button:stop",
-  EditorForceStopButton = "editor:button:force-stop",
-  EditorSettingsExecutionTimeout = "editor:settings:execution-timeout",
-  EditorSettingsExecutionTimeoutAlt = "editor:settings:execution-timeout-alt",
-}
-
-const strings: Record<Lang, Record<Label, string>> = {
-  [Lang.EN]: {
-    [Label.MainPage]: TITLE,
-    [Label.ProblemsPage]: "Problems",
-    [Label.EditorPage]: "Editor",
-    [Label.ProblemsCategoryDesignPatterns]: "Design Patterns",
-    [Label.EditorPanelTabTests]: "Tests",
-    [Label.EditorPanelTabOutput]: "Output",
-    [Label.EditorPanelTabSettings]: "Settings",
-    [Label.EditorSettingsVimMode]: "Vim mode",
-    [Label.EditorRunButton]: "Run",
-    [Label.EditorStopButton]: "Stop",
-    [Label.EditorForceStopButton]: "Force stop",
-    [Label.EditorSettingsExecutionTimeout]: "Execution timeout (ms)",
-    [Label.EditorSettingsExecutionTimeoutAlt]: "Use zero to disable",
-  },
-  [Lang.RU]: {
-    [Label.MainPage]: TITLE,
-    [Label.ProblemsPage]: "Проблемы",
-    [Label.EditorPage]: "Редактор",
-    [Label.ProblemsCategoryDesignPatterns]: "Паттерны проектирования",
-    [Label.EditorPanelTabTests]: "Тесты",
-    [Label.EditorPanelTabOutput]: "Вывод",
-    [Label.EditorPanelTabSettings]: "Настройки",
-    [Label.EditorSettingsVimMode]: "Режим Vim",
-    [Label.EditorRunButton]: "Запустить",
-    [Label.EditorStopButton]: "Остановить",
-    [Label.EditorForceStopButton]: "Остановить принудительно",
-    [Label.EditorSettingsExecutionTimeout]: "Таймаут выполнения (мс)",
-    [Label.EditorSettingsExecutionTimeoutAlt]: "Используйте ноль для отключения",
-  },
+export const PROBLEM_CATEGORY_TO_LABEL: Record<ProblemCategory, () => string> = {
+  [ProblemCategory.DesignPatterns]: m.designPatterns,
 };
 
-export function useTranslations(lang: Lang) {
-  return (label: Label) => strings[lang][label];
-}
-
-const PAGE_TO_LABEL: Record<Page, Label> = {
-  [Page.Main]: Label.MainPage,
-  [Page.Problems]: Label.ProblemsPage,
-  [Page.Editor]: Label.EditorPage,
+export const EDITOR_PANEL_TAB_TO_LABEL: Record<EditorPanelTab, () => string> = {
+  [EditorPanelTab.Tests]: m.tests,
+  [EditorPanelTab.Output]: m.output,
+  [EditorPanelTab.Settings]: m.settings,
 };
 
-export function getPageLabel(page: Page): Label {
-  return PAGE_TO_LABEL[page];
-}
-
-const PROBLEM_CATEGORY_TO_LABEL: Record<ProblemCategory, Label> = {
-  [ProblemCategory.DesignPatterns]: Label.ProblemsCategoryDesignPatterns,
-};
-
-export function getProblemCategoryLabel(category: ProblemCategory): Label {
-  return PROBLEM_CATEGORY_TO_LABEL[category];
-}
-
-const EDITOR_PANEL_TAB_TO_LABEL: Record<EditorPanelTab, Label> = {
-  [EditorPanelTab.Tests]: Label.EditorPanelTabTests,
-  [EditorPanelTab.Output]: Label.EditorPanelTabOutput,
-  [EditorPanelTab.Settings]: Label.EditorPanelTabSettings,
-};
-
-export function getEditorPanelTabLabel(tab: EditorPanelTab): Label {
-  return EDITOR_PANEL_TAB_TO_LABEL[tab];
+export function relativePath(path: string) {
+  return `${import.meta.env.BASE_URL}/${localizePath(path)}`
 }

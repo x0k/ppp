@@ -16,7 +16,6 @@
   import { debouncedSave, immediateSave } from "@/lib/sync-storage.svelte";
   import { Language, LANGUAGE_ICONS, LANGUAGE_TITLE } from "@/shared/languages";
   import { EditorPanelTab } from "@/shared/editor-panel-tab";
-  import { Label, type Lang } from "@/i18n";
   import { createSyncStorage } from "@/adapters/storage";
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import { DESCRIPTIONS } from "@/adapters/runtime/descriptions";
@@ -40,14 +39,9 @@
     PanelToggle,
   } from "@/components/editor/panel";
   import { CheckBox, Number } from "@/components/editor/controls";
+  import * as m from '@/paraglide/messages'
 
   import { RUNTIMES } from "./_runtimes";
-
-  interface Props {
-    lang: Lang;
-  }
-
-  const { lang: pageLang }: Props = $props();
 
   const languages = Object.keys(RUNTIMES).sort() as Language[];
   if (languages.length === 0) {
@@ -96,7 +90,7 @@
   const { terminal, fitAddon } = createTerminal();
   const streams = createStreams(terminal)
 
-  setEditorContext(new EditorContext(pageLang, model, terminal, fitAddon));
+  setEditorContext(new EditorContext(model, terminal, fitAddon));
 
   const panelHeightStorage = createSyncStorage(
     localStorage,
@@ -237,10 +231,10 @@
       />
       <TabContent tab={EditorPanelTab.Settings}>
         <div class="overflow-auto flex flex-col gap-4 p-4">
-          <CheckBox title={Label.EditorSettingsVimMode} bind:value={vimState} />
+          <CheckBox title={m.vimMode()} bind:value={vimState} />
           <Number
-            title={Label.EditorSettingsExecutionTimeout}
-            alt={Label.EditorSettingsExecutionTimeoutAlt}
+            title={m.executionTimeout()}
+            alt={m.executionTimeoutDescription()}
             bind:value={executionTimeout}
           />
         </div>

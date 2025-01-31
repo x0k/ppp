@@ -3,7 +3,6 @@ import type { TestCase, TestCompilerFactory } from 'libs/testing';
 
 import { type Language } from "@/shared/languages";
 import { type ProblemCategory } from '@/shared/problems';
-import { type Lang } from "@/i18n";
 
 export interface Runtime<I, O> {
   initialValue: string;
@@ -11,7 +10,6 @@ export interface Runtime<I, O> {
 }
 
 export interface Props<L extends Language, I, O> {
-  pageLang: Lang;
   problemCategory: ProblemCategory
   contentId: string;
   testCases: TestCase<I, O>[];
