@@ -1,4 +1,4 @@
-import { noop } from './function.js';
+import { noop } from "./function.js";
 
 export interface Context {
   readonly signal: AbortSignal;
@@ -13,12 +13,13 @@ function createContextFromSignal(signal: AbortSignal): Context {
         action();
         return { [Symbol.dispose]: noop };
       }
-      signal.addEventListener("abort", action);
-      return {
-        [Symbol.dispose]() {
-          signal.removeEventListener("abort", action);
-        },
+      const dispose = () => signal.removeEventListener("abort", handler);
+      const handler = () => {
+        dispose();
+        action();
       };
+      signal.addEventListener("abort", handler);
+      return { [Symbol.dispose]: dispose };
     },
   };
 }

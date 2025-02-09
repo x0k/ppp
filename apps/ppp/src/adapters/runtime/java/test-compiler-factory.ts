@@ -82,8 +82,7 @@ public class ${className} {
 }`
         );
         const program = new TestProgram(className, jvmFactory);
-        const disposable = ctx.onCancel(() => {
-          disposable[Symbol.dispose]();
+        ctx.onCancel(() => {
           program[Symbol.dispose]()
         });
         return program

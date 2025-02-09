@@ -176,8 +176,7 @@ export function startTestCompilerActor<D, I = unknown, O = unknown>(
   );
   connection.start(ctx);
   const actor = new TestCompilerActor(connection, superFactory);
-  const disposable = ctx.onCancel(() => {
-    disposable[Symbol.dispose]()
+  ctx.onCancel(() => {
     actor[Symbol.dispose]()
   })
   actor.start(ctx);
@@ -211,8 +210,7 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
         read += data.length
       }
     })
-    const disposable = ctx.onCancel(() => {
-      disposable[Symbol.dispose]()
+    ctx.onCancel(() => {
       sub[Symbol.dispose]()
       worker.terminate()
     })

@@ -135,8 +135,7 @@ export function startCompilerActor(
   );
   connection.start(ctx);
   const actor = new CompilerActor(connection, compilerFactory);
-  const disposable = ctx.onCancel(() => {
-    disposable[Symbol.dispose]()
+  ctx.onCancel(() => {
     actor[Symbol.dispose]()
   })
   actor.start(ctx);
@@ -167,8 +166,7 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
         read += data.length
       }
     })
-    const disposable = ctx.onCancel(() => {
-      disposable[Symbol.dispose]()
+    ctx.onCancel(() => {
       sub[Symbol.dispose]()
       worker.terminate()
     })

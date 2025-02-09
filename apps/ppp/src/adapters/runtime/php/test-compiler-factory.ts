@@ -24,8 +24,7 @@ export class PhpTestCompilerFactory {
           throw new Error("Compilation of multiple files is not implemented");
         }
         const program = new TestProgram(this.streams, php, files[0].content);
-        const disposable = ctx.onCancel(() => {
-          disposable[Symbol.dispose]()
+        ctx.onCancel(() => {
           program[Symbol.dispose]()
         })
         return program

@@ -42,8 +42,7 @@ export function startRemote<
     RequestId,
     DeferredPromise<ReturnType<H[keyof H]>, E | CanceledError>
   >();
-  const disposable = ctx.onCancel(() => {
-    disposable[Symbol.dispose]()
+  ctx.onCancel(() => {
     for (const [, p] of promises) {
       p.reject(new CanceledError())
     }
