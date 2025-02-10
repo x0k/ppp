@@ -2,10 +2,9 @@
   import type { Snippet } from 'svelte';
 
   import { EditorPanelTab } from '@/shared/editor-panel-tab'
-  import { useTranslations, getEditorPanelTabLabel } from '@/i18n';
 
-  import { getEditorContext } from '../context.svelte';
   import { getEditorPanelContext } from './context.svelte';
+  import { EDITOR_PANEL_TAB_TO_LABEL } from '@/i18n';
 
   interface Props {
     tab: EditorPanelTab
@@ -13,9 +12,6 @@
   }
 
   const { tab, append }: Props = $props();
-
-  const editorCtx = getEditorContext()
-  const t = useTranslations(editorCtx.lang)
 
   const ctx = getEditorPanelContext()
   const isSelected = $derived(ctx.selectedTab === tab)
@@ -34,7 +30,7 @@
     ctx.selectedTab = tab
   }}
 >
-  {t(getEditorPanelTabLabel(tab))}
+  {EDITOR_PANEL_TAB_TO_LABEL[tab]()}
   {#if append}
     {@render append()}
   {/if}

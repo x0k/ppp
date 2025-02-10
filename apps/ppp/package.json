@@ -6,18 +6,21 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
+    "messages": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "postinstall": "npm run messages"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "4.0.8",
     "@astrojs/svelte": "7.0.4",
-    "@tailwindcss/vite": "^4.0.1",
+    "@inlang/paraglide-astro": "^1.0.0-beta.5",
+    "@tailwindcss/vite": "^4.0.2",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "astro": "5.2.1",
+    "astro": "5.2.5",
     "astro-icon": "^1.1.5",
     "dotnet-runtime": "workspace:*",
     "gleam-runtime": "workspace:*",
@@ -34,17 +37,18 @@
     "python-runtime": "workspace:*",
     "ruby-runtime": "workspace:*",
     "rust-runtime": "workspace:*",
-    "tailwindcss": "^4.0.1",
+    "tailwindcss": "^4.0.5",
     "typescript-runtime": "workspace:*"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.25",
+    "@iconify-json/lucide": "^1.2.26",
     "@iconify/svelte": "^4.2.0",
+    "@inlang/paraglide-js": "2.0.0-beta.17",
     "@tailwindcss/typography": "^0.5.16",
     "@types/color": "^4.2.0",
     "color": "^4.2.3",
     "daisyui": "5.0.0-beta.6",
-    "svelte": "5.19.6",
+    "svelte": "5.19.9",
     "vite-plugin-cross-origin-isolation": "^0.1.6",
     "vite-plugin-static-copy": "catalog:"
   }

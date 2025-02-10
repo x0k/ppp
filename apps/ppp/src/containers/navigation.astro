@@ -1,23 +1,21 @@
 ---
-import { getRelativeLocaleUrl } from 'astro:i18n'
-
 import { Page } from "@/shared";
-import { type Lang, useTranslations, getPageLabel } from '@/i18n';
-import Logo from '@/components/logo.svelte';
+import Logo from "@/components/logo.svelte";
+import { localizePath } from '@/paraglide/runtime';
+import * as m from "@/paraglide/messages";
 
 export interface Props {
-  currentSection: Page
+  currentSection: Page;
 }
-
-const lang = Astro.currentLocale as Lang;
-const t = useTranslations(lang);
 ---
 
 <div class="navbar bg-base-100 max-w-4xl m-auto gap-3">
-	<Logo lang={lang} />
-	<span class="grow" >
-		Programming Patterns Practice
-	</span>
-	<a class="link link-hover" href={getRelativeLocaleUrl(lang, Page.Editor)}>{t(getPageLabel(Page.Editor))}</a>
-	<a class="link link-hover" href={getRelativeLocaleUrl(lang, Page.Problems)}>{t(getPageLabel(Page.Problems))}</a>
+  <Logo />
+  <span class="grow"> Programming Patterns Practice </span>
+  <a class="link link-hover" href={localizePath(Page.Editor)}
+    >{m.editorPageTitle()}</a
+  >
+  <a class="link link-hover" href={localizePath(Page.Problems)}
+    >{m.problemsPageTitle()}</a
+  >
 </div>

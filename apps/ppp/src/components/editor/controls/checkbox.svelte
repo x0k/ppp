@@ -1,13 +1,6 @@
 <script lang="ts">
-  import { Label, useTranslations } from "@/i18n";
-
-  import { getEditorContext } from "../context.svelte";
-
-  const ctx = getEditorContext();
-  const t = useTranslations(ctx.lang);
-
   interface Props {
-    title: Label;
+    title: string
     value: boolean;
   }
 
@@ -16,7 +9,7 @@
 
 <div class="form-control">
   <label class="label cursor-pointer">
-    <span class="label-text">{t(title)}</span>
+    <span class="label-text">{title}</span>
     <input type="checkbox" bind:checked={value} class="checkbox" />
   </label>
 </div>

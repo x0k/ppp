@@ -1,5 +1,4 @@
 <script lang="ts" generics="Langs extends Language, Input, Output">
-  import { getRelativeLocaleUrl } from "astro:i18n";
   import { untrack } from "svelte";
   import Icon from "@iconify/svelte";
   import { editor } from "monaco-editor";
@@ -18,7 +17,6 @@
   import { problemCategoryPage } from "@/shared/problems";
   import { LANGUAGE_TITLE, LANGUAGE_ICONS, Language } from "@/shared/languages";
   import { EditorPanelTab } from "@/shared/editor-panel-tab";
-  import { getProblemCategoryLabel, useTranslations, Label } from "@/i18n";
   import { MONACO_LANGUAGE_ID } from "@/adapters/monaco";
   import { createSyncStorage } from "@/adapters/storage";
   import { DESCRIPTIONS } from "@/adapters/runtime/test-descriptions";
@@ -44,6 +42,9 @@
     TabContent,
   } from "@/components/editor/panel";
   import { CheckBox, Number } from "@/components/editor/controls";
+  import { PROBLEM_CATEGORY_TO_LABEL } from "@/i18n";
+  import { localizePath } from '@/paraglide/runtime'
+  import * as m from "@/paraglide/messages";
 
   import {
     DESCRIPTION_PANEL_FLIP_POINT,
@@ -53,14 +54,12 @@
   } from "./model";
 
   const {
-    pageLang,
     problemCategory,
     contentId,
     testCases,
     runtimes,
     children,
   }: Props<Langs, Input, Output> = $props();
-  const t = useTranslations(pageLang);
 
   const languages = Object.keys(runtimes).sort() as Langs[];
   if (languages.length === 0) {
@@ -107,9 +106,9 @@
   });
 
   const { terminal, fitAddon } = createTerminal();
-  const streams = createStreams(terminal)
+  const streams = createStreams(terminal);
 
-  const editorContext = new EditorContext(pageLang, model, terminal, fitAddon);
+  const editorContext = new EditorContext(model, terminal, fitAddon);
   setEditorContext(editorContext);
 
   const editorWidthStorage = createSyncStorage(
@@ -177,7 +176,7 @@
   let testCompiler: TestCompiler<Input, Output> | null = null;
   const compilerCtx = createRecoverableContext(() => {
     testCompiler = null;
-    lastTestId = -1
+    lastTestId = -1;
     return withCancel(createContext());
   });
   $effect(() => () => compilerCtx[Symbol.dispose]());
@@ -190,24 +189,18 @@
     withCancel(compilerCtx.ref)
   );
   $effect(() => () => programCtx[Symbol.dispose]());
-  
+
   async function handleRun() {
     if (status === "running") {
       compilerCtx.cancel();
       return;
     }
-    const programCtxWithTimeout = withTimeout(
-      programCtx.ref,
-      executionTimeout
-    );
+    const programCtxWithTimeout = withTimeout(programCtx.ref, executionTimeout);
     status = "running";
     terminal.reset();
     try {
       if (testCompiler === null) {
-        testCompiler = await testCompilerFactory(
-          compilerCtx.ref,
-          streams
-        );
+        testCompiler = await testCompilerFactory(compilerCtx.ref, streams);
       }
       const testProgram = await testCompiler.compile(programCtxWithTimeout, [
         {
@@ -247,15 +240,12 @@
   >
     <div class="p-6">
       <div class="flex gap-3 items-center mb-8">
-        <Logo lang={pageLang} />
+        <Logo />
         <div class="breadcrumbs">
           <ul>
             <li>
-              <a
-                href={getRelativeLocaleUrl(
-                  pageLang,
-                  problemCategoryPage(problemCategory)
-                )}>{t(getProblemCategoryLabel(problemCategory))}</a
+              <a href={localizePath(problemCategoryPage(problemCategory))}
+                >{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}</a
               >
             </li>
           </ul>
@@ -300,7 +290,9 @@
                 class={[
                   "badge rounded-xs",
                   lastTestId < 0 && "hidden",
-                  lastTestId < testCases.length && lastTestId >= 0 && "badge-error",
+                  lastTestId < testCases.length &&
+                    lastTestId >= 0 &&
+                    "badge-error",
                   lastTestId === testCases.length && "badge-success",
                 ]}
               >
@@ -365,13 +357,10 @@
         </TabContent>
         <TabContent tab={EditorPanelTab.Settings}>
           <div class="overflow-auto flex flex-col gap-4 p-4">
-            <CheckBox
-              title={Label.EditorSettingsVimMode}
-              bind:value={vimState}
-            />
+            <CheckBox title={m.vimMode()} bind:value={vimState} />
             <Number
-              title={Label.EditorSettingsExecutionTimeout}
-              alt={Label.EditorSettingsExecutionTimeoutAlt}
+              title={m.executionTimeout()}
+              alt={m.executionTimeoutDescription()}
               bind:value={executionTimeout}
             />
           </div>

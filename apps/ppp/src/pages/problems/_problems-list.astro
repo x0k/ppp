@@ -1,23 +1,23 @@
 ---
-import type { CollectionEntry } from 'astro:content'
-import { getRelativeLocaleUrl } from 'astro:i18n'
+import type { CollectionEntry } from "astro:content";
 
-import { Page } from '@/shared'
-import type { Lang } from '@/i18n'
+import { Page } from "@/shared";
+import { localizePath } from "@/paraglide/runtime";
 
 export interface Props {
-  problems: CollectionEntry<'problems'>[]
+  problems: CollectionEntry<"problems">[];
 }
 
-const { problems } = Astro.props
-
-const lang = Astro.currentLocale as Lang
+const { problems } = Astro.props;
 ---
+
 <ul>
   {
     problems.map((entry) => (
       <li>
-        <a href={getRelativeLocaleUrl(lang, `${Page.Problems}/${entry.id}`)}>{entry.data.title}</a>
+        <a href={localizePath(`${Page.Problems}/${entry.id}`)}>
+          {entry.data.title}
+        </a>
       </li>
     ))
   }

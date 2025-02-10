@@ -1,15 +1,8 @@
 <script lang="ts">
-  import { useTranslations, type Label } from "@/i18n";
-
-  import { getEditorContext } from '../context.svelte';
-  
-  const ctx = getEditorContext();
-  const t = useTranslations(ctx.lang);
-
   interface Props {
     value: number;
-    title: Label;
-    alt?: Label;
+    title: string;
+    alt?: string;
   }
 
   let { value = $bindable(), title, alt }: Props = $props();
@@ -17,9 +10,9 @@
 
 <label class="form-control">
   <div class="label">
-    <span class="label-text">{t(title)}</span>
+    <span class="label-text">{title}</span>
     {#if alt}
-      <span class="label-text-alt">{t(alt)}</span>
+      <span class="label-text-alt">{alt}</span>
     {/if}
   </div>
   <input type="number" class="input input-bordered" bind:value />
