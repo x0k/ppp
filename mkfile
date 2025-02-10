@@ -14,6 +14,18 @@ b:
 p:
   pnpm run preview
 
+ppp/:
+  pushd apps/ppp
+  c:
+    pnpm run check
+  d:
+    pnpm run dev
+  b:
+    pnpm run build
+  p:
+    pnpm run preview
+  popd
+
 artifacts: */artifacts
 
 libs/:

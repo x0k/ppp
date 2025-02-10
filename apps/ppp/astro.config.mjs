@@ -1,7 +1,9 @@
+// @ts-check
 import { defineConfig } from "astro/config";
 import { fileURLToPath } from "node:url";
 
 import { viteStaticCopy } from "vite-plugin-static-copy";
+// @ts-expect-error
 import crossOriginIsolation from "vite-plugin-cross-origin-isolation";
 
 import mdx from "@astrojs/mdx";
@@ -23,7 +25,8 @@ export default defineConfig({
       project: "./project.inlang",
       outdir: "./src/paraglide",
       // define your strategy
-			strategy: ["pathname", "baseLocale"]
+			strategy: ["pathname", "baseLocale"],
+      pathnameBase: "/ppp"
     }),
   ],
   vite: {

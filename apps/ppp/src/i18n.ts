@@ -1,7 +1,7 @@
 import { ProblemCategory } from "./shared/problems";
 import { EditorPanelTab } from './shared/editor-panel-tab';
 
-import { type Locale, localizePath } from "./paraglide/runtime";
+import type { Locale } from "./paraglide/runtime";
 import * as m from './paraglide/messages'
 
 export const NEXT_LANGUAGES: Record<Locale, Locale> = {
@@ -18,7 +18,3 @@ export const EDITOR_PANEL_TAB_TO_LABEL: Record<EditorPanelTab, () => string> = {
   [EditorPanelTab.Output]: m.output,
   [EditorPanelTab.Settings]: m.settings,
 };
-
-export function relativePath(path: string) {
-  return `${import.meta.env.BASE_URL}/${localizePath(path)}`
-}

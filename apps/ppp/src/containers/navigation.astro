@@ -1,7 +1,7 @@
 ---
 import { Page } from "@/shared";
-import { relativePath } from "@/i18n";
 import Logo from "@/components/logo.svelte";
+import { localizePath } from '@/paraglide/runtime';
 import * as m from "@/paraglide/messages";
 
 export interface Props {
@@ -12,10 +12,10 @@ export interface Props {
 <div class="navbar bg-base-100 max-w-4xl m-auto gap-3">
   <Logo />
   <span class="grow"> Programming Patterns Practice </span>
-  <a class="link link-hover" href={relativePath(Page.Editor)}
+  <a class="link link-hover" href={localizePath(Page.Editor)}
     >{m.editorPageTitle()}</a
   >
-  <a class="link link-hover" href={relativePath(Page.Problems)}
+  <a class="link link-hover" href={localizePath(Page.Problems)}
     >{m.problemsPageTitle()}</a
   >
 </div>
