@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
     mk.url = "github:x0k/mk";
   };
@@ -8,6 +9,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-unstable,
       nixpkgs-old,
       mk,
     }:
@@ -19,19 +21,22 @@
           permittedInsecurePackages = [ "python-2.7.18.8" ];
         };
       };
+      pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+      };
       pkgs-old = import nixpkgs-old {
         inherit system;
         config = {
           permittedInsecurePackages = [ "nodejs-12.22.12" ];
         };
       };
-      # pkgs-very-old = import (pkgs.fetchFromGitHub {
-      #   owner = "NixOS";
-      #   repo = "nixpkgs";
-      #   rev = "19.09";
-      #   sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
-      # }) { inherit system; };
     in
+    # pkgs-very-old = import (pkgs.fetchFromGitHub {
+    #   owner = "NixOS";
+    #   repo = "nixpkgs";
+    #   rev = "19.09";
+    #   sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
+    # }) { inherit system; };
     {
       devShells.${system} = {
         default = pkgs.mkShell {
@@ -50,7 +55,7 @@
             pkgs.nodejs_23
             pkgs.bun
             pkgs.pnpm
-            pkgs.go_1_23
+            pkgs-unstable.go_1_24
             pkgs.gleam
             pkgs.python314
             pkgs.dotnetCorePackages.dotnet_9.sdk
