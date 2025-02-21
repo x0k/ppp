@@ -27,8 +27,7 @@ export function makeJVMFactory(streams: Streams): JVMFactory {
     });
     process.stdout.on("data", onStdout);
     process.stderr.on("data", onStderr);
-    const disposable = ctx.onCancel(() => {
-      disposable[Symbol.dispose]();
+    ctx.onCancel(() => {
       jvm.halt(1);
       process.stdout.removeListener("data", onStdout);
       process.stderr.removeListener("data", onStderr);

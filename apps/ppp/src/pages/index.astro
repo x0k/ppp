@@ -1,14 +1,14 @@
 ---
-import { Page } from "@/shared";
+import { Page, TITLE } from "@/shared";
 import Layout from "@/layouts/landing.astro";
-import Navigation from '@/containers/navigation.astro';
-import { getPageLabel, Lang, useTranslations } from '@/i18n';
-
-const lang = Astro.currentLocale as Lang;
-const t = useTranslations(lang);
+import Navigation from "@/containers/navigation.astro";
 ---
 
-<Layout title={t(getPageLabel(Page.Main))}>
-	<Navigation slot="nav" currentSection={Page.Main} />
-	Landing page
+<Layout title={TITLE}>
+  <Navigation slot="nav" currentSection={Page.Main} />
+  <p>
+    Web-based platform for solving design-oriented programming challenges. Work
+    in progress.
+  </p>
+  <a class="link" target="_blank" href="https://github.com/x0k/ppp"> GitHub</a>
 </Layout>

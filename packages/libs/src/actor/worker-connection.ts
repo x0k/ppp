@@ -27,8 +27,7 @@ export class WorkerConnection<Incoming, Outgoing>
 
   onMessage(ctx: Context, handler: (message: Incoming) => void) {
     this.handlers.add(handler);
-    const disposable = ctx.onCancel(() => {
-      disposable[Symbol.dispose]();
+    ctx.onCancel(() => {
       this.handlers.delete(handler);
     });
   }

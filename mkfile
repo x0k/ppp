@@ -14,6 +14,18 @@ b:
 p:
   pnpm run preview
 
+ppp/:
+  pushd apps/ppp
+  c:
+    pnpm run check
+  d:
+    pnpm run dev
+  b:
+    pnpm run build
+  p:
+    pnpm run preview
+  popd
+
 artifacts: */artifacts
 
 libs/:
@@ -67,7 +79,7 @@ go/:
   b:
     pnpm run build
   update-wasm-exec:
-    cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" src/vendor
+    cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" src/vendor
   artifacts: compiler/build
   compiler/:
     pushd go

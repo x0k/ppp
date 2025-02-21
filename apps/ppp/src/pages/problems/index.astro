@@ -4,17 +4,14 @@ import { getCollection } from 'astro:content'
 import { Page } from '@/shared';
 import Layout from '@/layouts/landing.astro'
 import Navigation from '@/containers/navigation.astro'
-import { type Lang, getPageLabel, useTranslations } from '@/i18n';
+import * as m from '@/paraglide/messages'
 
 import ProblemsList from './_problems-list.astro';
-
-const lang = Astro.currentLocale as Lang;
-const t = useTranslations(lang);
 
 const problems = await getCollection("problems")
 
 ---
-<Layout title={t(getPageLabel(Page.Problems))}>
+<Layout title={m.problemsPageTitle()}>
   <Navigation slot="nav" currentSection={Page.Problems} />
   <ProblemsList problems={problems} />
 </Layout>

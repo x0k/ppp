@@ -21,6 +21,9 @@ func main() {
 
 	initFunctionName := os.Args[1]
 
+	// NOTE: We can't use `go:wasmexport` instead because it has restrictions
+	// on what types it can receive and return
+	// https://go.dev/blog/wasmexport#limitations
 	js.Global().Set(initFunctionName, js_adapters.Sync(func(args []js.Value) js_adapters.Result {
 		if len(args) < 1 {
 			return js_adapters.Err(errors.New("Not enough arguments"))

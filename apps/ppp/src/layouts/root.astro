@@ -1,5 +1,6 @@
 ---
 import "../global.css";
+import { getLocale } from '../paraglide/runtime'
 
 interface Props {
   title: string;
@@ -8,11 +9,10 @@ interface Props {
 }
 
 const { title, description, class: className } = Astro.props;
-const lang = Astro.currentLocale;
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={getLocale()}>
   <head>
     <meta charset="UTF-8" />
     {description && <meta name="description" content={description} />}

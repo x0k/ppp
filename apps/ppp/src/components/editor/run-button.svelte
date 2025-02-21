@@ -1,9 +1,8 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  
-  import { Label, useTranslations } from '@/i18n';
 
-  import { getEditorContext } from './context.svelte';
+  import * as m from '@/paraglide/messages'
+  
   import type { ProcessStatus } from './process';
 
   interface Props {
@@ -11,20 +10,17 @@
     status: ProcessStatus
   }
   const { onClick, status }: Props = $props();
-
-  const ctx = getEditorContext()
-  const t = useTranslations(ctx.lang)
 </script>
 
 <button class="btn btn-sm btn-primary" onclick={onClick}>
   {#if status === 'running'}
     <span class="loading loading-spinner"></span>
-    {t(Label.EditorStopButton)}
+    {m.stop()}
   {:else if status === 'stopping'}
     <span class="loading loading-spinner"></span>
-    {t(Label.EditorForceStopButton)}
+    {m.forceStop()}
   {:else}
     <Icon class="w-6" icon="lucide:play" />
-    {t(Label.EditorRunButton)}
+    {m.run()}
   {/if}
 </button>

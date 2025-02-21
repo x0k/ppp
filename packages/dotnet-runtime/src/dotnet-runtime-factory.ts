@@ -8,8 +8,7 @@ export class DotnetRuntimeFactory {
   constructor(protected readonly compiler: DotnetCompiler) {}
 
   create(ctx: Context, ...code: string[]): DotnetRuntime {
-    const disposable = ctx.onCancel(() => {
-      disposable[Symbol.dispose]()
+    ctx.onCancel(() => {
       this.compiler.DisposeAssembly()
     })
     const status = this.compiler.Compile(code);

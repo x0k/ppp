@@ -6,8 +6,7 @@ import type { Context } from 'libs/context';
 export async function phpCompilerFactory (ctx: Context) {
   const phpRuntime = await loadPHPRuntime(phpModule)
   const php = new PHP(phpRuntime)
-  const disposable = ctx.onCancel(() => {
-    disposable[Symbol.dispose]()
+  ctx.onCancel(() => {
     php.exit(1)
   })
   return php
