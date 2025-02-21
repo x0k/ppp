@@ -280,7 +280,7 @@
       height={reactiveWindow.innerHeight - panelHeight}
     />
     <Panel bind:height={panelHeight} maxHeight={reactiveWindow.innerHeight}>
-      <div class="flex flex-wrap items-center gap-1 p-1">
+      <div class="flex flex-wrap items-center gap-1 p-0.5">
         <RunButton {status} onClick={handleRun} />
         <Tabs>
           <Tab tab={EditorPanelTab.Output} />
