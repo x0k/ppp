@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 
 import { Page } from "@/shared";
-import { localizePath } from "@/paraglide/runtime";
+import { localizeHref } from "@/paraglide/runtime";
 
 export interface Props {
   problems: CollectionEntry<"problems">[];
@@ -15,7 +15,7 @@ const { problems } = Astro.props;
   {
     problems.map((entry) => (
       <li>
-        <a href={localizePath(`${Page.Problems}/${entry.id}`)}>
+        <a href={localizeHref(`${Page.Problems}/${entry.id}`)}>
           {entry.data.title}
         </a>
       </li>

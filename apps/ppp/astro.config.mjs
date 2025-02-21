@@ -9,25 +9,19 @@ import crossOriginIsolation from "vite-plugin-cross-origin-isolation";
 import mdx from "@astrojs/mdx";
 import svelte from "@astrojs/svelte";
 import icon from "astro-icon";
-import paraglide from "@inlang/paraglide-astro";
-
 import tailwindcss from "@tailwindcss/vite";
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
+
+const base = "ppp";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://x0k.github.io",
-  base: "/ppp",
+  base: `/${base}`,
   integrations: [
     icon(),
     mdx(),
     svelte(),
-    paraglide({
-      project: "./project.inlang",
-      outdir: "./src/paraglide",
-      // define your strategy
-			strategy: ["pathname", "baseLocale"],
-      pathnameBase: "/ppp"
-    }),
   ],
   vite: {
     resolve: {
@@ -48,6 +42,22 @@ export default defineConfig({
     },
     assetsInclude: ["**/*.wasm", "**/*.zip", "**/*.rlib", "**/*.so"],
     plugins: [
+      paraglideVitePlugin({
+        project: "./project.inlang",
+        outdir: "./src/paraglide",
+        strategy: ["url", "baseLocale"],
+        urlPatterns: [
+          {
+            pattern:
+              `:protocol://:domain(.*)::port?/:base(${base})?/:locale(en|ru)?/:path(.*)`,
+            deLocalizedNamedGroups: { base, locale: null },
+            localizedNamedGroups: {
+              en: { base, locale: null },
+              ru: { base, locale: "ru" },
+            },
+          },
+        ],
+      }),
       viteStaticCopy({
         targets: [
           {

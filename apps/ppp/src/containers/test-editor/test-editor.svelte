@@ -43,7 +43,7 @@
   } from "@/components/editor/panel";
   import { CheckBox, Number } from "@/components/editor/controls";
   import { PROBLEM_CATEGORY_TO_LABEL } from "@/i18n";
-  import { localizePath } from '@/paraglide/runtime'
+  import { localizeHref } from '@/paraglide/runtime'
   import * as m from "@/paraglide/messages";
 
   import {
@@ -244,7 +244,7 @@
         <div class="breadcrumbs">
           <ul>
             <li>
-              <a href={localizePath(problemCategoryPage(problemCategory))}
+              <a href={localizeHref(problemCategoryPage(problemCategory))}
                 >{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}</a
               >
             </li>
