@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
     mk.url = "github:x0k/mk";
@@ -52,10 +52,10 @@
             mk.packages.${system}.default
             pkgs.zip
             pkgs.curl
-            pkgs.nodejs_23
+            pkgs.nodejs_24
             pkgs.bun
             pkgs.pnpm
-            pkgs-unstable.go_1_24
+            pkgs.go_1_25
             pkgs.gleam
             pkgs.python314
             pkgs.dotnetCorePackages.dotnet_9.sdk
