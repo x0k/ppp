@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Page } from '@/shared';
+  import { Page } from '$lib/routes';
   import { localizeHref } from '$lib/paraglide/runtime';
 </script>
 

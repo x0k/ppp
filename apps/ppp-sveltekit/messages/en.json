@@ -1,4 +1,16 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
-    "hello_world": "Hello, {name} from en!"
+    "hello_world": "Hello, {name} from en!",
+    "problemsPageTitle": "Problems",
+    "editorPageTitle": "Editor",
+    "designPatterns": "Design Patterns",
+    "tests": "Tests",
+    "output": "Output",
+    "settings": "Settings",
+    "vimMode": "Vim mode",
+    "run": "Run",
+    "stop": "Stop",
+    "forceStop": "Force stop",
+    "executionTimeout": "Execution timeout (ms)",
+    "executionTimeoutDescription": "Use zero to disable"
 }
