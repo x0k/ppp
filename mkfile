@@ -15,7 +15,7 @@ p:
   pnpm run preview
 
 app/:
-  pushd apps/ppp
+  pushd apps/ppp-sveltekit
   c:
     pnpm run check
   d:

@@ -1,0 +1,16 @@
+{
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "hello_world": "Hello, {name} from ru!",
+    "problemsPageTitle": "Проблемы",
+    "editorPageTitle": "Редактор",
+    "designPatterns": "Паттерны проектирования",
+    "tests": "Тесты",
+    "output": "Вывод",
+    "settings": "Настройки",
+    "vimMode": "Режим Vim",
+    "run": "Запустить",
+    "stop": "Остановить",
+    "forceStop": "Остановить принудительно",
+    "executionTimeout": "Таймаут выполнения (мс)",
+    "executionTimeoutDescription": "Используйте ноль для отключения"
+}
