@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	// import scriptUrl from '$lib/assets/enable-threads?url';
 	import { page } from '$app/state';
+	import { TITLE } from '$lib/routes';
 	import '../app.css';
 
 	let { children } = $props();
@@ -10,6 +11,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>{TITLE}</title>
 	<!-- <script src={scriptUrl}></script> -->
 	<script
 		data-goatcounter="https://ppp.counter.x0k.dev/count"
