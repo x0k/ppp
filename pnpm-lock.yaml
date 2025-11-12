@@ -44,7 +44,7 @@ importers:
         specifier: ^5.7.3
         version: 5.7.3
 
-  apps/ppp-sveltekit:
+  apps/ppp:
     dependencies:
       '@xterm/addon-fit':
         specifier: ^0.10.0
@@ -1398,11 +1398,6 @@ packages:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
-
-  acorn@8.14.0:
-    resolution: {integrity: sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
@@ -2992,10 +2987,6 @@ packages:
       vue-template-es2015-compiler:
         optional: true
 
-  unplugin@2.1.2:
-    resolution: {integrity: sha512-Q3LU0e4zxKfRko1wMV2HmP8lB9KWislY7hxXpxd+lGx0PRInE4vhMBVEZwpdVYHvtqzhSrzuIfErsob6bQfCzw==}
-    engines: {node: '>=18.12.0'}
-
   unplugin@2.3.10:
     resolution: {integrity: sha512-6NCPkv1ClwH+/BGE9QeoTIl09nuiAt0gS28nn1PvYXsGKRwM2TCbFA2QiilmehPDTXIe684k4rZI1yl3A1PCUw==}
     engines: {node: '>=18.12.0'}
@@ -3501,7 +3492,7 @@ snapshots:
       commander: 11.1.0
       consola: 3.4.0
       json5: 2.2.3
-      unplugin: 2.1.2
+      unplugin: 2.3.10
       urlpattern-polyfill: 10.0.0
     transitivePeerDependencies:
       - babel-plugin-macros
@@ -3529,7 +3520,7 @@ snapshots:
   '@jridgewell/gen-mapping@0.3.5':
     dependencies:
       '@jridgewell/set-array': 1.2.1
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@jridgewell/trace-mapping': 0.3.25
 
   '@jridgewell/remapping@2.3.5':
@@ -3548,7 +3539,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@lix-js/sdk@0.4.7':
     dependencies:
@@ -4280,8 +4271,6 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  acorn@8.14.0: {}
-
   acorn@8.15.0: {}
 
   ajv-draft-04@1.0.0(ajv@8.13.0):
@@ -4999,7 +4988,7 @@ snapshots:
 
   is-reference@3.0.3:
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
 
   isarray@1.0.0: {}
 
@@ -5792,11 +5781,6 @@ snapshots:
       svelte: 5.43.6
     transitivePeerDependencies:
       - supports-color
-
-  unplugin@2.1.2:
-    dependencies:
-      acorn: 8.14.0
-      webpack-virtual-modules: 0.6.2
 
   unplugin@2.3.10:
     dependencies:
