@@ -7,7 +7,7 @@ import (
 	"reflect"
 
 	"github.com/traefik/yaegi/interp"
-	"github.com/traefik/yaegi/stdlib"
+	"github.com/traefik/yaegi/stdlib/unrestricted"
 )
 
 var ErrProgramNotCompiled = errors.New("program not compiled")
@@ -29,7 +29,7 @@ func New(
 		Stdout: stdout,
 		Stderr: stderr,
 	})
-	if err := inter.Use(stdlib.Symbols); err != nil {
+	if err := inter.Use(unrestricted.Symbols); err != nil {
 		return nil, err
 	}
 	return &Compiler{

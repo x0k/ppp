@@ -1,6 +1,6 @@
 module github.com/x0k/ppp
 
-go 1.23.0
+go 1.25.0
 
 require github.com/traefik/yaegi v0.16.1
 
