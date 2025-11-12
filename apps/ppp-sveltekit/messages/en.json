@@ -12,5 +12,6 @@
     "stop": "Stop",
     "forceStop": "Force stop",
     "executionTimeout": "Execution timeout (ms)",
-    "executionTimeoutDescription": "Use zero to disable"
+    "executionTimeoutDescription": "Use zero to disable",
+    "currently_untranslated_problem": "This problem has not yet been translated for your language"
 }

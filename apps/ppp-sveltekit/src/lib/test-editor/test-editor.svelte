@@ -1,4 +1,4 @@
-<script lang="ts" generics="Langs extends Language, Input, Output">
+<script lang="ts" generics="Input, Output">
 	import { untrack } from 'svelte';
 	import { innerWidth, innerHeight } from 'svelte/reactivity/window';
 	import { editor } from 'monaco-editor';
@@ -17,7 +17,7 @@
 
 	import { debouncedSave, immediateSave } from '$lib/sync-storage.svelte';
 	import { PROBLEM_CATEGORY_TO_LABEL, problemCategoryPage } from '$lib/problem';
-	import { LANGUAGE_TITLE, Language } from '$lib/language';
+	import { LANGUAGES, LANGUAGE_TITLE, LANGUAGE_ICONS, isLanguage } from '$lib/language';
 	import { EditorPanelTab } from '$lib/editor-panel-tab';
 	import { MONACO_LANGUAGE_ID } from '$lib/monaco';
 	import { createSyncStorage } from '$lib/storage';
@@ -46,35 +46,49 @@
 	import { CheckBox, Number } from '$lib/components/editor/controls';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
+	import EditorProvider from '$lib/editor-provider.svelte';
 
 	import {
 		DESCRIPTION_PANEL_FLIP_POINT,
 		DESCRIPTION_PANEL_MIN_WIDTH,
 		EDITOR_MIN_WIDTH,
-		type Props
+		type Props,
+		type Runtime
 	} from './model';
-	import { LANGUAGE_ICONS } from '$lib/language-icons.svelte';
-	import EditorProvider from '$lib/editor-provider.svelte';
 
-	const { problemCategory, contentId, testCases, runtimes, children }: Props<Langs, Input, Output> =
-		$props();
+	const {
+		problemCategory,
+		contentId,
+		testCases,
+		runtimes: dirtyRuntimes,
+		children
+	}: Props<Input, Output> = $props();
 
-	const languages = Object.keys(runtimes).sort() as Langs[];
+	const runtimes = $derived.by(() => {
+		const result: Record<string, Runtime<Input, Output>> = {};
+		for (const key of Object.keys(dirtyRuntimes)) {
+			for (const lang of key.split('/')) {
+				if (isLanguage(lang)) {
+					result[lang] = dirtyRuntimes[key];
+					break;
+				}
+			}
+		}
+		return result;
+	});
+
+	const languages = LANGUAGES.filter((l) => l in runtimes);
 	if (languages.length === 0) {
 		throw new Error('No test runner factories provided');
 	}
 	const defaultLang = languages[0];
 	const langStorage = createSyncStorage(localStorage, 'test-editor-lang', defaultLang);
 	const initialLang = langStorage.load();
-	let lang = $state(initialLang in runtimes ? initialLang : defaultLang);
+	let lang = $derived(initialLang in runtimes ? initialLang : defaultLang);
 	immediateSave(langStorage, () => lang);
 	let runtime = $derived(runtimes[lang]);
 	let contentStorage = $derived(
-		createSyncStorage(
-			sessionStorage,
-			`test-editor-content-${contentId}-${lang}`,
-			runtime.initialValue
-		)
+		createSyncStorage(sessionStorage, `test-editor-content-${contentId}-${lang}`, runtime.code)
 	);
 
 	const model = editor.createModel('');
@@ -157,7 +171,7 @@
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
 	const terminalLogger = createLogger(streams.out);
-	let testCompilerFactory = $derived(runtime.testCompilerFactory);
+	let testCompilerFactory = $derived(runtime.factory);
 	let status = $state<ProcessStatus>('stopped');
 	let lastTestId = $state(-1);
 	let testCompiler: TestCompiler<Input, Output> | null = null;
@@ -204,7 +218,7 @@
 	}
 
 	function handleReset() {
-		model.setValue(runtime.initialValue);
+		model.setValue(runtime.code);
 		editorContext.editor?.focus();
 	}
 

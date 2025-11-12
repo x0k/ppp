@@ -24,6 +24,7 @@
 		"java-runtime": "workspace:*",
 		"javascript-runtime": "workspace:*",
 		"libs": "workspace:*",
+		"marked": "^17.0.0",
 		"monaco-editor": "^0.54.0",
 		"monaco-editor-textmate": "^4.0.0",
 		"monaco-textmate": "^3.0.1",

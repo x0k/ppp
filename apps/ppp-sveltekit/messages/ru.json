@@ -12,5 +12,6 @@
     "stop": "Остановить",
     "forceStop": "Остановить принудительно",
     "executionTimeout": "Таймаут выполнения (мс)",
-    "executionTimeoutDescription": "Используйте ноль для отключения"
+    "executionTimeoutDescription": "Используйте ноль для отключения",
+    "currently_untranslated_problem": "Данная проблема пока не переведена для вашего языка"
 }

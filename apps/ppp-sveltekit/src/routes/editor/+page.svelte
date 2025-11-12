@@ -10,7 +10,7 @@
 	import type { Compiler, Program } from 'libs/compiler';
 
 	import { debouncedSave, immediateSave } from '$lib/sync-storage.svelte';
-	import { Language, LANGUAGE_TITLE } from '$lib/language';
+	import { Language, LANGUAGE_TITLE, LANGUAGE_ICONS } from '$lib/language';
 	import { EditorPanelTab } from '$lib/editor-panel-tab';
 	import { createSyncStorage } from '$lib/storage';
 	import { MONACO_LANGUAGE_ID } from '$lib/monaco';
@@ -38,7 +38,6 @@
 	import { m } from '$lib/paraglide/messages';
 
 	import { RUNTIMES } from './_runtimes';
-	import { LANGUAGE_ICONS } from '$lib/language-icons.svelte';
 	import EditorProvider from '$lib/editor-provider.svelte';
 
 	const languages = Object.keys(RUNTIMES).sort() as Language[];
