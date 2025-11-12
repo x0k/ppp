@@ -26,8 +26,7 @@ export default defineConfig({
 			external: ['sharp']
 		}
 	},
-	// assetsInclude: ['**/*.wasm', '**/*.zip', '**/*.rlib', '**/*.so'],
-	assetsInclude: ['**/*.rlib', '**/*.so'],
+	assetsInclude: ['**/*.wasm', '**/*.zip', '**/*.rlib', '**/*.so'],
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
