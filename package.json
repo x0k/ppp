@@ -4,7 +4,7 @@
   "author": "Krasilnikov Roman",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.15.3",
+  "packageManager": "pnpm@10.15.1",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
