@@ -31,8 +31,10 @@ export default defineConfig({
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
+		//@ts-expect-error vite thing
 		Icons({ compiler: 'svelte' }),
 		devtoolsJson(),
+		//@ts-expect-error vite thing
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide',
