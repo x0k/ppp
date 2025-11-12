@@ -10,6 +10,9 @@
       "dependsOn": [
         "check"
       ],
+      "env": [
+        "BASE_PATH"
+      ],
       "outputs": [
         "dist/**"
       ]
