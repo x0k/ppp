@@ -1,11 +1,11 @@
 <script lang="ts" generics="Input, Output">
-	import { untrack } from 'svelte';
+	import { untrack, type Snippet } from 'svelte';
 	import { innerWidth, innerHeight } from 'svelte/reactivity/window';
 	import { editor } from 'monaco-editor';
 	import { stringifyError } from 'libs/error';
 	import { createLogger } from 'libs/logger';
 	import { createContext, createRecoverableContext, withCancel, withTimeout } from 'libs/context';
-	import { runTests, type TestCompiler } from 'libs/testing';
+	import { runTests, type TestCase, type TestCompiler } from 'libs/testing';
 	import LucideInfo from '~icons/lucide/info';
 	import LucideCircleX from '~icons/lucide/circle-x';
 	import LucideCircleCheck from '~icons/lucide/circle-check';
@@ -16,7 +16,6 @@
 	import LucideRotateCcw from '~icons/lucide/rotate-ccw';
 
 	import { debouncedSave, immediateSave } from '$lib/sync-storage.svelte';
-	import { PROBLEM_CATEGORY_TO_LABEL, problemCategoryPage } from '$lib/problem';
 	import { LANGUAGES, LANGUAGE_TITLE, LANGUAGE_ICONS, isLanguage } from '$lib/language';
 	import { EditorPanelTab } from '$lib/editor-panel-tab';
 	import { MONACO_LANGUAGE_ID } from '$lib/monaco';
@@ -44,17 +43,25 @@
 		TabContent
 	} from '$lib/components/editor/panel';
 	import { CheckBox, Number } from '$lib/components/editor/controls';
-	import { localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import EditorProvider from '$lib/editor-provider.svelte';
 
 	import {
-		DESCRIPTION_PANEL_FLIP_POINT,
-		DESCRIPTION_PANEL_MIN_WIDTH,
+		type Runtime,
+		ProblemCategory,
 		EDITOR_MIN_WIDTH,
-		type Props,
-		type Runtime
+		DESCRIPTION_PANEL_MIN_WIDTH,
+		DESCRIPTION_PANEL_FLIP_POINT,
+		PROBLEM_CATEGORY_TO_LABEL
 	} from './model';
+
+	interface Props<I, O> {
+		problemCategory: ProblemCategory;
+		contentId: string;
+		testCases: TestCase<I, O>[];
+		runtimes: Record<string, Runtime<I, O>>;
+		children: Snippet;
+	}
 
 	const {
 		problemCategory,
@@ -235,9 +242,7 @@
 				<div class="breadcrumbs">
 					<ul>
 						<li>
-							<a href={localizeHref(problemCategoryPage(problemCategory))}
-								>{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}</a
-							>
+							<a href="..">{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}</a>
 						</li>
 					</ul>
 				</div>

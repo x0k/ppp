@@ -3,8 +3,11 @@
 
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
+	
+	import type { Problem } from './model';
 
-	const { content: dirtyContent }: { content: Record<string, string> } = $props();
+	const { problem, content: dirtyContent }: { problem: Problem; content: Record<string, string> } =
+		$props();
 
 	const lang = getLocale();
 	const langs = $derived(Object.keys(dirtyContent));
@@ -23,4 +26,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{problem.titles[lang]}</title>
+</svelte:head>
+
+<h1>{problem.titles[lang]}</h1>
 {@html marked.parse(content)}

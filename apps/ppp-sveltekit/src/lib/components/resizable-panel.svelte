@@ -5,7 +5,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
 
-  import type { Vec2 } from '@/lib/vec2';
+  import type { Vec2 } from '$lib/math';
 
   import { Resizer, Alignment, Orientation } from "./resizer";
 

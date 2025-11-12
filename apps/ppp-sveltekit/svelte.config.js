@@ -8,11 +8,20 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			fallback: '404.html',
+			fallback: '404.html'
 			// assets: 'build/assets'
 		}),
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+		},
+		typescript: {
+			config: (config) => {
+				config.exclude.push(
+					'../src/lib/assets/**',
+					'../src/routes/(app)/problems/**/runtimes/*/code.*'
+				);
+				return config;
+			}
 		}
 	}
 };
