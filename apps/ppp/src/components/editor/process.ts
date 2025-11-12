@@ -1,1 +1,0 @@
-export type ProcessStatus = 'stopped' | 'stopping' | 'running'

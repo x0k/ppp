@@ -1,6 +1,0 @@
-export const PANEL_BORDER_HEIGHT = 1;
-export const PANEL_HEADER_VERTICAL_PADDING = 4 * 2;
-export const MIN_PANEL_HEIGHT =
-  36 /* ??? */ +
-  PANEL_HEADER_VERTICAL_PADDING +
-  PANEL_BORDER_HEIGHT;
