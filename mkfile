@@ -194,7 +194,7 @@ ruby/:
     pushd probe
     i:
       bun install
-      cp node_modules/@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm public/
+      cp node_modules/@ruby/3.4-wasm-wasi/dist/ruby+stdlib.wasm public/
     bun run index.ts
     popd
 
