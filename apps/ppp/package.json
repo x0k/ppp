@@ -4,6 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"paraglide-compile": "paraglide-js compile --strategy url --project ./project.inlang --outdir ./src/lib/paraglide",
+		"postinstall": "npm run paraglide-compile",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
