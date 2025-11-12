@@ -5,7 +5,10 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import Icons from 'unplugin-icons/vite'
+import Icons from 'unplugin-icons/vite';
+import { DEV } from 'esm-env';
+
+const base = DEV ? undefined : process.env.BASE_PATH?.slice(1);
 
 export default defineConfig({
 	worker: {
@@ -35,7 +38,18 @@ export default defineConfig({
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide',
-			strategy: ['url', 'baseLocale']
+			strategy: ['url', 'baseLocale'],
+			urlPatterns: base
+				? [
+						{
+							pattern: `/{${base}/}?:path(.*)?`,
+							localized: [
+								['ru', `/{${base}/}?ru/:path(.*)?`],
+								['en', `/{${base}/}?:path(.*)?`]
+							]
+						}
+					]
+				: undefined
 		}),
 		viteStaticCopy({
 			targets: [

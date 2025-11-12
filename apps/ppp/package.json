@@ -21,6 +21,7 @@
 		"@xterm/addon-fit": "^0.10.0",
 		"@xterm/xterm": "^5.5.0",
 		"dotnet-runtime": "workspace:*",
+		"esm-env": "^1.2.2",
 		"gleam-runtime": "workspace:*",
 		"go-runtime": "workspace:*",
 		"java-runtime": "workspace:*",

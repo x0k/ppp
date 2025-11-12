@@ -55,6 +55,9 @@ importers:
       dotnet-runtime:
         specifier: workspace:*
         version: link:../../packages/dotnet-runtime
+      esm-env:
+        specifier: ^1.2.2
+        version: 1.2.2
       gleam-runtime:
         specifier: workspace:*
         version: link:../../packages/gleam-runtime
