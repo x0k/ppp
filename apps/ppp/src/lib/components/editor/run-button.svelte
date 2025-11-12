@@ -18,7 +18,7 @@
     {m.stop()}
   {:else if status === 'stopping'}
     <span class="loading loading-spinner"></span>
-    {m.forceStop()}
+    {m.force_stop()}
   {:else}
     <LucidePlay class="w-6" />
     {m.run()}

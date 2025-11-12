@@ -3,7 +3,7 @@
 
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
-	
+
 	import type { Problem } from './model';
 
 	const { problem, content: dirtyContent }: { problem: Problem; content: Record<string, string> } =
@@ -22,7 +22,7 @@
 				return dirtyContent[key];
 			}
 		}
-		return m.currently_untranslated_problem();
+		return m.untranslated_content();
 	});
 </script>
 
@@ -30,5 +30,5 @@
 	<title>{problem.titles[lang]}</title>
 </svelte:head>
 
-<h1>{problem.titles[lang]}</h1>
+<h1 class="capitalize">{problem.titles[lang]}</h1>
 {@html marked.parse(content)}

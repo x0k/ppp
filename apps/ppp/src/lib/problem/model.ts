@@ -14,7 +14,7 @@ export enum ProblemCategory {
 export const PROBLEM_CATEGORIES = Object.values(ProblemCategory);
 
 export const PROBLEM_CATEGORY_TO_LABEL: Record<ProblemCategory, () => string> = {
-	[ProblemCategory.DesignPatterns]: m.designPatterns
+	[ProblemCategory.DesignPatterns]: m.design_patterns
 };
 
 export interface Runtime<I, O> {
@@ -23,5 +23,5 @@ export interface Runtime<I, O> {
 }
 
 export const EDITOR_MIN_WIDTH = 5;
-export const DESCRIPTION_PANEL_MIN_WIDTH = 600;
+export const DESCRIPTION_PANEL_MIN_WIDTH = 500;
 export const DESCRIPTION_PANEL_FLIP_POINT = DESCRIPTION_PANEL_MIN_WIDTH / 2;

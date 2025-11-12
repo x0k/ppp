@@ -200,10 +200,10 @@
 			<TerminalTab width={innerWidth.current!} height={panelHeight} class="mt-4 ml-4 grow" />
 			<TabContent tab={EditorPanelTab.Settings}>
 				<div class="flex flex-col gap-4 overflow-auto p-4">
-					<CheckBox title={m.vimMode()} bind:value={vimState} />
+					<CheckBox title={m.vim_mode()} bind:value={vimState} />
 					<Number
-						title={m.executionTimeout()}
-						alt={m.executionTimeoutDescription()}
+						title={m.execution_timeout()}
+						alt={m.execution_timeout_description()}
 						bind:value={executionTimeout}
 					/>
 				</div>
