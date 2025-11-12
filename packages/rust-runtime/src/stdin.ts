@@ -1,7 +1,7 @@
 import { Fd, wasi } from "@bjorn3/browser_wasi_shim";
 
 export class Stdin extends Fd {
-  buffer = new Uint8Array();
+  buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
   read: () => Uint8Array;
 
   constructor(read: () => Uint8Array) {
@@ -24,7 +24,7 @@ export class Stdin extends Fd {
   }
 
   override fd_read(size: number): { ret: number; data: Uint8Array } {
-    const data = this.read_data(size)
+    const data = this.read_data(size);
     return { ret: 0, data };
   }
 

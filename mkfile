@@ -14,7 +14,7 @@ b:
 p:
   pnpm run preview
 
-ppp/:
+app/:
   pushd apps/ppp
   c:
     pnpm run check

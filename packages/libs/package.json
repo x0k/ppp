@@ -24,7 +24,7 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^22.12.0",
+    "@types/node": "^24.10.1",
     "vite": "catalog:",
     "vitest": "catalog:"
   }

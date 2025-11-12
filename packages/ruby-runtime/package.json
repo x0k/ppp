@@ -13,7 +13,7 @@
     "libs": "workspace:*"
   },
   "devDependencies": {
-    "@ruby/3.4-wasm-wasi": "^2.7.1",
+    "@ruby/3.4-wasm-wasi": "^2.7.2",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-static-copy": "catalog:"
