@@ -358,8 +358,8 @@ importers:
   packages/rust-runtime:
     dependencies:
       '@bjorn3/browser_wasi_shim':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.2
+        version: 0.4.2
       libs:
         specifier: workspace:*
         version: link:../libs
