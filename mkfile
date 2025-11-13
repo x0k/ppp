@@ -162,15 +162,15 @@ dotnet/:
       dotnet publish
     link:
       rm -rf ../src/vendor/compiler
-      ln -s $(pwd)/bin/${TARGET}/net9.0/wwwroot/_framework ../src/vendor/compiler
+      ln -s $(pwd)/bin/${TARGET}/net10.0/wwwroot/_framework ../src/vendor/compiler
       rm -rf ../src/vendor/lib
-      ln -s $(pwd)/bin/${TARGET}/net9.0/ ../src/vendor/lib
+      ln -s $(pwd)/bin/${TARGET}/net10.0/ ../src/vendor/lib
     copy:
       rm -rf ../src/vendor/compiler
-      rsync -r ./bin/${TARGET}/net9.0/wwwroot/_framework/ ../src/vendor/compiler --delete
+      rsync -r ./bin/${TARGET}/net10.0/wwwroot/_framework/ ../src/vendor/compiler --delete
       rm -rf ../src/vendor/lib
       mkdir -p ../src/vendor/lib
-      cp ./bin/${TARGET}/net9.0/*.dll ../src/vendor/lib/
+      cp ./bin/${TARGET}/net10.0/*.dll ../src/vendor/lib/
     cleanup:
       rm -rf bin obj
     popd
