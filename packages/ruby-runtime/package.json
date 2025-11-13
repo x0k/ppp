@@ -8,8 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.3.0",
-    "@ruby/wasm-wasi": "^2.7.1",
+    "@bjorn3/browser_wasi_shim": "^0.4.2",
+    "@ruby/wasm-wasi": "^2.7.2",
     "libs": "workspace:*"
   },
   "devDependencies": {

@@ -135,7 +135,6 @@ public partial class Compiler
         }
         executionResult = method.Invoke(null, arguments);
         return 0;
-
     }
 
     [JSExport]

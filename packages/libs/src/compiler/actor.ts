@@ -173,6 +173,11 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
     connection.start(ctx);
     const log = createLogger(streams.out);
+    const Buffer = window.SharedArrayBuffer
+      ? SharedArrayBuffer
+      : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024)
+    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       ctx,
       log,
@@ -190,12 +195,7 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
       }
     );
     using _ = ctx.onCancel(() => remote.destroy())
-    const Buffer = window.SharedArrayBuffer
-      ? SharedArrayBuffer
-      : ArrayBuffer;
-    const buffer = new Buffer(1024 * 1024)
     await remote.initialize(buffer);
-    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     return {
       async compile(ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile())

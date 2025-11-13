@@ -1,4 +1,4 @@
-import { toList, remainderInt } from "../gleam.mjs";
+import { Ok, toList } from "../gleam.mjs";
 import * as $string from "../gleam/string.mjs";
 import {
   bit_array_from_string as from_string,
@@ -23,27 +23,48 @@ export {
   slice,
 };
 
+/**
+ * Converts a bit array to a string.
+ *
+ * Returns an error if the bit array is invalid UTF-8 data.
+ */
 export function to_string(bits) {
   return do_to_string(bits);
 }
 
 function do_is_utf8(bits) {
   let $ = to_string(bits);
-  if ($.isOk()) {
+  if ($ instanceof Ok) {
     return true;
   } else {
     return false;
   }
 }
 
+/**
+ * Tests to see whether a bit array is valid UTF-8.
+ */
 export function is_utf8(bits) {
   return do_is_utf8(bits);
 }
 
+/**
+ * Creates a new bit array by joining two bit arrays.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * append(to: from_string("butter"), suffix: from_string("fly"))
+ * // -> from_string("butterfly")
+ * ```
+ */
 export function append(first, second) {
   return concat(toList([first, second]));
 }
 
+/**
+ * Encodes a BitArray into a base 64 encoded string.
+ */
 export function base64_encode(input, padding) {
   let encoded = encode64(input);
   if (padding) {
@@ -53,25 +74,34 @@ export function base64_encode(input, padding) {
   }
 }
 
+/**
+ * Decodes a base 64 encoded string into a `BitArray`.
+ */
 export function base64_decode(encoded) {
-  let padded = (() => {
-    let $ = remainderInt(byte_size(from_string(encoded)), 4);
-    if ($ === 0) {
-      return encoded;
-    } else {
-      let n = $;
-      return $string.append(encoded, $string.repeat("=", 4 - n));
-    }
-  })();
+  let _block;
+  let $ = byte_size(from_string(encoded)) % 4;
+  if ($ === 0) {
+    _block = encoded;
+  } else {
+    let n = $;
+    _block = $string.append(encoded, $string.repeat("=", 4 - n));
+  }
+  let padded = _block;
   return decode64(padded);
 }
 
+/**
+ * Encodes a `BitArray` into a base 64 encoded string with URL and filename safe alphabet.
+ */
 export function base64_url_encode(input, padding) {
   let _pipe = base64_encode(input, padding);
   let _pipe$1 = $string.replace(_pipe, "+", "-");
   return $string.replace(_pipe$1, "/", "_");
 }
 
+/**
+ * Decodes a base 64 encoded string with URL and filename safe alphabet into a `BitArray`.
+ */
 export function base64_url_decode(encoded) {
   let _pipe = encoded;
   let _pipe$1 = $string.replace(_pipe, "-", "+");

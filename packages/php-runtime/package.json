@@ -8,16 +8,18 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@php-wasm/universal": "^0.9.46",
-    "@php-wasm/web": "^0.9.46",
+    "@php-wasm/universal": "^3.0.21",
+    "@php-wasm/web": "^3.0.21",
     "libs": "workspace:*"
   },
   "devDependencies": {
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:"
+    "vite-plugin-dts": "catalog:",
+		"vite-plugin-static-copy": "catalog:"
   },
   "exports": {
     ".": "./dist/index.js",
-    "./version": "./dist/version.js"
+    "./version": "./dist/version.js",
+    "./php.wasm": "./dist/php.wasm"
   }
 }

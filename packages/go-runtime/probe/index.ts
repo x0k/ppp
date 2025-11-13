@@ -1,5 +1,5 @@
 // @ts-ignore
-import WASM_PATH from "../assets/compiler.wasm";
+import WASM_PATH from "../public/compiler.wasm";
 
 import { LogLevel, makeCompilerFactory } from "../src/index.js";
 

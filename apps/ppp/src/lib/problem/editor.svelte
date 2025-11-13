@@ -241,8 +241,10 @@
 				<Logo />
 				<div class="breadcrumbs">
 					<ul>
-						<li>
-							<a href="..">{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}</a>
+						<li class="min-w-0">
+							<a class="truncate capitalize block" href="..">
+								{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}
+							</a>
 						</li>
 					</ul>
 				</div>
@@ -337,10 +339,10 @@
 				</TabContent>
 				<TabContent tab={EditorPanelTab.Settings}>
 					<div class="flex flex-col gap-4 overflow-auto p-4">
-						<CheckBox title={m.vimMode()} bind:value={vimState} />
+						<CheckBox title={m.vim_mode()} bind:value={vimState} />
 						<Number
-							title={m.executionTimeout()}
-							alt={m.executionTimeoutDescription()}
+							title={m.execution_timeout()}
+							alt={m.execution_timeout_description()}
 							bind:value={executionTimeout}
 						/>
 					</div>

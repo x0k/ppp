@@ -12,13 +12,13 @@
   const { onClick, status }: Props = $props();
 </script>
 
-<button class="btn btn-sm btn-primary" onclick={onClick}>
+<button class="btn btn-sm btn-primary capitalize" onclick={onClick}>
   {#if status === 'running'}
     <span class="loading loading-spinner"></span>
     {m.stop()}
   {:else if status === 'stopping'}
     <span class="loading loading-spinner"></span>
-    {m.forceStop()}
+    {m.force_stop()}
   {:else}
     <LucidePlay class="w-6" />
     {m.run()}

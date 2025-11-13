@@ -1,16 +1,19 @@
-import { Fd, wasi } from "@bjorn3/browser_wasi_shim";
+import { Fd, Inode, wasi } from "@bjorn3/browser_wasi_shim";
 
 export class Stdin extends Fd {
+  private ino: bigint;
   buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
   read: () => Uint8Array;
 
   constructor(read: () => Uint8Array) {
     super();
+    this.ino = Inode.issue_ino();
     this.read = read;
   }
 
   override fd_filestat_get(): { ret: number; filestat: wasi.Filestat } {
     const filestat = new wasi.Filestat(
+      this.ino,
       wasi.FILETYPE_CHARACTER_DEVICE,
       BigInt(0)
     );

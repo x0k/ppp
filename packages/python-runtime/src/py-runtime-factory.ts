@@ -5,7 +5,7 @@ import "pyodide/pyodide.asm.js";
 import { inContext, type Context } from "libs/context";
 import { patch } from "libs/patcher";
 import { stringifyError } from "libs/error";
-import type { Streams } from 'libs/io';
+import type { Streams } from "libs/io";
 
 interface EmscriptenSettings {
   readonly instantiateWasm?: (
@@ -39,16 +39,23 @@ export const pyRuntimeFactory = async (
       return originalCreatePyodideModule({
         ...settings,
         instantiateWasm(imports, callback) {
+          const error_marker = Symbol("error marker");
+          imports.sentinel = {
+            create_sentinel: () => error_marker,
+            is_sentinel: (val: any): val is typeof error_marker =>
+              val === error_marker,
+          };
           wasmInstance(ctx, imports).then(
             ({ instance, module }) => {
               callback(instance, module);
             },
             (e) => {
-              const text = stringifyError(e)
-              const encoder = new TextEncoder()
-              streams.err.write(encoder.encode(text))
+              const text = stringifyError(e);
+              const encoder = new TextEncoder();
+              streams.err.write(encoder.encode(text));
             }
           );
+          return {};
         },
       });
     }
@@ -63,19 +70,19 @@ export const pyRuntimeFactory = async (
   );
   pyodide.setStdin({
     stdin: streams.in.read.bind(streams.in),
-    autoEOF: false
-  })
+    autoEOF: false,
+  });
   pyodide.setStdout({
     write(data) {
-      streams.out.write(data)
-      return data.length
-    }
-  })
+      streams.out.write(data);
+      return data.length;
+    },
+  });
   pyodide.setStderr({
     write(data) {
-      streams.err.write(data)
-      return data.length
-    }
-  })
-  return pyodide
+      streams.err.write(data);
+      return data.length;
+    },
+  });
+  return pyodide;
 };

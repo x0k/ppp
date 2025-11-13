@@ -1,11 +1,11 @@
 const compilerFile = Bun.file(
-  new URL("../vendor/compiler/gleam_wasm_bg.wasm", import.meta.url)
+  new URL("../src/vendor/compiler/gleam_wasm_bg.wasm", import.meta.url)
 );
 
-import { initSync, write_module, initialise_panic_hook, reset_warnings, compile_package, read_compiled_javascript } from "../vendor/compiler/gleam_wasm";
-import stdlib from '../vendor/stdlib/stdlib'
+import { initSync, write_module, initialise_panic_hook, reset_warnings, compile_package, read_compiled_javascript } from "../src/vendor/compiler/gleam_wasm";
+import stdlib from '../src/vendor/stdlib/stdlib'
 
-initSync(await compilerFile.arrayBuffer());
+initSync({ module: await compilerFile.arrayBuffer() });
 
 initialise_panic_hook(false)
 

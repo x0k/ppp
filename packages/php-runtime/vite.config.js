@@ -1,12 +1,13 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry:{
+      entry: {
         index: resolve(__dirname, "src/index.ts"),
         version: resolve(__dirname, "src/version.ts"),
       },
@@ -29,16 +30,12 @@ export default defineConfig({
       },
     },
   },
-  assetsInclude: ["**/light/8_3_0/php_8_3.wasm"],
   plugins: [
     {
       name: "ignore-wasm-imports",
       load(id) {
-        if (id?.endsWith(".wasm")) {
-          return {
-            code: "export default {}",
-            map: null,
-          };
+        if (id.endsWith(".wasm")) {
+          return `export default {}`;
         }
       },
     },
@@ -53,5 +50,14 @@ export default defineConfig({
       },
     },
     dts(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: "node_modules/@php-wasm/web/php/jspi/8_4_14/php_8_4.wasm",
+          dest: ".",
+          rename: "php.wasm",
+        },
+      ],
+    }),
   ],
 });

@@ -11,13 +11,16 @@ export class PHPProgram implements Program {
   ) {}
 
   async run(_: Context): Promise<void> {
-    const response = await this.php.run({ code: this.code });
-    const text = response.bytes;
-    if (text.byteLength > 0) {
-      this.streams.out.write(new Uint8Array(text));
-    }
-    if (response.errors) {
-      throw new Error(response.errors);
+    const response = await this.php.runStream({
+      code: this.code,
+    });
+    await Promise.all([
+      response.stdout.pipeTo(new WritableStream(this.streams.out)),
+      response.stderr.pipeTo(new WritableStream(this.streams.err)),
+    ]);
+    const exitCode = await response.exitCode;
+    if (exitCode !== 0) {
+      throw new Error(`Command failed with exit code ${exitCode}`);
     }
   }
 }

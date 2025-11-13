@@ -1,5 +1,4 @@
 import type { PHP } from "@php-wasm/universal";
-
 import type { Streams } from "libs/io";
 import type { Context } from "libs/context";
 import type { TestProgram } from "libs/testing";

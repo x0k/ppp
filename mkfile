@@ -14,7 +14,7 @@ b:
 p:
   pnpm run preview
 
-app/:
+ppp/:
   pushd apps/ppp
   c:
     pnpm run check
@@ -100,7 +100,7 @@ gleam/:
     pnpm run build
   artifacts: compiler/* stdlib/*
   compiler/:
-    version="v1.7.0"
+    version="v1.13.0"
     name="gleam-${version}-browser"
     download:
       if [ ! -f "${name}.tar.gz" ]; then
@@ -162,15 +162,15 @@ dotnet/:
       dotnet publish
     link:
       rm -rf ../src/vendor/compiler
-      ln -s $(pwd)/bin/${TARGET}/net9.0/wwwroot/_framework ../src/vendor/compiler
+      ln -s $(pwd)/bin/${TARGET}/net10.0/wwwroot/_framework ../src/vendor/compiler
       rm -rf ../src/vendor/lib
-      ln -s $(pwd)/bin/${TARGET}/net9.0/ ../src/vendor/lib
+      ln -s $(pwd)/bin/${TARGET}/net10.0/ ../src/vendor/lib
     copy:
       rm -rf ../src/vendor/compiler
-      rsync -r ./bin/${TARGET}/net9.0/wwwroot/_framework/ ../src/vendor/compiler --delete
+      rsync -r ./bin/${TARGET}/net10.0/wwwroot/_framework/ ../src/vendor/compiler --delete
       rm -rf ../src/vendor/lib
       mkdir -p ../src/vendor/lib
-      cp ./bin/${TARGET}/net9.0/*.dll ../src/vendor/lib/
+      cp ./bin/${TARGET}/net10.0/*.dll ../src/vendor/lib/
     cleanup:
       rm -rf bin obj
     popd
@@ -194,7 +194,7 @@ ruby/:
     pushd probe
     i:
       bun install
-      cp node_modules/@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm public/
+      cp node_modules/@ruby/3.4-wasm-wasi/dist/ruby+stdlib.wasm public/
     bun run index.ts
     popd
 

@@ -11,6 +11,8 @@
 	}
 </script>
 
-{#each Object.entries(problems) as [path, p]}
-	<a href={getHref(path)}>{p.titles[lang]}</a>
-{/each}
+<div class="flex flex-col gap-2">
+	{#each Object.entries(problems) as [path, p]}
+		<a class="btn btn-outline" href={getHref(path)}>{p.titles[lang]}</a>
+	{/each}
+</div>
