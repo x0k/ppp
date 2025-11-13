@@ -1,68 +1,203 @@
-import { Ok, Error, toList, prepend as listPrepend } from "../gleam.mjs";
+import { Ok, Error, toList, Empty as $Empty, prepend as listPrepend } from "../gleam.mjs";
 import * as $list from "../gleam/list.mjs";
 
+/**
+ * Checks whether the result is an `Ok` value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * is_ok(Ok(1))
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * is_ok(Error(Nil))
+ * // -> False
+ * ```
+ */
 export function is_ok(result) {
-  if (!result.isOk()) {
-    return false;
-  } else {
+  if (result instanceof Ok) {
     return true;
+  } else {
+    return false;
   }
 }
 
+/**
+ * Checks whether the result is an `Error` value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * is_error(Ok(1))
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * is_error(Error(Nil))
+ * // -> True
+ * ```
+ */
 export function is_error(result) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     return false;
   } else {
     return true;
   }
 }
 
+/**
+ * Updates a value held within the `Ok` of a result by calling a given function
+ * on it.
+ *
+ * If the result is an `Error` rather than `Ok` the function is not called and the
+ * result stays the same.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * map(over: Ok(1), with: fn(x) { x + 1 })
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * map(over: Error(1), with: fn(x) { x + 1 })
+ * // -> Error(1)
+ * ```
+ */
 export function map(result, fun) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     let x = result[0];
     return new Ok(fun(x));
   } else {
-    let e = result[0];
-    return new Error(e);
+    return result;
   }
 }
 
+/**
+ * Updates a value held within the `Error` of a result by calling a given function
+ * on it.
+ *
+ * If the result is `Ok` rather than `Error` the function is not called and the
+ * result stays the same.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * map_error(over: Error(1), with: fn(x) { x + 1 })
+ * // -> Error(2)
+ * ```
+ *
+ * ```gleam
+ * map_error(over: Ok(1), with: fn(x) { x + 1 })
+ * // -> Ok(1)
+ * ```
+ */
 export function map_error(result, fun) {
-  if (result.isOk()) {
-    let x = result[0];
-    return new Ok(x);
+  if (result instanceof Ok) {
+    return result;
   } else {
     let error = result[0];
     return new Error(fun(error));
   }
 }
 
+/**
+ * Merges a nested `Result` into a single layer.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * flatten(Ok(Ok(1)))
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * flatten(Ok(Error("")))
+ * // -> Error("")
+ * ```
+ *
+ * ```gleam
+ * flatten(Error(Nil))
+ * // -> Error(Nil)
+ * ```
+ */
 export function flatten(result) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     let x = result[0];
     return x;
   } else {
-    let error = result[0];
-    return new Error(error);
+    return result;
   }
 }
 
+/**
+ * "Updates" an `Ok` result by passing its value to a function that yields a result,
+ * and returning the yielded result. (This may "replace" the `Ok` with an `Error`.)
+ *
+ * If the input is an `Error` rather than an `Ok`, the function is not called and
+ * the original `Error` is returned.
+ *
+ * This function is the equivalent of calling `map` followed by `flatten`, and
+ * it is useful for chaining together multiple functions that may fail.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * try(Ok(1), fn(x) { Ok(x + 1) })
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * try(Ok(1), fn(x) { Ok(#("a", x)) })
+ * // -> Ok(#("a", 1))
+ * ```
+ *
+ * ```gleam
+ * try(Ok(1), fn(_) { Error("Oh no") })
+ * // -> Error("Oh no")
+ * ```
+ *
+ * ```gleam
+ * try(Error(Nil), fn(x) { Ok(x + 1) })
+ * // -> Error(Nil)
+ * ```
+ */
 export function try$(result, fun) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     let x = result[0];
     return fun(x);
   } else {
-    let e = result[0];
-    return new Error(e);
+    return result;
   }
 }
 
+/**
+ * An alias for `try`. See the documentation for that function for more information.
+ */
 export function then$(result, fun) {
   return try$(result, fun);
 }
 
+/**
+ * Extracts the `Ok` value from a result, returning a default value if the result
+ * is an `Error`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * unwrap(Ok(1), 0)
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * unwrap(Error(""), 0)
+ * // -> 0
+ * ```
+ */
 export function unwrap(result, default$) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     let v = result[0];
     return v;
   } else {
@@ -70,8 +205,24 @@ export function unwrap(result, default$) {
   }
 }
 
+/**
+ * Extracts the `Ok` value from a result, evaluating the default function if the result
+ * is an `Error`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * lazy_unwrap(Ok(1), fn() { 0 })
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * lazy_unwrap(Error(""), fn() { 0 })
+ * // -> 0
+ * ```
+ */
 export function lazy_unwrap(result, default$) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     let v = result[0];
     return v;
   } else {
@@ -79,8 +230,24 @@ export function lazy_unwrap(result, default$) {
   }
 }
 
+/**
+ * Extracts the `Error` value from a result, returning a default value if the result
+ * is an `Ok`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * unwrap_error(Error(1), 0)
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * unwrap_error(Ok(""), 0)
+ * // -> 0
+ * ```
+ */
 export function unwrap_error(result, default$) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     return default$;
   } else {
     let e = result[0];
@@ -88,8 +255,24 @@ export function unwrap_error(result, default$) {
   }
 }
 
+/**
+ * Extracts the inner value from a result. Both the value and error must be of
+ * the same type.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * unwrap_both(Error(1))
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * unwrap_both(Ok(2))
+ * // -> 2
+ * ```
+ */
 export function unwrap_both(result) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     let a = result[0];
     return a;
   } else {
@@ -98,26 +281,108 @@ export function unwrap_both(result) {
   }
 }
 
+/**
+ * Transforms any error into `Error(Nil)`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * nil_error(Error(1))
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * nil_error(Ok(1))
+ * // -> Ok(1)
+ * ```
+ */
 export function nil_error(result) {
   return map_error(result, (_) => { return undefined; });
 }
 
+/**
+ * Returns the first value if it is `Ok`, otherwise returns the second value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * or(Ok(1), Ok(2))
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * or(Ok(1), Error("Error 2"))
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * or(Error("Error 1"), Ok(2))
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * or(Error("Error 1"), Error("Error 2"))
+ * // -> Error("Error 2")
+ * ```
+ */
 export function or(first, second) {
-  if (first.isOk()) {
+  if (first instanceof Ok) {
     return first;
   } else {
     return second;
   }
 }
 
+/**
+ * Returns the first value if it is `Ok`, otherwise evaluates the given function for a fallback value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * lazy_or(Ok(1), fn() { Ok(2) })
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * lazy_or(Ok(1), fn() { Error("Error 2") })
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * lazy_or(Error("Error 1"), fn() { Ok(2) })
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * lazy_or(Error("Error 1"), fn() { Error("Error 2") })
+ * // -> Error("Error 2")
+ * ```
+ */
 export function lazy_or(first, second) {
-  if (first.isOk()) {
+  if (first instanceof Ok) {
     return first;
   } else {
     return second();
   }
 }
 
+/**
+ * Combines a list of results into a single result.
+ * If all elements in the list are `Ok` then returns an `Ok` holding the list of values.
+ * If any element is `Error` then returns the first error.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * all([Ok(1), Ok(2)])
+ * // -> Ok([1, 2])
+ * ```
+ *
+ * ```gleam
+ * all([Ok(1), Error("e")])
+ * // -> Error("e")
+ * ```
+ */
 export function all(results) {
   return $list.try_map(results, (x) => { return x; });
 }
@@ -127,54 +392,135 @@ function do_partition(loop$results, loop$oks, loop$errors) {
     let results = loop$results;
     let oks = loop$oks;
     let errors = loop$errors;
-    if (results.hasLength(0)) {
+    if (results instanceof $Empty) {
       return [oks, errors];
-    } else if (results.atLeastLength(1) && results.head.isOk()) {
-      let a = results.head[0];
-      let rest = results.tail;
-      loop$results = rest;
-      loop$oks = listPrepend(a, oks);
-      loop$errors = errors;
     } else {
-      let e = results.head[0];
-      let rest = results.tail;
-      loop$results = rest;
-      loop$oks = oks;
-      loop$errors = listPrepend(e, errors);
+      let $ = results.head;
+      if ($ instanceof Ok) {
+        let rest = results.tail;
+        let a = $[0];
+        loop$results = rest;
+        loop$oks = listPrepend(a, oks);
+        loop$errors = errors;
+      } else {
+        let rest = results.tail;
+        let e = $[0];
+        loop$results = rest;
+        loop$oks = oks;
+        loop$errors = listPrepend(e, errors);
+      }
     }
   }
 }
 
+/**
+ * Given a list of results, returns a pair where the first element is a list
+ * of all the values inside `Ok` and the second element is a list with all the
+ * values inside `Error`. The values in both lists appear in reverse order with
+ * respect to their position in the original list of results.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * partition([Ok(1), Error("a"), Error("b"), Ok(2)])
+ * // -> #([2, 1], ["b", "a"])
+ * ```
+ */
 export function partition(results) {
   return do_partition(results, toList([]), toList([]));
 }
 
+/**
+ * Replace the value within a result
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * replace(Ok(1), Nil)
+ * // -> Ok(Nil)
+ * ```
+ *
+ * ```gleam
+ * replace(Error(1), Nil)
+ * // -> Error(1)
+ * ```
+ */
 export function replace(result, value) {
-  if (result.isOk()) {
+  if (result instanceof Ok) {
     return new Ok(value);
   } else {
-    let error = result[0];
-    return new Error(error);
+    return result;
   }
 }
 
+/**
+ * Replace the error within a result
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * replace_error(Error(1), Nil)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * replace_error(Ok(1), Nil)
+ * // -> Ok(1)
+ * ```
+ */
 export function replace_error(result, error) {
-  if (result.isOk()) {
-    let x = result[0];
-    return new Ok(x);
+  if (result instanceof Ok) {
+    return result;
   } else {
     return new Error(error);
   }
 }
 
+/**
+ * Given a list of results, returns only the values inside `Ok`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * values([Ok(1), Error("a"), Ok(3)])
+ * // -> [1, 3]
+ * ```
+ */
 export function values(results) {
   return $list.filter_map(results, (r) => { return r; });
 }
 
+/**
+ * Updates a value held within the `Error` of a result by calling a given function
+ * on it, where the given function also returns a result. The two results are
+ * then merged together into one result.
+ *
+ * If the result is an `Ok` rather than `Error` the function is not called and the
+ * result stays the same.
+ *
+ * This function is useful for chaining together computations that may fail
+ * and trying to recover from possible errors.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * Ok(1) |> try_recover(with: fn(_) { Error("failed to recover") })
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * Error(1) |> try_recover(with: fn(error) { Ok(error + 1) })
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * Error(1) |> try_recover(with: fn(error) { Error("failed to recover") })
+ * // -> Error("failed to recover")
+ * ```
+ */
 export function try_recover(result, fun) {
-  if (result.isOk()) {
-    let value = result[0];
-    return new Ok(value);
+  if (result instanceof Ok) {
+    return result;
   } else {
     let error = result[0];
     return fun(error);

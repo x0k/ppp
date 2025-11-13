@@ -14,7 +14,7 @@ b:
 p:
   pnpm run preview
 
-app/:
+ppp/:
   pushd apps/ppp
   c:
     pnpm run check
@@ -100,7 +100,7 @@ gleam/:
     pnpm run build
   artifacts: compiler/* stdlib/*
   compiler/:
-    version="v1.7.0"
+    version="v1.13.0"
     name="gleam-${version}-browser"
     download:
       if [ ! -f "${name}.tar.gz" ]; then

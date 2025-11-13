@@ -2,6 +2,7 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   remainderInt,
@@ -33,7 +34,25 @@ export {
 };
 
 export class InvalidBase extends $CustomType {}
+export const InvalidBase$InvalidBase = () => new InvalidBase();
+export const InvalidBase$isInvalidBase = (value) =>
+  value instanceof InvalidBase;
 
+/**
+ * Returns the absolute value of the input.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * absolute_value(-12)
+ * // -> 2
+ * ```
+ *
+ * ```gleam
+ * absolute_value(10)
+ * // -> 10
+ * ```
+ */
 export function absolute_value(x) {
   let $ = x >= 0;
   if ($) {
@@ -43,10 +62,56 @@ export function absolute_value(x) {
   }
 }
 
+/**
+ * Parses a given string as an int if possible.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * parse("2")
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * parse("ABC")
+ * // -> Error(Nil)
+ * ```
+ */
 export function parse(string) {
   return do_parse(string);
 }
 
+/**
+ * Parses a given string as an int in a given base if possible.
+ * Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * base_parse("10", 2)
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * base_parse("30", 16)
+ * // -> Ok(48)
+ * ```
+ *
+ * ```gleam
+ * base_parse("1C", 36)
+ * // -> Ok(48)
+ * ```
+ *
+ * ```gleam
+ * base_parse("48", 1)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * base_parse("48", 37)
+ * // -> Error(Nil)
+ * ```
+ */
 export function base_parse(string, base) {
   let $ = (base >= 2) && (base <= 36);
   if ($) {
@@ -56,10 +121,52 @@ export function base_parse(string, base) {
   }
 }
 
+/**
+ * Prints a given int to a string.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_string(2)
+ * // -> "2"
+ * ```
+ */
 export function to_string(x) {
   return do_to_string(x);
 }
 
+/**
+ * Prints a given int to a string using the base number provided.
+ * Supports only bases 2 to 36, for values outside of which this function returns an `Error(InvalidBase)`.
+ * For common bases (2, 8, 16, 36), use the `to_baseN` functions.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_base_string(2, 2)
+ * // -> Ok("10")
+ * ```
+ *
+ * ```gleam
+ * to_base_string(48, 16)
+ * // -> Ok("30")
+ * ```
+ *
+ * ```gleam
+ * to_base_string(48, 36)
+ * // -> Ok("1C")
+ * ```
+ *
+ * ```gleam
+ * to_base_string(48, 1)
+ * // -> Error(InvalidBase)
+ * ```
+ *
+ * ```gleam
+ * to_base_string(48, 37)
+ * // -> Error(InvalidBase)
+ * ```
+ */
 export function to_base_string(x, base) {
   let $ = (base >= 2) && (base <= 36);
   if ($) {
@@ -69,38 +176,164 @@ export function to_base_string(x, base) {
   }
 }
 
+/**
+ * Prints a given int to a string using base-2.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_base2(2)
+ * // -> "10"
+ * ```
+ */
 export function to_base2(x) {
   return do_to_base_string(x, 2);
 }
 
+/**
+ * Prints a given int to a string using base-8.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_base8(15)
+ * // -> "17"
+ * ```
+ */
 export function to_base8(x) {
   return do_to_base_string(x, 8);
 }
 
+/**
+ * Prints a given int to a string using base-16.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_base16(48)
+ * // -> "30"
+ * ```
+ */
 export function to_base16(x) {
   return do_to_base_string(x, 16);
 }
 
+/**
+ * Prints a given int to a string using base-36.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_base36(48)
+ * // -> "1C"
+ * ```
+ */
 export function to_base36(x) {
   return do_to_base_string(x, 36);
 }
 
+/**
+ * Takes an int and returns its value as a float.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_float(5)
+ * // -> 5.0
+ * ```
+ *
+ * ```gleam
+ * to_float(0)
+ * // -> 0.0
+ * ```
+ *
+ * ```gleam
+ * to_float(-3)
+ * // -> -3.0
+ * ```
+ */
 export function to_float(x) {
   return do_to_float(x);
 }
 
+/**
+ * Returns the results of the base being raised to the power of the
+ * exponent, as a `Float`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * power(2, -1.0)
+ * // -> Ok(0.5)
+ * ```
+ *
+ * ```gleam
+ * power(2, 2.0)
+ * // -> Ok(4.0)
+ * ```
+ *
+ * ```gleam
+ * power(8, 1.5)
+ * // -> Ok(22.627416997969522)
+ * ```
+ *
+ * ```gleam
+ * 4 |> power(of: 2.0)
+ * // -> Ok(16.0)
+ * ```
+ *
+ * ```gleam
+ * power(-1, 0.5)
+ * // -> Error(Nil)
+ * ```
+ */
 export function power(base, exponent) {
   let _pipe = base;
   let _pipe$1 = to_float(_pipe);
   return $float.power(_pipe$1, exponent);
 }
 
+/**
+ * Returns the square root of the input as a `Float`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * square_root(4)
+ * // -> Ok(2.0)
+ * ```
+ *
+ * ```gleam
+ * square_root(-16)
+ * // -> Error(Nil)
+ * ```
+ */
 export function square_root(x) {
   let _pipe = x;
   let _pipe$1 = to_float(_pipe);
   return $float.square_root(_pipe$1);
 }
 
+/**
+ * Compares two ints, returning an order.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * compare(2, 3)
+ * // -> Lt
+ * ```
+ *
+ * ```gleam
+ * compare(4, 3)
+ * // -> Gt
+ * ```
+ *
+ * ```gleam
+ * compare(3, 3)
+ * // -> Eq
+ * ```
+ */
 export function compare(a, b) {
   let $ = a === b;
   if ($) {
@@ -115,6 +348,16 @@ export function compare(a, b) {
   }
 }
 
+/**
+ * Compares two ints, returning the smaller of the two.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * min(2, 3)
+ * // -> 2
+ * ```
+ */
 export function min(a, b) {
   let $ = a < b;
   if ($) {
@@ -124,6 +367,16 @@ export function min(a, b) {
   }
 }
 
+/**
+ * Compares two ints, returning the larger of the two.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * max(2, 3)
+ * // -> 3
+ * ```
+ */
 export function max(a, b) {
   let $ = a > b;
   if ($) {
@@ -133,20 +386,70 @@ export function max(a, b) {
   }
 }
 
+/**
+ * Restricts an int between a lower and upper bound.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * clamp(40, min: 50, max: 60)
+ * // -> 50
+ * ```
+ */
 export function clamp(x, min_bound, max_bound) {
   let _pipe = x;
   let _pipe$1 = min(_pipe, max_bound);
   return max(_pipe$1, min_bound);
 }
 
+/**
+ * Returns whether the value provided is even.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * is_even(2)
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * is_even(3)
+ * // -> False
+ * ```
+ */
 export function is_even(x) {
-  return (remainderInt(x, 2)) === 0;
+  return (x % 2) === 0;
 }
 
+/**
+ * Returns whether the value provided is odd.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * is_odd(3)
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * is_odd(2)
+ * // -> False
+ * ```
+ */
 export function is_odd(x) {
-  return (remainderInt(x, 2)) !== 0;
+  return (x % 2) !== 0;
 }
 
+/**
+ * Returns the negative of the value provided.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * negate(1)
+ * // -> -1
+ * ```
+ */
 export function negate(x) {
   return -1 * x;
 }
@@ -155,7 +458,7 @@ function do_sum(loop$numbers, loop$initial) {
   while (true) {
     let numbers = loop$numbers;
     let initial = loop$initial;
-    if (numbers.hasLength(0)) {
+    if (numbers instanceof $Empty) {
       return initial;
     } else {
       let x = numbers.head;
@@ -166,6 +469,16 @@ function do_sum(loop$numbers, loop$initial) {
   }
 }
 
+/**
+ * Sums a list of ints.
+ *
+ * ## Example
+ *
+ * ```gleam
+ * sum([1, 2, 3])
+ * // -> 6
+ * ```
+ */
 export function sum(numbers) {
   let _pipe = numbers;
   return do_sum(_pipe, 0);
@@ -175,7 +488,7 @@ function do_product(loop$numbers, loop$initial) {
   while (true) {
     let numbers = loop$numbers;
     let initial = loop$initial;
-    if (numbers.hasLength(0)) {
+    if (numbers instanceof $Empty) {
       return initial;
     } else {
       let x = numbers.head;
@@ -186,8 +499,18 @@ function do_product(loop$numbers, loop$initial) {
   }
 }
 
+/**
+ * Multiplies a list of ints and returns the product.
+ *
+ * ## Example
+ *
+ * ```gleam
+ * product([2, 3, 4])
+ * // -> 24
+ * ```
+ */
 export function product(numbers) {
-  if (numbers.hasLength(0)) {
+  if (numbers instanceof $Empty) {
     return 1;
   } else {
     return do_product(numbers, 1);
@@ -210,6 +533,21 @@ function do_digits(loop$x, loop$base, loop$acc) {
   }
 }
 
+/**
+ * Splits an integer into its digit representation in the specified base
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * digits(234, 10)
+ * // -> Ok([2,3,4])
+ * ```
+ *
+ * ```gleam
+ * digits(234, 1)
+ * // -> Error(InvalidBase)
+ * ```
+ */
 export function digits(x, base) {
   let $ = base < 2;
   if ($) {
@@ -224,21 +562,44 @@ function do_undigits(loop$numbers, loop$base, loop$acc) {
     let numbers = loop$numbers;
     let base = loop$base;
     let acc = loop$acc;
-    if (numbers.hasLength(0)) {
+    if (numbers instanceof $Empty) {
       return new Ok(acc);
-    } else if (numbers.atLeastLength(1) && (numbers.head >= base)) {
-      let digit = numbers.head;
-      return new Error(new InvalidBase());
     } else {
       let digit = numbers.head;
-      let rest = numbers.tail;
-      loop$numbers = rest;
-      loop$base = base;
-      loop$acc = acc * base + digit;
+      if (digit >= base) {
+        return new Error(new InvalidBase());
+      } else {
+        let digit$1 = numbers.head;
+        let rest = numbers.tail;
+        loop$numbers = rest;
+        loop$base = base;
+        loop$acc = acc * base + digit$1;
+      }
     }
   }
 }
 
+/**
+ * Joins a list of digits into a single value.
+ * Returns an error if the base is less than 2 or if the list contains a digit greater than or equal to the specified base.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * undigits([2,3,4], 10)
+ * // -> Ok(234)
+ * ```
+ *
+ * ```gleam
+ * undigits([2,3,4], 1)
+ * // -> Error(InvalidBase)
+ * ```
+ *
+ * ```gleam
+ * undigits([2,3,4], 2)
+ * // -> Error(InvalidBase)
+ * ```
+ */
 export function undigits(numbers, base) {
   let $ = base < 2;
   if ($) {
@@ -248,12 +609,62 @@ export function undigits(numbers, base) {
   }
 }
 
+/**
+ * Generates a random int between zero and the given maximum.
+ *
+ * The lower number is inclusive, the upper number is exclusive.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * random(10)
+ * // -> 4
+ * ```
+ *
+ * ```gleam
+ * random(1)
+ * // -> 0
+ * ```
+ *
+ * ```gleam
+ * random(-1)
+ * // -> -1
+ * ```
+ */
 export function random(max) {
   let _pipe = ($float.random() * to_float(max));
   let _pipe$1 = $float.floor(_pipe);
   return $float.round(_pipe$1);
 }
 
+/**
+ * Performs a truncated integer division.
+ *
+ * Returns division of the inputs as a `Result`: If the given divisor equals
+ * `0`, this function returns an `Error`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * divide(0, 1)
+ * // -> Ok(0)
+ * ```
+ *
+ * ```gleam
+ * divide(1, 0)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * divide(5, 2)
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * divide(-99, 2)
+ * // -> Ok(-49)
+ * ```
+ */
 export function divide(dividend, divisor) {
   if (divisor === 0) {
     return new Error(undefined);
@@ -263,6 +674,52 @@ export function divide(dividend, divisor) {
   }
 }
 
+/**
+ * Computes the remainder of an integer division of inputs as a `Result`.
+ *
+ * Returns division of the inputs as a `Result`: If the given divisor equals
+ * `0`, this function returns an `Error`.
+ *
+ * Most the time you will want to use the `%` operator instead of this
+ * function.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * remainder(3, 2)
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * remainder(1, 0)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * remainder(10, -1)
+ * // -> Ok(0)
+ * ```
+ *
+ * ```gleam
+ * remainder(13, by: 3)
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * remainder(-13, by: 3)
+ * // -> Ok(-1)
+ * ```
+ *
+ * ```gleam
+ * remainder(13, by: -3)
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * remainder(-13, by: -3)
+ * // -> Ok(-1)
+ * ```
+ */
 export function remainder(dividend, divisor) {
   if (divisor === 0) {
     return new Error(undefined);
@@ -272,6 +729,42 @@ export function remainder(dividend, divisor) {
   }
 }
 
+/**
+ * Computes the modulo of an integer division of inputs as a `Result`.
+ *
+ * Returns division of the inputs as a `Result`: If the given divisor equals
+ * `0`, this function returns an `Error`.
+ *
+ * Most the time you will want to use the `%` operator instead of this
+ * function.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * modulo(3, 2)
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * modulo(1, 0)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * modulo(10, -1)
+ * // -> Ok(0)
+ * ```
+ *
+ * ```gleam
+ * modulo(13, by: 3)
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * modulo(-13, by: 3)
+ * // -> Ok(2)
+ * ```
+ */
 export function modulo(dividend, divisor) {
   if (divisor === 0) {
     return new Error(undefined);
@@ -286,6 +779,38 @@ export function modulo(dividend, divisor) {
   }
 }
 
+/**
+ * Performs a *floored* integer division, which means that the result will
+ * always be rounded towards negative infinity.
+ *
+ * If you want to perform truncated integer division (rounding towards zero),
+ * use `int.divide()` or the `/` operator instead.
+ *
+ * Returns division of the inputs as a `Result`: If the given divisor equals
+ * `0`, this function returns an `Error`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * floor_divide(1, 0)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * floor_divide(5, 2)
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * floor_divide(6, -4)
+ * // -> Ok(-2)
+ * ```
+ *
+ * ```gleam
+ * floor_divide(-99, 2)
+ * // -> Ok(-50)
+ * ```
+ */
 export function floor_divide(dividend, divisor) {
   if (divisor === 0) {
     return new Error(undefined);
@@ -300,14 +825,93 @@ export function floor_divide(dividend, divisor) {
   }
 }
 
+/**
+ * Adds two integers together.
+ *
+ * It's the function equivalent of the `+` operator.
+ * This function is useful in higher order functions or pipes.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * add(1, 2)
+ * // -> 3
+ * ```
+ *
+ * ```gleam
+ * import gleam/list
+ * list.fold([1, 2, 3], 0, add)
+ * // -> 6
+ * ```
+ *
+ * ```gleam
+ * 3 |> add(2)
+ * // -> 5
+ * ```
+ */
 export function add(a, b) {
   return a + b;
 }
 
+/**
+ * Multiplies two integers together.
+ *
+ * It's the function equivalent of the `*` operator.
+ * This function is useful in higher order functions or pipes.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * multiply(2, 4)
+ * // -> 8
+ * ```
+ *
+ * ```gleam
+ * import gleam/list
+ *
+ * list.fold([2, 3, 4], 1, multiply)
+ * // -> 24
+ * ```
+ *
+ * ```gleam
+ * 3 |> multiply(2)
+ * // -> 6
+ * ```
+ */
 export function multiply(a, b) {
   return a * b;
 }
 
+/**
+ * Subtracts one int from another.
+ *
+ * It's the function equivalent of the `-` operator.
+ * This function is useful in higher order functions or pipes.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * subtract(3, 1)
+ * // -> 2.0
+ * ```
+ *
+ * ```gleam
+ * import gleam/list
+ *
+ * list.fold([1, 2, 3], 10, subtract)
+ * // -> 4
+ * ```
+ *
+ * ```gleam
+ * 3 |> subtract(2)
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * 3 |> subtract(2, _)
+ * // -> -1
+ * ```
+ */
 export function subtract(a, b) {
   return a - b;
 }

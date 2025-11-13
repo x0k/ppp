@@ -56,7 +56,7 @@
             pkgs.bun
             pkgs.pnpm
             pkgs.go_1_25
-            pkgs.gleam
+            pkgs-unstable.gleam
             pkgs.python314
             pkgs.dotnetCorePackages.dotnet_9.sdk
           ];
