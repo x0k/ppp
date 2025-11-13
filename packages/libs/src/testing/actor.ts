@@ -219,6 +219,11 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
     );
     connection.start(ctx);
     const log = createLogger(streams.out);
+    const Buffer = window.SharedArrayBuffer
+      ? SharedArrayBuffer
+      : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024 * 10)
+    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     const remote = startRemote<Handlers<I, O>, string, TestingActorEvent>(
       ctx,
       log,
@@ -236,15 +241,10 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       }
     );
     using _ = ctx.onCancel(() => remote.destroy())
-    const Buffer = window.SharedArrayBuffer
-      ? SharedArrayBuffer
-      : ArrayBuffer;
-    const buffer = new Buffer(1024 * 1024 * 10)
     await remote.initialize({
       universalFactoryFunction: universalFactory.toString(),
       buffer
     });
-    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
     return {
       async compile(ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile())
