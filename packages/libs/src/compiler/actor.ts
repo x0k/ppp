@@ -16,7 +16,7 @@ import {
   withCancel,
   type Context,
 } from "../context.js";
-import type { Streams } from "../io.js";
+import type { ReadableStreamOfBytes, Streams, WebStreams, WritableStreamOfBytes, Writer } from "../io.js";
 import { stringifyError } from "../error.js";
 import { BACKSPACE, createLogger } from "../logger.js";
 
@@ -36,11 +36,9 @@ interface Handlers {
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface ReadEventMessage extends EventMessage<"read", undefined> {}
-
 interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
 
-type CompilerActorEvent = WriteEventMessage | ReadEventMessage;
+type CompilerActorEvent = WriteEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
@@ -66,11 +64,6 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
         const sharedQueue = new SharedQueue(buffer)
         const streams = createSharedStreamsClient(
           sharedQueue,
-          () => connection.send({
-            type: MessageType.Event,
-            event: "read",
-            payload: undefined
-          }),
           (type, data) => connection.send({
             type: MessageType.Event,
             event: "write",
@@ -145,47 +138,31 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
+export interface CompilerFactoryOptions {
+  input: ReadableStreamOfBytes
+  output: Writer
+}
+
 export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
-  return async (ctx: Context, streams: Streams): Promise<Compiler<Program>> => {
+  return async (ctx: Context, { input, output }: CompilerFactoryOptions): Promise<Compiler<Program>> => {
     const worker = new Worker();
-    let read = -1
-    const sub = streams.in.onData((data) => {
-      if (read === -1) {
-        return
-      }
-      if (data.length === 0) {
-        server.write(read)
-        // EOF
-        server.write(0)
-        read = -1
-      }
-      if (data === BACKSPACE) {
-        // TODO: What to do with non-ASCII characters?
-        read -= 1;
-      } else {
-        read += data.length
-      }
-    })
     ctx.onCancel(() => {
-      sub[Symbol.dispose]()
+      server[Symbol.dispose]()
       worker.terminate()
     })
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
     connection.start(ctx);
-    const log = createLogger(streams.out);
+    const log = createLogger(output);
     const Buffer = window.SharedArrayBuffer
       ? SharedArrayBuffer
       : ArrayBuffer;
     const buffer = new Buffer(1024 * 1024)
-    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
+    const server = createSharedStreamsServer(new SharedQueue(buffer), input, output)
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       ctx,
       log,
       connection,
       {
-        read() {
-          read = 0;
-        },
         write({ type, data }) {
           server.onClientWrite(type, data)
         },

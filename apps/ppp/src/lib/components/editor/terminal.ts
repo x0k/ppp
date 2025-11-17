@@ -74,7 +74,7 @@ export function createStreams(terminal: Terminal): Streams {
   return {
     out,
     err: makeErrorWriter(out),
-    in: {
+    BytesReaderStream: {
       read() {
         const chunk = buffer.subarray(0, offset);
         offset = 0;

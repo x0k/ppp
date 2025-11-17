@@ -1,4 +1,6 @@
-import type { Streams, Writer } from "../io.js";
+import { noop } from "../function.js";
+import type { Streams, ReadableStreamOfBytes, BytesStreamWriter, Writer } from "../io.js";
+import { makeErrorWriter } from "../logger.js";
 
 import type { SharedQueue } from "./shared-queue.js";
 
@@ -7,23 +9,20 @@ export enum StreamType {
   Err = 2,
 }
 
+export const STREAM_TYPES = Object.values(StreamType) as StreamType[];
+
 export function createSharedStreamsClient(
   inputQueue: SharedQueue,
-  beforeRead: () => void,
   write: (stream: StreamType, data: Uint8Array) => void
 ): Streams {
   return {
     in: {
       read() {
-        beforeRead()
         const r = inputQueue.blockingRead();
         const bytes = r.next().value.bytes;
         // NOTE: The generator must be exhausted
         r.next();
         return bytes;
-      },
-      onData() {
-        throw new Error("Not implemented");
       },
     },
     out: {
@@ -41,20 +40,27 @@ export function createSharedStreamsClient(
 
 export function createSharedStreamsServer(
   inputQueue: SharedQueue,
-  streams: Streams
+  input: ReadableStreamOfBytes,
+  output: Writer
 ) {
-  const writers: Record<StreamType, Writer> = {
-    [StreamType.Out]: streams.out,
-    [StreamType.Err]: streams.err,
-  };
+  const w = new WritableStream<Uint8Array>({
+    write(bytes) {
+      inputQueue.pushBytes(bytes);
+      inputQueue.commit();
+    },
+  });
+  const c = new AbortController();
+  input.pipeTo(w, { signal: c.signal }).catch(noop);
+  const writers = {
+    [StreamType.Out]: output,
+    [StreamType.Err]: makeErrorWriter(output),
+  } as const;
   return {
     onClientWrite(type: StreamType, data: Uint8Array) {
       writers[type].write(data);
     },
-    write(size: number) {
-      const bytes = streams.in.read()
-      inputQueue.pushBytes(bytes.subarray(bytes.length - size));
-      inputQueue.commit();
+    [Symbol.dispose]() {
+      c.abort();
     },
   };
 }
