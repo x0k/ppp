@@ -32,7 +32,8 @@
 		EditorContext,
 		setEditorContext,
 		type ProcessStatus,
-		createStreams
+		createReadableStream,
+		createLineInputMode,
 	} from '$lib/components/editor';
 	import {
 		Panel,
@@ -121,7 +122,8 @@
 	});
 
 	const { terminal, fitAddon } = createTerminal();
-	const streams = createStreams(terminal);
+	const input = createReadableStream(terminal)
+		.pipeThrough(createLineInputMode(terminal));
 
 	const editorContext = new EditorContext(model, terminal, fitAddon);
 	setEditorContext(editorContext);
@@ -177,7 +179,7 @@
 	let executionTimeout = $state(executionTimeoutStorage.load());
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-	const terminalLogger = createLogger(streams.out);
+	const terminalLogger = createLogger(terminal);
 	let testCompilerFactory = $derived(runtime.factory);
 	let status = $state<ProcessStatus>('stopped');
 	let lastTestId = $state(-1);
@@ -206,7 +208,7 @@
 		terminal.reset();
 		try {
 			if (testCompiler === null) {
-				testCompiler = await testCompilerFactory(compilerCtx.ref, streams);
+				testCompiler = await testCompilerFactory(compilerCtx.ref, { input, output: terminal });
 			}
 			const testProgram = await testCompiler.compile(programCtxWithTimeout, [
 				{

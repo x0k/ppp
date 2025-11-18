@@ -1,7 +1,8 @@
 import type { ReadableStreamOfBytes, Streams, Writer } from "libs/io";
+import { makeErrorWriter } from "libs/logger";
+import { noop } from "libs/function";
 
 import type { SharedQueue } from "./shared-queue.js";
-import { makeErrorWriter } from "../logger.js";
 
 export function readFromQueue(inputQueue: SharedQueue) {
   const input = new ReadableStream<Uint8Array>({
@@ -24,7 +25,9 @@ export function writeToQueue(input: ReadableStreamOfBytes, queue: SharedQueue) {
     },
   });
   const controller = new AbortController();
-  input.pipeTo(w);
+  input
+    .pipeTo(w, { signal: controller.signal, preventCancel: true })
+    .catch(noop);
   return {
     [Symbol.dispose]() {
       controller.abort();
