@@ -1,7 +1,7 @@
-import type { Logger } from "../logger.js";
-import type { Context } from "../context.js";
-import type { Compiler, CompilerFactory } from "../compiler/index.js";
-import { isDeepEqual } from "../deep-equal.js";
+import type { Logger } from "libs/logger";
+import type { Context } from "libs/context";
+import type { Compiler, CompilerFactory } from "libs/compiler";
+import { isDeepEqual } from "libs/deep-equal";
 
 export interface TestCase<I, O> {
   input: I;

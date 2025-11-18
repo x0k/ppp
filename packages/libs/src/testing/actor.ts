@@ -4,11 +4,11 @@ import {
   createRecoverableContext,
   withCancel,
   type Context,
-} from "../context.js";
-import { BACKSPACE, createLogger } from "../logger.js";
-import { stringifyError } from "../error.js";
-import { compileJsModule } from "../js.js";
-import type { ReadableStreamOfBytes, Streams, Writer } from "../io.js";
+} from "libs/context";
+import { createLogger } from "libs/logger";
+import { stringifyError } from "libs/error";
+import { compileJsModule } from "libs/js";
+import type { Streams } from "libs/io";
 import {
   Actor,
   MessageType,
@@ -18,9 +18,9 @@ import {
   type EventMessage,
   type IncomingMessage,
   type OutgoingMessage,
-} from "../actor/index.js";
-import { createSharedStreamsClient, pipeToQueue, SharedQueue } from "../sync/index.js";
-import type { File } from "../compiler/index.js";
+} from "libs/actor";
+import { readFromQueue, writeToQueue, SharedQueue } from "libs/sync";
+import type { CompilerFactoryOptions, File } from "libs/compiler";
 
 import type { TestProgram, TestCompiler } from "./testing.js";
 
@@ -96,7 +96,7 @@ class TestCompilerActor<D, I, O>
           universalFactoryFunction
         );
         const sharedQueue = new SharedQueue(buffer);
-        const client = createSharedStreamsClient(sharedQueue, {
+        const client = readFromQueue(sharedQueue, {
           write(data) {
             connection.send({
               type: MessageType.Event,
@@ -174,18 +174,13 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export interface RemoteTestCompilerFactoryOptions {
-  input: ReadableStreamOfBytes;
-  output: Writer;
-}
-
 export function makeRemoteTestCompilerFactory<D, I, O>(
   Worker: WorkerConstructor,
   universalFactory: UniversalFactory<D, I, O>
 ) {
   return async (
     ctx: Context,
-    { input, output }: RemoteTestCompilerFactoryOptions
+    { input, output }: CompilerFactoryOptions
   ): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
     ctx.onCancel(() => {
@@ -198,7 +193,7 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
     const log = createLogger(output);
     const Buffer = window.SharedArrayBuffer ? SharedArrayBuffer : ArrayBuffer;
     const buffer = new Buffer(1024 * 1024 * 10);
-    const sharedWriter = pipeToQueue(input, new SharedQueue(buffer));
+    const sharedWriter = writeToQueue(input, new SharedQueue(buffer));
     ctx.onCancel(() => {
       sharedWriter[Symbol.dispose]();
     });
@@ -208,7 +203,7 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       connection,
       {
         write(data) {
-          output.write(data)
+          output.write(data);
         },
         error(err) {
           log.error(err instanceof CanceledError ? err.message : err);

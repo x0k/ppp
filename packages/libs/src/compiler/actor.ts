@@ -7,24 +7,25 @@ import {
   type EventMessage,
   type IncomingMessage,
   type OutgoingMessage,
-} from "../actor/index.js";
-import {
-  SharedQueue,
-  createSharedStreamsClient,
-  pipeToQueue,
-} from "../sync/index.js";
+} from "libs/actor";
+import { SharedQueue, readFromQueue, writeToQueue } from "libs/sync";
 import {
   CanceledError,
   createContext,
   createRecoverableContext,
   withCancel,
   type Context,
-} from "../context.js";
-import type { ReadableStreamOfBytes, Writer } from "../io.js";
-import { stringifyError } from "../error.js";
-import { createLogger } from "../logger.js";
+} from "libs/context";
+import { stringifyError } from "libs/error";
+import { createLogger } from "libs/logger";
 
-import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
+import type {
+  Compiler,
+  CompilerFactory,
+  CompilerFactoryOptions,
+  File,
+  Program,
+} from "./compiler.js";
 
 interface Handlers {
   [key: string]: any;
@@ -67,17 +68,18 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
   ) {
     const handlers: Handlers = {
       initialize: async (buffer: SharedArrayBuffer) => {
-        const sharedQueue = new SharedQueue(buffer);
-        const streams = createSharedStreamsClient(sharedQueue, {
-          write(data) {
-            connection.send({
-              type: MessageType.Event,
-              event: "write",
-              payload: data,
-            });
+        this.compiler = await compilerFactory(this.compilerCtx.ref, {
+          input: readFromQueue(new SharedQueue(buffer)),
+          output: {
+            write(data) {
+              connection.send({
+                type: MessageType.Event,
+                event: "write",
+                payload: data,
+              });
+            },
           },
         });
-        this.compiler = await compilerFactory(this.compilerCtx.ref, streams);
       },
       destroy: () => {
         this.compilerCtx.cancel();
@@ -142,15 +144,10 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export interface RemoteCompilerFactoryOptions {
-  input: ReadableStreamOfBytes;
-  output: Writer;
-}
-
 export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
   return async (
     ctx: Context,
-    { input, output }: RemoteCompilerFactoryOptions
+    { input, output }: CompilerFactoryOptions
   ): Promise<Compiler<Program>> => {
     const worker = new Worker();
     ctx.onCancel(() => {
@@ -161,10 +158,10 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     const log = createLogger(output);
     const Buffer = window.SharedArrayBuffer ? SharedArrayBuffer : ArrayBuffer;
     const buffer = new Buffer(1024 * 1024);
-    const sharedWriter = pipeToQueue(input, new SharedQueue(buffer));
+    const sharedWriter = writeToQueue(input, new SharedQueue(buffer));
     ctx.onCancel(() => {
       sharedWriter[Symbol.dispose]();
-    })
+    });
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       ctx,
       log,

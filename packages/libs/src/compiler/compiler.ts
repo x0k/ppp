@@ -1,5 +1,4 @@
 import type { Context } from "libs/context";
-import type { Streams } from "libs/io";
 
 export interface Program {
   run: (ctx: Context) => Promise<void>;
@@ -14,7 +13,7 @@ export interface Compiler<P> {
   compile: (ctx: Context, files: File[]) => Promise<P>;
 }
 
-export type CompilerFactory<P> = (
+export type CompilerFactory<O, P> = (
   ctx: Context,
-  streams: Streams,
+  options: O
 ) => Promise<Compiler<P>>;
