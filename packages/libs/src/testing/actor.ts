@@ -19,8 +19,9 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "libs/actor";
-import { readFromQueue, writeToQueue, SharedQueue } from "libs/sync";
-import type { CompilerFactoryOptions, File } from "libs/compiler";
+import { writeToQueue, SharedQueue, createStreamsClient } from "libs/sync";
+import type { File } from "libs/compiler";
+import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 
 import type { TestProgram, TestCompiler } from "./testing.js";
 
@@ -31,19 +32,19 @@ export interface InitConfig {
 
 interface Handlers<I, O> {
   [key: string]: any;
-  initialize(config: InitConfig): Promise<void>;
-  destroy(): void;
+  initialize (config: InitConfig): Promise<void>;
+  destroy (): void;
 
-  compile(files: File[]): Promise<void>;
-  stopCompile(): void;
+  compile (files: File[]): Promise<void>;
+  stopCompile (): void;
 
-  test(data: I): Promise<O>;
-  stopTest(): void;
+  test (data: I): Promise<O>;
+  stopTest (): void;
 }
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
-interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
+interface WriteEventMessage extends EventMessage<"write", Uint8Array> { }
 
 type TestingActorEvent = WriteEventMessage;
 
@@ -51,7 +52,7 @@ type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
   | TestingActorEvent;
 
-async function evalEntity<T>(functionStr: string) {
+async function evalEntity<T> (functionStr: string) {
   const moduleStr = `export default ${functionStr}`;
   const mod = await compileJsModule<{ default: T }>(moduleStr);
   return mod.default;
@@ -70,8 +71,7 @@ export type TestCompilerSuperFactory<D, I, O> = (
 
 class TestCompilerActor<D, I, O>
   extends Actor<Handlers<I, O>, string>
-  implements Disposable
-{
+  implements Disposable {
   protected compiler: TestCompiler<I, O> | null = null;
   protected compilerCtx = createRecoverableContext(() => {
     this.compiler = null;
@@ -95,19 +95,20 @@ class TestCompilerActor<D, I, O>
         const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
           universalFactoryFunction
         );
-        const sharedQueue = new SharedQueue(buffer);
-        const client = readFromQueue(sharedQueue, {
-          write(data) {
-            connection.send({
-              type: MessageType.Event,
-              event: "write",
-              payload: data,
-            });
-          },
-        });
         this.compiler = await superFactory(
           this.compilerCtx.ref,
-          client,
+          createStreamsClient(
+            new SharedQueue(buffer),
+            {
+              write (data) {
+                connection.send({
+                  type: MessageType.Event,
+                  event: "write",
+                  payload: data,
+                });
+              },
+            }
+          ),
           universalFactory
         );
       },
@@ -146,7 +147,7 @@ class TestCompilerActor<D, I, O>
     super(connection, handlers, stringifyError);
   }
 
-  [Symbol.dispose](): void {
+  [Symbol.dispose] (): void {
     this.compiler = null;
     this.compilerCtx[Symbol.dispose]();
     this.program = null;
@@ -155,7 +156,7 @@ class TestCompilerActor<D, I, O>
   }
 }
 
-export function startTestCompilerActor<D, I = unknown, O = unknown>(
+export function startTestCompilerActor<D, I = unknown, O = unknown> (
   ctx: Context,
   superFactory: TestCompilerSuperFactory<D, I, O>
 ) {
@@ -171,16 +172,16 @@ export function startTestCompilerActor<D, I = unknown, O = unknown>(
 }
 
 interface WorkerConstructor {
-  new (): Worker;
+  new(): Worker;
 }
 
-export function makeRemoteTestCompilerFactory<D, I, O>(
+export function makeRemoteTestCompilerFactory<D, I, O> (
   Worker: WorkerConstructor,
   universalFactory: UniversalFactory<D, I, O>
 ) {
   return async (
     ctx: Context,
-    { input, output }: CompilerFactoryOptions
+    { input, output }: RemoteCompilerFactoryOptions
   ): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
     ctx.onCancel(() => {
@@ -202,10 +203,10 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       log,
       connection,
       {
-        write(data) {
+        write (data) {
           output.write(data);
         },
-        error(err) {
+        error (err) {
           log.error(err instanceof CanceledError ? err.message : err);
         },
       }
@@ -216,11 +217,11 @@ export function makeRemoteTestCompilerFactory<D, I, O>(
       buffer,
     });
     return {
-      async compile(ctx, files) {
+      async compile (ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile());
         await remote.compile(files);
         return {
-          async run(ctx, input) {
+          async run (ctx, input) {
             using _ = ctx.onCancel(() => remote.stopTest());
             return await remote.test(input);
           },

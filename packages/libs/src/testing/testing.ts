@@ -2,6 +2,7 @@ import type { Logger } from "libs/logger";
 import type { Context } from "libs/context";
 import type { Compiler, CompilerFactory } from "libs/compiler";
 import { isDeepEqual } from "libs/deep-equal";
+import type { Streams } from "libs/io";
 
 export interface TestCase<I, O> {
   input: I;
@@ -23,7 +24,10 @@ export interface TestProgram<I, O> {
 
 export type TestCompiler<I, O> = Compiler<TestProgram<I, O>>;
 
-export type TestCompilerFactory<I, O> = CompilerFactory<TestProgram<I, O>>;
+export type TestCompilerFactory<I, O> = CompilerFactory<
+  Streams,
+  TestProgram<I, O>
+>;
 
 export async function runTests<I, O>(
   ctx: Context,

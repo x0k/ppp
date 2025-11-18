@@ -8,7 +8,7 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "libs/actor";
-import { SharedQueue, readFromQueue, writeToQueue } from "libs/sync";
+import { SharedQueue, createStreamsClient, writeToQueue } from "libs/sync";
 import {
   CanceledError,
   createContext,
@@ -18,30 +18,30 @@ import {
 } from "libs/context";
 import { stringifyError } from "libs/error";
 import { createLogger } from "libs/logger";
+import type { ReadableStreamOfBytes, Streams, Writer } from 'libs/io';
 
 import type {
   Compiler,
   CompilerFactory,
-  CompilerFactoryOptions,
   File,
   Program,
 } from "./compiler.js";
 
 interface Handlers {
   [key: string]: any;
-  initialize(buffer: SharedArrayBuffer | ArrayBuffer): Promise<void>;
-  destroy(): void;
+  initialize (buffer: SharedArrayBuffer | ArrayBuffer): Promise<void>;
+  destroy (): void;
 
-  compile(files: File[]): Promise<void>;
-  stopCompile(): void;
+  compile (files: File[]): Promise<void>;
+  stopCompile (): void;
 
-  run(): Promise<void>;
-  stopRun(): void;
+  run (): Promise<void>;
+  stopRun (): void;
 }
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
+interface WriteEventMessage extends EventMessage<"write", Uint8Array> { }
 
 type CompilerActorEvent = WriteEventMessage;
 
@@ -64,22 +64,20 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
 
   constructor(
     connection: Connection<Incoming, Outgoing>,
-    compilerFactory: CompilerFactory<Program>
+    compilerFactory: CompilerFactory<Streams, Program>
   ) {
     const handlers: Handlers = {
       initialize: async (buffer: SharedArrayBuffer) => {
-        this.compiler = await compilerFactory(this.compilerCtx.ref, {
-          input: readFromQueue(new SharedQueue(buffer)),
-          output: {
-            write(data) {
+        this.compiler = await compilerFactory(this.compilerCtx.ref, createStreamsClient(new SharedQueue(buffer),
+          {
+            write (data) {
               connection.send({
                 type: MessageType.Event,
                 event: "write",
                 payload: data,
               });
             },
-          },
-        });
+          }));
       },
       destroy: () => {
         this.compilerCtx.cancel();
@@ -116,7 +114,7 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
     super(connection, handlers, stringifyError);
   }
 
-  [Symbol.dispose](): void {
+  [Symbol.dispose] (): void {
     this.compiler = null;
     this.compilerCtx[Symbol.dispose]();
     this.program = null;
@@ -125,9 +123,9 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
   }
 }
 
-export function startCompilerActor(
+export function startCompilerActor (
   ctx: Context,
-  compilerFactory: CompilerFactory<Program>
+  compilerFactory: CompilerFactory<Streams, Program>
 ) {
   const connection = new WorkerConnection<Incoming, Outgoing>(
     self as unknown as Worker
@@ -141,13 +139,18 @@ export function startCompilerActor(
 }
 
 interface WorkerConstructor {
-  new (): Worker;
+  new(): Worker;
 }
 
-export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
+export interface RemoteCompilerFactoryOptions {
+  input: ReadableStreamOfBytes
+  output: Writer
+}
+
+export function makeRemoteCompilerFactory (Worker: WorkerConstructor) {
   return async (
     ctx: Context,
-    { input, output }: CompilerFactoryOptions
+    { input, output }: RemoteCompilerFactoryOptions
   ): Promise<Compiler<Program>> => {
     const worker = new Worker();
     ctx.onCancel(() => {
@@ -167,10 +170,10 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
       log,
       connection,
       {
-        write(data) {
+        write (data) {
           output.write(data);
         },
-        error(err) {
+        error (err) {
           log.error(err instanceof CanceledError ? err.message : err);
         },
       }
@@ -178,11 +181,11 @@ export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
     using _ = ctx.onCancel(() => remote.destroy());
     await remote.initialize(buffer);
     return {
-      async compile(ctx, files) {
+      async compile (ctx, files) {
         using _ = ctx.onCancel(() => remote.stopCompile());
         await remote.compile(files);
         return {
-          async run(ctx) {
+          async run (ctx) {
             using _ = ctx.onCancel(() => remote.stopRun());
             await remote.run();
           },
