@@ -11,6 +11,13 @@ export interface TerminalConfig {
 	theme?: ITheme;
 }
 
+export enum InputMode {
+	Line = 'line',
+	Raw = 'raw'
+}
+
+export const INPUT_MODS = Object.values(InputMode)
+
 export function createTerminal({ theme = makeTerminalTheme() }: TerminalConfig = {}) {
 	const terminal = new Terminal({
 		theme,
@@ -32,13 +39,14 @@ export function createReadableStream(terminal: Terminal) {
 			});
 		},
 		cancel() {
+			console.log("CANCEL")
 			disposable.dispose();
 		}
 	});
 }
 
-const EMPTY_UINT8_ARRAY = new Uint8Array()
-const TEXT_ENCODER = new TextEncoder()
+const EMPTY_UINT8_ARRAY = new Uint8Array();
+const TEXT_ENCODER = new TextEncoder();
 
 export function createRawInputMode(terminal: Terminal) {
 	return new TransformStream<string, Uint8Array>({
@@ -58,7 +66,7 @@ export function createLineInputMode(terminal: Terminal) {
 	const buffer: string[] = [];
 	function flush(controller: TransformStreamDefaultController<Uint8Array>) {
 		if (buffer.length > 0) {
-			controller.enqueue(TEXT_ENCODER.encode(buffer.join("")));
+			controller.enqueue(TEXT_ENCODER.encode(buffer.join('')));
 			buffer.length = 0;
 		}
 	}
@@ -67,7 +75,7 @@ export function createLineInputMode(terminal: Terminal) {
 			if (chunk === '\r') {
 				terminal.write('\r\n');
 				flush(controller);
-        // EOF
+				// EOF
 				controller.enqueue(EMPTY_UINT8_ARRAY);
 				return;
 			}
@@ -76,10 +84,10 @@ export function createLineInputMode(terminal: Terminal) {
 				if (buffer.pop() !== undefined) {
 					terminal.write('\b \b');
 				}
-				return
+				return;
 			}
-			terminal.write(chunk)
-			buffer.push(chunk)
+			terminal.write(chunk);
+			buffer.push(chunk);
 		},
 		flush
 	});

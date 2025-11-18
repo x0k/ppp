@@ -25,7 +25,10 @@
 		RunButton,
 		type ProcessStatus,
 		createReadableStream,
-		createLineInputMode
+		createLineInputMode,
+		InputMode,
+		INPUT_MODS,
+		createRawInputMode
 	} from '$lib/components/editor';
 	import {
 		Panel,
@@ -35,11 +38,12 @@
 		TabContent,
 		PanelToggle
 	} from '$lib/components/editor/panel';
-	import { CheckBox, Number } from '$lib/components/editor/controls';
+	import { CheckBox, Number, Select } from '$lib/components/editor/controls';
 	import { m } from '$lib/paraglide/messages';
 	import EditorProvider from '$lib/editor-provider.svelte';
 
 	import { RUNTIMES } from './runtimes';
+	import type { ReadableStreamOfBytes } from 'libs/io';
 
 	const languages = Object.keys(RUNTIMES).sort() as Language[];
 	if (languages.length === 0) {
@@ -77,12 +81,6 @@
 		};
 	});
 
-	const { terminal, fitAddon } = createTerminal();
-	const input = createReadableStream(terminal)
-		.pipeThrough(createLineInputMode(terminal))
-
-	setEditorContext(new EditorContext(model, terminal, fitAddon));
-
 	const panelHeightStorage = createSyncStorage(
 		localStorage,
 		'editor-panel-height',
@@ -103,7 +101,22 @@
 	let executionTimeout = $state(executionTimeoutStorage.load());
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
+	const inputModeStorage = createSyncStorage(localStorage, "editor-input-mode", InputMode.Line)
+	let inputMode = $state(inputModeStorage.load())
+	immediateSave(inputModeStorage, () => inputMode)
+
+	const { terminal, fitAddon } = createTerminal();
+	let lastInput: ReadableStreamOfBytes | undefined
+	const input = $derived.by(() => {
+		lastInput?.cancel()
+		return lastInput = createReadableStream(terminal).pipeThrough(
+			(inputMode === InputMode.Line ? createLineInputMode : createRawInputMode)(terminal)
+		)
+	})
 	const terminalLogger = createLogger(terminal);
+
+	setEditorContext(new EditorContext(model, terminal, fitAddon));
+
 	let compilerFactory = $derived(runtime.compilerFactory);
 	let status = $state<ProcessStatus>('stopped');
 	let compiler: Compiler<Program> | null = null;
@@ -113,13 +126,14 @@
 	});
 	$effect(() => () => compilerCtx[Symbol.dispose]());
 	$effect(() => {
+		inputMode;
 		compilerFactory;
 		compilerCtx.cancel();
 		status = 'stopped';
 	});
 	const programCtx = createRecoverableContext(() => withCancel(compilerCtx.ref));
 	$effect(() => () => programCtx[Symbol.dispose]());
-
+	
 	async function handleRun() {
 		if (status === 'running') {
 			// At the moment, programs do not know how to stop
@@ -207,6 +221,7 @@
 							alt={m.execution_timeout_description()}
 							bind:value={executionTimeout}
 						/>
+						<Select bind:value={inputMode} title={m.input_mode()} options={INPUT_MODS} />
 					</div>
 				</TabContent>
 			</div>
