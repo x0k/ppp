@@ -12,5 +12,6 @@
     "force_stop": "force stop",
     "execution_timeout": "execution timeout (ms)",
     "execution_timeout_description": "use zero to disable",
-    "untranslated_content": "this content has not yet been translated into your language."
+    "untranslated_content": "this content has not yet been translated into your language.",
+    "input_mode": "input mode"
 }

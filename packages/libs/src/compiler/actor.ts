@@ -7,83 +7,80 @@ import {
   type EventMessage,
   type IncomingMessage,
   type OutgoingMessage,
-} from "../actor/index.js";
-import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from '../sync/index.js';
+} from "libs/actor";
+import { SharedQueue, createStreamsClient, writeToQueue } from "libs/sync";
 import {
   CanceledError,
   createContext,
   createRecoverableContext,
   withCancel,
   type Context,
-} from "../context.js";
-import type { Streams } from "../io.js";
-import { stringifyError } from "../error.js";
-import { BACKSPACE, createLogger } from "../logger.js";
+} from "libs/context";
+import { stringifyError } from "libs/error";
+import { createLogger } from "libs/logger";
+import type { ReadableStreamOfBytes, Streams, Writer } from 'libs/io';
 
-import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
+import type {
+  Compiler,
+  CompilerFactory,
+  File,
+  Program,
+} from "./compiler.js";
 
 interface Handlers {
   [key: string]: any;
-  initialize(buffer: SharedArrayBuffer | ArrayBuffer): Promise<void>;
-  destroy(): void;
+  initialize (buffer: SharedArrayBuffer | ArrayBuffer): Promise<void>;
+  destroy (): void;
 
-  compile(files: File[]): Promise<void>;
-  stopCompile(): void;
+  compile (files: File[]): Promise<void>;
+  stopCompile (): void;
 
-  run(): Promise<void>;
-  stopRun(): void;
+  run (): Promise<void>;
+  stopRun (): void;
 }
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface ReadEventMessage extends EventMessage<"read", undefined> {}
+interface WriteEventMessage extends EventMessage<"write", Uint8Array> { }
 
-interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
-
-type CompilerActorEvent = WriteEventMessage | ReadEventMessage;
+type CompilerActorEvent = WriteEventMessage;
 
 type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 
 class CompilerActor extends Actor<Handlers, string> implements Disposable {
   protected compiler: Compiler<Program> | null = null;
   protected compilerCtx = createRecoverableContext(() => {
-    this.compiler = null
-    return withCancel(createContext())
-  })
-  protected program: Program | null = null
+    this.compiler = null;
+    return withCancel(createContext());
+  });
+  protected program: Program | null = null;
   protected programCtx = createRecoverableContext(() => {
-    this.program = null
-    return withCancel(this.compilerCtx.ref)
-  })
-  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx.ref))
+    this.program = null;
+    return withCancel(this.compilerCtx.ref);
+  });
+  protected runCtx = createRecoverableContext(() =>
+    withCancel(this.programCtx.ref)
+  );
 
   constructor(
     connection: Connection<Incoming, Outgoing>,
-    compilerFactory: CompilerFactory<Program>
+    compilerFactory: CompilerFactory<Streams, Program>
   ) {
     const handlers: Handlers = {
       initialize: async (buffer: SharedArrayBuffer) => {
-        const sharedQueue = new SharedQueue(buffer)
-        const streams = createSharedStreamsClient(
-          sharedQueue,
-          () => connection.send({
-            type: MessageType.Event,
-            event: "read",
-            payload: undefined
-          }),
-          (type, data) => connection.send({
-            type: MessageType.Event,
-            event: "write",
-            payload: {
-              type,
-              data
-            }
-          })
-        )
-        this.compiler = await compilerFactory(this.compilerCtx.ref, streams);
+        this.compiler = await compilerFactory(this.compilerCtx.ref, createStreamsClient(new SharedQueue(buffer),
+          {
+            write (data) {
+              connection.send({
+                type: MessageType.Event,
+                event: "write",
+                payload: data,
+              });
+            },
+          }));
       },
       destroy: () => {
-        this.compilerCtx.cancel()
+        this.compilerCtx.cancel();
       },
       compile: async (files) => {
         if (this.compiler === null) {
@@ -92,7 +89,7 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
         this.program = await this.compiler.compile(this.programCtx.ref, files);
       },
       stopCompile: () => {
-        this.programCtx.cancel()
+        this.programCtx.cancel();
       },
       run: async () => {
         if (this.program === null) {
@@ -119,16 +116,16 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
 
   [Symbol.dispose] (): void {
     this.compiler = null;
-    this.compilerCtx[Symbol.dispose]()
+    this.compilerCtx[Symbol.dispose]();
     this.program = null;
-    this.programCtx[Symbol.dispose]()
-    this.runCtx[Symbol.dispose]()
+    this.programCtx[Symbol.dispose]();
+    this.runCtx[Symbol.dispose]();
   }
 }
 
-export function startCompilerActor(
+export function startCompilerActor (
   ctx: Context,
-  compilerFactory: CompilerFactory<Program>
+  compilerFactory: CompilerFactory<Streams, Program>
 ) {
   const connection = new WorkerConnection<Incoming, Outgoing>(
     self as unknown as Worker
@@ -136,75 +133,62 @@ export function startCompilerActor(
   connection.start(ctx);
   const actor = new CompilerActor(connection, compilerFactory);
   ctx.onCancel(() => {
-    actor[Symbol.dispose]()
-  })
+    actor[Symbol.dispose]();
+  });
   actor.start(ctx);
 }
 
 interface WorkerConstructor {
-  new (): Worker;
+  new(): Worker;
 }
 
-export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
-  return async (ctx: Context, streams: Streams): Promise<Compiler<Program>> => {
+export interface RemoteCompilerFactoryOptions {
+  input: ReadableStreamOfBytes
+  output: Writer
+}
+
+export function makeRemoteCompilerFactory (Worker: WorkerConstructor) {
+  return async (
+    ctx: Context,
+    { input, output }: RemoteCompilerFactoryOptions
+  ): Promise<Compiler<Program>> => {
     const worker = new Worker();
-    let read = -1
-    const sub = streams.in.onData((data) => {
-      if (read === -1) {
-        return
-      }
-      if (data.length === 0) {
-        server.write(read)
-        // EOF
-        server.write(0)
-        read = -1
-      }
-      if (data === BACKSPACE) {
-        // TODO: What to do with non-ASCII characters?
-        read -= 1;
-      } else {
-        read += data.length
-      }
-    })
     ctx.onCancel(() => {
-      sub[Symbol.dispose]()
-      worker.terminate()
-    })
+      worker.terminate();
+    });
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
     connection.start(ctx);
-    const log = createLogger(streams.out);
-    const Buffer = window.SharedArrayBuffer
-      ? SharedArrayBuffer
-      : ArrayBuffer;
-    const buffer = new Buffer(1024 * 1024)
-    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
+    const log = createLogger(output);
+    const Buffer = window.SharedArrayBuffer ? SharedArrayBuffer : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024);
+    const sharedWriter = writeToQueue(input, new SharedQueue(buffer));
+    ctx.onCancel(() => {
+      sharedWriter[Symbol.dispose]();
+    });
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       ctx,
       log,
       connection,
       {
-        read() {
-          read = 0;
+        write (data) {
+          output.write(data);
         },
-        write({ type, data }) {
-          server.onClientWrite(type, data)
-        },
-        error(err) {
+        error (err) {
           log.error(err instanceof CanceledError ? err.message : err);
         },
       }
     );
-    using _ = ctx.onCancel(() => remote.destroy())
+    using _ = ctx.onCancel(() => remote.destroy());
     await remote.initialize(buffer);
     return {
-      async compile(ctx, files) {
-        using _ = ctx.onCancel(() => remote.stopCompile())
+      async compile (ctx, files) {
+        using _ = ctx.onCancel(() => remote.stopCompile());
         await remote.compile(files);
         return {
-          async run(ctx) {
-            using _ = ctx.onCancel(() => remote.stopRun())
+          async run (ctx) {
+            using _ = ctx.onCancel(() => remote.stopRun());
             await remote.run();
-          }
+          },
         };
       },
     };

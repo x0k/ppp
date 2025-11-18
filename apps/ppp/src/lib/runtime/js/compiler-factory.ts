@@ -1,8 +1,9 @@
 import { redirect, createLogger } from "libs/logger";
 import type { CompilerFactory, Program } from "libs/compiler";
+import type { Streams } from 'libs/io';
 import { JsProgram } from "javascript-runtime";
 
-export const makeJsCompiler: CompilerFactory<Program> = async (_, streams) => {
+export const makeJsCompiler: CompilerFactory<Streams, Program> = async (_, streams) => {
   const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
   return {
     async compile(_, files) {

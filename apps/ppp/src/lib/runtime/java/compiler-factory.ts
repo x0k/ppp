@@ -1,16 +1,17 @@
+import type { CompilerFactory, Program } from "libs/compiler";
+import type { Streams } from 'libs/io';
 import {
   initFs,
   JavaCompiler,
   JavaProgram,
   makeJVMFactory,
 } from "java-runtime";
-import type { CompilerFactory, Program } from "libs/compiler";
 
 import libZipUrl from "java-runtime/doppio.zip?url";
 
 const CLASSNAME = "Program";
 
-export const makeJavaCompiler: CompilerFactory<Program> = async (ctx, streams) => {
+export const makeJavaCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
   const jvmFactory = makeJVMFactory(streams);
   const libZipData = await fetch(libZipUrl, {
     signal: ctx.signal,

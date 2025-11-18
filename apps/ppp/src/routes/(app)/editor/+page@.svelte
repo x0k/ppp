@@ -24,7 +24,11 @@
 		createTerminal,
 		RunButton,
 		type ProcessStatus,
-		createStreams
+		createReadableStream,
+		createLineInputMode,
+		InputMode,
+		INPUT_MODS,
+		createRawInputMode
 	} from '$lib/components/editor';
 	import {
 		Panel,
@@ -34,11 +38,12 @@
 		TabContent,
 		PanelToggle
 	} from '$lib/components/editor/panel';
-	import { CheckBox, Number } from '$lib/components/editor/controls';
+	import { CheckBox, Number, Select } from '$lib/components/editor/controls';
 	import { m } from '$lib/paraglide/messages';
-
-	import { RUNTIMES } from './_runtimes';
 	import EditorProvider from '$lib/editor-provider.svelte';
+
+	import { RUNTIMES } from './runtimes';
+	import type { ReadableStreamOfBytes } from 'libs/io';
 
 	const languages = Object.keys(RUNTIMES).sort() as Language[];
 	if (languages.length === 0) {
@@ -76,11 +81,6 @@
 		};
 	});
 
-	const { terminal, fitAddon } = createTerminal();
-	const streams = createStreams(terminal);
-
-	setEditorContext(new EditorContext(model, terminal, fitAddon));
-
 	const panelHeightStorage = createSyncStorage(
 		localStorage,
 		'editor-panel-height',
@@ -101,7 +101,22 @@
 	let executionTimeout = $state(executionTimeoutStorage.load());
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-	const terminalLogger = createLogger(streams.out);
+	const inputModeStorage = createSyncStorage(localStorage, "editor-input-mode", InputMode.Line)
+	let inputMode = $state(inputModeStorage.load())
+	immediateSave(inputModeStorage, () => inputMode)
+
+	const { terminal, fitAddon } = createTerminal();
+	let lastInput: ReadableStreamOfBytes | undefined
+	const input = $derived.by(() => {
+		lastInput?.cancel()
+		return lastInput = createReadableStream(terminal).pipeThrough(
+			(inputMode === InputMode.Line ? createLineInputMode : createRawInputMode)(terminal)
+		)
+	})
+	const terminalLogger = createLogger(terminal);
+
+	setEditorContext(new EditorContext(model, terminal, fitAddon));
+
 	let compilerFactory = $derived(runtime.compilerFactory);
 	let status = $state<ProcessStatus>('stopped');
 	let compiler: Compiler<Program> | null = null;
@@ -111,13 +126,14 @@
 	});
 	$effect(() => () => compilerCtx[Symbol.dispose]());
 	$effect(() => {
+		inputMode;
 		compilerFactory;
 		compilerCtx.cancel();
 		status = 'stopped';
 	});
 	const programCtx = createRecoverableContext(() => withCancel(compilerCtx.ref));
 	$effect(() => () => programCtx[Symbol.dispose]());
-
+	
 	async function handleRun() {
 		if (status === 'running') {
 			// At the moment, programs do not know how to stop
@@ -131,7 +147,7 @@
 		terminal.reset();
 		try {
 			if (compiler === null) {
-				compiler = await compilerFactory(compilerCtx.ref, streams);
+				compiler = await compilerFactory(compilerCtx.ref, { input, output: terminal });
 			}
 			const program = await compiler.compile(programCtxWithTimeout, [
 				{
@@ -157,59 +173,60 @@
 <div class="flex h-screen flex-col overflow-hidden">
 	<EditorProvider>
 		<Editor width={innerWidth.current!} height={innerHeight.current! - panelHeight} />
+		<Panel bind:height={panelHeight} maxHeight={innerHeight.current!}>
+			<div class="flex flex-wrap items-center gap-1 p-0.5">
+				<RunButton {status} onClick={handleRun} />
+				<Tabs>
+					<Tab tab={EditorPanelTab.Output} />
+					<Tab tab={EditorPanelTab.Settings} />
+				</Tabs>
+				<div class="grow"></div>
+				<VimStatus bind:vimState />
+				<Dropdown bind:value={lang} options={languages}>
+					{#snippet preLabel(lang)}
+						{@const Icon = LANGUAGE_ICONS[lang]}
+						<Icon />
+					{/snippet}
+					{#snippet label(lang)}
+						{LANGUAGE_TITLE[lang]}
+					{/snippet}
+					{#snippet postLabel(lang)}
+						<LucideInfo
+							onclick={(e) => {
+								describedLanguage = lang;
+								e.stopPropagation();
+								descriptionDialogElement.showModal();
+							}}
+							class="invisible group-hover:visible"
+						/>
+					{/snippet}
+					{#snippet children()}
+						<li>
+							<a target="_blank" href="https://github.com/x0k/ppp">
+								<LucideGithub />
+								<span class="font-[sans-serif]"> GitHub </span>
+							</a>
+						</li>
+					{/snippet}
+				</Dropdown>
+				<PanelToggle bind:panelHeight maxPanelHeight={innerHeight.current!} />
+			</div>
+			<div class="flex grow flex-col overflow-hidden">
+				<TerminalTab width={innerWidth.current!} height={panelHeight} class="mt-4 ml-4 grow" />
+				<TabContent tab={EditorPanelTab.Settings}>
+					<div class="flex flex-col gap-4 overflow-auto p-4">
+						<CheckBox title={m.vim_mode()} bind:value={vimState} />
+						<Number
+							title={m.execution_timeout()}
+							alt={m.execution_timeout_description()}
+							bind:value={executionTimeout}
+						/>
+						<Select bind:value={inputMode} title={m.input_mode()} options={INPUT_MODS} />
+					</div>
+				</TabContent>
+			</div>
+		</Panel>
 	</EditorProvider>
-	<Panel bind:height={panelHeight} maxHeight={innerHeight.current!}>
-		<div class="flex flex-wrap items-center gap-1 p-0.5">
-			<RunButton {status} onClick={handleRun} />
-			<Tabs>
-				<Tab tab={EditorPanelTab.Output} />
-				<Tab tab={EditorPanelTab.Settings} />
-			</Tabs>
-			<div class="grow"></div>
-			<VimStatus bind:vimState />
-			<Dropdown bind:value={lang} options={languages}>
-				{#snippet preLabel(lang)}
-					{@const Icon = LANGUAGE_ICONS[lang]}
-					<Icon />
-				{/snippet}
-				{#snippet label(lang)}
-					{LANGUAGE_TITLE[lang]}
-				{/snippet}
-				{#snippet postLabel(lang)}
-					<LucideInfo
-						onclick={(e) => {
-							describedLanguage = lang;
-							e.stopPropagation();
-							descriptionDialogElement.showModal();
-						}}
-						class="invisible group-hover:visible"
-					/>
-				{/snippet}
-				{#snippet children()}
-					<li>
-						<a target="_blank" href="https://github.com/x0k/ppp">
-							<LucideGithub />
-							<span class="font-[sans-serif]"> GitHub </span>
-						</a>
-					</li>
-				{/snippet}
-			</Dropdown>
-			<PanelToggle bind:panelHeight maxPanelHeight={innerHeight.current!} />
-		</div>
-		<div class="flex grow flex-col overflow-hidden">
-			<TerminalTab width={innerWidth.current!} height={panelHeight} class="mt-4 ml-4 grow" />
-			<TabContent tab={EditorPanelTab.Settings}>
-				<div class="flex flex-col gap-4 overflow-auto p-4">
-					<CheckBox title={m.vim_mode()} bind:value={vimState} />
-					<Number
-						title={m.execution_timeout()}
-						alt={m.execution_timeout_description()}
-						bind:value={executionTimeout}
-					/>
-				</div>
-			</TabContent>
-		</div>
-	</Panel>
 </div>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->

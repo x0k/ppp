@@ -1,60 +1,55 @@
-import type { Streams, Writer } from "../io.js";
+import type { ReadableStreamOfBytes, Streams, Writer } from "libs/io";
+import { makeErrorWriter } from "libs/logger";
+import { noop } from "libs/function";
 
 import type { SharedQueue } from "./shared-queue.js";
 
-export enum StreamType {
-  Out = 1,
-  Err = 2,
+export function readFromQueue(inputQueue: SharedQueue) {
+  const input = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      const r = inputQueue.blockingRead();
+      const bytes = r.next().value.bytes;
+      // NOTE: The generator must be exhausted
+      r.next();
+      controller.enqueue(bytes);
+    },
+  });
+  return input;
 }
 
-export function createSharedStreamsClient(
+export function writeToQueue(input: ReadableStreamOfBytes, queue: SharedQueue) {
+  const w = new WritableStream<Uint8Array>({
+    write(bytes) {
+      queue.pushBytes(bytes);
+      queue.commit();
+    },
+  });
+  const controller = new AbortController();
+  input
+    .pipeTo(w, { signal: controller.signal, preventCancel: true })
+    .catch(noop);
+  return {
+    [Symbol.dispose]() {
+      controller.abort();
+    },
+  };
+}
+
+export function createStreamsClient(
   inputQueue: SharedQueue,
-  beforeRead: () => void,
-  write: (stream: StreamType, data: Uint8Array) => void
+  writer: Writer
 ): Streams {
   return {
     in: {
       read() {
-        beforeRead()
         const r = inputQueue.blockingRead();
         const bytes = r.next().value.bytes;
         // NOTE: The generator must be exhausted
         r.next();
         return bytes;
       },
-      onData() {
-        throw new Error("Not implemented");
-      },
     },
-    out: {
-      write(data) {
-        write(StreamType.Out, data);
-      },
-    },
-    err: {
-      write(data) {
-        write(StreamType.Err, data);
-      },
-    },
-  };
-}
-
-export function createSharedStreamsServer(
-  inputQueue: SharedQueue,
-  streams: Streams
-) {
-  const writers: Record<StreamType, Writer> = {
-    [StreamType.Out]: streams.out,
-    [StreamType.Err]: streams.err,
-  };
-  return {
-    onClientWrite(type: StreamType, data: Uint8Array) {
-      writers[type].write(data);
-    },
-    write(size: number) {
-      const bytes = streams.in.read()
-      inputQueue.pushBytes(bytes.subarray(bytes.length - size));
-      inputQueue.commit();
-    },
+    out: writer,
+    err: makeErrorWriter(writer),
   };
 }

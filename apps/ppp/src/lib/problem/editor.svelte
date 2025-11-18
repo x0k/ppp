@@ -6,6 +6,7 @@
 	import { createLogger } from 'libs/logger';
 	import { createContext, createRecoverableContext, withCancel, withTimeout } from 'libs/context';
 	import { runTests, type TestCase, type TestCompiler } from 'libs/testing';
+	import type { ReadableStreamOfBytes } from 'libs/io';
 	import LucideInfo from '~icons/lucide/info';
 	import LucideCircleX from '~icons/lucide/circle-x';
 	import LucideCircleCheck from '~icons/lucide/circle-check';
@@ -32,7 +33,11 @@
 		EditorContext,
 		setEditorContext,
 		type ProcessStatus,
-		createStreams
+		createReadableStream,
+		createLineInputMode,
+		INPUT_MODS,
+		InputMode,
+		createRawInputMode,
 	} from '$lib/components/editor';
 	import {
 		Panel,
@@ -42,7 +47,7 @@
 		TerminalTab,
 		TabContent
 	} from '$lib/components/editor/panel';
-	import { CheckBox, Number } from '$lib/components/editor/controls';
+	import { CheckBox, Number, Select } from '$lib/components/editor/controls';
 	import { m } from '$lib/paraglide/messages';
 	import EditorProvider from '$lib/editor-provider.svelte';
 
@@ -120,12 +125,6 @@
 		};
 	});
 
-	const { terminal, fitAddon } = createTerminal();
-	const streams = createStreams(terminal);
-
-	const editorContext = new EditorContext(model, terminal, fitAddon);
-	setEditorContext(editorContext);
-
 	const editorWidthStorage = createSyncStorage(
 		localStorage,
 		'test-editor-width',
@@ -177,7 +176,23 @@
 	let executionTimeout = $state(executionTimeoutStorage.load());
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-	const terminalLogger = createLogger(streams.out);
+	const inputModeStorage = createSyncStorage(localStorage, "test-editor-input-mode", InputMode.Line)
+	let inputMode = $state(inputModeStorage.load())
+	immediateSave(inputModeStorage, () => inputMode)
+
+	const { terminal, fitAddon } = createTerminal();
+	let lastInput: ReadableStreamOfBytes | undefined
+	const input = $derived.by(() => {
+		lastInput?.cancel()
+		return lastInput = createReadableStream(terminal).pipeThrough(
+			(inputMode === InputMode.Line ? createLineInputMode : createRawInputMode)(terminal)
+		)
+	})
+	const terminalLogger = createLogger(terminal);
+
+	const editorContext = new EditorContext(model, terminal, fitAddon);
+	setEditorContext(editorContext);
+
 	let testCompilerFactory = $derived(runtime.factory);
 	let status = $state<ProcessStatus>('stopped');
 	let lastTestId = $state(-1);
@@ -189,6 +204,7 @@
 	});
 	$effect(() => () => compilerCtx[Symbol.dispose]());
 	$effect(() => {
+		inputMode;
 		testCompilerFactory;
 		compilerCtx.cancel();
 		status = 'stopped';
@@ -206,7 +222,7 @@
 		terminal.reset();
 		try {
 			if (testCompiler === null) {
-				testCompiler = await testCompilerFactory(compilerCtx.ref, streams);
+				testCompiler = await testCompilerFactory(compilerCtx.ref, { input, output: terminal });
 			}
 			const testProgram = await testCompiler.compile(programCtxWithTimeout, [
 				{
@@ -345,6 +361,7 @@
 							alt={m.execution_timeout_description()}
 							bind:value={executionTimeout}
 						/>
+						<Select bind:value={inputMode} title={m.input_mode()} options={INPUT_MODS} />
 					</div>
 				</TabContent>
 			</div>
