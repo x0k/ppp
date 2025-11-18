@@ -1,7 +1,7 @@
 import type { Logger } from "../logger.js";
 import type { Context } from "../context.js";
 import type { Compiler, CompilerFactory } from "../compiler/index.js";
-import { isDeepEqual } from '../deep-equal.js';
+import { isDeepEqual } from "../deep-equal.js";
 
 export interface TestCase<I, O> {
   input: I;
@@ -21,9 +21,9 @@ export interface TestProgram<I, O> {
   run: (ctx: Context, input: I) => Promise<O>;
 }
 
-export type TestCompiler<I, O> = Compiler<TestProgram<I, O>>
+export type TestCompiler<I, O> = Compiler<TestProgram<I, O>>;
 
-export type TestCompilerFactory<I, O> = CompilerFactory<TestProgram<I, O>>
+export type TestCompilerFactory<I, O> = CompilerFactory<TestProgram<I, O>>;
 
 export async function runTests<I, O>(
   ctx: Context,

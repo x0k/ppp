@@ -8,7 +8,7 @@ import {
 import { BACKSPACE, createLogger } from "../logger.js";
 import { stringifyError } from "../error.js";
 import { compileJsModule } from "../js.js";
-import type { Streams } from "../io.js";
+import type { ReadableStreamOfBytes, Streams, Writer } from "../io.js";
 import {
   Actor,
   MessageType,
@@ -19,12 +19,7 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "../actor/index.js";
-import {
-  createSharedStreamsClient,
-  createSharedStreamsServer,
-  SharedQueue,
-  StreamType
-} from '../sync/index.js';
+import { createSharedStreamsClient, pipeToQueue, SharedQueue } from "../sync/index.js";
 import type { File } from "../compiler/index.js";
 
 import type { TestProgram, TestCompiler } from "./testing.js";
@@ -48,11 +43,9 @@ interface Handlers<I, O> {
 
 type Incoming<I, O> = IncomingMessage<Handlers<I, O>>;
 
-interface ReadEventMessage extends EventMessage<"read", undefined> {}
+interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
 
-interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
-
-type TestingActorEvent = WriteEventMessage | ReadEventMessage;
+type TestingActorEvent = WriteEventMessage;
 
 type Outgoing<I, O> =
   | OutgoingMessage<Handlers<I, O>, string>
@@ -75,45 +68,43 @@ export type TestCompilerSuperFactory<D, I, O> = (
   universalFactory: UniversalFactory<D, I, O>
 ) => Promise<TestCompiler<I, O>>;
 
-class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implements Disposable {
+class TestCompilerActor<D, I, O>
+  extends Actor<Handlers<I, O>, string>
+  implements Disposable
+{
   protected compiler: TestCompiler<I, O> | null = null;
   protected compilerCtx = createRecoverableContext(() => {
-    this.compiler = null
-    return withCancel(createContext())
-  })
-  protected program: TestProgram<I, O> | null = null
+    this.compiler = null;
+    return withCancel(createContext());
+  });
+  protected program: TestProgram<I, O> | null = null;
   protected programCtx = createRecoverableContext(() => {
-    this.program = null
-    return withCancel(this.compilerCtx.ref)
-  })
-  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx.ref))
+    this.program = null;
+    return withCancel(this.compilerCtx.ref);
+  });
+  protected runCtx = createRecoverableContext(() =>
+    withCancel(this.programCtx.ref)
+  );
 
   constructor(
     connection: Connection<Incoming<I, O>, Outgoing<I, O>>,
     superFactory: TestCompilerSuperFactory<D, I, O>
   ) {
     const handlers: Handlers<I, O> = {
-      initialize: async({ universalFactoryFunction, buffer }) => {
+      initialize: async ({ universalFactoryFunction, buffer }) => {
         const universalFactory = await evalEntity<UniversalFactory<D, I, O>>(
           universalFactoryFunction
         );
-        const sharedQueue = new SharedQueue(buffer)
-        const client = createSharedStreamsClient(
-          sharedQueue,
-          () => connection.send({
-            type: MessageType.Event,
-            event: "read",
-            payload: undefined,
-          }),
-          (type, data) => connection.send({
-            type: MessageType.Event,
-            event: "write",
-            payload: {
-              type,
-              data
-            }
-          })
-        )
+        const sharedQueue = new SharedQueue(buffer);
+        const client = createSharedStreamsClient(sharedQueue, {
+          write(data) {
+            connection.send({
+              type: MessageType.Event,
+              event: "write",
+              payload: data,
+            });
+          },
+        });
         this.compiler = await superFactory(
           this.compilerCtx.ref,
           client,
@@ -121,19 +112,16 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
         );
       },
       destroy: () => {
-        this.compilerCtx.cancel()
+        this.compilerCtx.cancel();
       },
       compile: async (files) => {
         if (this.compiler === null) {
           throw new Error("Test runner not initialized");
         }
-        this.program = await this.compiler.compile(
-          this.programCtx.ref,
-          files
-        );
+        this.program = await this.compiler.compile(this.programCtx.ref, files);
       },
       stopCompile: () => {
-        this.programCtx.cancel()
+        this.programCtx.cancel();
       },
       test: async (input) => {
         if (this.program === null) {
@@ -148,22 +136,22 @@ class TestCompilerActor<D, I, O> extends Actor<Handlers<I, O>, string> implement
         try {
           return await this.program.run(this.runCtx.ref, input);
         } finally {
-          this.runCtx.cancel()
+          this.runCtx.cancel();
         }
       },
       stopTest: () => {
-        this.runCtx.cancel()
+        this.runCtx.cancel();
       },
     };
     super(connection, handlers, stringifyError);
   }
 
-  [Symbol.dispose] (): void {
+  [Symbol.dispose](): void {
     this.compiler = null;
-    this.compilerCtx[Symbol.dispose]()
+    this.compilerCtx[Symbol.dispose]();
     this.program = null;
-    this.programCtx[Symbol.dispose]()
-    this.runCtx[Symbol.dispose]()
+    this.programCtx[Symbol.dispose]();
+    this.runCtx[Symbol.dispose]();
   }
 }
 
@@ -177,8 +165,8 @@ export function startTestCompilerActor<D, I = unknown, O = unknown>(
   connection.start(ctx);
   const actor = new TestCompilerActor(connection, superFactory);
   ctx.onCancel(() => {
-    actor[Symbol.dispose]()
-  })
+    actor[Symbol.dispose]();
+  });
   actor.start(ctx);
 }
 
@@ -186,75 +174,62 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
+export interface RemoteTestCompilerFactoryOptions {
+  input: ReadableStreamOfBytes;
+  output: Writer;
+}
+
 export function makeRemoteTestCompilerFactory<D, I, O>(
   Worker: WorkerConstructor,
   universalFactory: UniversalFactory<D, I, O>
 ) {
-  return async (ctx: Context, streams: Streams): Promise<TestCompiler<I, O>> => {
+  return async (
+    ctx: Context,
+    { input, output }: RemoteTestCompilerFactoryOptions
+  ): Promise<TestCompiler<I, O>> => {
     const worker = new Worker();
-    let read = -1
-    const sub = streams.in.onData((data) => {
-      if (read === -1) {
-        return
-      }
-      if (data.length === 0) {
-        server.write(read)
-        // EOF
-        server.write(0)
-        read = -1
-      }
-      if (data === BACKSPACE) {
-        // TODO: What to do with non-ASCII characters?
-        read -= 1;
-      } else {
-        read += data.length
-      }
-    })
     ctx.onCancel(() => {
-      sub[Symbol.dispose]()
-      worker.terminate()
-    })
+      worker.terminate();
+    });
     const connection = new WorkerConnection<Outgoing<I, O>, Incoming<I, O>>(
       worker
     );
     connection.start(ctx);
-    const log = createLogger(streams.out);
-    const Buffer = window.SharedArrayBuffer
-      ? SharedArrayBuffer
-      : ArrayBuffer;
-    const buffer = new Buffer(1024 * 1024 * 10)
-    const server = createSharedStreamsServer(new SharedQueue(buffer), streams)
+    const log = createLogger(output);
+    const Buffer = window.SharedArrayBuffer ? SharedArrayBuffer : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024 * 10);
+    const sharedWriter = pipeToQueue(input, new SharedQueue(buffer));
+    ctx.onCancel(() => {
+      sharedWriter[Symbol.dispose]();
+    });
     const remote = startRemote<Handlers<I, O>, string, TestingActorEvent>(
       ctx,
       log,
       connection,
       {
-        read() {
-          read = 0;
-        },
-        write({ type, data }) {
-          server.onClientWrite(type, data)
+        write(data) {
+          output.write(data)
         },
         error(err) {
           log.error(err instanceof CanceledError ? err.message : err);
         },
       }
     );
-    using _ = ctx.onCancel(() => remote.destroy())
+    using _ = ctx.onCancel(() => remote.destroy());
     await remote.initialize({
       universalFactoryFunction: universalFactory.toString(),
-      buffer
+      buffer,
     });
     return {
       async compile(ctx, files) {
-        using _ = ctx.onCancel(() => remote.stopCompile())
+        using _ = ctx.onCancel(() => remote.stopCompile());
         await remote.compile(files);
         return {
           async run(ctx, input) {
-            using _ = ctx.onCancel(() => remote.stopTest())
+            using _ = ctx.onCancel(() => remote.stopTest());
             return await remote.test(input);
-          }
-        }
+          },
+        };
       },
     };
   };

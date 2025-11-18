@@ -1,5 +1,5 @@
 import { stringify } from "./json.js";
-import type { WritableStreamOfBytes, BytesStreamWriter, Writer } from './io.js';
+import type { Writer } from './io.js';
 
 export interface Logger {
   debug(text: string): void;

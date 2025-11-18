@@ -1,19 +1,11 @@
-import { noop } from "../function.js";
-import type { Streams, ReadableStreamOfBytes, BytesStreamWriter, Writer } from "../io.js";
+import type { Streams, ReadableStreamOfBytes, Writer } from "../io.js";
 import { makeErrorWriter } from "../logger.js";
 
 import type { SharedQueue } from "./shared-queue.js";
 
-export enum StreamType {
-  Out = 1,
-  Err = 2,
-}
-
-export const STREAM_TYPES = Object.values(StreamType) as StreamType[];
-
 export function createSharedStreamsClient(
   inputQueue: SharedQueue,
-  write: (stream: StreamType, data: Uint8Array) => void
+  writer: Writer
 ): Streams {
   return {
     in: {
@@ -25,42 +17,23 @@ export function createSharedStreamsClient(
         return bytes;
       },
     },
-    out: {
-      write(data) {
-        write(StreamType.Out, data);
-      },
-    },
-    err: {
-      write(data) {
-        write(StreamType.Err, data);
-      },
-    },
+    out: writer,
+    err: makeErrorWriter(writer),
   };
 }
 
-export function createSharedStreamsServer(
-  inputQueue: SharedQueue,
-  input: ReadableStreamOfBytes,
-  output: Writer
-) {
+export function pipeToQueue(input: ReadableStreamOfBytes, queue: SharedQueue) {
   const w = new WritableStream<Uint8Array>({
     write(bytes) {
-      inputQueue.pushBytes(bytes);
-      inputQueue.commit();
+      queue.pushBytes(bytes);
+      queue.commit();
     },
   });
-  const c = new AbortController();
-  input.pipeTo(w, { signal: c.signal }).catch(noop);
-  const writers = {
-    [StreamType.Out]: output,
-    [StreamType.Err]: makeErrorWriter(output),
-  } as const;
+  const controller = new AbortController();
+  input.pipeTo(w);
   return {
-    onClientWrite(type: StreamType, data: Uint8Array) {
-      writers[type].write(data);
-    },
     [Symbol.dispose]() {
-      c.abort();
+      controller.abort();
     },
   };
 }

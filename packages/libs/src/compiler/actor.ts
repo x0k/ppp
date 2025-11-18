@@ -8,7 +8,11 @@ import {
   type IncomingMessage,
   type OutgoingMessage,
 } from "../actor/index.js";
-import { SharedQueue, StreamType, createSharedStreamsClient, createSharedStreamsServer } from '../sync/index.js';
+import {
+  SharedQueue,
+  createSharedStreamsClient,
+  pipeToQueue,
+} from "../sync/index.js";
 import {
   CanceledError,
   createContext,
@@ -16,9 +20,9 @@ import {
   withCancel,
   type Context,
 } from "../context.js";
-import type { ReadableStreamOfBytes, Streams, WebStreams, WritableStreamOfBytes, Writer } from "../io.js";
+import type { ReadableStreamOfBytes, Writer } from "../io.js";
 import { stringifyError } from "../error.js";
-import { BACKSPACE, createLogger } from "../logger.js";
+import { createLogger } from "../logger.js";
 
 import type { Compiler, CompilerFactory, File, Program } from "./compiler.js";
 
@@ -36,7 +40,7 @@ interface Handlers {
 
 type Incoming = IncomingMessage<Handlers>;
 
-interface WriteEventMessage extends EventMessage<"write", { type: StreamType, data: Uint8Array }> {}
+interface WriteEventMessage extends EventMessage<"write", Uint8Array> {}
 
 type CompilerActorEvent = WriteEventMessage;
 
@@ -45,15 +49,17 @@ type Outgoing = OutgoingMessage<Handlers, string> | CompilerActorEvent;
 class CompilerActor extends Actor<Handlers, string> implements Disposable {
   protected compiler: Compiler<Program> | null = null;
   protected compilerCtx = createRecoverableContext(() => {
-    this.compiler = null
-    return withCancel(createContext())
-  })
-  protected program: Program | null = null
+    this.compiler = null;
+    return withCancel(createContext());
+  });
+  protected program: Program | null = null;
   protected programCtx = createRecoverableContext(() => {
-    this.program = null
-    return withCancel(this.compilerCtx.ref)
-  })
-  protected runCtx = createRecoverableContext(() => withCancel(this.programCtx.ref))
+    this.program = null;
+    return withCancel(this.compilerCtx.ref);
+  });
+  protected runCtx = createRecoverableContext(() =>
+    withCancel(this.programCtx.ref)
+  );
 
   constructor(
     connection: Connection<Incoming, Outgoing>,
@@ -61,22 +67,20 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
   ) {
     const handlers: Handlers = {
       initialize: async (buffer: SharedArrayBuffer) => {
-        const sharedQueue = new SharedQueue(buffer)
-        const streams = createSharedStreamsClient(
-          sharedQueue,
-          (type, data) => connection.send({
-            type: MessageType.Event,
-            event: "write",
-            payload: {
-              type,
-              data
-            }
-          })
-        )
+        const sharedQueue = new SharedQueue(buffer);
+        const streams = createSharedStreamsClient(sharedQueue, {
+          write(data) {
+            connection.send({
+              type: MessageType.Event,
+              event: "write",
+              payload: data,
+            });
+          },
+        });
         this.compiler = await compilerFactory(this.compilerCtx.ref, streams);
       },
       destroy: () => {
-        this.compilerCtx.cancel()
+        this.compilerCtx.cancel();
       },
       compile: async (files) => {
         if (this.compiler === null) {
@@ -85,7 +89,7 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
         this.program = await this.compiler.compile(this.programCtx.ref, files);
       },
       stopCompile: () => {
-        this.programCtx.cancel()
+        this.programCtx.cancel();
       },
       run: async () => {
         if (this.program === null) {
@@ -110,12 +114,12 @@ class CompilerActor extends Actor<Handlers, string> implements Disposable {
     super(connection, handlers, stringifyError);
   }
 
-  [Symbol.dispose] (): void {
+  [Symbol.dispose](): void {
     this.compiler = null;
-    this.compilerCtx[Symbol.dispose]()
+    this.compilerCtx[Symbol.dispose]();
     this.program = null;
-    this.programCtx[Symbol.dispose]()
-    this.runCtx[Symbol.dispose]()
+    this.programCtx[Symbol.dispose]();
+    this.runCtx[Symbol.dispose]();
   }
 }
 
@@ -129,8 +133,8 @@ export function startCompilerActor(
   connection.start(ctx);
   const actor = new CompilerActor(connection, compilerFactory);
   ctx.onCancel(() => {
-    actor[Symbol.dispose]()
-  })
+    actor[Symbol.dispose]();
+  });
   actor.start(ctx);
 }
 
@@ -138,50 +142,53 @@ interface WorkerConstructor {
   new (): Worker;
 }
 
-export interface CompilerFactoryOptions {
-  input: ReadableStreamOfBytes
-  output: Writer
+export interface RemoteCompilerFactoryOptions {
+  input: ReadableStreamOfBytes;
+  output: Writer;
 }
 
 export function makeRemoteCompilerFactory(Worker: WorkerConstructor) {
-  return async (ctx: Context, { input, output }: CompilerFactoryOptions): Promise<Compiler<Program>> => {
+  return async (
+    ctx: Context,
+    { input, output }: RemoteCompilerFactoryOptions
+  ): Promise<Compiler<Program>> => {
     const worker = new Worker();
     ctx.onCancel(() => {
-      server[Symbol.dispose]()
-      worker.terminate()
-    })
+      worker.terminate();
+    });
     const connection = new WorkerConnection<Outgoing, Incoming>(worker);
     connection.start(ctx);
     const log = createLogger(output);
-    const Buffer = window.SharedArrayBuffer
-      ? SharedArrayBuffer
-      : ArrayBuffer;
-    const buffer = new Buffer(1024 * 1024)
-    const server = createSharedStreamsServer(new SharedQueue(buffer), input, output)
+    const Buffer = window.SharedArrayBuffer ? SharedArrayBuffer : ArrayBuffer;
+    const buffer = new Buffer(1024 * 1024);
+    const sharedWriter = pipeToQueue(input, new SharedQueue(buffer));
+    ctx.onCancel(() => {
+      sharedWriter[Symbol.dispose]();
+    })
     const remote = startRemote<Handlers, string, CompilerActorEvent>(
       ctx,
       log,
       connection,
       {
-        write({ type, data }) {
-          server.onClientWrite(type, data)
+        write(data) {
+          output.write(data);
         },
         error(err) {
           log.error(err instanceof CanceledError ? err.message : err);
         },
       }
     );
-    using _ = ctx.onCancel(() => remote.destroy())
+    using _ = ctx.onCancel(() => remote.destroy());
     await remote.initialize(buffer);
     return {
       async compile(ctx, files) {
-        using _ = ctx.onCancel(() => remote.stopCompile())
+        using _ = ctx.onCancel(() => remote.stopCompile());
         await remote.compile(files);
         return {
           async run(ctx) {
-            using _ = ctx.onCancel(() => remote.stopRun())
+            using _ = ctx.onCancel(() => remote.stopRun());
             await remote.run();
-          }
+          },
         };
       },
     };
