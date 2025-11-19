@@ -1,37 +1,37 @@
 //! Licensed to the .NET Foundation under one or more agreements.
 //! The .NET Foundation licenses this file to you under the MIT license.
 
-var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0,3,2,1,0,10,8,1,6,0,6,64,25,11,11])),o=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,15,1,13,0,65,1,253,15,65,2,253,15,253,128,2,11])),n=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11])),r=Symbol.for("wasm promise_control");function i(e,t){let o=null;const n=new Promise((function(n,r){o={isDone:!1,promise:null,resolve:t=>{o.isDone||(o.isDone=!0,n(t),e&&e())},reject:e=>{o.isDone||(o.isDone=!0,r(e),t&&t())}}}));o.promise=n;const i=n;return i[r]=o,{promise:i,promise_control:o}}function s(e){return e[r]}function a(e){e&&function(e){return void 0!==e[r]}(e)||Be(!1,"Promise is not controllable")}const l="__mono_message__",c=["debug","log","trace","warn","info","error"],d="MONO_WASM: ";let u,f,m,g,p,h;function w(e){g=e}function b(e){if(Pe.diagnosticTracing){const t="function"==typeof e?e():e;console.debug(d+t)}}function y(e,...t){console.info(d+e,...t)}function v(e,...t){console.info(e,...t)}function E(e,...t){console.warn(d+e,...t)}function _(e,...t){if(t&&t.length>0&&t[0]&&"object"==typeof t[0]){if(t[0].silent)return;if(t[0].toString)return void console.error(d+e,t[0].toString())}console.error(d+e,...t)}function x(e,t,o){return function(...n){try{let r=n[0];if(void 0===r)r="undefined";else if(null===r)r="null";else if("function"==typeof r)r=r.toString();else if("string"!=typeof r)try{r=JSON.stringify(r)}catch(e){r=r.toString()}t(o?JSON.stringify({method:e,payload:r,arguments:n.slice(1)}):[e+r,...n.slice(1)])}catch(e){m.error(`proxyConsole failed: ${e}`)}}}function j(e,t,o){f=t,g=e,m={...t};const n=`${o}/console`.replace("https://","wss://").replace("http://","ws://");u=new WebSocket(n),u.addEventListener("error",A),u.addEventListener("close",S),function(){for(const e of c)f[e]=x(`console.${e}`,T,!0)}()}function R(e){let t=30;const o=()=>{u?0==u.bufferedAmount||0==t?(e&&v(e),function(){for(const e of c)f[e]=x(`console.${e}`,m.log,!1)}(),u.removeEventListener("error",A),u.removeEventListener("close",S),u.close(1e3,e),u=void 0):(t--,globalThis.setTimeout(o,100)):e&&m&&m.log(e)};o()}function T(e){u&&u.readyState===WebSocket.OPEN?u.send(e):m.log(e)}function A(e){m.error(`[${g}] proxy console websocket error: ${e}`,e)}function S(e){m.debug(`[${g}] proxy console websocket closed: ${e}`,e)}function D(){Pe.preferredIcuAsset=O(Pe.config);let e="invariant"==Pe.config.globalizationMode;if(!e)if(Pe.preferredIcuAsset)Pe.diagnosticTracing&&b("ICU data archive(s) available, disabling invariant mode");else{if("custom"===Pe.config.globalizationMode||"all"===Pe.config.globalizationMode||"sharded"===Pe.config.globalizationMode){const e="invariant globalization mode is inactive and no ICU data archives are available";throw _(`ERROR: ${e}`),new Error(e)}Pe.diagnosticTracing&&b("ICU data archive(s) not available, using invariant globalization mode"),e=!0,Pe.preferredIcuAsset=null}const t="DOTNET_SYSTEM_GLOBALIZATION_INVARIANT",o=Pe.config.environmentVariables;if(void 0===o[t]&&e&&(o[t]="1"),void 0===o.TZ)try{const e=Intl.DateTimeFormat().resolvedOptions().timeZone||null;e&&(o.TZ=e)}catch(e){y("failed to detect timezone, will fallback to UTC")}}function O(e){var t;if((null===(t=e.resources)||void 0===t?void 0:t.icu)&&"invariant"!=e.globalizationMode){const t=e.applicationCulture||(ke?globalThis.navigator&&globalThis.navigator.languages&&globalThis.navigator.languages[0]:Intl.DateTimeFormat().resolvedOptions().locale),o=e.resources.icu;let n=null;if("custom"===e.globalizationMode){if(o.length>=1)return o[0].name}else t&&"all"!==e.globalizationMode?"sharded"===e.globalizationMode&&(n=function(e){const t=e.split("-")[0];return"en"===t||["fr","fr-FR","it","it-IT","de","de-DE","es","es-ES"].includes(e)?"icudt_EFIGS.dat":["zh","ko","ja"].includes(t)?"icudt_CJK.dat":"icudt_no_CJK.dat"}(t)):n="icudt.dat";if(n)for(let e=0;e<o.length;e++){const t=o[e];if(t.virtualPath===n)return t.name}}return e.globalizationMode="invariant",null}(new Date).valueOf();const C=class{constructor(e){this.url=e}toString(){return this.url}};async function k(e,t){try{const o="function"==typeof globalThis.fetch;if(Se){const n=e.startsWith("file://");if(!n&&o)return globalThis.fetch(e,t||{credentials:"same-origin"});p||(h=Ne.require("url"),p=Ne.require("fs")),n&&(e=h.fileURLToPath(e));const r=await p.promises.readFile(e);return{ok:!0,headers:{length:0,get:()=>null},url:e,arrayBuffer:()=>r,json:()=>JSON.parse(r),text:()=>{throw new Error("NotImplementedException")}}}if(o)return globalThis.fetch(e,t||{credentials:"same-origin"});if("function"==typeof read)return{ok:!0,url:e,headers:{length:0,get:()=>null},arrayBuffer:()=>new Uint8Array(read(e,"binary")),json:()=>JSON.parse(read(e,"utf8")),text:()=>read(e,"utf8")}}catch(t){return{ok:!1,url:e,status:500,headers:{length:0,get:()=>null},statusText:"ERR28: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t},text:()=>{throw t}}}throw new Error("No fetch implementation available")}function I(e){return"string"!=typeof e&&Be(!1,"url must be a string"),!M(e)&&0!==e.indexOf("./")&&0!==e.indexOf("../")&&globalThis.URL&&globalThis.document&&globalThis.document.baseURI&&(e=new URL(e,globalThis.document.baseURI).toString()),e}const U=/^[a-zA-Z][a-zA-Z\d+\-.]*?:\/\//,P=/[a-zA-Z]:[\\/]/;function M(e){return Se||Ie?e.startsWith("/")||e.startsWith("\\")||-1!==e.indexOf("///")||P.test(e):U.test(e)}let L,N=0;const $=[],z=[],W=new Map,F={"js-module-threads":!0,"js-module-runtime":!0,"js-module-dotnet":!0,"js-module-native":!0,"js-module-diagnostics":!0},B={...F,"js-module-library-initializer":!0},V={...F,dotnetwasm:!0,heap:!0,manifest:!0},q={...B,manifest:!0},H={...B,dotnetwasm:!0},J={dotnetwasm:!0,symbols:!0},Z={...B,dotnetwasm:!0,symbols:!0},Q={symbols:!0};function G(e){return!("icu"==e.behavior&&e.name!=Pe.preferredIcuAsset)}function K(e,t,o){null!=t||(t=[]),Be(1==t.length,`Expect to have one ${o} asset in resources`);const n=t[0];return n.behavior=o,X(n),e.push(n),n}function X(e){V[e.behavior]&&W.set(e.behavior,e)}function Y(e){Be(V[e],`Unknown single asset behavior ${e}`);const t=W.get(e);if(t&&!t.resolvedUrl)if(t.resolvedUrl=Pe.locateFile(t.name),F[t.behavior]){const e=ge(t);e?("string"!=typeof e&&Be(!1,"loadBootResource response for 'dotnetjs' type should be a URL string"),t.resolvedUrl=e):t.resolvedUrl=ce(t.resolvedUrl,t.behavior)}else if("dotnetwasm"!==t.behavior)throw new Error(`Unknown single asset behavior ${e}`);return t}function ee(e){const t=Y(e);return Be(t,`Single asset for ${e} not found`),t}let te=!1;async function oe(){if(!te){te=!0,Pe.diagnosticTracing&&b("mono_download_assets");try{const e=[],t=[],o=(e,t)=>{!Z[e.behavior]&&G(e)&&Pe.expected_instantiated_assets_count++,!H[e.behavior]&&G(e)&&(Pe.expected_downloaded_assets_count++,t.push(se(e)))};for(const t of $)o(t,e);for(const e of z)o(e,t);Pe.allDownloadsQueued.promise_control.resolve(),Promise.all([...e,...t]).then((()=>{Pe.allDownloadsFinished.promise_control.resolve()})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e})),await Pe.runtimeModuleLoaded.promise;const n=async e=>{const t=await e;if(t.buffer){if(!Z[t.behavior]){t.buffer&&"object"==typeof t.buffer||Be(!1,"asset buffer must be array-like or buffer-like or promise of these"),"string"!=typeof t.resolvedUrl&&Be(!1,"resolvedUrl must be string");const e=t.resolvedUrl,o=await t.buffer,n=new Uint8Array(o);pe(t),await Ue.beforeOnRuntimeInitialized.promise,Ue.instantiate_asset(t,e,n)}}else J[t.behavior]?("symbols"===t.behavior&&(await Ue.instantiate_symbols_asset(t),pe(t)),J[t.behavior]&&++Pe.actual_downloaded_assets_count):(t.isOptional||Be(!1,"Expected asset to have the downloaded buffer"),!H[t.behavior]&&G(t)&&Pe.expected_downloaded_assets_count--,!Z[t.behavior]&&G(t)&&Pe.expected_instantiated_assets_count--)},r=[],i=[];for(const t of e)r.push(n(t));for(const e of t)i.push(n(e));Promise.all(r).then((()=>{Ce||Ue.coreAssetsInMemory.promise_control.resolve()})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e})),Promise.all(i).then((async()=>{Ce||(await Ue.coreAssetsInMemory.promise,Ue.allAssetsInMemory.promise_control.resolve())})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e}))}catch(e){throw Pe.err("Error in mono_download_assets: "+e),e}}}let ne=!1;function re(){if(ne)return;ne=!0;const e=Pe.config,t=[];if(e.assets)for(const t of e.assets)"object"!=typeof t&&Be(!1,`asset must be object, it was ${typeof t} : ${t}`),"string"!=typeof t.behavior&&Be(!1,"asset behavior must be known string"),"string"!=typeof t.name&&Be(!1,"asset name must be string"),t.resolvedUrl&&"string"!=typeof t.resolvedUrl&&Be(!1,"asset resolvedUrl could be string"),t.hash&&"string"!=typeof t.hash&&Be(!1,"asset resolvedUrl could be string"),t.pendingDownload&&"object"!=typeof t.pendingDownload&&Be(!1,"asset pendingDownload could be object"),t.isCore?$.push(t):z.push(t),X(t);else if(e.resources){const o=e.resources;o.wasmNative||Be(!1,"resources.wasmNative must be defined"),o.jsModuleNative||Be(!1,"resources.jsModuleNative must be defined"),o.jsModuleRuntime||Be(!1,"resources.jsModuleRuntime must be defined"),K(z,o.wasmNative,"dotnetwasm"),K(t,o.jsModuleNative,"js-module-native"),K(t,o.jsModuleRuntime,"js-module-runtime"),o.jsModuleDiagnostics&&K(t,o.jsModuleDiagnostics,"js-module-diagnostics");const n=(e,t,o)=>{const n=e;n.behavior=t,o?(n.isCore=!0,$.push(n)):z.push(n)};if(o.coreAssembly)for(let e=0;e<o.coreAssembly.length;e++)n(o.coreAssembly[e],"assembly",!0);if(o.assembly)for(let e=0;e<o.assembly.length;e++)n(o.assembly[e],"assembly",!o.coreAssembly);if(0!=e.debugLevel&&Pe.isDebuggingSupported()){if(o.corePdb)for(let e=0;e<o.corePdb.length;e++)n(o.corePdb[e],"pdb",!0);if(o.pdb)for(let e=0;e<o.pdb.length;e++)n(o.pdb[e],"pdb",!o.corePdb)}if(e.loadAllSatelliteResources&&o.satelliteResources)for(const e in o.satelliteResources)for(let t=0;t<o.satelliteResources[e].length;t++){const r=o.satelliteResources[e][t];r.culture=e,n(r,"resource",!o.coreAssembly)}if(o.coreVfs)for(let e=0;e<o.coreVfs.length;e++)n(o.coreVfs[e],"vfs",!0);if(o.vfs)for(let e=0;e<o.vfs.length;e++)n(o.vfs[e],"vfs",!o.coreVfs);const r=O(e);if(r&&o.icu)for(let e=0;e<o.icu.length;e++){const t=o.icu[e];t.name===r&&n(t,"icu",!1)}if(o.wasmSymbols)for(let e=0;e<o.wasmSymbols.length;e++)n(o.wasmSymbols[e],"symbols",!1)}if(e.appsettings)for(let t=0;t<e.appsettings.length;t++){const o=e.appsettings[t],n=he(o);"appsettings.json"!==n&&n!==`appsettings.${e.applicationEnvironment}.json`||z.push({name:o,behavior:"vfs",noCache:!0,useCredentials:!0})}e.assets=[...$,...z,...t]}async function ie(e){const t=await se(e);return await t.pendingDownloadInternal.response,t.buffer}async function se(e){try{return await ae(e)}catch(t){if(!Pe.enableDownloadRetry)throw t;if(Ie||Se)throw t;if(e.pendingDownload&&e.pendingDownloadInternal==e.pendingDownload)throw t;if(e.resolvedUrl&&-1!=e.resolvedUrl.indexOf("file://"))throw t;if(t&&404==t.status)throw t;e.pendingDownloadInternal=void 0,await Pe.allDownloadsQueued.promise;try{return Pe.diagnosticTracing&&b(`Retrying download '${e.name}'`),await ae(e)}catch(t){return e.pendingDownloadInternal=void 0,await new Promise((e=>globalThis.setTimeout(e,100))),Pe.diagnosticTracing&&b(`Retrying download (2) '${e.name}' after delay`),await ae(e)}}}async function ae(e){for(;L;)await L.promise;try{++N,N==Pe.maxParallelDownloads&&(Pe.diagnosticTracing&&b("Throttling further parallel downloads"),L=i());const t=await async function(e){if(e.pendingDownload&&(e.pendingDownloadInternal=e.pendingDownload),e.pendingDownloadInternal&&e.pendingDownloadInternal.response)return e.pendingDownloadInternal.response;if(e.buffer){const t=await e.buffer;return e.resolvedUrl||(e.resolvedUrl="undefined://"+e.name),e.pendingDownloadInternal={url:e.resolvedUrl,name:e.name,response:Promise.resolve({ok:!0,arrayBuffer:()=>t,json:()=>JSON.parse(new TextDecoder("utf-8").decode(t)),text:()=>{throw new Error("NotImplementedException")},headers:{get:()=>{}}})},e.pendingDownloadInternal.response}const t=e.loadRemote&&Pe.config.remoteSources?Pe.config.remoteSources:[""];let o;for(let n of t){n=n.trim(),"./"===n&&(n="");const t=le(e,n);e.name===t?Pe.diagnosticTracing&&b(`Attempting to download '${t}'`):Pe.diagnosticTracing&&b(`Attempting to download '${t}' for ${e.name}`);try{e.resolvedUrl=t;const n=fe(e);if(e.pendingDownloadInternal=n,o=await n.response,!o||!o.ok)continue;return o}catch(e){o||(o={ok:!1,url:t,status:0,statusText:""+e});continue}}const n=e.isOptional||e.name.match(/\.pdb$/)&&Pe.config.ignorePdbLoadErrors;if(o||Be(!1,`Response undefined ${e.name}`),!n){const t=new Error(`download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`);throw t.status=o.status,t}y(`optional download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`)}(e);return t?(J[e.behavior]||(e.buffer=await t.arrayBuffer(),++Pe.actual_downloaded_assets_count),e):e}finally{if(--N,L&&N==Pe.maxParallelDownloads-1){Pe.diagnosticTracing&&b("Resuming more parallel downloads");const e=L;L=void 0,e.promise_control.resolve()}}}function le(e,t){let o;return null==t&&Be(!1,`sourcePrefix must be provided for ${e.name}`),e.resolvedUrl?o=e.resolvedUrl:(o=""===t?"assembly"===e.behavior||"pdb"===e.behavior?e.name:"resource"===e.behavior&&e.culture&&""!==e.culture?`${e.culture}/${e.name}`:e.name:t+e.name,o=ce(Pe.locateFile(o),e.behavior)),o&&"string"==typeof o||Be(!1,"attemptUrl need to be path or url string"),o}function ce(e,t){return Pe.modulesUniqueQuery&&q[t]&&(e+=Pe.modulesUniqueQuery),e}let de=0;const ue=new Set;function fe(e){try{e.resolvedUrl||Be(!1,"Request's resolvedUrl must be set");const t=function(e){let t=e.resolvedUrl;if(Pe.loadBootResource){const o=ge(e);if(o instanceof Promise)return o;"string"==typeof o&&(t=o)}const o={};return Pe.config.disableNoCacheFetch||(o.cache="no-cache"),e.useCredentials?o.credentials="include":!Pe.config.disableIntegrityCheck&&e.hash&&(o.integrity=e.hash),Pe.fetch_like(t,o)}(e),o={name:e.name,url:e.resolvedUrl,response:t};return ue.add(e.name),o.response.then((()=>{"assembly"==e.behavior&&Pe.loadedAssemblies.push(e.name),de++,Pe.onDownloadResourceProgress&&Pe.onDownloadResourceProgress(de,ue.size)})),o}catch(t){const o={ok:!1,url:e.resolvedUrl,status:500,statusText:"ERR29: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t}};return{name:e.name,url:e.resolvedUrl,response:Promise.resolve(o)}}}const me={resource:"assembly",assembly:"assembly",pdb:"pdb",icu:"globalization",vfs:"configuration",manifest:"manifest",dotnetwasm:"dotnetwasm","js-module-dotnet":"dotnetjs","js-module-native":"dotnetjs","js-module-runtime":"dotnetjs","js-module-threads":"dotnetjs"};function ge(e){var t;if(Pe.loadBootResource){const o=null!==(t=e.hash)&&void 0!==t?t:"",n=e.resolvedUrl,r=me[e.behavior];if(r){const t=Pe.loadBootResource(r,e.name,n,o,e.behavior);return"string"==typeof t?I(t):t}}}function pe(e){e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null}function he(e){let t=e.lastIndexOf("/");return t>=0&&t++,e.substring(t)}async function we(e){e&&await Promise.all((null!=e?e:[]).map((e=>async function(e){try{const t=e.name;if(!e.moduleExports){const o=ce(Pe.locateFile(t),"js-module-library-initializer");Pe.diagnosticTracing&&b(`Attempting to import '${o}' for ${e}`),e.moduleExports=await import(/*! webpackIgnore: true */o)}Pe.libraryInitializers.push({scriptName:t,exports:e.moduleExports})}catch(t){E(`Failed to import library initializer '${e}': ${t}`)}}(e))))}async function be(e,t){if(!Pe.libraryInitializers)return;const o=[];for(let n=0;n<Pe.libraryInitializers.length;n++){const r=Pe.libraryInitializers[n];r.exports[e]&&o.push(ye(r.scriptName,e,(()=>r.exports[e](...t))))}await Promise.all(o)}async function ye(e,t,o){try{await o()}catch(o){throw E(`Failed to invoke '${t}' on library initializer '${e}': ${o}`),Xe(1,o),o}}function ve(e,t){if(e===t)return e;const o={...t};return void 0!==o.assets&&o.assets!==e.assets&&(o.assets=[...e.assets||[],...o.assets||[]]),void 0!==o.resources&&(o.resources=_e(e.resources||{assembly:[],jsModuleNative:[],jsModuleRuntime:[],wasmNative:[]},o.resources)),void 0!==o.environmentVariables&&(o.environmentVariables={...e.environmentVariables||{},...o.environmentVariables||{}}),void 0!==o.runtimeOptions&&o.runtimeOptions!==e.runtimeOptions&&(o.runtimeOptions=[...e.runtimeOptions||[],...o.runtimeOptions||[]]),Object.assign(e,o)}function Ee(e,t){if(e===t)return e;const o={...t};return o.config&&(e.config||(e.config={}),o.config=ve(e.config,o.config)),Object.assign(e,o)}function _e(e,t){if(e===t)return e;const o={...t};return void 0!==o.coreAssembly&&(o.coreAssembly=[...e.coreAssembly||[],...o.coreAssembly||[]]),void 0!==o.assembly&&(o.assembly=[...e.assembly||[],...o.assembly||[]]),void 0!==o.lazyAssembly&&(o.lazyAssembly=[...e.lazyAssembly||[],...o.lazyAssembly||[]]),void 0!==o.corePdb&&(o.corePdb=[...e.corePdb||[],...o.corePdb||[]]),void 0!==o.pdb&&(o.pdb=[...e.pdb||[],...o.pdb||[]]),void 0!==o.jsModuleWorker&&(o.jsModuleWorker=[...e.jsModuleWorker||[],...o.jsModuleWorker||[]]),void 0!==o.jsModuleNative&&(o.jsModuleNative=[...e.jsModuleNative||[],...o.jsModuleNative||[]]),void 0!==o.jsModuleDiagnostics&&(o.jsModuleDiagnostics=[...e.jsModuleDiagnostics||[],...o.jsModuleDiagnostics||[]]),void 0!==o.jsModuleRuntime&&(o.jsModuleRuntime=[...e.jsModuleRuntime||[],...o.jsModuleRuntime||[]]),void 0!==o.wasmSymbols&&(o.wasmSymbols=[...e.wasmSymbols||[],...o.wasmSymbols||[]]),void 0!==o.wasmNative&&(o.wasmNative=[...e.wasmNative||[],...o.wasmNative||[]]),void 0!==o.icu&&(o.icu=[...e.icu||[],...o.icu||[]]),void 0!==o.satelliteResources&&(o.satelliteResources=function(e,t){if(e===t)return e;for(const o in t)e[o]=[...e[o]||[],...t[o]||[]];return e}(e.satelliteResources||{},o.satelliteResources||{})),void 0!==o.modulesAfterConfigLoaded&&(o.modulesAfterConfigLoaded=[...e.modulesAfterConfigLoaded||[],...o.modulesAfterConfigLoaded||[]]),void 0!==o.modulesAfterRuntimeReady&&(o.modulesAfterRuntimeReady=[...e.modulesAfterRuntimeReady||[],...o.modulesAfterRuntimeReady||[]]),void 0!==o.extensions&&(o.extensions={...e.extensions||{},...o.extensions||{}}),void 0!==o.vfs&&(o.vfs=[...e.vfs||[],...o.vfs||[]]),Object.assign(e,o)}function xe(){const e=Pe.config;if(e.environmentVariables=e.environmentVariables||{},e.runtimeOptions=e.runtimeOptions||[],e.resources=e.resources||{assembly:[],jsModuleNative:[],jsModuleWorker:[],jsModuleRuntime:[],wasmNative:[],vfs:[],satelliteResources:{}},e.assets){Pe.diagnosticTracing&&b("config.assets is deprecated, use config.resources instead");for(const t of e.assets){const o={};switch(t.behavior){case"assembly":o.assembly=[t];break;case"pdb":o.pdb=[t];break;case"resource":o.satelliteResources={},o.satelliteResources[t.culture]=[t];break;case"icu":o.icu=[t];break;case"symbols":o.wasmSymbols=[t];break;case"vfs":o.vfs=[t];break;case"dotnetwasm":o.wasmNative=[t];break;case"js-module-threads":o.jsModuleWorker=[t];break;case"js-module-runtime":o.jsModuleRuntime=[t];break;case"js-module-native":o.jsModuleNative=[t];break;case"js-module-diagnostics":o.jsModuleDiagnostics=[t];break;case"js-module-dotnet":break;default:throw new Error(`Unexpected behavior ${t.behavior} of asset ${t.name}`)}_e(e.resources,o)}}e.debugLevel,e.applicationEnvironment||(e.applicationEnvironment="Production"),e.applicationCulture&&(e.environmentVariables.LANG=`${e.applicationCulture}.UTF-8`),Ue.diagnosticTracing=Pe.diagnosticTracing=!!e.diagnosticTracing,Ue.waitForDebugger=e.waitForDebugger,Pe.maxParallelDownloads=e.maxParallelDownloads||Pe.maxParallelDownloads,Pe.enableDownloadRetry=void 0!==e.enableDownloadRetry?e.enableDownloadRetry:Pe.enableDownloadRetry}let je=!1;async function Re(e){var t;if(je)return void await Pe.afterConfigLoaded.promise;let o;try{if(e.configSrc||Pe.config&&0!==Object.keys(Pe.config).length&&(Pe.config.assets||Pe.config.resources)||(e.configSrc="dotnet.boot.js"),o=e.configSrc,je=!0,o&&(Pe.diagnosticTracing&&b("mono_wasm_load_config"),await async function(e){const t=e.configSrc,o=Pe.locateFile(t);let n=null;void 0!==Pe.loadBootResource&&(n=Pe.loadBootResource("manifest",t,o,"","manifest"));let r,i=null;if(n)if("string"==typeof n)n.includes(".json")?(i=await s(I(n)),r=await Ae(i)):r=(await import(I(n))).config;else{const e=await n;"function"==typeof e.json?(i=e,r=await Ae(i)):r=e.config}else o.includes(".json")?(i=await s(ce(o,"manifest")),r=await Ae(i)):r=(await import(ce(o,"manifest"))).config;function s(e){return Pe.fetch_like(e,{method:"GET",credentials:"include",cache:"no-cache"})}Pe.config.applicationEnvironment&&(r.applicationEnvironment=Pe.config.applicationEnvironment),ve(Pe.config,r)}(e)),xe(),await we(null===(t=Pe.config.resources)||void 0===t?void 0:t.modulesAfterConfigLoaded),await be("onRuntimeConfigLoaded",[Pe.config]),e.onConfigLoaded)try{await e.onConfigLoaded(Pe.config,Le),xe()}catch(e){throw _("onConfigLoaded() failed",e),e}xe(),Pe.afterConfigLoaded.promise_control.resolve(Pe.config)}catch(t){const n=`Failed to load config file ${o} ${t} ${null==t?void 0:t.stack}`;throw Pe.config=e.config=Object.assign(Pe.config,{message:n,error:t,isError:!0}),Xe(1,new Error(n)),t}}function Te(){return!!globalThis.navigator&&(Pe.isChromium||Pe.isFirefox)}async function Ae(e){const t=Pe.config,o=await e.json();t.applicationEnvironment||o.applicationEnvironment||(o.applicationEnvironment=e.headers.get("Blazor-Environment")||e.headers.get("DotNet-Environment")||void 0),o.environmentVariables||(o.environmentVariables={});const n=e.headers.get("DOTNET-MODIFIABLE-ASSEMBLIES");n&&(o.environmentVariables.DOTNET_MODIFIABLE_ASSEMBLIES=n);const r=e.headers.get("ASPNETCORE-BROWSER-TOOLS");return r&&(o.environmentVariables.__ASPNETCORE_BROWSER_TOOLS=r),o}"function"!=typeof importScripts||globalThis.onmessage||(globalThis.dotnetSidecar=!0);const Se="object"==typeof process&&"object"==typeof process.versions&&"string"==typeof process.versions.node,De="function"==typeof importScripts,Oe=De&&"undefined"!=typeof dotnetSidecar,Ce=De&&!Oe,ke="object"==typeof window||De&&!Se,Ie=!ke&&!Se;let Ue={},Pe={},Me={},Le={},Ne={},$e=!1;const ze={},We={config:ze},Fe={mono:{},binding:{},internal:Ne,module:We,loaderHelpers:Pe,runtimeHelpers:Ue,diagnosticHelpers:Me,api:Le};function Be(e,t){if(e)return;const o="Assert failed: "+("function"==typeof t?t():t),n=new Error(o);_(o,n),Ue.nativeAbort(n)}function Ve(){return void 0!==Pe.exitCode}function qe(){return Ue.runtimeReady&&!Ve()}function He(){Ve()&&Be(!1,`.NET runtime already exited with ${Pe.exitCode} ${Pe.exitReason}. You can use runtime.runMain() which doesn't exit the runtime.`),Ue.runtimeReady||Be(!1,".NET runtime didn't start yet. Please call dotnet.create() first.")}function Je(){ke&&(globalThis.addEventListener("unhandledrejection",et),globalThis.addEventListener("error",tt))}let Ze,Qe;function Ge(e){Qe&&Qe(e),Xe(e,Pe.exitReason)}function Ke(e){Ze&&Ze(e||Pe.exitReason),Xe(1,e||Pe.exitReason)}function Xe(t,o){var n,r;const i=o&&"object"==typeof o;t=i&&"number"==typeof o.status?o.status:void 0===t?-1:t;const s=i&&"string"==typeof o.message?o.message:""+o;(o=i?o:Ue.ExitStatus?function(e,t){const o=new Ue.ExitStatus(e);return o.message=t,o.toString=()=>t,o}(t,s):new Error("Exit with code "+t+" "+s)).status=t,o.message||(o.message=s);const a=""+(o.stack||(new Error).stack);try{Object.defineProperty(o,"stack",{get:()=>a})}catch(e){}const l=!!o.silent;if(o.silent=!0,Ve())Pe.diagnosticTracing&&b("mono_exit called after exit");else{try{We.onAbort==Ke&&(We.onAbort=Ze),We.onExit==Ge&&(We.onExit=Qe),ke&&(globalThis.removeEventListener("unhandledrejection",et),globalThis.removeEventListener("error",tt)),Ue.runtimeReady?(Ue.jiterpreter_dump_stats&&Ue.jiterpreter_dump_stats(!1),0===t&&(null===(n=Pe.config)||void 0===n?void 0:n.interopCleanupOnExit)&&Ue.forceDisposeProxies(!0,!0),e&&0!==t&&(null===(r=Pe.config)||void 0===r||r.dumpThreadsOnNonZeroExit)):(Pe.diagnosticTracing&&b(`abort_startup, reason: ${o}`),function(e){Pe.allDownloadsQueued.promise_control.reject(e),Pe.allDownloadsFinished.promise_control.reject(e),Pe.afterConfigLoaded.promise_control.reject(e),Pe.wasmCompilePromise.promise_control.reject(e),Pe.runtimeModuleLoaded.promise_control.reject(e),Ue.dotnetReady&&(Ue.dotnetReady.promise_control.reject(e),Ue.afterInstantiateWasm.promise_control.reject(e),Ue.beforePreInit.promise_control.reject(e),Ue.afterPreInit.promise_control.reject(e),Ue.afterPreRun.promise_control.reject(e),Ue.beforeOnRuntimeInitialized.promise_control.reject(e),Ue.afterOnRuntimeInitialized.promise_control.reject(e),Ue.afterPostRun.promise_control.reject(e))}(o))}catch(e){E("mono_exit A failed",e)}try{l||(function(e,t){if(0!==e&&t){const e=Ue.ExitStatus&&t instanceof Ue.ExitStatus?b:_;"string"==typeof t?e(t):(void 0===t.stack&&(t.stack=(new Error).stack+""),t.message?e(Ue.stringify_as_error_with_stack?Ue.stringify_as_error_with_stack(t.message+"\n"+t.stack):t.message+"\n"+t.stack):e(JSON.stringify(t)))}!Ce&&Pe.config&&(Pe.config.logExitCode?Pe.config.forwardConsoleLogsToWS?R("WASM EXIT "+e):v("WASM EXIT "+e):Pe.config.forwardConsoleLogsToWS&&R())}(t,o),function(e){if(ke&&!Ce&&Pe.config&&Pe.config.appendElementOnExit&&document){const t=document.createElement("label");t.id="tests_done",0!==e&&(t.style.background="red"),t.innerHTML=""+e,document.body.appendChild(t)}}(t))}catch(e){E("mono_exit B failed",e)}Pe.exitCode=t,Pe.exitReason||(Pe.exitReason=o),!Ce&&Ue.runtimeReady&&We.runtimeKeepalivePop()}if(Pe.config&&Pe.config.asyncFlushOnExit&&0===t)throw(async()=>{try{await async function(){try{const e=await import(/*! webpackIgnore: true */"process"),t=e=>new Promise(((t,o)=>{e.on("error",o),e.end("","utf8",t)})),o=t(e.stderr),n=t(e.stdout);let r;const i=new Promise((e=>{r=setTimeout((()=>e("timeout")),1e3)}));await Promise.race([Promise.all([n,o]),i]),clearTimeout(r)}catch(e){_(`flushing std* streams failed: ${e}`)}}()}finally{Ye(t,o)}})(),o;Ye(t,o)}function Ye(e,t){if(Ue.runtimeReady&&Ue.nativeExit)try{Ue.nativeExit(e)}catch(e){!Ue.ExitStatus||e instanceof Ue.ExitStatus||E("set_exit_code_and_quit_now failed: "+e.toString())}if(0!==e||!ke)throw Se&&Ne.process?Ne.process.exit(e):Ue.quit&&Ue.quit(e,t),t}function et(e){ot(e,e.reason,"rejection")}function tt(e){ot(e,e.error,"error")}function ot(e,t,o){e.preventDefault();try{t||(t=new Error("Unhandled "+o)),void 0===t.stack&&(t.stack=(new Error).stack),t.stack=t.stack+"",t.silent||(_("Unhandled error:",t),Xe(1,t))}catch(e){}}!function(e){if($e)throw new Error("Loader module already loaded");$e=!0,Ue=e.runtimeHelpers,Pe=e.loaderHelpers,Me=e.diagnosticHelpers,Le=e.api,Ne=e.internal,Object.assign(Le,{INTERNAL:Ne,invokeLibraryInitializers:be}),Object.assign(e.module,{config:ve(ze,{environmentVariables:{}})});const r={mono_wasm_bindings_is_ready:!1,config:e.module.config,diagnosticTracing:!1,nativeAbort:e=>{throw e||new Error("abort")},nativeExit:e=>{throw new Error("exit:"+e)}},l={gitHash:"89c8f6a112d37d2ea8b77821e56d170a1bccdc5a",config:e.module.config,diagnosticTracing:!1,maxParallelDownloads:16,enableDownloadRetry:!0,_loaded_files:[],loadedFiles:[],loadedAssemblies:[],libraryInitializers:[],workerNextNumber:1,actual_downloaded_assets_count:0,actual_instantiated_assets_count:0,expected_downloaded_assets_count:0,expected_instantiated_assets_count:0,afterConfigLoaded:i(),allDownloadsQueued:i(),allDownloadsFinished:i(),wasmCompilePromise:i(),runtimeModuleLoaded:i(),loadingWorkers:i(),is_exited:Ve,is_runtime_running:qe,assert_runtime_running:He,mono_exit:Xe,createPromiseController:i,getPromiseController:s,assertIsControllablePromise:a,mono_download_assets:oe,resolve_single_asset_path:ee,setup_proxy_console:j,set_thread_prefix:w,installUnhandledErrorHandler:Je,retrieve_asset_download:ie,invokeLibraryInitializers:be,isDebuggingSupported:Te,exceptions:t,simd:n,relaxedSimd:o};Object.assign(Ue,r),Object.assign(Pe,l)}(Fe);let nt,rt,it,st=!1,at=!1;async function lt(e){if(!at){if(at=!0,ke&&Pe.config.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&j("main",globalThis.console,globalThis.location.origin),We||Be(!1,"Null moduleConfig"),Pe.config||Be(!1,"Null moduleConfig.config"),"function"==typeof e){const t=e(Fe.api);if(t.ready)throw new Error("Module.ready couldn't be redefined.");Object.assign(We,t),Ee(We,t)}else{if("object"!=typeof e)throw new Error("Can't use moduleFactory callback of createDotnetRuntime function.");Ee(We,e)}await async function(e){if(Se){const e=await import(/*! webpackIgnore: true */"process"),t=14;if(e.versions.node.split(".")[0]<t)throw new Error(`NodeJS at '${e.execPath}' has too low version '${e.versions.node}', please use at least ${t}. See also https://aka.ms/dotnet-wasm-features`)}const t=/*! webpackIgnore: true */import.meta.url,o=t.indexOf("?");var n;if(o>0&&(Pe.modulesUniqueQuery=t.substring(o)),Pe.scriptUrl=t.replace(/\\/g,"/").replace(/[?#].*/,""),Pe.scriptDirectory=(n=Pe.scriptUrl).slice(0,n.lastIndexOf("/"))+"/",Pe.locateFile=e=>"URL"in globalThis&&globalThis.URL!==C?new URL(e,Pe.scriptDirectory).toString():M(e)?e:Pe.scriptDirectory+e,Pe.fetch_like=k,Pe.out=console.log,Pe.err=console.error,Pe.onDownloadResourceProgress=e.onDownloadResourceProgress,ke&&globalThis.navigator){const e=globalThis.navigator,t=e.userAgentData&&e.userAgentData.brands;t&&t.length>0?Pe.isChromium=t.some((e=>"Google Chrome"===e.brand||"Microsoft Edge"===e.brand||"Chromium"===e.brand)):e.userAgent&&(Pe.isChromium=e.userAgent.includes("Chrome"),Pe.isFirefox=e.userAgent.includes("Firefox"))}Ne.require=Se?await import(/*! webpackIgnore: true */"module").then((e=>e.createRequire(/*! webpackIgnore: true */import.meta.url))):Promise.resolve((()=>{throw new Error("require not supported")})),void 0===globalThis.URL&&(globalThis.URL=C)}(We)}}async function ct(e){return await lt(e),Ze=We.onAbort,Qe=We.onExit,We.onAbort=Ke,We.onExit=Ge,We.ENVIRONMENT_IS_PTHREAD?async function(){(function(){const e=new MessageChannel,t=e.port1,o=e.port2;t.addEventListener("message",(e=>{var n,r;n=JSON.parse(e.data.config),r=JSON.parse(e.data.monoThreadInfo),st?Pe.diagnosticTracing&&b("mono config already received"):(ve(Pe.config,n),Ue.monoThreadInfo=r,xe(),Pe.diagnosticTracing&&b("mono config received"),st=!0,Pe.afterConfigLoaded.promise_control.resolve(Pe.config),ke&&n.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&Pe.setup_proxy_console("worker-idle",console,globalThis.location.origin)),t.close(),o.close()}),{once:!0}),t.start(),self.postMessage({[l]:{monoCmd:"preload",port:o}},[o])})(),await Pe.afterConfigLoaded.promise,function(){const e=Pe.config;e.assets||Be(!1,"config.assets must be defined");for(const t of e.assets)X(t),Q[t.behavior]&&z.push(t)}(),setTimeout((async()=>{try{await oe()}catch(e){Xe(1,e)}}),0);const e=dt(),t=await Promise.all(e);return await ut(t),We}():async function(){var e;await Re(We),re();const t=dt();(async function(){try{const e=ee("dotnetwasm");await se(e),e&&e.pendingDownloadInternal&&e.pendingDownloadInternal.response||Be(!1,"Can't load dotnet.native.wasm");const t=await e.pendingDownloadInternal.response,o=t.headers&&t.headers.get?t.headers.get("Content-Type"):void 0;let n;if("function"==typeof WebAssembly.compileStreaming&&"application/wasm"===o)n=await WebAssembly.compileStreaming(t);else{ke&&"application/wasm"!==o&&E('WebAssembly resource does not have the expected content type "application/wasm", so falling back to slower ArrayBuffer instantiation.');const e=await t.arrayBuffer();Pe.diagnosticTracing&&b("instantiate_wasm_module buffered"),n=Ie?await Promise.resolve(new WebAssembly.Module(e)):await WebAssembly.compile(e)}e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null,Pe.wasmCompilePromise.promise_control.resolve(n)}catch(e){Pe.wasmCompilePromise.promise_control.reject(e)}})(),setTimeout((async()=>{try{D(),await oe()}catch(e){Xe(1,e)}}),0);const o=await Promise.all(t);return await ut(o),await Ue.dotnetReady.promise,await we(null===(e=Pe.config.resources)||void 0===e?void 0:e.modulesAfterRuntimeReady),await be("onRuntimeReady",[Fe.api]),Le}()}function dt(){const e=ee("js-module-runtime"),t=ee("js-module-native");if(nt&&rt)return[nt,rt,it];"object"==typeof e.moduleExports?nt=e.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${e.resolvedUrl}' for ${e.name}`),nt=import(/*! webpackIgnore: true */e.resolvedUrl)),"object"==typeof t.moduleExports?rt=t.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${t.resolvedUrl}' for ${t.name}`),rt=import(/*! webpackIgnore: true */t.resolvedUrl));const o=Y("js-module-diagnostics");return o&&("object"==typeof o.moduleExports?it=o.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${o.resolvedUrl}' for ${o.name}`),it=import(/*! webpackIgnore: true */o.resolvedUrl))),[nt,rt,it]}async function ut(e){const{initializeExports:t,initializeReplacements:o,configureRuntimeStartup:n,configureEmscriptenStartup:r,configureWorkerStartup:i,setRuntimeGlobals:s,passEmscriptenInternals:a}=e[0],{default:l}=e[1],c=e[2];s(Fe),t(Fe),c&&c.setRuntimeGlobals(Fe),await n(We),Pe.runtimeModuleLoaded.promise_control.resolve(),l((e=>(Object.assign(We,{ready:e.ready,__dotnet_runtime:{initializeReplacements:o,configureEmscriptenStartup:r,configureWorkerStartup:i,passEmscriptenInternals:a}}),We))).catch((e=>{if(e.message&&e.message.toLowerCase().includes("out of memory"))throw new Error(".NET runtime has failed to start, because too much memory was requested. Please decrease the memory by adjusting EmccMaximumHeapSize. See also https://aka.ms/dotnet-wasm-features");throw e}))}const ft=new class{withModuleConfig(e){try{return Ee(We,e),this}catch(e){throw Xe(1,e),e}}withOnConfigLoaded(e){try{return Ee(We,{onConfigLoaded:e}),this}catch(e){throw Xe(1,e),e}}withConsoleForwarding(){try{return ve(ze,{forwardConsoleLogsToWS:!0}),this}catch(e){throw Xe(1,e),e}}withExitOnUnhandledError(){try{return ve(ze,{exitOnUnhandledError:!0}),Je(),this}catch(e){throw Xe(1,e),e}}withAsyncFlushOnExit(){try{return ve(ze,{asyncFlushOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withExitCodeLogging(){try{return ve(ze,{logExitCode:!0}),this}catch(e){throw Xe(1,e),e}}withElementOnExit(){try{return ve(ze,{appendElementOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withInteropCleanupOnExit(){try{return ve(ze,{interopCleanupOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withDumpThreadsOnNonZeroExit(){try{return ve(ze,{dumpThreadsOnNonZeroExit:!0}),this}catch(e){throw Xe(1,e),e}}withWaitingForDebugger(e){try{return ve(ze,{waitForDebugger:e}),this}catch(e){throw Xe(1,e),e}}withInterpreterPgo(e,t){try{return ve(ze,{interpreterPgo:e,interpreterPgoSaveDelay:t}),ze.runtimeOptions?ze.runtimeOptions.push("--interp-pgo-recording"):ze.runtimeOptions=["--interp-pgo-recording"],this}catch(e){throw Xe(1,e),e}}withConfig(e){try{return ve(ze,e),this}catch(e){throw Xe(1,e),e}}withConfigSrc(e){try{return e&&"string"==typeof e||Be(!1,"must be file path or URL"),Ee(We,{configSrc:e}),this}catch(e){throw Xe(1,e),e}}withVirtualWorkingDirectory(e){try{return e&&"string"==typeof e||Be(!1,"must be directory path"),ve(ze,{virtualWorkingDirectory:e}),this}catch(e){throw Xe(1,e),e}}withEnvironmentVariable(e,t){try{const o={};return o[e]=t,ve(ze,{environmentVariables:o}),this}catch(e){throw Xe(1,e),e}}withEnvironmentVariables(e){try{return e&&"object"==typeof e||Be(!1,"must be dictionary object"),ve(ze,{environmentVariables:e}),this}catch(e){throw Xe(1,e),e}}withDiagnosticTracing(e){try{return"boolean"!=typeof e&&Be(!1,"must be boolean"),ve(ze,{diagnosticTracing:e}),this}catch(e){throw Xe(1,e),e}}withDebugging(e){try{return null!=e&&"number"==typeof e||Be(!1,"must be number"),ve(ze,{debugLevel:e}),this}catch(e){throw Xe(1,e),e}}withApplicationArguments(...e){try{return e&&Array.isArray(e)||Be(!1,"must be array of strings"),ve(ze,{applicationArguments:e}),this}catch(e){throw Xe(1,e),e}}withRuntimeOptions(e){try{return e&&Array.isArray(e)||Be(!1,"must be array of strings"),ze.runtimeOptions?ze.runtimeOptions.push(...e):ze.runtimeOptions=e,this}catch(e){throw Xe(1,e),e}}withMainAssembly(e){try{return ve(ze,{mainAssemblyName:e}),this}catch(e){throw Xe(1,e),e}}withApplicationArgumentsFromQuery(){try{if(!globalThis.window)throw new Error("Missing window to the query parameters from");if(void 0===globalThis.URLSearchParams)throw new Error("URLSearchParams is supported");const e=new URLSearchParams(globalThis.window.location.search).getAll("arg");return this.withApplicationArguments(...e)}catch(e){throw Xe(1,e),e}}withApplicationEnvironment(e){try{return ve(ze,{applicationEnvironment:e}),this}catch(e){throw Xe(1,e),e}}withApplicationCulture(e){try{return ve(ze,{applicationCulture:e}),this}catch(e){throw Xe(1,e),e}}withResourceLoader(e){try{return Pe.loadBootResource=e,this}catch(e){throw Xe(1,e),e}}async download(){try{await async function(){lt(We),await Re(We),re(),D(),oe(),await Pe.allDownloadsFinished.promise}()}catch(e){throw Xe(1,e),e}}async create(){try{return this.instance||(this.instance=await async function(){return await ct(We),Fe.api}()),this.instance}catch(e){throw Xe(1,e),e}}async run(){try{return We.config||Be(!1,"Null moduleConfig.config"),this.instance||await this.create(),this.instance.runMainAndExit()}catch(e){throw Xe(1,e),e}}},mt=Xe,gt=ct;Ie||"function"==typeof globalThis.URL||Be(!1,"This browser/engine doesn't support URL API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),"function"!=typeof globalThis.BigInt64Array&&Be(!1,"This browser/engine doesn't support BigInt64Array API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),ft.withConfig(/*json-start*/{
+var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0,3,2,1,0,10,8,1,6,0,6,64,25,11,11])),o=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,15,1,13,0,65,1,253,15,65,2,253,15,253,128,2,11])),n=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11])),r=Symbol.for("wasm promise_control");function i(e,t){let o=null;const n=new Promise((function(n,r){o={isDone:!1,promise:null,resolve:t=>{o.isDone||(o.isDone=!0,n(t),e&&e())},reject:e=>{o.isDone||(o.isDone=!0,r(e),t&&t())}}}));o.promise=n;const i=n;return i[r]=o,{promise:i,promise_control:o}}function s(e){return e[r]}function a(e){e&&function(e){return void 0!==e[r]}(e)||Be(!1,"Promise is not controllable")}const l="__mono_message__",c=["debug","log","trace","warn","info","error"],d="MONO_WASM: ";let u,f,m,g,p,h;function w(e){g=e}function b(e){if(Pe.diagnosticTracing){const t="function"==typeof e?e():e;console.debug(d+t)}}function y(e,...t){console.info(d+e,...t)}function v(e,...t){console.info(e,...t)}function E(e,...t){console.warn(d+e,...t)}function _(e,...t){if(t&&t.length>0&&t[0]&&"object"==typeof t[0]){if(t[0].silent)return;if(t[0].toString)return void console.error(d+e,t[0].toString())}console.error(d+e,...t)}function x(e,t,o){return function(...n){try{let r=n[0];if(void 0===r)r="undefined";else if(null===r)r="null";else if("function"==typeof r)r=r.toString();else if("string"!=typeof r)try{r=JSON.stringify(r)}catch(e){r=r.toString()}t(o?JSON.stringify({method:e,payload:r,arguments:n.slice(1)}):[e+r,...n.slice(1)])}catch(e){m.error(`proxyConsole failed: ${e}`)}}}function j(e,t,o){f=t,g=e,m={...t};const n=`${o}/console`.replace("https://","wss://").replace("http://","ws://");u=new WebSocket(n),u.addEventListener("error",A),u.addEventListener("close",S),function(){for(const e of c)f[e]=x(`console.${e}`,T,!0)}()}function R(e){let t=30;const o=()=>{u?0==u.bufferedAmount||0==t?(e&&v(e),function(){for(const e of c)f[e]=x(`console.${e}`,m.log,!1)}(),u.removeEventListener("error",A),u.removeEventListener("close",S),u.close(1e3,e),u=void 0):(t--,globalThis.setTimeout(o,100)):e&&m&&m.log(e)};o()}function T(e){u&&u.readyState===WebSocket.OPEN?u.send(e):m.log(e)}function A(e){m.error(`[${g}] proxy console websocket error: ${e}`,e)}function S(e){m.debug(`[${g}] proxy console websocket closed: ${e}`,e)}function D(){Pe.preferredIcuAsset=O(Pe.config);let e="invariant"==Pe.config.globalizationMode;if(!e)if(Pe.preferredIcuAsset)Pe.diagnosticTracing&&b("ICU data archive(s) available, disabling invariant mode");else{if("custom"===Pe.config.globalizationMode||"all"===Pe.config.globalizationMode||"sharded"===Pe.config.globalizationMode){const e="invariant globalization mode is inactive and no ICU data archives are available";throw _(`ERROR: ${e}`),new Error(e)}Pe.diagnosticTracing&&b("ICU data archive(s) not available, using invariant globalization mode"),e=!0,Pe.preferredIcuAsset=null}const t="DOTNET_SYSTEM_GLOBALIZATION_INVARIANT",o=Pe.config.environmentVariables;if(void 0===o[t]&&e&&(o[t]="1"),void 0===o.TZ)try{const e=Intl.DateTimeFormat().resolvedOptions().timeZone||null;e&&(o.TZ=e)}catch(e){y("failed to detect timezone, will fallback to UTC")}}function O(e){var t;if((null===(t=e.resources)||void 0===t?void 0:t.icu)&&"invariant"!=e.globalizationMode){const t=e.applicationCulture||(ke?globalThis.navigator&&globalThis.navigator.languages&&globalThis.navigator.languages[0]:Intl.DateTimeFormat().resolvedOptions().locale),o=e.resources.icu;let n=null;if("custom"===e.globalizationMode){if(o.length>=1)return o[0].name}else t&&"all"!==e.globalizationMode?"sharded"===e.globalizationMode&&(n=function(e){const t=e.split("-")[0];return"en"===t||["fr","fr-FR","it","it-IT","de","de-DE","es","es-ES"].includes(e)?"icudt_EFIGS.dat":["zh","ko","ja"].includes(t)?"icudt_CJK.dat":"icudt_no_CJK.dat"}(t)):n="icudt.dat";if(n)for(let e=0;e<o.length;e++){const t=o[e];if(t.virtualPath===n)return t.name}}return e.globalizationMode="invariant",null}(new Date).valueOf();const C=class{constructor(e){this.url=e}toString(){return this.url}};async function k(e,t){try{const o="function"==typeof globalThis.fetch;if(Se){const n=e.startsWith("file://");if(!n&&o)return globalThis.fetch(e,t||{credentials:"same-origin"});p||(h=Ne.require("url"),p=Ne.require("fs")),n&&(e=h.fileURLToPath(e));const r=await p.promises.readFile(e);return{ok:!0,headers:{length:0,get:()=>null},url:e,arrayBuffer:()=>r,json:()=>JSON.parse(r),text:()=>{throw new Error("NotImplementedException")}}}if(o)return globalThis.fetch(e,t||{credentials:"same-origin"});if("function"==typeof read)return{ok:!0,url:e,headers:{length:0,get:()=>null},arrayBuffer:()=>new Uint8Array(read(e,"binary")),json:()=>JSON.parse(read(e,"utf8")),text:()=>read(e,"utf8")}}catch(t){return{ok:!1,url:e,status:500,headers:{length:0,get:()=>null},statusText:"ERR28: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t},text:()=>{throw t}}}throw new Error("No fetch implementation available")}function I(e){return"string"!=typeof e&&Be(!1,"url must be a string"),!M(e)&&0!==e.indexOf("./")&&0!==e.indexOf("../")&&globalThis.URL&&globalThis.document&&globalThis.document.baseURI&&(e=new URL(e,globalThis.document.baseURI).toString()),e}const U=/^[a-zA-Z][a-zA-Z\d+\-.]*?:\/\//,P=/[a-zA-Z]:[\\/]/;function M(e){return Se||Ie?e.startsWith("/")||e.startsWith("\\")||-1!==e.indexOf("///")||P.test(e):U.test(e)}let L,N=0;const $=[],z=[],W=new Map,F={"js-module-threads":!0,"js-module-runtime":!0,"js-module-dotnet":!0,"js-module-native":!0,"js-module-diagnostics":!0},B={...F,"js-module-library-initializer":!0},V={...F,dotnetwasm:!0,heap:!0,manifest:!0},q={...B,manifest:!0},H={...B,dotnetwasm:!0},J={dotnetwasm:!0,symbols:!0},Z={...B,dotnetwasm:!0,symbols:!0},Q={symbols:!0};function G(e){return!("icu"==e.behavior&&e.name!=Pe.preferredIcuAsset)}function K(e,t,o){null!=t||(t=[]),Be(1==t.length,`Expect to have one ${o} asset in resources`);const n=t[0];return n.behavior=o,X(n),e.push(n),n}function X(e){V[e.behavior]&&W.set(e.behavior,e)}function Y(e){Be(V[e],`Unknown single asset behavior ${e}`);const t=W.get(e);if(t&&!t.resolvedUrl)if(t.resolvedUrl=Pe.locateFile(t.name),F[t.behavior]){const e=ge(t);e?("string"!=typeof e&&Be(!1,"loadBootResource response for 'dotnetjs' type should be a URL string"),t.resolvedUrl=e):t.resolvedUrl=ce(t.resolvedUrl,t.behavior)}else if("dotnetwasm"!==t.behavior)throw new Error(`Unknown single asset behavior ${e}`);return t}function ee(e){const t=Y(e);return Be(t,`Single asset for ${e} not found`),t}let te=!1;async function oe(){if(!te){te=!0,Pe.diagnosticTracing&&b("mono_download_assets");try{const e=[],t=[],o=(e,t)=>{!Z[e.behavior]&&G(e)&&Pe.expected_instantiated_assets_count++,!H[e.behavior]&&G(e)&&(Pe.expected_downloaded_assets_count++,t.push(se(e)))};for(const t of $)o(t,e);for(const e of z)o(e,t);Pe.allDownloadsQueued.promise_control.resolve(),Promise.all([...e,...t]).then((()=>{Pe.allDownloadsFinished.promise_control.resolve()})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e})),await Pe.runtimeModuleLoaded.promise;const n=async e=>{const t=await e;if(t.buffer){if(!Z[t.behavior]){t.buffer&&"object"==typeof t.buffer||Be(!1,"asset buffer must be array-like or buffer-like or promise of these"),"string"!=typeof t.resolvedUrl&&Be(!1,"resolvedUrl must be string");const e=t.resolvedUrl,o=await t.buffer,n=new Uint8Array(o);pe(t),await Ue.beforeOnRuntimeInitialized.promise,Ue.instantiate_asset(t,e,n)}}else J[t.behavior]?("symbols"===t.behavior&&(await Ue.instantiate_symbols_asset(t),pe(t)),J[t.behavior]&&++Pe.actual_downloaded_assets_count):(t.isOptional||Be(!1,"Expected asset to have the downloaded buffer"),!H[t.behavior]&&G(t)&&Pe.expected_downloaded_assets_count--,!Z[t.behavior]&&G(t)&&Pe.expected_instantiated_assets_count--)},r=[],i=[];for(const t of e)r.push(n(t));for(const e of t)i.push(n(e));Promise.all(r).then((()=>{Ce||Ue.coreAssetsInMemory.promise_control.resolve()})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e})),Promise.all(i).then((async()=>{Ce||(await Ue.coreAssetsInMemory.promise,Ue.allAssetsInMemory.promise_control.resolve())})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e}))}catch(e){throw Pe.err("Error in mono_download_assets: "+e),e}}}let ne=!1;function re(){if(ne)return;ne=!0;const e=Pe.config,t=[];if(e.assets)for(const t of e.assets)"object"!=typeof t&&Be(!1,`asset must be object, it was ${typeof t} : ${t}`),"string"!=typeof t.behavior&&Be(!1,"asset behavior must be known string"),"string"!=typeof t.name&&Be(!1,"asset name must be string"),t.resolvedUrl&&"string"!=typeof t.resolvedUrl&&Be(!1,"asset resolvedUrl could be string"),t.hash&&"string"!=typeof t.hash&&Be(!1,"asset resolvedUrl could be string"),t.pendingDownload&&"object"!=typeof t.pendingDownload&&Be(!1,"asset pendingDownload could be object"),t.isCore?$.push(t):z.push(t),X(t);else if(e.resources){const o=e.resources;o.wasmNative||Be(!1,"resources.wasmNative must be defined"),o.jsModuleNative||Be(!1,"resources.jsModuleNative must be defined"),o.jsModuleRuntime||Be(!1,"resources.jsModuleRuntime must be defined"),K(z,o.wasmNative,"dotnetwasm"),K(t,o.jsModuleNative,"js-module-native"),K(t,o.jsModuleRuntime,"js-module-runtime"),o.jsModuleDiagnostics&&K(t,o.jsModuleDiagnostics,"js-module-diagnostics");const n=(e,t,o)=>{const n=e;n.behavior=t,o?(n.isCore=!0,$.push(n)):z.push(n)};if(o.coreAssembly)for(let e=0;e<o.coreAssembly.length;e++)n(o.coreAssembly[e],"assembly",!0);if(o.assembly)for(let e=0;e<o.assembly.length;e++)n(o.assembly[e],"assembly",!o.coreAssembly);if(0!=e.debugLevel&&Pe.isDebuggingSupported()){if(o.corePdb)for(let e=0;e<o.corePdb.length;e++)n(o.corePdb[e],"pdb",!0);if(o.pdb)for(let e=0;e<o.pdb.length;e++)n(o.pdb[e],"pdb",!o.corePdb)}if(e.loadAllSatelliteResources&&o.satelliteResources)for(const e in o.satelliteResources)for(let t=0;t<o.satelliteResources[e].length;t++){const r=o.satelliteResources[e][t];r.culture=e,n(r,"resource",!o.coreAssembly)}if(o.coreVfs)for(let e=0;e<o.coreVfs.length;e++)n(o.coreVfs[e],"vfs",!0);if(o.vfs)for(let e=0;e<o.vfs.length;e++)n(o.vfs[e],"vfs",!o.coreVfs);const r=O(e);if(r&&o.icu)for(let e=0;e<o.icu.length;e++){const t=o.icu[e];t.name===r&&n(t,"icu",!1)}if(o.wasmSymbols)for(let e=0;e<o.wasmSymbols.length;e++)n(o.wasmSymbols[e],"symbols",!1)}if(e.appsettings)for(let t=0;t<e.appsettings.length;t++){const o=e.appsettings[t],n=he(o);"appsettings.json"!==n&&n!==`appsettings.${e.applicationEnvironment}.json`||z.push({name:o,behavior:"vfs",noCache:!0,useCredentials:!0})}e.assets=[...$,...z,...t]}async function ie(e){const t=await se(e);return await t.pendingDownloadInternal.response,t.buffer}async function se(e){try{return await ae(e)}catch(t){if(!Pe.enableDownloadRetry)throw t;if(Ie||Se)throw t;if(e.pendingDownload&&e.pendingDownloadInternal==e.pendingDownload)throw t;if(e.resolvedUrl&&-1!=e.resolvedUrl.indexOf("file://"))throw t;if(t&&404==t.status)throw t;e.pendingDownloadInternal=void 0,await Pe.allDownloadsQueued.promise;try{return Pe.diagnosticTracing&&b(`Retrying download '${e.name}'`),await ae(e)}catch(t){return e.pendingDownloadInternal=void 0,await new Promise((e=>globalThis.setTimeout(e,100))),Pe.diagnosticTracing&&b(`Retrying download (2) '${e.name}' after delay`),await ae(e)}}}async function ae(e){for(;L;)await L.promise;try{++N,N==Pe.maxParallelDownloads&&(Pe.diagnosticTracing&&b("Throttling further parallel downloads"),L=i());const t=await async function(e){if(e.pendingDownload&&(e.pendingDownloadInternal=e.pendingDownload),e.pendingDownloadInternal&&e.pendingDownloadInternal.response)return e.pendingDownloadInternal.response;if(e.buffer){const t=await e.buffer;return e.resolvedUrl||(e.resolvedUrl="undefined://"+e.name),e.pendingDownloadInternal={url:e.resolvedUrl,name:e.name,response:Promise.resolve({ok:!0,arrayBuffer:()=>t,json:()=>JSON.parse(new TextDecoder("utf-8").decode(t)),text:()=>{throw new Error("NotImplementedException")},headers:{get:()=>{}}})},e.pendingDownloadInternal.response}const t=e.loadRemote&&Pe.config.remoteSources?Pe.config.remoteSources:[""];let o;for(let n of t){n=n.trim(),"./"===n&&(n="");const t=le(e,n);e.name===t?Pe.diagnosticTracing&&b(`Attempting to download '${t}'`):Pe.diagnosticTracing&&b(`Attempting to download '${t}' for ${e.name}`);try{e.resolvedUrl=t;const n=fe(e);if(e.pendingDownloadInternal=n,o=await n.response,!o||!o.ok)continue;return o}catch(e){o||(o={ok:!1,url:t,status:0,statusText:""+e});continue}}const n=e.isOptional||e.name.match(/\.pdb$/)&&Pe.config.ignorePdbLoadErrors;if(o||Be(!1,`Response undefined ${e.name}`),!n){const t=new Error(`download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`);throw t.status=o.status,t}y(`optional download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`)}(e);return t?(J[e.behavior]||(e.buffer=await t.arrayBuffer(),++Pe.actual_downloaded_assets_count),e):e}finally{if(--N,L&&N==Pe.maxParallelDownloads-1){Pe.diagnosticTracing&&b("Resuming more parallel downloads");const e=L;L=void 0,e.promise_control.resolve()}}}function le(e,t){let o;return null==t&&Be(!1,`sourcePrefix must be provided for ${e.name}`),e.resolvedUrl?o=e.resolvedUrl:(o=""===t?"assembly"===e.behavior||"pdb"===e.behavior?e.name:"resource"===e.behavior&&e.culture&&""!==e.culture?`${e.culture}/${e.name}`:e.name:t+e.name,o=ce(Pe.locateFile(o),e.behavior)),o&&"string"==typeof o||Be(!1,"attemptUrl need to be path or url string"),o}function ce(e,t){return Pe.modulesUniqueQuery&&q[t]&&(e+=Pe.modulesUniqueQuery),e}let de=0;const ue=new Set;function fe(e){try{e.resolvedUrl||Be(!1,"Request's resolvedUrl must be set");const t=function(e){let t=e.resolvedUrl;if(Pe.loadBootResource){const o=ge(e);if(o instanceof Promise)return o;"string"==typeof o&&(t=o)}const o={};return Pe.config.disableNoCacheFetch||(o.cache="no-cache"),e.useCredentials?o.credentials="include":!Pe.config.disableIntegrityCheck&&e.hash&&(o.integrity=e.hash),Pe.fetch_like(t,o)}(e),o={name:e.name,url:e.resolvedUrl,response:t};return ue.add(e.name),o.response.then((()=>{"assembly"==e.behavior&&Pe.loadedAssemblies.push(e.name),de++,Pe.onDownloadResourceProgress&&Pe.onDownloadResourceProgress(de,ue.size)})),o}catch(t){const o={ok:!1,url:e.resolvedUrl,status:500,statusText:"ERR29: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t}};return{name:e.name,url:e.resolvedUrl,response:Promise.resolve(o)}}}const me={resource:"assembly",assembly:"assembly",pdb:"pdb",icu:"globalization",vfs:"configuration",manifest:"manifest",dotnetwasm:"dotnetwasm","js-module-dotnet":"dotnetjs","js-module-native":"dotnetjs","js-module-runtime":"dotnetjs","js-module-threads":"dotnetjs"};function ge(e){var t;if(Pe.loadBootResource){const o=null!==(t=e.hash)&&void 0!==t?t:"",n=e.resolvedUrl,r=me[e.behavior];if(r){const t=Pe.loadBootResource(r,e.name,n,o,e.behavior);return"string"==typeof t?I(t):t}}}function pe(e){e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null}function he(e){let t=e.lastIndexOf("/");return t>=0&&t++,e.substring(t)}async function we(e){e&&await Promise.all((null!=e?e:[]).map((e=>async function(e){try{const t=e.name;if(!e.moduleExports){const o=ce(Pe.locateFile(t),"js-module-library-initializer");Pe.diagnosticTracing&&b(`Attempting to import '${o}' for ${e}`),e.moduleExports=await import(/*! webpackIgnore: true */o)}Pe.libraryInitializers.push({scriptName:t,exports:e.moduleExports})}catch(t){E(`Failed to import library initializer '${e}': ${t}`)}}(e))))}async function be(e,t){if(!Pe.libraryInitializers)return;const o=[];for(let n=0;n<Pe.libraryInitializers.length;n++){const r=Pe.libraryInitializers[n];r.exports[e]&&o.push(ye(r.scriptName,e,(()=>r.exports[e](...t))))}await Promise.all(o)}async function ye(e,t,o){try{await o()}catch(o){throw E(`Failed to invoke '${t}' on library initializer '${e}': ${o}`),Xe(1,o),o}}function ve(e,t){if(e===t)return e;const o={...t};return void 0!==o.assets&&o.assets!==e.assets&&(o.assets=[...e.assets||[],...o.assets||[]]),void 0!==o.resources&&(o.resources=_e(e.resources||{assembly:[],jsModuleNative:[],jsModuleRuntime:[],wasmNative:[]},o.resources)),void 0!==o.environmentVariables&&(o.environmentVariables={...e.environmentVariables||{},...o.environmentVariables||{}}),void 0!==o.runtimeOptions&&o.runtimeOptions!==e.runtimeOptions&&(o.runtimeOptions=[...e.runtimeOptions||[],...o.runtimeOptions||[]]),Object.assign(e,o)}function Ee(e,t){if(e===t)return e;const o={...t};return o.config&&(e.config||(e.config={}),o.config=ve(e.config,o.config)),Object.assign(e,o)}function _e(e,t){if(e===t)return e;const o={...t};return void 0!==o.coreAssembly&&(o.coreAssembly=[...e.coreAssembly||[],...o.coreAssembly||[]]),void 0!==o.assembly&&(o.assembly=[...e.assembly||[],...o.assembly||[]]),void 0!==o.lazyAssembly&&(o.lazyAssembly=[...e.lazyAssembly||[],...o.lazyAssembly||[]]),void 0!==o.corePdb&&(o.corePdb=[...e.corePdb||[],...o.corePdb||[]]),void 0!==o.pdb&&(o.pdb=[...e.pdb||[],...o.pdb||[]]),void 0!==o.jsModuleWorker&&(o.jsModuleWorker=[...e.jsModuleWorker||[],...o.jsModuleWorker||[]]),void 0!==o.jsModuleNative&&(o.jsModuleNative=[...e.jsModuleNative||[],...o.jsModuleNative||[]]),void 0!==o.jsModuleDiagnostics&&(o.jsModuleDiagnostics=[...e.jsModuleDiagnostics||[],...o.jsModuleDiagnostics||[]]),void 0!==o.jsModuleRuntime&&(o.jsModuleRuntime=[...e.jsModuleRuntime||[],...o.jsModuleRuntime||[]]),void 0!==o.wasmSymbols&&(o.wasmSymbols=[...e.wasmSymbols||[],...o.wasmSymbols||[]]),void 0!==o.wasmNative&&(o.wasmNative=[...e.wasmNative||[],...o.wasmNative||[]]),void 0!==o.icu&&(o.icu=[...e.icu||[],...o.icu||[]]),void 0!==o.satelliteResources&&(o.satelliteResources=function(e,t){if(e===t)return e;for(const o in t)e[o]=[...e[o]||[],...t[o]||[]];return e}(e.satelliteResources||{},o.satelliteResources||{})),void 0!==o.modulesAfterConfigLoaded&&(o.modulesAfterConfigLoaded=[...e.modulesAfterConfigLoaded||[],...o.modulesAfterConfigLoaded||[]]),void 0!==o.modulesAfterRuntimeReady&&(o.modulesAfterRuntimeReady=[...e.modulesAfterRuntimeReady||[],...o.modulesAfterRuntimeReady||[]]),void 0!==o.extensions&&(o.extensions={...e.extensions||{},...o.extensions||{}}),void 0!==o.vfs&&(o.vfs=[...e.vfs||[],...o.vfs||[]]),Object.assign(e,o)}function xe(){const e=Pe.config;if(e.environmentVariables=e.environmentVariables||{},e.runtimeOptions=e.runtimeOptions||[],e.resources=e.resources||{assembly:[],jsModuleNative:[],jsModuleWorker:[],jsModuleRuntime:[],wasmNative:[],vfs:[],satelliteResources:{}},e.assets){Pe.diagnosticTracing&&b("config.assets is deprecated, use config.resources instead");for(const t of e.assets){const o={};switch(t.behavior){case"assembly":o.assembly=[t];break;case"pdb":o.pdb=[t];break;case"resource":o.satelliteResources={},o.satelliteResources[t.culture]=[t];break;case"icu":o.icu=[t];break;case"symbols":o.wasmSymbols=[t];break;case"vfs":o.vfs=[t];break;case"dotnetwasm":o.wasmNative=[t];break;case"js-module-threads":o.jsModuleWorker=[t];break;case"js-module-runtime":o.jsModuleRuntime=[t];break;case"js-module-native":o.jsModuleNative=[t];break;case"js-module-diagnostics":o.jsModuleDiagnostics=[t];break;case"js-module-dotnet":break;default:throw new Error(`Unexpected behavior ${t.behavior} of asset ${t.name}`)}_e(e.resources,o)}}e.debugLevel,e.applicationEnvironment||(e.applicationEnvironment="Production"),e.applicationCulture&&(e.environmentVariables.LANG=`${e.applicationCulture}.UTF-8`),Ue.diagnosticTracing=Pe.diagnosticTracing=!!e.diagnosticTracing,Ue.waitForDebugger=e.waitForDebugger,Pe.maxParallelDownloads=e.maxParallelDownloads||Pe.maxParallelDownloads,Pe.enableDownloadRetry=void 0!==e.enableDownloadRetry?e.enableDownloadRetry:Pe.enableDownloadRetry}let je=!1;async function Re(e){var t;if(je)return void await Pe.afterConfigLoaded.promise;let o;try{if(e.configSrc||Pe.config&&0!==Object.keys(Pe.config).length&&(Pe.config.assets||Pe.config.resources)||(e.configSrc="dotnet.boot.js"),o=e.configSrc,je=!0,o&&(Pe.diagnosticTracing&&b("mono_wasm_load_config"),await async function(e){const t=e.configSrc,o=Pe.locateFile(t);let n=null;void 0!==Pe.loadBootResource&&(n=Pe.loadBootResource("manifest",t,o,"","manifest"));let r,i=null;if(n)if("string"==typeof n)n.includes(".json")?(i=await s(I(n)),r=await Ae(i)):r=(await import(I(n))).config;else{const e=await n;"function"==typeof e.json?(i=e,r=await Ae(i)):r=e.config}else o.includes(".json")?(i=await s(ce(o,"manifest")),r=await Ae(i)):r=(await import(ce(o,"manifest"))).config;function s(e){return Pe.fetch_like(e,{method:"GET",credentials:"include",cache:"no-cache"})}Pe.config.applicationEnvironment&&(r.applicationEnvironment=Pe.config.applicationEnvironment),ve(Pe.config,r)}(e)),xe(),await we(null===(t=Pe.config.resources)||void 0===t?void 0:t.modulesAfterConfigLoaded),await be("onRuntimeConfigLoaded",[Pe.config]),e.onConfigLoaded)try{await e.onConfigLoaded(Pe.config,Le),xe()}catch(e){throw _("onConfigLoaded() failed",e),e}xe(),Pe.afterConfigLoaded.promise_control.resolve(Pe.config)}catch(t){const n=`Failed to load config file ${o} ${t} ${null==t?void 0:t.stack}`;throw Pe.config=e.config=Object.assign(Pe.config,{message:n,error:t,isError:!0}),Xe(1,new Error(n)),t}}function Te(){return!!globalThis.navigator&&(Pe.isChromium||Pe.isFirefox)}async function Ae(e){const t=Pe.config,o=await e.json();t.applicationEnvironment||o.applicationEnvironment||(o.applicationEnvironment=e.headers.get("Blazor-Environment")||e.headers.get("DotNet-Environment")||void 0),o.environmentVariables||(o.environmentVariables={});const n=e.headers.get("DOTNET-MODIFIABLE-ASSEMBLIES");n&&(o.environmentVariables.DOTNET_MODIFIABLE_ASSEMBLIES=n);const r=e.headers.get("ASPNETCORE-BROWSER-TOOLS");return r&&(o.environmentVariables.__ASPNETCORE_BROWSER_TOOLS=r),o}"function"!=typeof importScripts||globalThis.onmessage||(globalThis.dotnetSidecar=!0);const Se="object"==typeof process&&"object"==typeof process.versions&&"string"==typeof process.versions.node,De="function"==typeof importScripts,Oe=De&&"undefined"!=typeof dotnetSidecar,Ce=De&&!Oe,ke="object"==typeof window||De&&!Se,Ie=!ke&&!Se;let Ue={},Pe={},Me={},Le={},Ne={},$e=!1;const ze={},We={config:ze},Fe={mono:{},binding:{},internal:Ne,module:We,loaderHelpers:Pe,runtimeHelpers:Ue,diagnosticHelpers:Me,api:Le};function Be(e,t){if(e)return;const o="Assert failed: "+("function"==typeof t?t():t),n=new Error(o);_(o,n),Ue.nativeAbort(n)}function Ve(){return void 0!==Pe.exitCode}function qe(){return Ue.runtimeReady&&!Ve()}function He(){Ve()&&Be(!1,`.NET runtime already exited with ${Pe.exitCode} ${Pe.exitReason}. You can use runtime.runMain() which doesn't exit the runtime.`),Ue.runtimeReady||Be(!1,".NET runtime didn't start yet. Please call dotnet.create() first.")}function Je(){ke&&(globalThis.addEventListener("unhandledrejection",et),globalThis.addEventListener("error",tt))}let Ze,Qe;function Ge(e){Qe&&Qe(e),Xe(e,Pe.exitReason)}function Ke(e){Ze&&Ze(e||Pe.exitReason),Xe(1,e||Pe.exitReason)}function Xe(t,o){var n,r;const i=o&&"object"==typeof o;t=i&&"number"==typeof o.status?o.status:void 0===t?-1:t;const s=i&&"string"==typeof o.message?o.message:""+o;(o=i?o:Ue.ExitStatus?function(e,t){const o=new Ue.ExitStatus(e);return o.message=t,o.toString=()=>t,o}(t,s):new Error("Exit with code "+t+" "+s)).status=t,o.message||(o.message=s);const a=""+(o.stack||(new Error).stack);try{Object.defineProperty(o,"stack",{get:()=>a})}catch(e){}const l=!!o.silent;if(o.silent=!0,Ve())Pe.diagnosticTracing&&b("mono_exit called after exit");else{try{We.onAbort==Ke&&(We.onAbort=Ze),We.onExit==Ge&&(We.onExit=Qe),ke&&(globalThis.removeEventListener("unhandledrejection",et),globalThis.removeEventListener("error",tt)),Ue.runtimeReady?(Ue.jiterpreter_dump_stats&&Ue.jiterpreter_dump_stats(!1),0===t&&(null===(n=Pe.config)||void 0===n?void 0:n.interopCleanupOnExit)&&Ue.forceDisposeProxies(!0,!0),e&&0!==t&&(null===(r=Pe.config)||void 0===r||r.dumpThreadsOnNonZeroExit)):(Pe.diagnosticTracing&&b(`abort_startup, reason: ${o}`),function(e){Pe.allDownloadsQueued.promise_control.reject(e),Pe.allDownloadsFinished.promise_control.reject(e),Pe.afterConfigLoaded.promise_control.reject(e),Pe.wasmCompilePromise.promise_control.reject(e),Pe.runtimeModuleLoaded.promise_control.reject(e),Ue.dotnetReady&&(Ue.dotnetReady.promise_control.reject(e),Ue.afterInstantiateWasm.promise_control.reject(e),Ue.beforePreInit.promise_control.reject(e),Ue.afterPreInit.promise_control.reject(e),Ue.afterPreRun.promise_control.reject(e),Ue.beforeOnRuntimeInitialized.promise_control.reject(e),Ue.afterOnRuntimeInitialized.promise_control.reject(e),Ue.afterPostRun.promise_control.reject(e))}(o))}catch(e){E("mono_exit A failed",e)}try{l||(function(e,t){if(0!==e&&t){const e=Ue.ExitStatus&&t instanceof Ue.ExitStatus?b:_;"string"==typeof t?e(t):(void 0===t.stack&&(t.stack=(new Error).stack+""),t.message?e(Ue.stringify_as_error_with_stack?Ue.stringify_as_error_with_stack(t.message+"\n"+t.stack):t.message+"\n"+t.stack):e(JSON.stringify(t)))}!Ce&&Pe.config&&(Pe.config.logExitCode?Pe.config.forwardConsoleLogsToWS?R("WASM EXIT "+e):v("WASM EXIT "+e):Pe.config.forwardConsoleLogsToWS&&R())}(t,o),function(e){if(ke&&!Ce&&Pe.config&&Pe.config.appendElementOnExit&&document){const t=document.createElement("label");t.id="tests_done",0!==e&&(t.style.background="red"),t.innerHTML=""+e,document.body.appendChild(t)}}(t))}catch(e){E("mono_exit B failed",e)}Pe.exitCode=t,Pe.exitReason||(Pe.exitReason=o),!Ce&&Ue.runtimeReady&&We.runtimeKeepalivePop()}if(Pe.config&&Pe.config.asyncFlushOnExit&&0===t)throw(async()=>{try{await async function(){try{const e=await import(/*! webpackIgnore: true */"process"),t=e=>new Promise(((t,o)=>{e.on("error",o),e.end("","utf8",t)})),o=t(e.stderr),n=t(e.stdout);let r;const i=new Promise((e=>{r=setTimeout((()=>e("timeout")),1e3)}));await Promise.race([Promise.all([n,o]),i]),clearTimeout(r)}catch(e){_(`flushing std* streams failed: ${e}`)}}()}finally{Ye(t,o)}})(),o;Ye(t,o)}function Ye(e,t){if(Ue.runtimeReady&&Ue.nativeExit)try{Ue.nativeExit(e)}catch(e){!Ue.ExitStatus||e instanceof Ue.ExitStatus||E("set_exit_code_and_quit_now failed: "+e.toString())}if(0!==e||!ke)throw Se&&Ne.process?Ne.process.exit(e):Ue.quit&&Ue.quit(e,t),t}function et(e){ot(e,e.reason,"rejection")}function tt(e){ot(e,e.error,"error")}function ot(e,t,o){e.preventDefault();try{t||(t=new Error("Unhandled "+o)),void 0===t.stack&&(t.stack=(new Error).stack),t.stack=t.stack+"",t.silent||(_("Unhandled error:",t),Xe(1,t))}catch(e){}}!function(e){if($e)throw new Error("Loader module already loaded");$e=!0,Ue=e.runtimeHelpers,Pe=e.loaderHelpers,Me=e.diagnosticHelpers,Le=e.api,Ne=e.internal,Object.assign(Le,{INTERNAL:Ne,invokeLibraryInitializers:be}),Object.assign(e.module,{config:ve(ze,{environmentVariables:{}})});const r={mono_wasm_bindings_is_ready:!1,config:e.module.config,diagnosticTracing:!1,nativeAbort:e=>{throw e||new Error("abort")},nativeExit:e=>{throw new Error("exit:"+e)}},l={gitHash:"b0f34d51fccc69fd334253924abd8d6853fad7aa",config:e.module.config,diagnosticTracing:!1,maxParallelDownloads:16,enableDownloadRetry:!0,_loaded_files:[],loadedFiles:[],loadedAssemblies:[],libraryInitializers:[],workerNextNumber:1,actual_downloaded_assets_count:0,actual_instantiated_assets_count:0,expected_downloaded_assets_count:0,expected_instantiated_assets_count:0,afterConfigLoaded:i(),allDownloadsQueued:i(),allDownloadsFinished:i(),wasmCompilePromise:i(),runtimeModuleLoaded:i(),loadingWorkers:i(),is_exited:Ve,is_runtime_running:qe,assert_runtime_running:He,mono_exit:Xe,createPromiseController:i,getPromiseController:s,assertIsControllablePromise:a,mono_download_assets:oe,resolve_single_asset_path:ee,setup_proxy_console:j,set_thread_prefix:w,installUnhandledErrorHandler:Je,retrieve_asset_download:ie,invokeLibraryInitializers:be,isDebuggingSupported:Te,exceptions:t,simd:n,relaxedSimd:o};Object.assign(Ue,r),Object.assign(Pe,l)}(Fe);let nt,rt,it,st=!1,at=!1;async function lt(e){if(!at){if(at=!0,ke&&Pe.config.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&j("main",globalThis.console,globalThis.location.origin),We||Be(!1,"Null moduleConfig"),Pe.config||Be(!1,"Null moduleConfig.config"),"function"==typeof e){const t=e(Fe.api);if(t.ready)throw new Error("Module.ready couldn't be redefined.");Object.assign(We,t),Ee(We,t)}else{if("object"!=typeof e)throw new Error("Can't use moduleFactory callback of createDotnetRuntime function.");Ee(We,e)}await async function(e){if(Se){const e=await import(/*! webpackIgnore: true */"process"),t=14;if(e.versions.node.split(".")[0]<t)throw new Error(`NodeJS at '${e.execPath}' has too low version '${e.versions.node}', please use at least ${t}. See also https://aka.ms/dotnet-wasm-features`)}const t=/*! webpackIgnore: true */import.meta.url,o=t.indexOf("?");var n;if(o>0&&(Pe.modulesUniqueQuery=t.substring(o)),Pe.scriptUrl=t.replace(/\\/g,"/").replace(/[?#].*/,""),Pe.scriptDirectory=(n=Pe.scriptUrl).slice(0,n.lastIndexOf("/"))+"/",Pe.locateFile=e=>"URL"in globalThis&&globalThis.URL!==C?new URL(e,Pe.scriptDirectory).toString():M(e)?e:Pe.scriptDirectory+e,Pe.fetch_like=k,Pe.out=console.log,Pe.err=console.error,Pe.onDownloadResourceProgress=e.onDownloadResourceProgress,ke&&globalThis.navigator){const e=globalThis.navigator,t=e.userAgentData&&e.userAgentData.brands;t&&t.length>0?Pe.isChromium=t.some((e=>"Google Chrome"===e.brand||"Microsoft Edge"===e.brand||"Chromium"===e.brand)):e.userAgent&&(Pe.isChromium=e.userAgent.includes("Chrome"),Pe.isFirefox=e.userAgent.includes("Firefox"))}Ne.require=Se?await import(/*! webpackIgnore: true */"module").then((e=>e.createRequire(/*! webpackIgnore: true */import.meta.url))):Promise.resolve((()=>{throw new Error("require not supported")})),void 0===globalThis.URL&&(globalThis.URL=C)}(We)}}async function ct(e){return await lt(e),Ze=We.onAbort,Qe=We.onExit,We.onAbort=Ke,We.onExit=Ge,We.ENVIRONMENT_IS_PTHREAD?async function(){(function(){const e=new MessageChannel,t=e.port1,o=e.port2;t.addEventListener("message",(e=>{var n,r;n=JSON.parse(e.data.config),r=JSON.parse(e.data.monoThreadInfo),st?Pe.diagnosticTracing&&b("mono config already received"):(ve(Pe.config,n),Ue.monoThreadInfo=r,xe(),Pe.diagnosticTracing&&b("mono config received"),st=!0,Pe.afterConfigLoaded.promise_control.resolve(Pe.config),ke&&n.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&Pe.setup_proxy_console("worker-idle",console,globalThis.location.origin)),t.close(),o.close()}),{once:!0}),t.start(),self.postMessage({[l]:{monoCmd:"preload",port:o}},[o])})(),await Pe.afterConfigLoaded.promise,function(){const e=Pe.config;e.assets||Be(!1,"config.assets must be defined");for(const t of e.assets)X(t),Q[t.behavior]&&z.push(t)}(),setTimeout((async()=>{try{await oe()}catch(e){Xe(1,e)}}),0);const e=dt(),t=await Promise.all(e);return await ut(t),We}():async function(){var e;await Re(We),re();const t=dt();(async function(){try{const e=ee("dotnetwasm");await se(e),e&&e.pendingDownloadInternal&&e.pendingDownloadInternal.response||Be(!1,"Can't load dotnet.native.wasm");const t=await e.pendingDownloadInternal.response,o=t.headers&&t.headers.get?t.headers.get("Content-Type"):void 0;let n;if("function"==typeof WebAssembly.compileStreaming&&"application/wasm"===o)n=await WebAssembly.compileStreaming(t);else{ke&&"application/wasm"!==o&&E('WebAssembly resource does not have the expected content type "application/wasm", so falling back to slower ArrayBuffer instantiation.');const e=await t.arrayBuffer();Pe.diagnosticTracing&&b("instantiate_wasm_module buffered"),n=Ie?await Promise.resolve(new WebAssembly.Module(e)):await WebAssembly.compile(e)}e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null,Pe.wasmCompilePromise.promise_control.resolve(n)}catch(e){Pe.wasmCompilePromise.promise_control.reject(e)}})(),setTimeout((async()=>{try{D(),await oe()}catch(e){Xe(1,e)}}),0);const o=await Promise.all(t);return await ut(o),await Ue.dotnetReady.promise,await we(null===(e=Pe.config.resources)||void 0===e?void 0:e.modulesAfterRuntimeReady),await be("onRuntimeReady",[Fe.api]),Le}()}function dt(){const e=ee("js-module-runtime"),t=ee("js-module-native");if(nt&&rt)return[nt,rt,it];"object"==typeof e.moduleExports?nt=e.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${e.resolvedUrl}' for ${e.name}`),nt=import(/*! webpackIgnore: true */e.resolvedUrl)),"object"==typeof t.moduleExports?rt=t.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${t.resolvedUrl}' for ${t.name}`),rt=import(/*! webpackIgnore: true */t.resolvedUrl));const o=Y("js-module-diagnostics");return o&&("object"==typeof o.moduleExports?it=o.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${o.resolvedUrl}' for ${o.name}`),it=import(/*! webpackIgnore: true */o.resolvedUrl))),[nt,rt,it]}async function ut(e){const{initializeExports:t,initializeReplacements:o,configureRuntimeStartup:n,configureEmscriptenStartup:r,configureWorkerStartup:i,setRuntimeGlobals:s,passEmscriptenInternals:a}=e[0],{default:l}=e[1],c=e[2];s(Fe),t(Fe),c&&c.setRuntimeGlobals(Fe),await n(We),Pe.runtimeModuleLoaded.promise_control.resolve(),l((e=>(Object.assign(We,{ready:e.ready,__dotnet_runtime:{initializeReplacements:o,configureEmscriptenStartup:r,configureWorkerStartup:i,passEmscriptenInternals:a}}),We))).catch((e=>{if(e.message&&e.message.toLowerCase().includes("out of memory"))throw new Error(".NET runtime has failed to start, because too much memory was requested. Please decrease the memory by adjusting EmccMaximumHeapSize. See also https://aka.ms/dotnet-wasm-features");throw e}))}const ft=new class{withModuleConfig(e){try{return Ee(We,e),this}catch(e){throw Xe(1,e),e}}withOnConfigLoaded(e){try{return Ee(We,{onConfigLoaded:e}),this}catch(e){throw Xe(1,e),e}}withConsoleForwarding(){try{return ve(ze,{forwardConsoleLogsToWS:!0}),this}catch(e){throw Xe(1,e),e}}withExitOnUnhandledError(){try{return ve(ze,{exitOnUnhandledError:!0}),Je(),this}catch(e){throw Xe(1,e),e}}withAsyncFlushOnExit(){try{return ve(ze,{asyncFlushOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withExitCodeLogging(){try{return ve(ze,{logExitCode:!0}),this}catch(e){throw Xe(1,e),e}}withElementOnExit(){try{return ve(ze,{appendElementOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withInteropCleanupOnExit(){try{return ve(ze,{interopCleanupOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withDumpThreadsOnNonZeroExit(){try{return ve(ze,{dumpThreadsOnNonZeroExit:!0}),this}catch(e){throw Xe(1,e),e}}withWaitingForDebugger(e){try{return ve(ze,{waitForDebugger:e}),this}catch(e){throw Xe(1,e),e}}withInterpreterPgo(e,t){try{return ve(ze,{interpreterPgo:e,interpreterPgoSaveDelay:t}),ze.runtimeOptions?ze.runtimeOptions.push("--interp-pgo-recording"):ze.runtimeOptions=["--interp-pgo-recording"],this}catch(e){throw Xe(1,e),e}}withConfig(e){try{return ve(ze,e),this}catch(e){throw Xe(1,e),e}}withConfigSrc(e){try{return e&&"string"==typeof e||Be(!1,"must be file path or URL"),Ee(We,{configSrc:e}),this}catch(e){throw Xe(1,e),e}}withVirtualWorkingDirectory(e){try{return e&&"string"==typeof e||Be(!1,"must be directory path"),ve(ze,{virtualWorkingDirectory:e}),this}catch(e){throw Xe(1,e),e}}withEnvironmentVariable(e,t){try{const o={};return o[e]=t,ve(ze,{environmentVariables:o}),this}catch(e){throw Xe(1,e),e}}withEnvironmentVariables(e){try{return e&&"object"==typeof e||Be(!1,"must be dictionary object"),ve(ze,{environmentVariables:e}),this}catch(e){throw Xe(1,e),e}}withDiagnosticTracing(e){try{return"boolean"!=typeof e&&Be(!1,"must be boolean"),ve(ze,{diagnosticTracing:e}),this}catch(e){throw Xe(1,e),e}}withDebugging(e){try{return null!=e&&"number"==typeof e||Be(!1,"must be number"),ve(ze,{debugLevel:e}),this}catch(e){throw Xe(1,e),e}}withApplicationArguments(...e){try{return e&&Array.isArray(e)||Be(!1,"must be array of strings"),ve(ze,{applicationArguments:e}),this}catch(e){throw Xe(1,e),e}}withRuntimeOptions(e){try{return e&&Array.isArray(e)||Be(!1,"must be array of strings"),ze.runtimeOptions?ze.runtimeOptions.push(...e):ze.runtimeOptions=e,this}catch(e){throw Xe(1,e),e}}withMainAssembly(e){try{return ve(ze,{mainAssemblyName:e}),this}catch(e){throw Xe(1,e),e}}withApplicationArgumentsFromQuery(){try{if(!globalThis.window)throw new Error("Missing window to the query parameters from");if(void 0===globalThis.URLSearchParams)throw new Error("URLSearchParams is supported");const e=new URLSearchParams(globalThis.window.location.search).getAll("arg");return this.withApplicationArguments(...e)}catch(e){throw Xe(1,e),e}}withApplicationEnvironment(e){try{return ve(ze,{applicationEnvironment:e}),this}catch(e){throw Xe(1,e),e}}withApplicationCulture(e){try{return ve(ze,{applicationCulture:e}),this}catch(e){throw Xe(1,e),e}}withResourceLoader(e){try{return Pe.loadBootResource=e,this}catch(e){throw Xe(1,e),e}}async download(){try{await async function(){lt(We),await Re(We),re(),D(),oe(),await Pe.allDownloadsFinished.promise}()}catch(e){throw Xe(1,e),e}}async create(){try{return this.instance||(this.instance=await async function(){return await ct(We),Fe.api}()),this.instance}catch(e){throw Xe(1,e),e}}async run(){try{return We.config||Be(!1,"Null moduleConfig.config"),this.instance||await this.create(),this.instance.runMainAndExit()}catch(e){throw Xe(1,e),e}}},mt=Xe,gt=ct;Ie||"function"==typeof globalThis.URL||Be(!1,"This browser/engine doesn't support URL API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),"function"!=typeof globalThis.BigInt64Array&&Be(!1,"This browser/engine doesn't support BigInt64Array API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),ft.withConfig(/*json-start*/{
   "mainAssemblyName": "compiler",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-gFCcehSTe5IngRhDmvR71j01pxrgXDphrR92u87gMjo=",
+    "hash": "sha256-+vWE4qpCKicJzBvdpcc8lrv40Htwgs0pEg/aqDgSQ+E=",
     "jsModuleNative": [
       {
-        "name": "dotnet.native.98v1chuo8c.js"
+        "name": "dotnet.native.xanz2e7ksm.js"
       }
     ],
     "jsModuleRuntime": [
       {
-        "name": "dotnet.runtime.fn94ls2wwa.js"
+        "name": "dotnet.runtime.o0qy896u8v.js"
       }
     ],
     "wasmNative": [
       {
-        "name": "dotnet.native.ggch313emy.wasm",
-        "integrity": "sha256-sG8pH2oty+zIEarSlYNdLjF8uAgfueHqHC6BVtWVPg8="
+        "name": "dotnet.native.2qba9g5fwn.wasm",
+        "integrity": "sha256-Jq16DJlsNP/EZy3u5dUfhPu0r4vqciQE3d0LSaelSes="
       }
     ],
     "coreAssembly": [
       {
         "virtualPath": "System.Runtime.InteropServices.JavaScript.wasm",
-        "name": "System.Runtime.InteropServices.JavaScript.qdrwfg47h5.wasm",
-        "integrity": "sha256-ngFn74a3Dx8pZxahoFHJreh62odKJmJcskblmx1dzt0="
+        "name": "System.Runtime.InteropServices.JavaScript.0uujcsvtme.wasm",
+        "integrity": "sha256-KDEGwvLuPsW2U5IWosNGLuFfvvsnc51nttHvW1jBuyQ="
       },
       {
         "virtualPath": "System.Private.CoreLib.wasm",
-        "name": "System.Private.CoreLib.yuhfhvrgwa.wasm",
-        "integrity": "sha256-1roUOG37q1KQ4bSbBCE2akHq7EW6I8RzvBqcxZf+/zI="
+        "name": "System.Private.CoreLib.8ubjv9s18t.wasm",
+        "integrity": "sha256-UPqXyIy+Vhy/9g3REe6SNZ90Yu2D6FU+kG6v4KTNqkM="
       }
     ],
     "assembly": [
@@ -47,33 +47,33 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "Microsoft.CodeAnalysis.wasm",
-        "name": "Microsoft.CodeAnalysis.kpjgxy86t6.wasm",
-        "integrity": "sha256-yFB2pIa2byV3TrRzKx8sZMf9diT4CLls+UHRXPpzgew="
+        "name": "Microsoft.CodeAnalysis.erp1n29u9n.wasm",
+        "integrity": "sha256-VvgzZZPZ5B7lUxBoceWqgqrawKs/BElsjRu+YB9hkIk="
       },
       {
         "virtualPath": "Microsoft.CodeAnalysis.CSharp.wasm",
-        "name": "Microsoft.CodeAnalysis.CSharp.spyk6zagzf.wasm",
-        "integrity": "sha256-wL7WJvjnoNxQLq7zuL8jTfh74XusEIsa6TS761YhJfM="
+        "name": "Microsoft.CodeAnalysis.CSharp.df8hfd5o8z.wasm",
+        "integrity": "sha256-F6hjB2uObN+teOfptznqaUCTmIDykWUjqqGeeis7Rjw="
       },
       {
         "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.wasm",
-        "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.emud6oo046.wasm",
-        "integrity": "sha256-RoKohOXHz0EIVOoJQVkCbEzGgFfsWefMTDGLMgAAfxA="
+        "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.nnmcno2xng.wasm",
+        "integrity": "sha256-szRxBE0pVPoPByitWVImsT5ZNVzI1WotxWc8ElzLKWc="
       },
       {
         "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.wasm",
-        "name": "Microsoft.CodeAnalysis.VisualBasic.jf8omzzmf7.wasm",
-        "integrity": "sha256-Uc3y3xHi5a3ONC0aUvbDEg1L1orocMIiY8CSrWoU8sw="
+        "name": "Microsoft.CodeAnalysis.VisualBasic.16g3yrjguf.wasm",
+        "integrity": "sha256-mVK1oeaP7G9j2O75XqJRirJ/UiqlwgzeoPHuYKVPaJY="
       },
       {
         "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.wasm",
-        "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.y9pmeckjso.wasm",
-        "integrity": "sha256-ilgh5yIWZLHaPvm8F8o/B600EKrVAlXroU077EtEF2k="
+        "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.9ur51h30jz.wasm",
+        "integrity": "sha256-MdFejKxBz2wJda/gFl0zKOawxDN+Elz4sCIcCety434="
       },
       {
         "virtualPath": "Microsoft.CodeAnalysis.Workspaces.wasm",
-        "name": "Microsoft.CodeAnalysis.Workspaces.zkqto69bm6.wasm",
-        "integrity": "sha256-LZQxuyPt5rC5a/nO20LEWWEruRWlWyE9GN848Ud/bh0="
+        "name": "Microsoft.CodeAnalysis.Workspaces.c3dihulv86.wasm",
+        "integrity": "sha256-yAu2rqqQvhof4W5kbWNInCtLmYIYPbm/0vHEJfVe6h8="
       },
       {
         "virtualPath": "Microsoft.JSInterop.wasm",
@@ -111,1288 +111,1288 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
         "integrity": "sha256-pMd0NDsJG6d31aN31kU1bpOuZDEG7RaYleALWz38k98="
       },
       {
-        "virtualPath": "System.Text.Json.wasm",
-        "name": "System.Text.Json.9zeefb9ryb.wasm",
-        "integrity": "sha256-VQ7Wlb7okzFLdwt0fritW/eYDMOPWlsKMDvOropu7jY="
-      },
-      {
         "virtualPath": "WebAssembly.wasm",
         "name": "WebAssembly.80zcn45hvr.wasm",
         "integrity": "sha256-yCzmrGzacnOCgQm+JtucdzQaax1unfTADXjE/d0pIvU="
       },
       {
         "virtualPath": "Microsoft.CSharp.wasm",
-        "name": "Microsoft.CSharp.7ekt55vmkb.wasm",
-        "integrity": "sha256-gSrJuNU0Z1fkUOE58H4IwN7xfe2EG5T3ah9E5ErzwGE="
+        "name": "Microsoft.CSharp.j06echzfpz.wasm",
+        "integrity": "sha256-DYrTDwbyt3m7me0Lc6JdkjveSLmUZ2fLqs4ICdyJMeo="
       },
       {
         "virtualPath": "Microsoft.VisualBasic.Core.wasm",
-        "name": "Microsoft.VisualBasic.Core.zzakt1dc79.wasm",
-        "integrity": "sha256-UdqlREks2BDwPKksetvq1rG2f2gPheTBCWTLyRNHG0s="
+        "name": "Microsoft.VisualBasic.Core.h2kvac5o7p.wasm",
+        "integrity": "sha256-pz6Nq08pgLqbsP2d/Jn4EFsCe3gNpmHaap/Zxew/JK8="
       },
       {
         "virtualPath": "Microsoft.VisualBasic.wasm",
-        "name": "Microsoft.VisualBasic.cwtwp129w5.wasm",
-        "integrity": "sha256-pONqyNvNp4bcPaa/UwKjpPOH2X7yCP/HBRvyLyIGvRc="
+        "name": "Microsoft.VisualBasic.r1r1o64guk.wasm",
+        "integrity": "sha256-L2/WuM5KkmRbktqVoNgIFexMJisncaLvtkuDyqHbwO0="
       },
       {
         "virtualPath": "Microsoft.Win32.Primitives.wasm",
-        "name": "Microsoft.Win32.Primitives.s7f1whhxfh.wasm",
-        "integrity": "sha256-SFeTzxMLHH0r/W7YEnuD7pJYjvk1ANM4uG8sLT9ULm0="
+        "name": "Microsoft.Win32.Primitives.5nko60lje3.wasm",
+        "integrity": "sha256-f6u/slPHfUjszv2EKsm2fQEKmmrPVH8VNUQjUGPmXh8="
       },
       {
         "virtualPath": "Microsoft.Win32.Registry.wasm",
-        "name": "Microsoft.Win32.Registry.zfmdhc8y2i.wasm",
-        "integrity": "sha256-IeyL54ZEyWmymiNgynWLF2RJP9WjcC3LWWJyAUUphoY="
+        "name": "Microsoft.Win32.Registry.lmhf2szmg9.wasm",
+        "integrity": "sha256-AxfLjbMc5l3NIsQdGtMX2fZ2hj+n1lFgIFBCEqrhUSU="
       },
       {
         "virtualPath": "System.AppContext.wasm",
-        "name": "System.AppContext.3uz9m7wog7.wasm",
-        "integrity": "sha256-q2/JgtD4GNRaGd477N1N8TukJ2CeuGqUL+IJ6YonMqM="
+        "name": "System.AppContext.c2z2iszv5a.wasm",
+        "integrity": "sha256-/K8wKW5wf0vwTAjJqN2YhR0Sr8RxibLeyVmlwIrdDnA="
       },
       {
         "virtualPath": "System.Buffers.wasm",
-        "name": "System.Buffers.cddvx78kj1.wasm",
-        "integrity": "sha256-cBLrgGCJNSUwzLgFZHQbZmC8AFQ7DEfFBKdOYJcLaYk="
+        "name": "System.Buffers.jv7wyzqgeh.wasm",
+        "integrity": "sha256-IaL/kK1bEI/zWHYYy6XTumLTMCx6U3QnzAN0ZhZvTxk="
       },
       {
         "virtualPath": "System.Collections.Concurrent.wasm",
-        "name": "System.Collections.Concurrent.edgv89fov9.wasm",
-        "integrity": "sha256-oiAO39vj7FsEjGH6/wMkUJJD1YDNEBcfD8n0Vsi/I7o="
+        "name": "System.Collections.Concurrent.qyjrh4n7wg.wasm",
+        "integrity": "sha256-0g6gWUQT/CM0STTkeMNDh/k58TERdqnV/u5BUiPgoX4="
       },
       {
         "virtualPath": "System.Collections.Immutable.wasm",
-        "name": "System.Collections.Immutable.und9kn5ybq.wasm",
-        "integrity": "sha256-ljJhYI9ymjjjV5LRHGbz0RE10Kb5FtAS0bAZagDmlDU="
+        "name": "System.Collections.Immutable.6nfqc1y6mx.wasm",
+        "integrity": "sha256-Tl4vPbIwiBiOanNfgKpIHEH8LHbkjhFdjVJhG1AZBwE="
       },
       {
         "virtualPath": "System.Collections.NonGeneric.wasm",
-        "name": "System.Collections.NonGeneric.sd9wcwxi2j.wasm",
-        "integrity": "sha256-gGzh70oolcaW0d4iRa19MsSy0qGww/9uwaqmOTF9a18="
+        "name": "System.Collections.NonGeneric.oye06xq4bj.wasm",
+        "integrity": "sha256-QCr/0s0flwGA/GCqLAAE4ON6WmVO491cSonE3bQ9IGc="
       },
       {
         "virtualPath": "System.Collections.Specialized.wasm",
-        "name": "System.Collections.Specialized.817ki6vscu.wasm",
-        "integrity": "sha256-ZIU+eD6+wwXySm86ityiciBOxJNsd+JNp1ln01Yv5FM="
+        "name": "System.Collections.Specialized.ua3ga4ojzm.wasm",
+        "integrity": "sha256-to5p9xGZUq477KGEDpIfH3UJ4lPoeUNmxWJF1hYQL2E="
       },
       {
         "virtualPath": "System.Collections.wasm",
-        "name": "System.Collections.g2jg0g9zhy.wasm",
-        "integrity": "sha256-iFSp4xT69pkt2Q0kcBP0/jWlEgfN8ilqdWnJJQuMsPc="
+        "name": "System.Collections.4u69gysy90.wasm",
+        "integrity": "sha256-JF1S6+O5rd//jR63yXjT8jzeJVLYhtC6Iomazyu+46Q="
       },
       {
         "virtualPath": "System.ComponentModel.Annotations.wasm",
-        "name": "System.ComponentModel.Annotations.horu6w69pm.wasm",
-        "integrity": "sha256-XzKQyLRqVcvKGfQxAroZU0SMheSBpRzsumrt9rUxud8="
+        "name": "System.ComponentModel.Annotations.fu60omoy5j.wasm",
+        "integrity": "sha256-p1Lg6ia7+B8luWLdv25XkpevVOWp7kEpoW2ZG2JU4Sk="
       },
       {
         "virtualPath": "System.ComponentModel.DataAnnotations.wasm",
-        "name": "System.ComponentModel.DataAnnotations.0qkokb4tbp.wasm",
-        "integrity": "sha256-GGHwZ8y2N6q3xCzX9IZVB/HoV/b2x7wjNvLF1OvzSTY="
+        "name": "System.ComponentModel.DataAnnotations.b05dlz1h33.wasm",
+        "integrity": "sha256-ZbQnUZmK7uOo5/7/OCDfEd4S+BUVzb13F3kfSTUvfgI="
       },
       {
         "virtualPath": "System.ComponentModel.EventBasedAsync.wasm",
-        "name": "System.ComponentModel.EventBasedAsync.nqotb9qqdz.wasm",
-        "integrity": "sha256-f/Gho+DTXu8G4j5esfmpYFvJWu48U8+xw4brIWmVPMc="
+        "name": "System.ComponentModel.EventBasedAsync.6se1ltc450.wasm",
+        "integrity": "sha256-FopipCTTK1t50cVaouVGtVdvMDrIYyDoG/qzjV47ue8="
       },
       {
         "virtualPath": "System.ComponentModel.Primitives.wasm",
-        "name": "System.ComponentModel.Primitives.30agiordrd.wasm",
-        "integrity": "sha256-ozhHf4xPHLIfCJttiBB3qU4wAs4OV2UxABGd2OEKREs="
+        "name": "System.ComponentModel.Primitives.lzg3p2fcb8.wasm",
+        "integrity": "sha256-P5ZvpWHH91ux6O6bOf8ynbRnw5AaIbR8pQvQvhfbFo4="
       },
       {
         "virtualPath": "System.ComponentModel.TypeConverter.wasm",
-        "name": "System.ComponentModel.TypeConverter.yqedqr26h6.wasm",
-        "integrity": "sha256-6tEP6EvZYZ0TDb7SZpjXGnQWeWVFm7uBTtWfC0bYrrs="
+        "name": "System.ComponentModel.TypeConverter.pua8doket6.wasm",
+        "integrity": "sha256-D8pzZSwPMue+ZyITZ+ZAEMWcn+uefBsXKBH7sYN/4mY="
       },
       {
         "virtualPath": "System.ComponentModel.wasm",
-        "name": "System.ComponentModel.52va30zlt7.wasm",
-        "integrity": "sha256-vQ7IVezOF7dCFCJ33tqH57pS8HePg6IVRWQ35/yXU2A="
+        "name": "System.ComponentModel.u8ypsaemfu.wasm",
+        "integrity": "sha256-YiKSA3c6DrWeQhnULB8W3aNEklFWk6nMq9LHXQIFBaQ="
       },
       {
         "virtualPath": "System.Configuration.wasm",
-        "name": "System.Configuration.bu3aho8brh.wasm",
-        "integrity": "sha256-DX3Bf82jXM7YLJ7abqUPXEg18gWEt2CdGxNkZGNxD8c="
+        "name": "System.Configuration.gkfiw2lgu6.wasm",
+        "integrity": "sha256-UNfMOINEZ4FKag9zZIx6s3h7ns5SfuugmXwU+8U/dV0="
       },
       {
         "virtualPath": "System.Console.wasm",
-        "name": "System.Console.0ipqlt2gwg.wasm",
-        "integrity": "sha256-mOyDt5x+iKoJdBlHGt/kGJ4KUqJ03m2Syy+dzABOBdM="
+        "name": "System.Console.p023t1evip.wasm",
+        "integrity": "sha256-+a1me9l0qxQGQ21ZOXMg91hkMyWZWgMzJoKTxtGafRQ="
       },
       {
         "virtualPath": "System.Core.wasm",
-        "name": "System.Core.44yafkcomb.wasm",
-        "integrity": "sha256-NMq5N8H+RghiGk/nfHt4CmAQ2kqcRa0PWK3QJioTwmw="
+        "name": "System.Core.lhxt5qhoq6.wasm",
+        "integrity": "sha256-N9SdhWyXlYrOsCF5r1Vdj2MX24SEPjfPHpsXTqmOzHM="
       },
       {
         "virtualPath": "System.Data.Common.wasm",
-        "name": "System.Data.Common.k2irgufjk7.wasm",
-        "integrity": "sha256-PIx9AOx95Fw3iHPnWis+I4CP7Q8ql8qj9577kF/Vwck="
+        "name": "System.Data.Common.eqtn3ssyme.wasm",
+        "integrity": "sha256-RglA8/aUDu9A4xuejyzC501sqvNsZuPchDnUaXO0EoI="
       },
       {
         "virtualPath": "System.Data.DataSetExtensions.wasm",
-        "name": "System.Data.DataSetExtensions.zotfqnq91v.wasm",
-        "integrity": "sha256-Ezrv7hvr/jBL4NYZvTozyUOv9QR0nkhakGZzvOfIXZA="
+        "name": "System.Data.DataSetExtensions.zp6ucti1as.wasm",
+        "integrity": "sha256-eQIbLxxsxeL42w74Tq/lXDmF0ynV+bgglc9X+0XLh28="
       },
       {
         "virtualPath": "System.Data.wasm",
-        "name": "System.Data.orhqx3to6n.wasm",
-        "integrity": "sha256-dFl9FQV3zhMLpMPpe4cQ4BKordXySDRAFq4r+sxZ6Uc="
+        "name": "System.Data.d0h61hksxr.wasm",
+        "integrity": "sha256-nWAc+7AFH58HVBr63YYPxWNMbLGtKSZNmjfX75a4Fmk="
       },
       {
         "virtualPath": "System.Diagnostics.Contracts.wasm",
-        "name": "System.Diagnostics.Contracts.aqgf5r12ov.wasm",
-        "integrity": "sha256-cgNqKfGrSqtkgi43UxaZ1WvcU7W7JI3LSHcPvOQO2t8="
+        "name": "System.Diagnostics.Contracts.dck23rphvl.wasm",
+        "integrity": "sha256-fdLLIl/XKyAES/Vpsgv7XkMogMCDODrLHBZBAfQy15Q="
       },
       {
         "virtualPath": "System.Diagnostics.Debug.wasm",
-        "name": "System.Diagnostics.Debug.f73k8z9qa4.wasm",
-        "integrity": "sha256-xS4soeTlZduZ3RRdlw3dwwZQT6vpzMYLzmWE5Uf/Sx0="
+        "name": "System.Diagnostics.Debug.xp56ua2jd2.wasm",
+        "integrity": "sha256-dYjxHogP1J8fV6xyYPGZ+6N29+038atjxy+0Bx4JygY="
       },
       {
         "virtualPath": "System.Diagnostics.DiagnosticSource.wasm",
-        "name": "System.Diagnostics.DiagnosticSource.yo016xkv91.wasm",
-        "integrity": "sha256-wqPNSMrVVBURk49PpU1sxQBY4uZOhVkRb5698rMQPvg="
+        "name": "System.Diagnostics.DiagnosticSource.kzyp7dz13i.wasm",
+        "integrity": "sha256-YKhoNGFx1V1QFffrc8nzwFtpzeQwU8GsVMySyZvpbBI="
       },
       {
         "virtualPath": "System.Diagnostics.FileVersionInfo.wasm",
-        "name": "System.Diagnostics.FileVersionInfo.wlwt87jjkp.wasm",
-        "integrity": "sha256-rEHuAoDk1A6h9om8iNlhbkmnCWnwzJ95gmm0txZ1Elw="
+        "name": "System.Diagnostics.FileVersionInfo.8kwccfatn9.wasm",
+        "integrity": "sha256-KMj0UcwgkXCf1ylB6JWKzvV9OUW0NugjW1ZJh7Ev4wM="
       },
       {
         "virtualPath": "System.Diagnostics.Process.wasm",
-        "name": "System.Diagnostics.Process.i456bnlijd.wasm",
-        "integrity": "sha256-jil5CdOgrLHhbS1NrI0wvstzo7k8hFECZQ+Dmz2TS8Q="
+        "name": "System.Diagnostics.Process.pbsvhgaqld.wasm",
+        "integrity": "sha256-203JmtZD8wfzBSkTfUfU1GHb9AyLbbSygVRZO+TiCGs="
       },
       {
         "virtualPath": "System.Diagnostics.StackTrace.wasm",
-        "name": "System.Diagnostics.StackTrace.mikg0u5yb2.wasm",
-        "integrity": "sha256-IiyicciVYk+iONewG6JYMQmQM1TRN6KyHrSdea8TDAE="
+        "name": "System.Diagnostics.StackTrace.uosmk512ff.wasm",
+        "integrity": "sha256-vpLMKyIWA7x2n0Bsz9K5HoZ3ngjJ5NBCclrORmE+KmY="
       },
       {
         "virtualPath": "System.Diagnostics.TextWriterTraceListener.wasm",
-        "name": "System.Diagnostics.TextWriterTraceListener.y1gptvixga.wasm",
-        "integrity": "sha256-hpaABsegLM06SqXEJHYMKQ6/yS1QRPn90nJCmY6U8jA="
+        "name": "System.Diagnostics.TextWriterTraceListener.f9a4ca75f9.wasm",
+        "integrity": "sha256-87AUYe4ysxcD0ko7e2ObnrEn5x+SPXaUAbeXhUY8dVE="
       },
       {
         "virtualPath": "System.Diagnostics.Tools.wasm",
-        "name": "System.Diagnostics.Tools.fjetqio2d3.wasm",
-        "integrity": "sha256-29B90UJT6RAURapkyZoMDx7a/7n9WUUp4tpzfF+2eUk="
+        "name": "System.Diagnostics.Tools.r58uhp06u4.wasm",
+        "integrity": "sha256-z7lmrHX9vDxaWhlz1lbKVpvZ513Fb+Xw+Yl6rSiIu1M="
       },
       {
         "virtualPath": "System.Diagnostics.TraceSource.wasm",
-        "name": "System.Diagnostics.TraceSource.fmv8wtirqr.wasm",
-        "integrity": "sha256-F+bURdehxF4knyn8ZeOWNXElgWu1YOFKNNoovbI5/6c="
+        "name": "System.Diagnostics.TraceSource.74aa6mybdk.wasm",
+        "integrity": "sha256-tw/FLt5S2lY4KXfUy8nBDyqwj+zk5Xs7JIwpidOmM3U="
       },
       {
         "virtualPath": "System.Diagnostics.Tracing.wasm",
-        "name": "System.Diagnostics.Tracing.mkbvxd0fsj.wasm",
-        "integrity": "sha256-qt6TQlvR8tbNnYUYe8iWDIUuKgG32cvpYoKPQqooQuQ="
+        "name": "System.Diagnostics.Tracing.uyjvspoaee.wasm",
+        "integrity": "sha256-1hZcocCbG0k/cE7HL5GHqzn/H5LAIqsRXDl76joHsu4="
       },
       {
         "virtualPath": "System.Drawing.Primitives.wasm",
-        "name": "System.Drawing.Primitives.a8jiglxmp7.wasm",
-        "integrity": "sha256-2kUWJPofUUotRFOFzcfNdASXJQy/ijTKBGjXGL1GoZE="
+        "name": "System.Drawing.Primitives.ygagw4cllm.wasm",
+        "integrity": "sha256-Akl3hiSkdbtaYYGIoYUjeyO//SKuN+iBRcgkxNYT8BI="
       },
       {
         "virtualPath": "System.Drawing.wasm",
-        "name": "System.Drawing.upww3v3fe2.wasm",
-        "integrity": "sha256-XuM42F8/0M3ov7huuw1nBtdHBm6GFlGtUoQuMg3UG5w="
+        "name": "System.Drawing.nem9gi6fos.wasm",
+        "integrity": "sha256-r5E4jlAN3MoHR7CGVqYY7c6SjzbU0tOKOpK6HyHNpHo="
       },
       {
         "virtualPath": "System.Dynamic.Runtime.wasm",
-        "name": "System.Dynamic.Runtime.shys22cnm7.wasm",
-        "integrity": "sha256-YFjkWNUN5Q24rVNKszXXK2hS9xjHz4mEx4Qe3UdsbAg="
+        "name": "System.Dynamic.Runtime.4xdpjnpw4n.wasm",
+        "integrity": "sha256-SK7Rp1LlZeCM4aF9xv3+qB0GzGj4W3z9v+xSAyAtJpI="
       },
       {
         "virtualPath": "System.Formats.Asn1.wasm",
-        "name": "System.Formats.Asn1.fdygfqarnw.wasm",
-        "integrity": "sha256-/XYAtsdyVWvjuCVJsHQGq6vjrKFEPOabocuoHk5lWHM="
+        "name": "System.Formats.Asn1.9bedxuqoe2.wasm",
+        "integrity": "sha256-tSKaftmE+6oibzbPJ8RrVystM3q+Ig9vv2UIM1vbTZg="
       },
       {
         "virtualPath": "System.Formats.Tar.wasm",
-        "name": "System.Formats.Tar.p0loft40fm.wasm",
-        "integrity": "sha256-acNJbKIAxpEjl6Op2CtCod9uHk4jjTNoDITuz1YmmmU="
+        "name": "System.Formats.Tar.hjwgs8goh9.wasm",
+        "integrity": "sha256-vcSKSfY4GCt79AW+Ou0PNWaEeLaiDIHi9/sJdJG/az0="
       },
       {
         "virtualPath": "System.Globalization.Calendars.wasm",
-        "name": "System.Globalization.Calendars.3a0r2lvbjz.wasm",
-        "integrity": "sha256-K6C03b0MwW9tFeZBuNuOS6/cc0rigRhaAKiNZSKw/tQ="
+        "name": "System.Globalization.Calendars.qqu4d9h6d4.wasm",
+        "integrity": "sha256-ovUiGEaI708wBPkNBqnhJVjOtfJshPLtPAdk7IDq5rE="
       },
       {
         "virtualPath": "System.Globalization.Extensions.wasm",
-        "name": "System.Globalization.Extensions.9fvcdfsc79.wasm",
-        "integrity": "sha256-FbMxJ0xybWF+JFv/Xp+Rp8vGXu7h06a/B1Qq+zLYvrE="
+        "name": "System.Globalization.Extensions.1d3dstrmml.wasm",
+        "integrity": "sha256-RbJFSGZfQU4dg7vZg0hOydbRGKGj7YgE6K/M7kwEnTo="
       },
       {
         "virtualPath": "System.Globalization.wasm",
-        "name": "System.Globalization.j9hp0z3uut.wasm",
-        "integrity": "sha256-pz/hPzfm7UhEeVc2nBOKu1HDc9LItqmjO3rKkwOZYbc="
+        "name": "System.Globalization.de5yfe377i.wasm",
+        "integrity": "sha256-K1lyyFLkCJLd5yY5976WrfLBIWlM+Hp7rXpC+0X82T4="
       },
       {
         "virtualPath": "System.IO.Compression.Brotli.wasm",
-        "name": "System.IO.Compression.Brotli.b19nlei11r.wasm",
-        "integrity": "sha256-fxr6gaWY+PFcxrHvubWv/GS1gGZ24MsBS4jkJBwKh+g="
+        "name": "System.IO.Compression.Brotli.s6yhzy6ra0.wasm",
+        "integrity": "sha256-VLJMKsqb/ahJC6wdMLIpzC3Ba17pMreLo6ABr2YaEBs="
       },
       {
         "virtualPath": "System.IO.Compression.FileSystem.wasm",
-        "name": "System.IO.Compression.FileSystem.xokj0hkzdz.wasm",
-        "integrity": "sha256-gdMLuffj1VxBN6mTBm8c5eT9rUkMMlZxJkXDC+e2sJE="
+        "name": "System.IO.Compression.FileSystem.8e8pwcj0r8.wasm",
+        "integrity": "sha256-wPZuicWgYn53ZKpeG8rgTlzL30S6iVFUWgN/R3Pghjo="
       },
       {
         "virtualPath": "System.IO.Compression.ZipFile.wasm",
-        "name": "System.IO.Compression.ZipFile.n6fry1pr3p.wasm",
-        "integrity": "sha256-n9tV4BF+c61LNDwDgsMV4CSdRlQZsC8QnIToglSZFfM="
+        "name": "System.IO.Compression.ZipFile.5ulbwi9soi.wasm",
+        "integrity": "sha256-s4TtJcgT9w/91UL6CaceheKsChluKLRbOOzm10/qiPs="
       },
       {
         "virtualPath": "System.IO.Compression.wasm",
-        "name": "System.IO.Compression.or6fsr5skv.wasm",
-        "integrity": "sha256-BAiyzxk5r2Ndz16EHJ1Pa8uwJAB7m60CtbOmCdDMDsM="
+        "name": "System.IO.Compression.mbpybl62de.wasm",
+        "integrity": "sha256-svN92AT3+BUYa1QtkLdk9RMxfI+zkBH7DiarN69nu6I="
       },
       {
         "virtualPath": "System.IO.FileSystem.AccessControl.wasm",
-        "name": "System.IO.FileSystem.AccessControl.hmsaw8htm9.wasm",
-        "integrity": "sha256-aT+YYcNQ+Yh9mQvBOM8s6jRJOPgBexAQcWTj42RJ/wQ="
+        "name": "System.IO.FileSystem.AccessControl.olg38ln9cn.wasm",
+        "integrity": "sha256-NF0+/VKsfVj0BiivY2UYtXKZFBqBjDpoBTziEp9WRdQ="
       },
       {
         "virtualPath": "System.IO.FileSystem.DriveInfo.wasm",
-        "name": "System.IO.FileSystem.DriveInfo.o326txysij.wasm",
-        "integrity": "sha256-3C6YPlLD6J3QuMqd14PB5WmGBRnVvV7wOs1n4RGd5Oo="
+        "name": "System.IO.FileSystem.DriveInfo.0o22a9akm7.wasm",
+        "integrity": "sha256-ACjniuh1mOYJ8DzDXvcOxpfo62cJGJdVS9lPK3J84Ow="
       },
       {
         "virtualPath": "System.IO.FileSystem.Primitives.wasm",
-        "name": "System.IO.FileSystem.Primitives.eb2dm6xdj5.wasm",
-        "integrity": "sha256-+kruBHKysrF22mQafKMCvIL3HePiPIbn1plZFY8zRuE="
+        "name": "System.IO.FileSystem.Primitives.efika37m4r.wasm",
+        "integrity": "sha256-tj/OX0gw97/4j/xmnlepeUlLWa2vb1CncREZ/y2oCkg="
       },
       {
         "virtualPath": "System.IO.FileSystem.Watcher.wasm",
-        "name": "System.IO.FileSystem.Watcher.9cfcfdtgco.wasm",
-        "integrity": "sha256-qWuo98hEbb4jQXMWjgQJypY12CdkLCCrPoNPSAoodlo="
+        "name": "System.IO.FileSystem.Watcher.b81ylq3lid.wasm",
+        "integrity": "sha256-u4elZM62YqQW3aOIkBuyqtG2dh22Q/OLxHP7mNgKbo0="
       },
       {
         "virtualPath": "System.IO.FileSystem.wasm",
-        "name": "System.IO.FileSystem.qjtfcwd9yc.wasm",
-        "integrity": "sha256-Vl+Zl7GI/OJPT1ca4Dvkil12W2QkB/xSXdL1lioHTmQ="
+        "name": "System.IO.FileSystem.m0wrikzu53.wasm",
+        "integrity": "sha256-1qzBK4xFdn4wzMHICchwvCbGMOaqQNcgqsp3SRJOMKE="
       },
       {
         "virtualPath": "System.IO.IsolatedStorage.wasm",
-        "name": "System.IO.IsolatedStorage.1sincb3daz.wasm",
-        "integrity": "sha256-Lzm6aF+wVRfNEn/uhr9vj5F/BK7Z1JvhrqIkbeJ5NeA="
+        "name": "System.IO.IsolatedStorage.moxgx46g2v.wasm",
+        "integrity": "sha256-hr+g8mbenPBU+e6Fnd1AgxfXkWXkTHBNTMdZ9HBNeH4="
       },
       {
         "virtualPath": "System.IO.MemoryMappedFiles.wasm",
-        "name": "System.IO.MemoryMappedFiles.yb053b8huo.wasm",
-        "integrity": "sha256-7j++Hp8rhzw9VyGhlP1PlxswSqzEfehOGiRay5jTWDs="
+        "name": "System.IO.MemoryMappedFiles.1qwcduyngl.wasm",
+        "integrity": "sha256-qXWhYhgIDyR7MQYlvG9cZ95TJXrGjK7ertrH0WHYCIk="
       },
       {
         "virtualPath": "System.IO.Pipelines.wasm",
-        "name": "System.IO.Pipelines.4tds854z1t.wasm",
-        "integrity": "sha256-GI+l8Upumfyw6Wp0aA23e2hmpEOAUu99EwPyukotn/I="
+        "name": "System.IO.Pipelines.8cw6ik4s41.wasm",
+        "integrity": "sha256-OEtaHHhbPrV24wsVnhfA4PbJntaPbb7+igynNVvFXxw="
       },
       {
         "virtualPath": "System.IO.Pipes.AccessControl.wasm",
-        "name": "System.IO.Pipes.AccessControl.tnzx94emdm.wasm",
-        "integrity": "sha256-NzSlXc+TDsKM+Hwf7utPDeqXRIl5OtPufiaJahRwlXc="
+        "name": "System.IO.Pipes.AccessControl.yejz5yzur4.wasm",
+        "integrity": "sha256-9hUXtJqrWjPe4aLq89Wp/LlIBv8q7oqbRwEST0BqreM="
       },
       {
         "virtualPath": "System.IO.Pipes.wasm",
-        "name": "System.IO.Pipes.0age66bi3g.wasm",
-        "integrity": "sha256-6BedlJhpguF2VW6x8nrSkDsVsLnUNKxp7Pfv2DQQ2GE="
+        "name": "System.IO.Pipes.aovxgtgqh6.wasm",
+        "integrity": "sha256-Zr2cBhgS1wyjPdmHBK+VVgSbfY/odwPWe+PMnA4Bi24="
       },
       {
         "virtualPath": "System.IO.UnmanagedMemoryStream.wasm",
-        "name": "System.IO.UnmanagedMemoryStream.t5u18r4nwy.wasm",
-        "integrity": "sha256-8aL5s7UVy/wCPRuLHQcOUspwbgYxs5g90QWqo6sAC5o="
+        "name": "System.IO.UnmanagedMemoryStream.09whssgw8a.wasm",
+        "integrity": "sha256-hEk9jPa+QsFOE4mODDFbZMUMh9Cza9D7VM3J8ezXr8o="
       },
       {
         "virtualPath": "System.IO.wasm",
-        "name": "System.IO.w9oqr5rgy0.wasm",
-        "integrity": "sha256-nCP3k2MWCXmlBE+9eV8rXVMxYksgFiNZgO+uVUq8itI="
+        "name": "System.IO.lavhpdycer.wasm",
+        "integrity": "sha256-UxqjUSSEz7LfKGInDukxFxC8WIX5WFCauNNBghLtXGc="
       },
       {
         "virtualPath": "System.Linq.AsyncEnumerable.wasm",
-        "name": "System.Linq.AsyncEnumerable.rawtdu84rh.wasm",
-        "integrity": "sha256-PdJd/IlDwInW0VwVDre3aKuaFnqFYrr+Vpacso0mdC0="
+        "name": "System.Linq.AsyncEnumerable.a9leffpn15.wasm",
+        "integrity": "sha256-Hr7vFko1NtsUNvFMsGKF3gcQ46evU8eeKeO5DWdnYww="
       },
       {
         "virtualPath": "System.Linq.Expressions.wasm",
-        "name": "System.Linq.Expressions.f9w577zkbu.wasm",
-        "integrity": "sha256-k0UB5pTNDORquriYfX5E25D4L98QrlQO5WLEW8QlHK4="
+        "name": "System.Linq.Expressions.r1c6atm1cw.wasm",
+        "integrity": "sha256-fwD/0YGVA2NtmzaB3kmK1VBquX5rCHs7Pgr8tQKKNUA="
       },
       {
         "virtualPath": "System.Linq.Parallel.wasm",
-        "name": "System.Linq.Parallel.mh1ea8vhqs.wasm",
-        "integrity": "sha256-Cpkuwa3eDmY8N+vO7A4K2Z3Ph54NbB3tTccgA5fG9kY="
+        "name": "System.Linq.Parallel.g7xw2v7b07.wasm",
+        "integrity": "sha256-HL5m9ysqEVBiWOWsjxG6x1/p8Ax6i6HNxP1p2JK30vE="
       },
       {
         "virtualPath": "System.Linq.Queryable.wasm",
-        "name": "System.Linq.Queryable.91gb3f3uq1.wasm",
-        "integrity": "sha256-E6s0mKJnf5PuAlmcLnF5iN0UgL9i5DSavuxtFgZR2kY="
+        "name": "System.Linq.Queryable.sdb7n2mhn5.wasm",
+        "integrity": "sha256-oGsvMGIFjxOinjBMGMfoREtSuPfmSm6a1qephV4cDhE="
       },
       {
         "virtualPath": "System.Linq.wasm",
-        "name": "System.Linq.h64rvye1fy.wasm",
-        "integrity": "sha256-6bTPl0kBUF8yUXU68jeiH3h1jAhxNURe9padSI8T2WY="
+        "name": "System.Linq.rskygq9p37.wasm",
+        "integrity": "sha256-Ndq91UdOaePUPruH0XwhG8EfY9zHI9VjSDvaHyrU62A="
       },
       {
         "virtualPath": "System.Memory.wasm",
-        "name": "System.Memory.40g2cm90wo.wasm",
-        "integrity": "sha256-fA5JdkYOwy2L9tuo8SrHfRnwYYg739ArPYQzvvxLDIk="
+        "name": "System.Memory.i4ezuafn9k.wasm",
+        "integrity": "sha256-QignbHihp8N/AHJbFxGSaKTTwip5OG1Ex3Xu+gnPd8o="
       },
       {
         "virtualPath": "System.Net.Http.Json.wasm",
-        "name": "System.Net.Http.Json.d62150zi6n.wasm",
-        "integrity": "sha256-RZYCrwmOGz0drrr0d6nxGyTmfkKqatefnsa7A4UhfFo="
+        "name": "System.Net.Http.Json.zy8lvi4mlm.wasm",
+        "integrity": "sha256-q+fbtqH8Ng0VVrmZigvxi1DiYMOcGhwA9QYooGSkb24="
       },
       {
         "virtualPath": "System.Net.Http.wasm",
-        "name": "System.Net.Http.z5sttdveou.wasm",
-        "integrity": "sha256-KcvOK2xhOP/N5I0eBN+Cb37fAodCMUNC9cL0qbRfUvw="
+        "name": "System.Net.Http.c5n0c1iaa3.wasm",
+        "integrity": "sha256-MEXCxsa4MHoKtsmQYOJNqQiV2BIWopYdC7DQAcKxqy0="
       },
       {
         "virtualPath": "System.Net.HttpListener.wasm",
-        "name": "System.Net.HttpListener.ud5vbkz84i.wasm",
-        "integrity": "sha256-/uctGjUzbQidLC65abR2afHyKJCsUyFesvdBbM8yGMY="
+        "name": "System.Net.HttpListener.bzgrr803nf.wasm",
+        "integrity": "sha256-t2kK/4r7DO5hZBFT38HSNlvyi8bwkHV6MxF5EToXbg4="
       },
       {
         "virtualPath": "System.Net.Mail.wasm",
-        "name": "System.Net.Mail.zqd1eyera1.wasm",
-        "integrity": "sha256-2zHDh8PvPqA4Dy2nMhvDdWwRXnXk6RZ4kXuoYYJtweM="
+        "name": "System.Net.Mail.tbh6kodhoc.wasm",
+        "integrity": "sha256-OaHyLRif055DU7n1jjKgzLZz2s4XjRs5BX4fo39CeKU="
       },
       {
         "virtualPath": "System.Net.NameResolution.wasm",
-        "name": "System.Net.NameResolution.ty9uohols3.wasm",
-        "integrity": "sha256-9UmOvk6k1/wFdrGon2VV0y0oLIyMV3ccDpiFGnQRejg="
+        "name": "System.Net.NameResolution.97kbgrqa3x.wasm",
+        "integrity": "sha256-+0hB6vvHz/671Jf4yfKkXFKjse15zC/Kf7s9XE8ale8="
       },
       {
         "virtualPath": "System.Net.NetworkInformation.wasm",
-        "name": "System.Net.NetworkInformation.w7ueh7suju.wasm",
-        "integrity": "sha256-hAIbDa+0nZWvDhdNSdqNWxlnlzjaihVtu38QCBDA7gc="
+        "name": "System.Net.NetworkInformation.6lqpzaxhm8.wasm",
+        "integrity": "sha256-JvIohIRZGlm/+IxsnPZKZ2Ps44BKVprgwehALa5th0g="
       },
       {
         "virtualPath": "System.Net.Ping.wasm",
-        "name": "System.Net.Ping.nooey5sp8o.wasm",
-        "integrity": "sha256-dwrp0zf9Rv9oI/88zddSo8Rx8EsbNmfxzFqe616e6QU="
+        "name": "System.Net.Ping.8imioclqo5.wasm",
+        "integrity": "sha256-kCXBIumyAHTtmm6vl2ZAhfXG2/Q1Tb1OqgZzuepbLg8="
       },
       {
         "virtualPath": "System.Net.Primitives.wasm",
-        "name": "System.Net.Primitives.u3mnc891g3.wasm",
-        "integrity": "sha256-qkvbeXclcTZVKJi3/m2DEMHtEbZYEuwnfKitmY1rDeA="
+        "name": "System.Net.Primitives.06opecf70b.wasm",
+        "integrity": "sha256-mHTKctintC1Wr9bR2ybPWGP8FXBiTehna1X3kNymSTs="
       },
       {
         "virtualPath": "System.Net.Quic.wasm",
-        "name": "System.Net.Quic.orqtp31i91.wasm",
-        "integrity": "sha256-xGEiEK1Sr6ADbzO0/Yc2TYL4MPuVkbtXOGB6gxHrw4o="
+        "name": "System.Net.Quic.m8fkmwx2e2.wasm",
+        "integrity": "sha256-JnAa5r/lZUsfFU7li/jbjq0LspPunJDrbDZItl6n5cI="
       },
       {
         "virtualPath": "System.Net.Requests.wasm",
-        "name": "System.Net.Requests.apiuj4yhw5.wasm",
-        "integrity": "sha256-Lp0t5h+MEoVEVzkihX9M9sLa0dU9FAiN0XjZPKYB4BI="
+        "name": "System.Net.Requests.r215bg21jb.wasm",
+        "integrity": "sha256-sx8DBBYz/YFyK8b5r7vawbecA384e7zEKd81zD94Kkg="
       },
       {
         "virtualPath": "System.Net.Security.wasm",
-        "name": "System.Net.Security.54z2i82u3f.wasm",
-        "integrity": "sha256-u88CTdxsSBeo2dPFNj6nmTLZYbmZ5DQQF99bw/Pu+Zo="
+        "name": "System.Net.Security.7zwmva046j.wasm",
+        "integrity": "sha256-czeQag0zUvoNd+LIdV4jcMs47Y1Ek6CF0S+6ZaLpgLA="
       },
       {
         "virtualPath": "System.Net.ServerSentEvents.wasm",
-        "name": "System.Net.ServerSentEvents.d5cn8qc62i.wasm",
-        "integrity": "sha256-QY1Wk0kIWjxIna2fqvrSZA8+h0bj1uqN6YNrDRSzWaY="
+        "name": "System.Net.ServerSentEvents.c4uhw1iihb.wasm",
+        "integrity": "sha256-ROnnbLvTNWDOeScUlG9SDwLxvaz38ABUwVEyAnEGDic="
       },
       {
         "virtualPath": "System.Net.ServicePoint.wasm",
-        "name": "System.Net.ServicePoint.2d0ew5hnae.wasm",
-        "integrity": "sha256-quKijwi28O6vWHiHZFODSrnH8Iuqb6Z1o0n+SQcAAgc="
+        "name": "System.Net.ServicePoint.jysyz6pe5n.wasm",
+        "integrity": "sha256-5U313KmkSiOeCy+3brWCNcNtrt07brFNf+gVYCR2y4o="
       },
       {
         "virtualPath": "System.Net.Sockets.wasm",
-        "name": "System.Net.Sockets.gy9hprr2aq.wasm",
-        "integrity": "sha256-WH7uDiMaqjui0cNQpn0oolet+/CvCMqfIsqbvVKtGpg="
+        "name": "System.Net.Sockets.3pbfy2myku.wasm",
+        "integrity": "sha256-CY0MZ/+/k1OP+ZBjSWtjGWJQxLuMkT7Ag7QVXVzBAec="
       },
       {
         "virtualPath": "System.Net.WebClient.wasm",
-        "name": "System.Net.WebClient.kk1mvyjt06.wasm",
-        "integrity": "sha256-dGgXWtqsb701yFrhX0JwQVj7I1t5C1/qpLdSTafOdF4="
+        "name": "System.Net.WebClient.0vydlgc6dw.wasm",
+        "integrity": "sha256-vKb16TQRF7NY7cSvnqIuYbT3cwV/+Y3xq2MpHIUwAoU="
       },
       {
         "virtualPath": "System.Net.WebHeaderCollection.wasm",
-        "name": "System.Net.WebHeaderCollection.2qa3xk0q6f.wasm",
-        "integrity": "sha256-CmpJMb281EtXTJS8mBHWtmYLemFplGR+YT1dDEXnLsU="
+        "name": "System.Net.WebHeaderCollection.7o9dkw6pk7.wasm",
+        "integrity": "sha256-ydnCzipG3Q/N6B8l/i5+ICyls+k47V9X3XJhISGlqhs="
       },
       {
         "virtualPath": "System.Net.WebProxy.wasm",
-        "name": "System.Net.WebProxy.c56pnyow6u.wasm",
-        "integrity": "sha256-oFXnGGlpksbtigN0S2/TkWjtiGUnhK1ZHo/zhtxdBV0="
+        "name": "System.Net.WebProxy.zmhtx343lv.wasm",
+        "integrity": "sha256-dVRFFC8RdqOlzWEKQpG0pM85PFfc2OY2lJuTKNFwy+s="
       },
       {
         "virtualPath": "System.Net.WebSockets.Client.wasm",
-        "name": "System.Net.WebSockets.Client.t9xu7z5r7d.wasm",
-        "integrity": "sha256-8ebEABwB9OgnI+Pp2U6fmmXtVC1IaUxWs8yfzt7gIf8="
+        "name": "System.Net.WebSockets.Client.2f3nip0afr.wasm",
+        "integrity": "sha256-DkeBT1Pg0REE1NZFjxAer1/vHdWNMGpENDo5wgI3x/8="
       },
       {
         "virtualPath": "System.Net.WebSockets.wasm",
-        "name": "System.Net.WebSockets.4p0it930z5.wasm",
-        "integrity": "sha256-+Pq31tJBAAShJLVyfNLUBtdhToA2Cp8XfCXQghXuHxU="
+        "name": "System.Net.WebSockets.gm6qkoxxpi.wasm",
+        "integrity": "sha256-COiKH5sQr3MEOfCnC1RPormfSS7HlT4P9KCaOSN3pHU="
       },
       {
         "virtualPath": "System.Net.wasm",
-        "name": "System.Net.we8ykxbpfo.wasm",
-        "integrity": "sha256-GAcxbKLzYTwRKfgBFPrMhlnqt6R5gLbPtPGv4XFc89A="
+        "name": "System.Net.4qaklzza4n.wasm",
+        "integrity": "sha256-tDtlMI5NKjn1XCfxKn4u4kEb1f7ViQlCo34kX8VCJV4="
       },
       {
         "virtualPath": "System.Numerics.Vectors.wasm",
-        "name": "System.Numerics.Vectors.fo1cmp7ir1.wasm",
-        "integrity": "sha256-gaIA9/5T44ya1ZSyRU065VXEygWrAry1ISujMBaZCGU="
+        "name": "System.Numerics.Vectors.95xmo86x7v.wasm",
+        "integrity": "sha256-TSkQpffIW+0zm/VKS4iCUtr12Y6732xH89JbymLfA58="
       },
       {
         "virtualPath": "System.Numerics.wasm",
-        "name": "System.Numerics.xk08lzt881.wasm",
-        "integrity": "sha256-8SXnvEQcWRs26KJYIj6zJnhAg2U8jXr7rkDCQgzsfE4="
+        "name": "System.Numerics.ig9uomhcbs.wasm",
+        "integrity": "sha256-YsucGbZIhglan4Dr05M68J3wsVbeIVnY92h5eaM/274="
       },
       {
         "virtualPath": "System.ObjectModel.wasm",
-        "name": "System.ObjectModel.e532zojf7h.wasm",
-        "integrity": "sha256-jjAfY0x8SiaZhlP7ubJNPtXFIwuG2xr3yFsKrA7rwM8="
+        "name": "System.ObjectModel.snprhmugxx.wasm",
+        "integrity": "sha256-qGPud04AIksV++yyYF0zE7gjmIhe9Uhr+Sjb9thAKXk="
       },
       {
         "virtualPath": "System.Private.DataContractSerialization.wasm",
-        "name": "System.Private.DataContractSerialization.x8w77inhqa.wasm",
-        "integrity": "sha256-AT4XhV23psdbfuh3tUSiXtf+zdEihieXcxkjPWBdAnc="
+        "name": "System.Private.DataContractSerialization.gjeod45zn6.wasm",
+        "integrity": "sha256-nCwGk+1Ei8db+rRyBbYVMjE7Oe0wZr9w2geHJQnLjn4="
       },
       {
         "virtualPath": "System.Private.Uri.wasm",
-        "name": "System.Private.Uri.k4mqmij3mb.wasm",
-        "integrity": "sha256-hEDhIQKqjI0ouFsXOrir6pGyFQf37ENNSjFAvzm+VBI="
+        "name": "System.Private.Uri.z6jswaywn8.wasm",
+        "integrity": "sha256-K/hRKjzMbXcgQmquOqff8l5abAM0bDpYZ8giwo1sCKo="
       },
       {
         "virtualPath": "System.Private.Xml.Linq.wasm",
-        "name": "System.Private.Xml.Linq.m3jn5xtv79.wasm",
-        "integrity": "sha256-jmaWg8sBmEuCfav1T05alz6k1bpsKDJp5EDBGjLOxPw="
+        "name": "System.Private.Xml.Linq.lr5v2oiugs.wasm",
+        "integrity": "sha256-D4/MIhb7PTDq4/+ra0e15LQlIwbeGuH3ksedF/AoWdo="
       },
       {
         "virtualPath": "System.Private.Xml.wasm",
-        "name": "System.Private.Xml.6dtrj9zs2g.wasm",
-        "integrity": "sha256-lksVavHYYE2lpmSddCDIw+O7LLX94fmx6kiUXEQWNm8="
+        "name": "System.Private.Xml.wtrgu5mtlc.wasm",
+        "integrity": "sha256-5KJf/3xcuGV17lJVCiiCw7s1tZCl5+ELHZcRbzTIbwM="
       },
       {
         "virtualPath": "System.Reflection.DispatchProxy.wasm",
-        "name": "System.Reflection.DispatchProxy.96yvftwre0.wasm",
-        "integrity": "sha256-P34jdZBi1PTet/VkW7DYSpNiN++aZfvCa4Q/Mk0oid4="
+        "name": "System.Reflection.DispatchProxy.upd872z9tl.wasm",
+        "integrity": "sha256-chZ/GwGqUZFjMR0NhbxhI2t+O5fGcWuV+gRP6QnhP94="
       },
       {
         "virtualPath": "System.Reflection.Emit.ILGeneration.wasm",
-        "name": "System.Reflection.Emit.ILGeneration.797kqbp1u6.wasm",
-        "integrity": "sha256-u5fqdNUCT0QuiHZbLdgF4VlGlPGqGKmZy48GHfaRj/E="
+        "name": "System.Reflection.Emit.ILGeneration.g7zocluvg9.wasm",
+        "integrity": "sha256-PGh2/6TE8aEWRk894ZlBzhFNtpU6vjPZFpMqKapq6QU="
       },
       {
         "virtualPath": "System.Reflection.Emit.Lightweight.wasm",
-        "name": "System.Reflection.Emit.Lightweight.5r781nvogg.wasm",
-        "integrity": "sha256-v9kSxcQ32HCliDS3l7BobzaCgk5wIeFb3kcB6I56KSQ="
+        "name": "System.Reflection.Emit.Lightweight.dg35e9lw3s.wasm",
+        "integrity": "sha256-vYIhnzkf5Ag/eg+Xd0JuR1JIrBYrmiKTGKqO5M+zgcU="
       },
       {
         "virtualPath": "System.Reflection.Emit.wasm",
-        "name": "System.Reflection.Emit.ylln6nmq4d.wasm",
-        "integrity": "sha256-2tDaijCrKYmQvC+j1WPQjM++7+gS5xw265QpSLoICTQ="
+        "name": "System.Reflection.Emit.mrh9tkt04t.wasm",
+        "integrity": "sha256-zmBwIoocMYbTptjU2gbRUIXz07dHxbt5rvVVCFB4J0s="
       },
       {
         "virtualPath": "System.Reflection.Extensions.wasm",
-        "name": "System.Reflection.Extensions.pfdhnbr3gu.wasm",
-        "integrity": "sha256-u663zwxTg96Rq8/hKhL0gdyQnrJCZ5BvHgDK2n5+/L8="
+        "name": "System.Reflection.Extensions.sognfb51go.wasm",
+        "integrity": "sha256-xEDQsF0JAVGHiP0UUg8LNZkicpuJyj0QcGhSkWNPWqQ="
       },
       {
         "virtualPath": "System.Reflection.Metadata.wasm",
-        "name": "System.Reflection.Metadata.hiwljei8qp.wasm",
-        "integrity": "sha256-2aKa2yR1ib4JFkl29Q6fBOzpkCL5o+dqcP0zsXfhzno="
+        "name": "System.Reflection.Metadata.4temtjmiid.wasm",
+        "integrity": "sha256-eD2DPloi86p0ROVFzHbfNZU6e1Ly4TPMdr2iBuImEk8="
       },
       {
         "virtualPath": "System.Reflection.Primitives.wasm",
-        "name": "System.Reflection.Primitives.iq7p4cmw98.wasm",
-        "integrity": "sha256-aodkDxuRQRAPamsqQgiz337qqHL7LC19u6eiYGRis6A="
+        "name": "System.Reflection.Primitives.rla5yzpm68.wasm",
+        "integrity": "sha256-76KnuMlYrRFKgG/vaQBzaWHr3pPtfGKM8+eL1OpSAXw="
       },
       {
         "virtualPath": "System.Reflection.TypeExtensions.wasm",
-        "name": "System.Reflection.TypeExtensions.1pgdbmbciq.wasm",
-        "integrity": "sha256-O7fHyCcveT/QQ/xmqupziIk5W313WiEEb3DGrWFJCiw="
+        "name": "System.Reflection.TypeExtensions.eziqyy81b1.wasm",
+        "integrity": "sha256-mswpR2Zal1E7ubdSBCH9NU1CPNl9LhK5psIDlRtgXDA="
       },
       {
         "virtualPath": "System.Reflection.wasm",
-        "name": "System.Reflection.kv9w77rzcx.wasm",
-        "integrity": "sha256-ALORExJMjCOY2epP2CLWaw6/pFIHR7sWoYywwNwHiR0="
+        "name": "System.Reflection.d59jdh5una.wasm",
+        "integrity": "sha256-EZal90o5b8F2uy8AlM8torrALvU1eKTb8KHgX2rajag="
       },
       {
         "virtualPath": "System.Resources.Reader.wasm",
-        "name": "System.Resources.Reader.k3n9n2hrpi.wasm",
-        "integrity": "sha256-0JO0xJ7+yxflaN52eQHH27qkWwE0fCXa1fBFnetJ4ec="
+        "name": "System.Resources.Reader.42xaf3wy3o.wasm",
+        "integrity": "sha256-3KDhYHgXLUBc83+iLovVRwuxIBNkfu1Mv7yQ9SVJhfo="
       },
       {
         "virtualPath": "System.Resources.ResourceManager.wasm",
-        "name": "System.Resources.ResourceManager.dxk8hkn0pd.wasm",
-        "integrity": "sha256-D/OpryB13Nm97EVSWIL6M55SPbmD560dPh4XEABDcEw="
+        "name": "System.Resources.ResourceManager.78ixpnkxwz.wasm",
+        "integrity": "sha256-eTBjOO6rYoSrzx9S9Dv358zJKDWMTVrLjwCpRPqNhFs="
       },
       {
         "virtualPath": "System.Resources.Writer.wasm",
-        "name": "System.Resources.Writer.8gzd09mf6r.wasm",
-        "integrity": "sha256-SCejdWnz6/yT7ZUjIaRfGIBYwm9DJY+qTStKuqJ2hsw="
+        "name": "System.Resources.Writer.j5qafotg8o.wasm",
+        "integrity": "sha256-50HY5j2XCtRweQ6f5k5xWEQWT9o5UhvyMvmHrj1q6zk="
       },
       {
         "virtualPath": "System.Runtime.CompilerServices.Unsafe.wasm",
-        "name": "System.Runtime.CompilerServices.Unsafe.9hdemd1zg6.wasm",
-        "integrity": "sha256-Q8qNzH66XJbGtl8LGbq+zeNlwAk9/o6oJN5cb1VQ6Zo="
+        "name": "System.Runtime.CompilerServices.Unsafe.4s8vka7mb8.wasm",
+        "integrity": "sha256-NCqP7cLbmnc7ZJCoxAISLDvqyJqjOg+/Ue2kC+Yx6QU="
       },
       {
         "virtualPath": "System.Runtime.CompilerServices.VisualC.wasm",
-        "name": "System.Runtime.CompilerServices.VisualC.u486nooeyj.wasm",
-        "integrity": "sha256-UroPGyhrh7rDMhLOXbXL7qYjrEwTbNMkEMAiGJqxzq0="
+        "name": "System.Runtime.CompilerServices.VisualC.7dilrkv0n5.wasm",
+        "integrity": "sha256-xfRptfAquSCUgY2jjpM0ZeX6PM7BoMnh9WRSKipy3H8="
       },
       {
         "virtualPath": "System.Runtime.Extensions.wasm",
-        "name": "System.Runtime.Extensions.dgcev1x2j5.wasm",
-        "integrity": "sha256-cxacPTFFhuqoI8UhgJYB/WRXFRCsUoG2oOmiKjoLIHQ="
+        "name": "System.Runtime.Extensions.x9isqqr7mp.wasm",
+        "integrity": "sha256-hb139LM7Fg4fQ1OzSrbW1cmZB2Kev/7F9Jj/OKPKXYA="
       },
       {
         "virtualPath": "System.Runtime.Handles.wasm",
-        "name": "System.Runtime.Handles.x8t76h9iqc.wasm",
-        "integrity": "sha256-0UlG8Kruv7VBVfofFetb+GOL9f4f3LZhPX9V6+u4Riw="
+        "name": "System.Runtime.Handles.gmejdz8b1i.wasm",
+        "integrity": "sha256-yKnNECFRT1B9euhzjT/5dSC1sJUoPfO6m2qkDLeGTYQ="
       },
       {
         "virtualPath": "System.Runtime.InteropServices.RuntimeInformation.wasm",
-        "name": "System.Runtime.InteropServices.RuntimeInformation.6x46xl0fkw.wasm",
-        "integrity": "sha256-lqwkxy/rl7HuHiGSVfyuOXyj5jiFdQn1VXYbrAR+QP0="
+        "name": "System.Runtime.InteropServices.RuntimeInformation.zydo3g4f27.wasm",
+        "integrity": "sha256-u39o0cpKkndMdK/4OyAxy+2qkc9PGw9H8JLbVLnx6pI="
       },
       {
         "virtualPath": "System.Runtime.InteropServices.wasm",
-        "name": "System.Runtime.InteropServices.yvih4tdwds.wasm",
-        "integrity": "sha256-3mHwFke8IS1qJd5S9tmIJSm6bDX0ZhTBeXDoTzhNlOk="
+        "name": "System.Runtime.InteropServices.y2d70ja2cw.wasm",
+        "integrity": "sha256-+on+uh3ABzIz7NaS0i3xbt2cIpDyhUT0y5JlJO/X84Q="
       },
       {
         "virtualPath": "System.Runtime.Intrinsics.wasm",
-        "name": "System.Runtime.Intrinsics.wpzyysvog0.wasm",
-        "integrity": "sha256-rNT841huhgL+y/t6LkKXzSZO2k6B5jywKJHbLVv18ys="
+        "name": "System.Runtime.Intrinsics.kmq2apj5l0.wasm",
+        "integrity": "sha256-tE5pijLzITXr2GNazqJfMxf/cUQnh4DpPpvrwXi+o3w="
       },
       {
         "virtualPath": "System.Runtime.Loader.wasm",
-        "name": "System.Runtime.Loader.1mwm1bgjgj.wasm",
-        "integrity": "sha256-Z0S1WuTMoQ6XPHOMC9bU7ruuWmAag8ou92+cJ1yaLsQ="
+        "name": "System.Runtime.Loader.3t71kb21wu.wasm",
+        "integrity": "sha256-x91aidPCMaoWyaRMIgxW6p2d28VwkIuUBlypTqGceFw="
       },
       {
         "virtualPath": "System.Runtime.Numerics.wasm",
-        "name": "System.Runtime.Numerics.fhvyz5x2g6.wasm",
-        "integrity": "sha256-HWVrqgpjYwvvK24Tl0JPbEDK0GDJV1R3/KsdiI3NOR8="
+        "name": "System.Runtime.Numerics.n8gwbfvruj.wasm",
+        "integrity": "sha256-N1Fe+j6anuFpO55l0zkEtjQMhoNxz2zleDCPbup1XpY="
       },
       {
         "virtualPath": "System.Runtime.Serialization.Formatters.wasm",
-        "name": "System.Runtime.Serialization.Formatters.e77lbn9sd8.wasm",
-        "integrity": "sha256-uk5xySp5HzBhavGFpRZrnhY6XiV72es5pfjLKcFe/iQ="
+        "name": "System.Runtime.Serialization.Formatters.kp04s3jyn3.wasm",
+        "integrity": "sha256-aOsZY3nMr6z32t39pJR69/VMnGxeJzvEp0ETnxT3GmU="
       },
       {
         "virtualPath": "System.Runtime.Serialization.Json.wasm",
-        "name": "System.Runtime.Serialization.Json.jk90p02j9y.wasm",
-        "integrity": "sha256-jTYxq3AscBiLUfk9bqd7W7/frXuIBOfvrRE4uR+gBec="
+        "name": "System.Runtime.Serialization.Json.w5ytzloqtn.wasm",
+        "integrity": "sha256-zDYl84jM9auaAgtHUHoZJ6GTVRwa8WxsQMlBos7yZfw="
       },
       {
         "virtualPath": "System.Runtime.Serialization.Primitives.wasm",
-        "name": "System.Runtime.Serialization.Primitives.89hbpwsi8z.wasm",
-        "integrity": "sha256-5FpIDx7n9T3mndId6hNiG2gzqO7pVp0tr3zksHveipI="
+        "name": "System.Runtime.Serialization.Primitives.ktqshul6zq.wasm",
+        "integrity": "sha256-ONCren6sSBH/S6Lrdi02lcm7BEyEsrvDdhedXaPwX/M="
       },
       {
         "virtualPath": "System.Runtime.Serialization.Xml.wasm",
-        "name": "System.Runtime.Serialization.Xml.d7r7w6jo0y.wasm",
-        "integrity": "sha256-ea1lepO6QAZ9jsOcvs2BwCGQ37VJOlG4mvBdTR16WFg="
+        "name": "System.Runtime.Serialization.Xml.zxalj6oi7a.wasm",
+        "integrity": "sha256-p/WuCRmCujQfBUCe4wtQXRR9XcMzz2c0hWt7H+38DuI="
       },
       {
         "virtualPath": "System.Runtime.Serialization.wasm",
-        "name": "System.Runtime.Serialization.42tqcgfp3k.wasm",
-        "integrity": "sha256-nBGKw6KKTqcV5fssFzsZLSpaG4cJWCwa02VRunMqenQ="
+        "name": "System.Runtime.Serialization.oqtdyhn9ex.wasm",
+        "integrity": "sha256-MDKNYDBRCcTlV03EhLQLZbSeoFY+kI8U+lAU/viuNF0="
       },
       {
         "virtualPath": "System.Runtime.wasm",
-        "name": "System.Runtime.fia9t5aa1g.wasm",
-        "integrity": "sha256-dy4ZGlsKWRJKxM+iZn/uIEZ2fWNqPOIuuOs8vGevqbo="
+        "name": "System.Runtime.csube7l7j7.wasm",
+        "integrity": "sha256-ZDVnvJqlmlCfxYjN5fr+P0doPw46WTWaXRLcW5YRFIk="
       },
       {
         "virtualPath": "System.Security.AccessControl.wasm",
-        "name": "System.Security.AccessControl.8jczl74u1l.wasm",
-        "integrity": "sha256-NJtajZ4/rmdivaLQaa8FFJpnOKA0iNEdZpLj86rdfDs="
+        "name": "System.Security.AccessControl.l725whzq2q.wasm",
+        "integrity": "sha256-cU4IfLEkqllRw6droSxGbz3BUtQJHP8L8QwTGK58P40="
       },
       {
         "virtualPath": "System.Security.Claims.wasm",
-        "name": "System.Security.Claims.d4szcy3jij.wasm",
-        "integrity": "sha256-Hb2gEQMYwOR0+Y+pSj+hwOPQkygmbnbx/4N6sfGiAc8="
+        "name": "System.Security.Claims.ls4mvh9izv.wasm",
+        "integrity": "sha256-O8tZsGr7ds++haAS+cf0wwHgax+RlcRNgoOk38EyR/o="
       },
       {
         "virtualPath": "System.Security.Cryptography.Algorithms.wasm",
-        "name": "System.Security.Cryptography.Algorithms.ypcmxdzh7n.wasm",
-        "integrity": "sha256-5m58rAkUiSNYt+Iux+A8pbNdBJPTsul0Bhf9ZzyCOVM="
+        "name": "System.Security.Cryptography.Algorithms.xptci9gx2e.wasm",
+        "integrity": "sha256-dXe3LsqJ1vNr/WFRatELAVLh1CP2PwfQXASDrSfunAg="
       },
       {
         "virtualPath": "System.Security.Cryptography.Cng.wasm",
-        "name": "System.Security.Cryptography.Cng.vef4n2zmbj.wasm",
-        "integrity": "sha256-+Wlqx+fi6Xm68LPbryBh8T4lIJnl0IA8ARkomGhxMG4="
+        "name": "System.Security.Cryptography.Cng.cwmo3bkk7r.wasm",
+        "integrity": "sha256-7LgAp+0po71GWfP8ZuvRYIyjsF1gHKZJ3352ulzjb/0="
       },
       {
         "virtualPath": "System.Security.Cryptography.Csp.wasm",
-        "name": "System.Security.Cryptography.Csp.wgyk5zye6w.wasm",
-        "integrity": "sha256-gOMehAFVcVSZrrsTnfZtuMD54EJWHEK/24lFgXRp88w="
+        "name": "System.Security.Cryptography.Csp.dh1ommb4jg.wasm",
+        "integrity": "sha256-gbvQ/uAStjISX/CISFTZj9Rjbcp1BewADcXCef0QV5E="
       },
       {
         "virtualPath": "System.Security.Cryptography.Encoding.wasm",
-        "name": "System.Security.Cryptography.Encoding.zez5h32m7f.wasm",
-        "integrity": "sha256-i38SVqfczFVyeqxYq7GBKCAy2gHUMGKF9Fw3ygEtXKI="
+        "name": "System.Security.Cryptography.Encoding.mjrnxqi695.wasm",
+        "integrity": "sha256-MvT0VFnceq8eJcNM1q/yclUNhjtcKfZ1sq+1yOY8Qqc="
       },
       {
         "virtualPath": "System.Security.Cryptography.OpenSsl.wasm",
-        "name": "System.Security.Cryptography.OpenSsl.3mmfx2fwxo.wasm",
-        "integrity": "sha256-xeaWcGalkX7rjx57pZjgw4kCfVsIub5o9tEp9XC1Je4="
+        "name": "System.Security.Cryptography.OpenSsl.bwa2csm6hl.wasm",
+        "integrity": "sha256-VQArOf/OSDP6hdRPrFn8/6yG0/OY3DkjZETENRIvKls="
       },
       {
         "virtualPath": "System.Security.Cryptography.Primitives.wasm",
-        "name": "System.Security.Cryptography.Primitives.nu8gqxk6tj.wasm",
-        "integrity": "sha256-z87gy0if+OQhvvktEj+k6u/JKv4DRwpzYfuaK6n8q1k="
+        "name": "System.Security.Cryptography.Primitives.3u8l6vjobk.wasm",
+        "integrity": "sha256-BQ6O6oEE2uisVe5cYv2pXq2W+3Au0Mreg58sBuPdp00="
       },
       {
         "virtualPath": "System.Security.Cryptography.X509Certificates.wasm",
-        "name": "System.Security.Cryptography.X509Certificates.2939tf7117.wasm",
-        "integrity": "sha256-tgHiq/CBVeM9k/+bgmxSW8MtSwhrB9sK/oO7FgmpSLs="
+        "name": "System.Security.Cryptography.X509Certificates.ha8unomn85.wasm",
+        "integrity": "sha256-h4O+YpHSawujBDPC6VIgdrvFG/DwhmLtKQWaWrPvffQ="
       },
       {
         "virtualPath": "System.Security.Cryptography.wasm",
-        "name": "System.Security.Cryptography.f5cgdqs337.wasm",
-        "integrity": "sha256-fQkTYT6ABHztvjEdtGn8GrVUdGvwiaHlGnYIr4ZKLmY="
+        "name": "System.Security.Cryptography.k3w9v7ue50.wasm",
+        "integrity": "sha256-QJpzemleE1G7DoWqPxhIsz0VGQ39onjjkxCZIBSAgWY="
       },
       {
         "virtualPath": "System.Security.Principal.Windows.wasm",
-        "name": "System.Security.Principal.Windows.6vay03s7pu.wasm",
-        "integrity": "sha256-gteCE33TF5wyXTeR063+HZwgGqUP5MF01cWey6K4GAM="
+        "name": "System.Security.Principal.Windows.xecxe1aqkj.wasm",
+        "integrity": "sha256-GU8SeAu2VYxmSyTNbCKkx7Prg6hGGp1JclbRo9lnbiU="
       },
       {
         "virtualPath": "System.Security.Principal.wasm",
-        "name": "System.Security.Principal.q88jaff799.wasm",
-        "integrity": "sha256-ekZwN6LsBxE6JMtSi6jNNZ8l+PhtkFQa5tjaKONHTeE="
+        "name": "System.Security.Principal.60u8ec2sxl.wasm",
+        "integrity": "sha256-GhgxN265Hnrb++RANZUp/PjjUmCHd5q+rju9sFLStyg="
       },
       {
         "virtualPath": "System.Security.SecureString.wasm",
-        "name": "System.Security.SecureString.hb54ys7isu.wasm",
-        "integrity": "sha256-E8qN5uyGVHXMiiiY66/Gm6bUKcSXy32GYZlkpIN0bxA="
+        "name": "System.Security.SecureString.eim2t43py4.wasm",
+        "integrity": "sha256-dhu3HwNFqdM6H4nln0ILjPR8bh9H+zMFMy3ajbl5TEs="
       },
       {
         "virtualPath": "System.Security.wasm",
-        "name": "System.Security.f6krzjlgrw.wasm",
-        "integrity": "sha256-5x16E/PPE8IuSIlUoPjVlh33uMhayzX75nQ1lmZAEO0="
+        "name": "System.Security.n9s9f533o4.wasm",
+        "integrity": "sha256-W4rsIX/JstFGb9BuFPEshwSqlqbmaZHYNrF7aRxYggI="
       },
       {
         "virtualPath": "System.ServiceModel.Web.wasm",
-        "name": "System.ServiceModel.Web.rbntdrde7r.wasm",
-        "integrity": "sha256-qRuwsyVaLzjhv7ubB2NL6IsmMwuVUXjHDzKRMWfjWM0="
+        "name": "System.ServiceModel.Web.0gnfditp44.wasm",
+        "integrity": "sha256-kBbb3QDrvSCgSerndOm7zlCCo4AANOUw3EoJ4bWO6p8="
       },
       {
         "virtualPath": "System.ServiceProcess.wasm",
-        "name": "System.ServiceProcess.qyilso7t8z.wasm",
-        "integrity": "sha256-Qv9WjGzt98I3CaqNrUwr32NV/uZU0oP9RdP6BLl9Z58="
+        "name": "System.ServiceProcess.isfmih530m.wasm",
+        "integrity": "sha256-cj8Q4z7X9AoM9eqcJgDEGh/Y0+3tCS3i1WjuODB39Uw="
       },
       {
         "virtualPath": "System.Text.Encoding.CodePages.wasm",
-        "name": "System.Text.Encoding.CodePages.17ayvhtqge.wasm",
-        "integrity": "sha256-HRungvyyDrs9mDy+17vbupNHAEKY3Z3H8NS3wO1qi+4="
+        "name": "System.Text.Encoding.CodePages.uujl0fau9d.wasm",
+        "integrity": "sha256-OuzhS1UJERfXfxJNFeB90xsx3+ZVkGOpXrDCXAKrirU="
       },
       {
         "virtualPath": "System.Text.Encoding.Extensions.wasm",
-        "name": "System.Text.Encoding.Extensions.nygy3jbhx1.wasm",
-        "integrity": "sha256-oXazY+HRVeLsh2aZG1T9rGwXoTdAJu3GKQZ3C6TLfZQ="
+        "name": "System.Text.Encoding.Extensions.mr1rkcnv13.wasm",
+        "integrity": "sha256-srV09G1PP9FVqF0aeuMZJq06N4tct5hcZ+CwpuqhqxY="
       },
       {
         "virtualPath": "System.Text.Encoding.wasm",
-        "name": "System.Text.Encoding.04hepsgj3x.wasm",
-        "integrity": "sha256-4Eg0jFhydpm3qIGrAydbuoXDAIMvDLlOo9kZLmfEUBQ="
+        "name": "System.Text.Encoding.g0sgi8atoh.wasm",
+        "integrity": "sha256-MLyR55YLzFGLmUJhYXAgL1eSlVsoLM9DZ9AF3yjHjek="
       },
       {
         "virtualPath": "System.Text.Encodings.Web.wasm",
-        "name": "System.Text.Encodings.Web.bjfqt0dahs.wasm",
-        "integrity": "sha256-J17dmTiHubRkZhNBWYtDKL0LYC0uyVbwFsg5t5zpijg="
+        "name": "System.Text.Encodings.Web.mb9atwjqsn.wasm",
+        "integrity": "sha256-TkUE2WeUuuig9GrdHEkGpl+x/jBXcGm7808V2hVagOo="
+      },
+      {
+        "virtualPath": "System.Text.Json.wasm",
+        "name": "System.Text.Json.hphxl2km4u.wasm",
+        "integrity": "sha256-5RTaN0JxaGJllfLtZwuEDWQg9xaBZGpF+tIrpPlkdTc="
       },
       {
         "virtualPath": "System.Text.RegularExpressions.wasm",
-        "name": "System.Text.RegularExpressions.pg4zhyyp9k.wasm",
-        "integrity": "sha256-pyWsqNx0HwjL6/jbWNce4C1uzIyHCWyotT5mHWy3bqM="
+        "name": "System.Text.RegularExpressions.6a9cxw2dq7.wasm",
+        "integrity": "sha256-AqWnwO3chHjgXyNSmYw2kuDbdhDPsnvczcm7WMD62i8="
       },
       {
         "virtualPath": "System.Threading.AccessControl.wasm",
-        "name": "System.Threading.AccessControl.sbjd1gkt6y.wasm",
-        "integrity": "sha256-6Pvpqc1NgW7xyxxrNbHsoCgWHSFHaVkBs6Be+9si2V8="
+        "name": "System.Threading.AccessControl.m54ktoxm2s.wasm",
+        "integrity": "sha256-9oC+LgyLlyfh/dxbG4/74EmhJnjGL8b1pOxfyvTMpwo="
       },
       {
         "virtualPath": "System.Threading.Channels.wasm",
-        "name": "System.Threading.Channels.lvmlilj250.wasm",
-        "integrity": "sha256-7yK0GAk52eGHcqOzltleFrY+HH8KbvIhucRfeEnTWIM="
+        "name": "System.Threading.Channels.v1qpu5ozcz.wasm",
+        "integrity": "sha256-I6Ic+FPml+Z8jhdiwJXYiv/Ai1yAyc5I3kqF4r0JrAY="
       },
       {
         "virtualPath": "System.Threading.Overlapped.wasm",
-        "name": "System.Threading.Overlapped.gyxolnyjwp.wasm",
-        "integrity": "sha256-6JLze1yT+KYXQAIXRq14cTqgJxkY/wASLxtIrtGZXzI="
+        "name": "System.Threading.Overlapped.jgaekt0s0k.wasm",
+        "integrity": "sha256-javxIrC+o96lJ4/nvMq/pvpVcgpjQrzd5XH9g9C4u4k="
       },
       {
         "virtualPath": "System.Threading.Tasks.Dataflow.wasm",
-        "name": "System.Threading.Tasks.Dataflow.3osjsejwew.wasm",
-        "integrity": "sha256-HSSrFCuMO4G7h7d+zQodxL7RSodD6ygthGHC341izEU="
+        "name": "System.Threading.Tasks.Dataflow.tnzumxbiut.wasm",
+        "integrity": "sha256-98XOM2TEKDKy4hA9Ti0hd5xbl0h/4ZQ/0P23RwITACA="
       },
       {
         "virtualPath": "System.Threading.Tasks.Extensions.wasm",
-        "name": "System.Threading.Tasks.Extensions.1mcanyuddp.wasm",
-        "integrity": "sha256-p0JTgI1z4lP75tK5rpx2bnpynX2q8Ru7BAi2mZDxRBs="
+        "name": "System.Threading.Tasks.Extensions.abjpbegqw7.wasm",
+        "integrity": "sha256-+m5PwTeyBG2NOkwZKSnkYQcotGYGm6/TdclnpdFli40="
       },
       {
         "virtualPath": "System.Threading.Tasks.Parallel.wasm",
-        "name": "System.Threading.Tasks.Parallel.r6zpp982xl.wasm",
-        "integrity": "sha256-Y/t84VLoEkhnwFgMUZqi9Yfj4v0hTYE+qMcUxCs/Le4="
+        "name": "System.Threading.Tasks.Parallel.uopu4j1ll0.wasm",
+        "integrity": "sha256-ciLKVq3LBPOvNgR9AdzC4wfh6EEPb+08tCTjpXd5Nks="
       },
       {
         "virtualPath": "System.Threading.Tasks.wasm",
-        "name": "System.Threading.Tasks.pcj2ogebx4.wasm",
-        "integrity": "sha256-hzlMPtchlSuUXB/crf18ZUYAxTj9Fdaw5th1gU5KGhg="
+        "name": "System.Threading.Tasks.f8ooi2bwxq.wasm",
+        "integrity": "sha256-r9oq5YYeKRo+Xs1RLyHLlcociyVPcRJiSnJ4lrJUyDo="
       },
       {
         "virtualPath": "System.Threading.Thread.wasm",
-        "name": "System.Threading.Thread.04a10woh59.wasm",
-        "integrity": "sha256-cCnqwxaOn2xJMgfRsXrnXmQyUuiJu/fBqllOk4gAwlo="
+        "name": "System.Threading.Thread.icdc9s98z0.wasm",
+        "integrity": "sha256-bgh6805hir/uiGP4SdKhOF7HcW2z/Af4xypRqBAhj/o="
       },
       {
         "virtualPath": "System.Threading.ThreadPool.wasm",
-        "name": "System.Threading.ThreadPool.lmw2wobzj9.wasm",
-        "integrity": "sha256-U/5Kw/mTaJykZjDJcpGeSLxj9t4OwiWap3nzGBSol/M="
+        "name": "System.Threading.ThreadPool.sqmy5jnljd.wasm",
+        "integrity": "sha256-pKi/o3tTV4J6JY18/UXmERqG+9Ei9kjCJcsin7SJoOE="
       },
       {
         "virtualPath": "System.Threading.Timer.wasm",
-        "name": "System.Threading.Timer.poct2xeqhn.wasm",
-        "integrity": "sha256-h1R2vcQ97076p/GwBpPRpXqjBk/S0lh8ZNeMvNd4YZo="
+        "name": "System.Threading.Timer.n7hcp5usgn.wasm",
+        "integrity": "sha256-I6/NajKCnP5eXpeMKILLzGttnQ+BmwDAgDWRPRgj8gg="
       },
       {
         "virtualPath": "System.Threading.wasm",
-        "name": "System.Threading.qp7l28k3o3.wasm",
-        "integrity": "sha256-soOcih6t/V2Y775XsRm+4cna8E0NnPzDjtnC2kU6pVQ="
+        "name": "System.Threading.nxaopq8r9v.wasm",
+        "integrity": "sha256-pRGrYZ78tSeq+9d6cFTCUhRxYJwRGX3dSWCEJb33xSo="
       },
       {
         "virtualPath": "System.Transactions.Local.wasm",
-        "name": "System.Transactions.Local.6kd3xk8hdh.wasm",
-        "integrity": "sha256-Zrgg0PiFYuUjxGHilBpijjjTD6I80ICEmL0B+27/vZ0="
+        "name": "System.Transactions.Local.q4k65jbhaz.wasm",
+        "integrity": "sha256-auz8FcE2SKFTLameaNOZCiNisRJGnS8bYCHx7haHoIQ="
       },
       {
         "virtualPath": "System.Transactions.wasm",
-        "name": "System.Transactions.ump4so0y0l.wasm",
-        "integrity": "sha256-xtZYKOllBRFVorDF1D2RApRi1WSE8fOFsv2gWL/q3Cw="
+        "name": "System.Transactions.vnrbvecmwd.wasm",
+        "integrity": "sha256-Nei1TQva4sHGLKlPi/GvdwNdOTUPVfNs405///tsN7A="
       },
       {
         "virtualPath": "System.ValueTuple.wasm",
-        "name": "System.ValueTuple.8l2r2fcikp.wasm",
-        "integrity": "sha256-JJzcNUBWHQPPnOWVk6KyHIlk2SffBkKjqEyzT2VDaXo="
+        "name": "System.ValueTuple.6b0gmpb390.wasm",
+        "integrity": "sha256-blDN8OhZRiSF187D0z1M5o2M5aHP9rxvXIGxv130CwE="
       },
       {
         "virtualPath": "System.Web.HttpUtility.wasm",
-        "name": "System.Web.HttpUtility.jqny9b28k8.wasm",
-        "integrity": "sha256-VX4HXxvr+27q9682PsKSEVdwKHvcGlkPy+zMHvLlxPE="
+        "name": "System.Web.HttpUtility.cxyvb282ci.wasm",
+        "integrity": "sha256-cAqx0jsCodOgbls9FDyplzXB6ocmboR/yQx/mQSRWl4="
       },
       {
         "virtualPath": "System.Web.wasm",
-        "name": "System.Web.f3isiszv3w.wasm",
-        "integrity": "sha256-m3y3phZj6uNNguyeuCMkEZIz3lkRynaPOaiucgIAaR4="
+        "name": "System.Web.aeo7nmvkid.wasm",
+        "integrity": "sha256-QvbCXGr8iqtW9AN3b6v8Lzet6LLM33ySfjJ0v1LM1Bs="
       },
       {
         "virtualPath": "System.Windows.wasm",
-        "name": "System.Windows.q5sidjfnfu.wasm",
-        "integrity": "sha256-8pfabqlVMYqOCfXEQG8fSAv9WRuutWOaKop52tFYX64="
+        "name": "System.Windows.brg453rzbv.wasm",
+        "integrity": "sha256-KVE8aUAPPnPmLeWrhqZRqHfx5moeoEoXkZWjXswPO/o="
       },
       {
         "virtualPath": "System.Xml.Linq.wasm",
-        "name": "System.Xml.Linq.atp09gp5u7.wasm",
-        "integrity": "sha256-UsR0Y0lH0gSjh2syGbFPep0nV8ZAgnboX8y4i6jMlWc="
+        "name": "System.Xml.Linq.nmrhj7elbr.wasm",
+        "integrity": "sha256-HzUzg4lR8XskvD/2IthZHe4JiUrSB9NPfzJNKnL1cdc="
       },
       {
         "virtualPath": "System.Xml.ReaderWriter.wasm",
-        "name": "System.Xml.ReaderWriter.aojujok3am.wasm",
-        "integrity": "sha256-GhKWJndfG9FyzyLbf2gYHwCUHdJKlqmV92qhEcy0vyY="
+        "name": "System.Xml.ReaderWriter.91p1gp9557.wasm",
+        "integrity": "sha256-A+c69Te7Z6eqB2tvckBdVM5rTy5lfolUwUsGZ0jvpyg="
       },
       {
         "virtualPath": "System.Xml.Serialization.wasm",
-        "name": "System.Xml.Serialization.agak2gozwa.wasm",
-        "integrity": "sha256-Fsz/hbw7X2e02FlPziw7DkGo7WcyakVUgkJKe9KXwNg="
+        "name": "System.Xml.Serialization.ckvc8z5y7y.wasm",
+        "integrity": "sha256-zG6ZkeNKtHZbGyusdUopn9HLcfZYyiG90ZOsAh0WP/s="
       },
       {
         "virtualPath": "System.Xml.XDocument.wasm",
-        "name": "System.Xml.XDocument.02w9zz751t.wasm",
-        "integrity": "sha256-eNbdUX8fYv3vgXdXDSM/58VRgJPDE7QvYre+1TqascQ="
+        "name": "System.Xml.XDocument.yqi6lt4nme.wasm",
+        "integrity": "sha256-am11JOmO484uml+v90svFmWD0obrJeQ7lxGBCWOc+wI="
       },
       {
         "virtualPath": "System.Xml.XPath.XDocument.wasm",
-        "name": "System.Xml.XPath.XDocument.33cyrav3at.wasm",
-        "integrity": "sha256-UXs9W1Z1j2/3x1nSuBgvgCnEtROUmFBXSk+btxWJs3U="
+        "name": "System.Xml.XPath.XDocument.3ukl29h35t.wasm",
+        "integrity": "sha256-uzLGbcvk9kZ0baKEO11TpSI93Y5oMrmkaM0mx7Ne0f4="
       },
       {
         "virtualPath": "System.Xml.XPath.wasm",
-        "name": "System.Xml.XPath.tvqmjgrks4.wasm",
-        "integrity": "sha256-Z+vO34JvsRn3VFl7G407FwtnK95SFYBm9vuV1XNwR+g="
+        "name": "System.Xml.XPath.mto1j3qx1a.wasm",
+        "integrity": "sha256-6vJuPXqveQAcCnwxUnRUHAaf9JJyKEPRwDdZEDM1utI="
       },
       {
         "virtualPath": "System.Xml.XmlDocument.wasm",
-        "name": "System.Xml.XmlDocument.wxidkaeb57.wasm",
-        "integrity": "sha256-3MLqz/ZCfGKMeOqte/pG8M69UxrhEE6kWyFVxs7Tkek="
+        "name": "System.Xml.XmlDocument.kp4g8oyokz.wasm",
+        "integrity": "sha256-2AMukrRhIuFp1rkDraESwzmZbaqOoa6kz++bxtm3jHE="
       },
       {
         "virtualPath": "System.Xml.XmlSerializer.wasm",
-        "name": "System.Xml.XmlSerializer.wz2ns3vb1t.wasm",
-        "integrity": "sha256-FFmdIoqfSMWK+2KHkRgmosixjn09Lx2GNWg4+8YVxTA="
+        "name": "System.Xml.XmlSerializer.1mt75y9wos.wasm",
+        "integrity": "sha256-V/GIQFT2gkPoQGlXHjLoQ2Yev2nBFSC2tfDXNRKYCGc="
       },
       {
         "virtualPath": "System.Xml.wasm",
-        "name": "System.Xml.96ugyjhhs1.wasm",
-        "integrity": "sha256-wdqvDcI4c+Y53jmjhgm6hB8OytZf6iiY1V//BfG+DmE="
+        "name": "System.Xml.5s4754zdrc.wasm",
+        "integrity": "sha256-9ThjkczNOE9N4dDG94cO+MDWKNziO6N71wzXaLcvvrA="
       },
       {
         "virtualPath": "System.wasm",
-        "name": "System.7ivh8t028t.wasm",
-        "integrity": "sha256-QSo5msDSOeSNfKGOHymqidG/WhFiQfS1+OHRbPAVl48="
+        "name": "System.802vhulao5.wasm",
+        "integrity": "sha256-6NTPYNI6n3oO57u2wa7lzDTHPFL2ZX2i25hpw7j7xDU="
       },
       {
         "virtualPath": "WindowsBase.wasm",
-        "name": "WindowsBase.t8009apkm8.wasm",
-        "integrity": "sha256-PaL8FZzeN08X4B9lnn0Rzfkdz/UzrOfHGVRr2v8p8c4="
+        "name": "WindowsBase.8yv9o2iuhl.wasm",
+        "integrity": "sha256-AAqTAi+vgOcStGpiy9Y9e1b6rGzlfaEPdg3wtsG0yIM="
       },
       {
         "virtualPath": "mscorlib.wasm",
-        "name": "mscorlib.2hudslz60a.wasm",
-        "integrity": "sha256-emSsjRV2LKaEomf4hjRYICERFvrg8xxumtbgtbV75cQ="
+        "name": "mscorlib.d4fuuhbiqe.wasm",
+        "integrity": "sha256-82UMflQuWomOXTd29akEcY13QLehNcDOVqIwvKLH/kQ="
       },
       {
         "virtualPath": "netstandard.wasm",
-        "name": "netstandard.j4ilm936ku.wasm",
-        "integrity": "sha256-A5mxY/s9ROoUSC44GE0cwB2iIyoYUITC8vTORChFwjk="
+        "name": "netstandard.qwxk4mrnbx.wasm",
+        "integrity": "sha256-qvS8z84YdecQR/SxYISAg7okb66AKCp1kOEtPuat9hs="
       },
       {
         "virtualPath": "compiler.wasm",
-        "name": "compiler.h5rzmcrw3q.wasm",
-        "integrity": "sha256-y1X5UXOfPg+w2s3uLFXG4mSPl/kdjLFMOM1CJpFzE4g="
+        "name": "compiler.c0oahebakd.wasm",
+        "integrity": "sha256-DHGckjSg8u09BGBsTN06vsVf3rzM/Qi6bPbMsJpMe0k="
       }
     ],
     "pdb": [
       {
         "virtualPath": "compiler.pdb",
-        "name": "compiler.tvg61vj3c7.pdb",
-        "integrity": "sha256-+Qdp5jkER19yAG8vVfkxkIqmchsyMEqQRA/7uGUzRA8="
+        "name": "compiler.0ycdege2jf.pdb",
+        "integrity": "sha256-yPA40WSrYHgX0iMBK/UrlLgm/FvN4sB6O7gXGB7p+sA="
       }
     ],
     "satelliteResources": {
       "cs": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.azbzwnm97j.wasm",
-          "integrity": "sha256-mlyPvIy/aTrD9cWR+naU3dIlgyi0Hd5XLyFjgSiNIwo="
+          "name": "Microsoft.CodeAnalysis.resources.k2w3mhwa07.wasm",
+          "integrity": "sha256-5AAoE+VEEKjOKppvnO0NXWR+FfDFviAAz6dirSZXXkc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.ncyjg21q77.wasm",
-          "integrity": "sha256-pxzSGpQdM/slmFBgQf8QMehjkKWMozPJYzfPqW5HeVc="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.xfa6pu1alu.wasm",
+          "integrity": "sha256-owSBVY320uiTlbt4DYYZnH4X76tZBdbWYGhiA1Sd9jo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.xahtunrvma.wasm",
-          "integrity": "sha256-2QapptlLRPZU8oSk9rh6ofJ/8ptisfsMoUJyuFoJQPA="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.twnsm9mflg.wasm",
+          "integrity": "sha256-DSK+odmVy4U/72dM+VWe5ACOHs/qFWWexAJ7BtbT7Mg="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.glch3zuqym.wasm",
-          "integrity": "sha256-BAk+Ol0YIyIPbEC3FuZHtjOGxxwuVtTDvB1t/SUzg08="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.uv38xb70xb.wasm",
+          "integrity": "sha256-qgIv/iIeqUxbEnQ/Bjj70eRBQ/ZzKo5gm2kxF4hg60A="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.v0cr9c01q3.wasm",
-          "integrity": "sha256-nw5u45EUdqoE1J2YQfR7C37I1dmuwGLo9evUPnyL+B8="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.ix8z21lnuz.wasm",
+          "integrity": "sha256-CvJq4XNNFrDbRb9aPXqfAYcFvcBxS2X0ESgAKFalqwk="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.g3hovypeve.wasm",
-          "integrity": "sha256-jMMsHr4NzccRIX+QynY9/UQozO54jum6INXFYn5dUNo="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.19kzaraf2j.wasm",
+          "integrity": "sha256-RUdTeKysikZvzJmLdfWhz8xz2vsYBT+WxCvM+zxhA+k="
         }
       ],
       "de": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.uxm2gznvff.wasm",
-          "integrity": "sha256-XnOwMjY5/+DsrMdTu6tlf+FF5JbUGf0DZCeqDZrS9Nk="
+          "name": "Microsoft.CodeAnalysis.resources.jrul1nigrc.wasm",
+          "integrity": "sha256-/ws8akfgIPA946chWhnykIj60oqzui+aI7PiBvYc9gc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.nrmkzk2qqa.wasm",
-          "integrity": "sha256-QyPHORDObecDXST5xMuf7MOjs86CBuGI3xViI+xovF8="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.f2gywvfjln.wasm",
+          "integrity": "sha256-Kc4HSwAO5vK29dkOuhT//RP6bv4RFv5x3JbDaYRe/OE="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.rle74e9jdp.wasm",
-          "integrity": "sha256-rxEYe3zXeFVQ4KGwMcQWpnWVbwKMeV4gUt1YSon8xUw="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.qiezfgxkoi.wasm",
+          "integrity": "sha256-vgzOC83AWxeAvx6JfW8Rfzx9rVDUdiGaKmSCEvAu0f0="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.3mfzxsme75.wasm",
-          "integrity": "sha256-y8oOgaw/GVEmI/d4xVfxHj/r2yeMytdfdxa97CmhQtg="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.duhon6qcbk.wasm",
+          "integrity": "sha256-q6Az8tKUDy/zuonwB0FrPxpGMpPIT3jvSTTkGtajyDo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.51hsea87zy.wasm",
-          "integrity": "sha256-ObtMrur1IIcCXAMBS8bFXtdQxanf/NvlFL8X5sF8aKg="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.kj79e7yk6c.wasm",
+          "integrity": "sha256-cPgKz8Ta7EArIMOw4NSPMMg7sbmD7FAJ1HOWSQrg9JE="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.emy289h252.wasm",
-          "integrity": "sha256-xndogMRuwJx9pxJSIC8l6eWLaFH1a39ZVU2BC9/I1ak="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.fr7rfz9kts.wasm",
+          "integrity": "sha256-9TRG9OgsETX0LzlmmYw2KTrimnBR/pVdD4nTm983eC8="
         }
       ],
       "es": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.ec0xfu5e6x.wasm",
-          "integrity": "sha256-/vbzh2wSibkLG+hxBNdOvithq0WREjHZI9USfqETzd0="
+          "name": "Microsoft.CodeAnalysis.resources.gs17fo235q.wasm",
+          "integrity": "sha256-0LPqXNHrSpxy0auus32GhLiEWOrSpOk4X3dLIi0IdWo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.7u63wh3avx.wasm",
-          "integrity": "sha256-oQbGJX2FzuOnM40Kb8YEjIQax6I+o1FvPXyTpMfVepI="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.hxim79cv9u.wasm",
+          "integrity": "sha256-VbQC1BlGdcNw7OQRzt+hyN9vno7v9vZ6MmmFONV9Zhk="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.cv3mgmxsv9.wasm",
-          "integrity": "sha256-6Ao5RsHL7jXHczaARlk/gHbAOrPr8eY2BzYYoVKgpxw="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.2fps4apfsm.wasm",
+          "integrity": "sha256-rqsHaOyox/ciiTtZo5xV+9xkznWGPKgVf1p4PITQ8zQ="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.3n2xu2fkks.wasm",
-          "integrity": "sha256-n6FQXHdWmW0rRTVI1MYY4jqFHYDijkdf5zOmT1NLHdM="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.3yea7c6my1.wasm",
+          "integrity": "sha256-1Z7bHjH3WePImmXj6sfzKqfREamu5gbyQBjh/B5oE6g="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.evc7j9kssq.wasm",
-          "integrity": "sha256-6jP8sQ9gsVFrV+mFMmsGL7M2LW7Cfl0e2ERhKd8fpM0="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.a60msc5gi6.wasm",
+          "integrity": "sha256-nrlpOygdUMLa6mJ89lLdAWyKCu6AGBpdCQZCHQ259WQ="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.tan2fcgo2r.wasm",
-          "integrity": "sha256-i/6ouCSNqDTq8XSVqwEVtgvX5cVndy5XkLp2HIz/fnc="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.8txpr7w59n.wasm",
+          "integrity": "sha256-lNHQdm2nofay47a5HX+Q5H/bT4EtLg4uOVIEilIPB0Q="
         }
       ],
       "fr": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.udwqjg1mda.wasm",
-          "integrity": "sha256-jhZ+Q0gSqxX6phNcgIwZy9p0Pz7EdbFCrXBrtsls1mA="
+          "name": "Microsoft.CodeAnalysis.resources.mw7bxyd1cx.wasm",
+          "integrity": "sha256-OmpuoghrvMmkX6qg0xZBDL/zieLnPaiUNXC537v5M7w="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.yiwbzamycv.wasm",
-          "integrity": "sha256-ljtkxxDpZ57IdAOGi0BjhomnAssAojYKklGmb+MxuBs="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.nxyt3ca9i7.wasm",
+          "integrity": "sha256-5Tb5QIBz1A7O5D8ZZXkNEEHVO4aP/QXTkWSdh6nuiRs="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.z1hggb0y3z.wasm",
-          "integrity": "sha256-V1YO3dBWBDtKjqxkMBuKX/5JW4qX1rQ1ZqNFYmLKhpg="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.1jmchu9kgf.wasm",
+          "integrity": "sha256-DXYc6cSMnYEKjjlU10z4ZDKIR3rJw24PNkFQjVAg/Rc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.jtpg4r6zw4.wasm",
-          "integrity": "sha256-SSmhrKTl7DmIthyX5WXhA3JqFrK4Rez/iXw3Vvcis2o="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.0tcex13g0k.wasm",
+          "integrity": "sha256-VM1zN5bZIwp9LZ2bcc9vdd0dFJaalxzx+WmTuBh6W9Y="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.iafwb4ru8y.wasm",
-          "integrity": "sha256-lj+yyavjiBy/A+qIxMO1bWrb0vKugGDBJdMCk4geMMU="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.5lyj3pleqr.wasm",
+          "integrity": "sha256-JxMRkPYOhuiT1zYktyDiFZiB/6Y0GK2GkBlA0si2LQg="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.8aysq2t2lw.wasm",
-          "integrity": "sha256-kI5q6MPiDgdhOfj6ASBWnxhYB0hOMxDeFolxgawiptw="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.0lbw7v84lk.wasm",
+          "integrity": "sha256-pMUK2zqFZZojYeHAO+2dCWPDbz1/hNlDhbqZHoCZYkk="
         }
       ],
       "it": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.86tqtx2upv.wasm",
-          "integrity": "sha256-0OjnaSwlweTjnDhi+nfZTko7nCMlOA+fGiL6fml5V10="
+          "name": "Microsoft.CodeAnalysis.resources.k2wkf7t3s8.wasm",
+          "integrity": "sha256-XFqlyThLxHRA7uL2blMZ5Y6Sl7Ftz8JOdtg+GTy8ItY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.465xyiyi1i.wasm",
-          "integrity": "sha256-lN03J4Ux8x+ewgl0TIBsNWX5yySMVEuOtITVTXKeh4w="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.iq2tgsxh7r.wasm",
+          "integrity": "sha256-5vygcBxPavXTsMvG3TIBjKY16wX9SXdB+1IpyMYqxE4="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.qywpdlptl3.wasm",
-          "integrity": "sha256-3hvKfvAu383TSQpA81WWYql1dnT4CL+DDJa14WiIMS8="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.puwdb4kxhw.wasm",
+          "integrity": "sha256-bx3tYLvEpOfMviXmUR9pUTILukdj+VBodw40bBvf7ks="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.hs6ws8elfc.wasm",
-          "integrity": "sha256-YcZm3nYwE1sBHPeTrbsmoJHRJ1UU7fRfNyzBXXuK/BI="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.xndxp3rbhz.wasm",
+          "integrity": "sha256-bdh4tB9ULS5XLkYrwBqQ9UMdxO/Eswru3PBWPz+7MnY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.ii6e2ugdyo.wasm",
-          "integrity": "sha256-etI4JU8TcAZzAhYSE/unc8rqSH7F88bcxXIgAEcsxmE="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.2hachj3qf9.wasm",
+          "integrity": "sha256-+rJG2BR8xEeVztvRwvjje3MUz3pTHXtd0Aqba5waiK4="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.tljkgh8rl0.wasm",
-          "integrity": "sha256-vys04gENScKCIg0xLU6nSTSNTBijGlEeK5QAWZtzJXY="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.zt36s7opzu.wasm",
+          "integrity": "sha256-5zBFIBWPbjFeCLw7Xsd9ZB7wdNEGLrSeZMLM8g2G+Is="
         }
       ],
       "ja": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.ner1z7do1e.wasm",
-          "integrity": "sha256-AXAAYzbCWQvP4VWolOBBZDvPJ/hxjI8p6bfsg6VqimQ="
+          "name": "Microsoft.CodeAnalysis.resources.6ydrix4n4z.wasm",
+          "integrity": "sha256-XvVDR01x6RN6BdmeIa/vY/cGPgvqliwAHfqdDzSDJLk="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.hi9e1rrn8r.wasm",
-          "integrity": "sha256-qYT18CC0AWdwbfE90bB/q/PeXLn6pjvSj1HcHfGpm34="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.oqxcfypbpj.wasm",
+          "integrity": "sha256-MEPSNbRhBo7LLZ0+q1/Tj1FxfRGb7r89FFzIcbtmdu4="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.sqiata1vol.wasm",
-          "integrity": "sha256-ZPItJaH3dz8HLw0N2QNhzZBLCPCsK0m9PaE9BzZY880="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.3kqyxpifwm.wasm",
+          "integrity": "sha256-DaBi9Ajg2O6c13kHbmxP+7KbgS2pfZEcJnoHkoaouaY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.jwuf4fl4ld.wasm",
-          "integrity": "sha256-zUUwHGujhNuIUYa9h59xuyHWZAjfL6cbFD8xLwKuGE8="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.hu86yp5g11.wasm",
+          "integrity": "sha256-t9elFDHp7LGnxEocgLZRoyFx7Ey9VoAb6yie+YdycFY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.2j7ab012ap.wasm",
-          "integrity": "sha256-YkAlGuLl4hD32u5e6nS8pO/lerEY/TkH9S6LfAGXS9Y="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.gmr50p933z.wasm",
+          "integrity": "sha256-GG8/KLkfVGl+OvzcmBXckSvHdlt1s/b9/dok/CWvBJg="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.a7tfnlchdd.wasm",
-          "integrity": "sha256-atOv2cXayTTVPxBttM78oEU2XvbpPJcm52ASfcIhGRc="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.93fwyaqel7.wasm",
+          "integrity": "sha256-Zf4YQmMVCxgYGqnkz9QvqZEg2kMJjsIhFEobDw/0Azk="
         }
       ],
       "ko": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.u9mscaqe3g.wasm",
-          "integrity": "sha256-wnNUgEa31P8Bvdti52QP1fOQQcvvViQDmMtMP2nnl18="
+          "name": "Microsoft.CodeAnalysis.resources.b1sticklb0.wasm",
+          "integrity": "sha256-L7VVAX3VTvIgZU474lTeBHgiuQxYl6NmSzRF+cmUjnk="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.998gjfe8qz.wasm",
-          "integrity": "sha256-MwPjNwHYVz3X3xvxzDupsG637ubEm65TVIPbS6fvL94="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.dqtqrrbrjm.wasm",
+          "integrity": "sha256-BdBnJdWVGophql3s9sQzqW6bchfg8OjbbAZHnXGejmo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.nkahbg8bp3.wasm",
-          "integrity": "sha256-x7oa03cEprs4TJIxWPDv73X1a+ZhDEzxewu7ZEAHvsc="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.bp234bdujy.wasm",
+          "integrity": "sha256-ke8XtUf+4m25xP0Qs39ryCS235nJjz6WizZMBy7lNeM="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.26rd1snw29.wasm",
-          "integrity": "sha256-yssF7DI18rQNRSpOSJHqLoHWnkPkYxdOBW4ial8Lo0g="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.vri9jfytj5.wasm",
+          "integrity": "sha256-tUkOSWbXEV7mK7pa7UObtJKYCoVguFUMj3VRRF0xWf8="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.5rbmzqek0s.wasm",
-          "integrity": "sha256-AXDVN/Yi+8hUctr2nKmhSjO96voruLbfT1z0tQnlGSU="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.vi17fpcv10.wasm",
+          "integrity": "sha256-d/be6B5QR9sGqNg0iuPQ4fOVyWI/50x0IFdXKNSi/Rc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.muf6eu4jeq.wasm",
-          "integrity": "sha256-vptbf+JmoxR2I1VfsPvTK2E6lJeLfIqe4KYhYMZ6aSk="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.5ocsmx07ez.wasm",
+          "integrity": "sha256-JelEuFlE08AMeqsWE1PR9+jwtieO38o8hEo9z/wC39s="
         }
       ],
       "pl": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.si9hlaf1s0.wasm",
-          "integrity": "sha256-dBft16QYqFgHThAnfDbPL14GgZO4xew3FuT2RvSJvDE="
+          "name": "Microsoft.CodeAnalysis.resources.aozvshmubu.wasm",
+          "integrity": "sha256-ptmMN4yy7w33vNswuxcAGfRZ3bU+fb+OPLTEYaDYWMc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.snlz6ty14s.wasm",
-          "integrity": "sha256-mO3VU//2bzWuSiCo2L/1+LmQ1T/1R9Cp/TjbZFTFz9U="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.s5wqb5jumu.wasm",
+          "integrity": "sha256-UPSZbnzGlFMo0zVa/HJFHpAMg71T7QXE2hJOzR3Phbs="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.zeiz2i0z3d.wasm",
-          "integrity": "sha256-BS5aX4t53ImgsQI5eZ4UGaSxqW4p88dMDAFQlY12B6k="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.7vgwd3747g.wasm",
+          "integrity": "sha256-nVkS/MOcBS6Titt62ZcZyufKaaRWMcD5O8R46llSvRo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.g4i0f9yk91.wasm",
-          "integrity": "sha256-QFGVsdSBS1TWZWme6spufxuBjANfPjFuR4NqiCsbuhA="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.ss5rik3zab.wasm",
+          "integrity": "sha256-5JeUgRL5OsvibVYllwte6hvNm3f0yvYK7Unsnq4Ermc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.gkm47blczk.wasm",
-          "integrity": "sha256-wPHpcM3g0tiSPKnJN4Yw01XIpviA7rNNfv1QlwHI7w0="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.zschwj1wsz.wasm",
+          "integrity": "sha256-E7dZG86saYEOXkgPD7VYye0CKo9C6mXsxBe5tXbrKho="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.90ofzrxtw9.wasm",
-          "integrity": "sha256-tzkylNbNjUmXKNrVCdoohGPoLsa55mDLM2ilrnKHVTM="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.kddnrje2p6.wasm",
+          "integrity": "sha256-eCr/kTEM/lEQgRTKfKtnQpXvPZM7RH7sFTQtP7yglW0="
         }
       ],
       "pt-BR": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.mn8z1j7j2b.wasm",
-          "integrity": "sha256-khOT3LEMbAh8DDtztJPeiiuLYDPdIBD6ckqK5W5lRG4="
+          "name": "Microsoft.CodeAnalysis.resources.zv156ps1rf.wasm",
+          "integrity": "sha256-MZ2Nk6Px9uy5e2UyGvLKtsWhfNoJpEhTF2kz0OiBbZ4="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.xarwohe7gy.wasm",
-          "integrity": "sha256-Oe6BxpPIYbJqQfzGcO8X/T/WeFUPxQ0mLYPPZnegLOc="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.1nstpkpk8i.wasm",
+          "integrity": "sha256-PU9QBM0MrfNN5qb6TDaoyTpi4zH9mfqLq9qtsdPxjrc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.mwrapdchf0.wasm",
-          "integrity": "sha256-xrho/rzjANBR6xvGOeATTqnDqta883FCxynT/+H90n4="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.y8p7o1wypw.wasm",
+          "integrity": "sha256-krd2UIEhG7t8HHty4nyHAljVnfn6gqzBn1We1gAFQLk="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.ag49p40ok2.wasm",
-          "integrity": "sha256-yscz/1353KsKOJ3sGhz8uA2P5LT2rzNnWJ9PNUnbRmc="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.b85f71hxnh.wasm",
+          "integrity": "sha256-OyN6udXk/9lxjF7Isgxnb9gs2svrh0/KH3NQcvTz++0="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.u9aadhb4vj.wasm",
-          "integrity": "sha256-ghODcUl7gl5XzwVeb85Pxbxei0HwnA3RtN4K1wvZW50="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.7yahgb1qkz.wasm",
+          "integrity": "sha256-r/1s0lJNjXwiKvAKQ9rWibYKIrvetFlfvuYN2YPj1KY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.zudxo5gd8d.wasm",
-          "integrity": "sha256-la8Vh8qyqp/9QjsZ1Zauz1UXUpBHKVdg7DwGIXRcx6M="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.7y97jvbmw3.wasm",
+          "integrity": "sha256-4dJOQ+FOZPLjj7cMIF6s5MlmNRJOjmLaUPO/Nn8MF7U="
         }
       ],
       "ru": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.h3mfsuyol9.wasm",
-          "integrity": "sha256-Y+54eupiktzb2rnvJIfO8kTru7uv7j4SEncDmfjOe5Y="
+          "name": "Microsoft.CodeAnalysis.resources.jrtuwdet4j.wasm",
+          "integrity": "sha256-0Xnb8+I6FK+UeuOIXmECjBa2JXg6A242nqE/3WxwJ1k="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.u5qr7p1vic.wasm",
-          "integrity": "sha256-zgdEQNh/n56dpU21YmaNRBf0ARPO5DALw3JGr5HMjQQ="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.dpk6yazkd5.wasm",
+          "integrity": "sha256-UaiTpeLfoLlZB7k+dztw4YOwh2R/yUY+LQ/4uE4LyDo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.p42b90dnqv.wasm",
-          "integrity": "sha256-d+ePLt5nw+STIg8XmR+5OszVBfBrg24CuO4QVMVSQKk="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.6o8h5a7s2a.wasm",
+          "integrity": "sha256-2rw29vx+wnLc6ays+Dr4/MfOewDWP3wE0UEaTwyh3S8="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.o1hvwndqwv.wasm",
-          "integrity": "sha256-DJQxoNl+MUFfdIPnUN/yb+I+shxiJJVSx7WWwyXi1sg="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.v0bbfe7ukp.wasm",
+          "integrity": "sha256-j2NaN6UuUYFIjmQ7mjFbBxCP2LkKzNVEwWyPtjSySL8="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.1or4a8z4y3.wasm",
-          "integrity": "sha256-Ef+eQwCsotFE2HbieruJboHUUIrlxk2tY8Fl2Pda9ps="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.0yxjgi59s5.wasm",
+          "integrity": "sha256-aKWMbZD/Bcfvsr3TaMMEBt3C0niLxs09W62AuT+Umyg="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.nanmd097ls.wasm",
-          "integrity": "sha256-kWOCodcE9ReuhWAfecjA0QJT8c2m7OUh+CrU3VLMYGE="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.5cfnmmqxmq.wasm",
+          "integrity": "sha256-ZXvqXJrbrtpzoDczhp+ACXH8FidftfRPKcEArQwL3ko="
         }
       ],
       "tr": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.5zvghpcemm.wasm",
-          "integrity": "sha256-HwW8NLN7cTqlZfYe16gB/a3QCBO6ZGKi81rApQRTec4="
+          "name": "Microsoft.CodeAnalysis.resources.supgpk80d0.wasm",
+          "integrity": "sha256-HBDpI1dSfTKUI/LMl9LtFInbN7GMcHa0u+/Q26DeFGA="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.pwlsqlbbsk.wasm",
-          "integrity": "sha256-F2QjCvdgMhil7A5fgAZhgxmj4ws4A6BqTryGCfkQ3fI="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.uizefrs9ny.wasm",
+          "integrity": "sha256-VmZv/UnPi7FPtmNb6KSyKSy/oT5u1RsDPKIkQNSgErg="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.sm5b3c5hpx.wasm",
-          "integrity": "sha256-vOtwuic14BnkiNIAWSqioxtXnjq/2lgDLRX4buM1SvU="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.3cpfp24kxn.wasm",
+          "integrity": "sha256-A29HTkgCyRY6F4NtY01GDQfQIIktLmWoluEWSyP+A6s="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.0vdmvujudw.wasm",
-          "integrity": "sha256-VKl/GMl8PkPr9sGGQAVCOzLy9H+CLQ7HUQYIBLtFDKc="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.umwk8ohnvi.wasm",
+          "integrity": "sha256-Nho6fJ5UDrpeYTSzu/uzpBhiQsE0y9T41j/y29hBdic="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.zuap7ima7j.wasm",
-          "integrity": "sha256-xS2uJpWjkJL4SPxwDBR/PSvIc1ws/60zQnwvUw75/v0="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.453oln03ka.wasm",
+          "integrity": "sha256-6NbGE0e+xVJkT7LatizeNCL/5xTQi48G8D3xdyZjbyw="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.p617tdr33s.wasm",
-          "integrity": "sha256-P/00H6AWX1CxYD+8rpq5ErDB1qelp3Uc1Fv2iEyAVuk="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.uphkrecjin.wasm",
+          "integrity": "sha256-TvYmqtEe4SHWyXEOsAD3XkdfNFV4cvB0eac/AmDHE9Q="
         }
       ],
       "zh-Hans": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.v3jjn2jlhr.wasm",
-          "integrity": "sha256-helIZuiJmOS4iSCte80+TeV/keycWw4zMTad7TECc50="
+          "name": "Microsoft.CodeAnalysis.resources.uoqbwu4d5d.wasm",
+          "integrity": "sha256-3jN67QIzaCYlN25M3byvmhrUypuE8F57E786mKscmB8="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.xa5czk39rr.wasm",
-          "integrity": "sha256-Jxfdz3Jgmon5wrrZgjDG6+hTArh5VrZeQblT1tZuePA="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.hx2jjh9mf9.wasm",
+          "integrity": "sha256-a4OiCzt7JbjlbHS49JCgCY88sQLiif7HS9hKIfUKj7s="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.m6ucnmo7p7.wasm",
-          "integrity": "sha256-Mg3t5ehK0Caw7o7prNKXvClg3rQgCm67wTy4SncvHjA="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.fs88kym2we.wasm",
+          "integrity": "sha256-geU/R390Fg/DPw4EbOze7yy5TVnti6+PVJmex0ZSbSo="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.0679n81qoj.wasm",
-          "integrity": "sha256-eEwh3erTkEKl1zp4KoGyFj3I5fjX4sT7JYRZNIoFEyg="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.79zy19plb4.wasm",
+          "integrity": "sha256-BeR+mcoX6merz2aRAariIdPIv05U5ngQbnQuFgjM7Jc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.mpjam9iwdb.wasm",
-          "integrity": "sha256-tsM0HhQeAg3iKg7tUilyBLN3AjaxGQhos5DT+HGeUYY="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.gbijbf25ij.wasm",
+          "integrity": "sha256-fMp6Y/UTCnVuz9F/diZo/iD9K3EPL1K0ps869HvJrIc="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.n9c992ve2i.wasm",
-          "integrity": "sha256-pfi4I4oz/9b+brV4MIpNIL5+lkPzLOGW5jp9TdjA/YA="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.7horqp1cux.wasm",
+          "integrity": "sha256-Vd3bxvKNtYGElc5RwOQP4bi9g2XzFt6OAu0l1EhrE/Q="
         }
       ],
       "zh-Hant": [
         {
           "virtualPath": "Microsoft.CodeAnalysis.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.resources.xff2phc93y.wasm",
-          "integrity": "sha256-rVcHpYZCLuYlbIqfBE0mN4yXFwZCS2YbR7T5PyoeNo0="
+          "name": "Microsoft.CodeAnalysis.resources.cw5kdl8sc3.wasm",
+          "integrity": "sha256-3Hv6IJP0lj56wSIUL0jYPDINIz1sLup1I5Tt9uwIlGU="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.resources.pc7lskmtva.wasm",
-          "integrity": "sha256-eSTRMqYhBX0GTXPnSh4dY0hu7n/XPeRSmwIrNOcAOVE="
+          "name": "Microsoft.CodeAnalysis.CSharp.resources.nlbexjoxba.wasm",
+          "integrity": "sha256-xSB7bMK5Y8KOYtZjBTJ+ysPnxrkmH/a0TcaQmldtABY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.84ewjmqlhy.wasm",
-          "integrity": "sha256-ePqDMQ/SeRY7aK9L0lpsd7gnAKUKdqwL8nJBvXMtgEw="
+          "name": "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.ra50fj1r2c.wasm",
+          "integrity": "sha256-04XcBRjXn+IKppX5jACWNYk2wDXqH86RMNi7pcWjeEY="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.k9cdtkpeav.wasm",
-          "integrity": "sha256-qGME6faa+uzEhGwLnvk7yUZmV/rlzHUY6X+24hGASCM="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.resources.3snf57yw91.wasm",
+          "integrity": "sha256-I+faSZQeRQFN2BzixxJuBuUjWMqF160ffFHjb1yOvlE="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.h11kdu4hxg.wasm",
-          "integrity": "sha256-RSdaG2w482ojZ/YviUCnPbSg/OKagEODOkTR4i3iFyM="
+          "name": "Microsoft.CodeAnalysis.VisualBasic.Workspaces.resources.umvqfgpaxf.wasm",
+          "integrity": "sha256-puEhRs38bllKTmOzKiMD30wxemHc2JFStJD6x517FLQ="
         },
         {
           "virtualPath": "Microsoft.CodeAnalysis.Workspaces.resources.wasm",
-          "name": "Microsoft.CodeAnalysis.Workspaces.resources.9227t61asb.wasm",
-          "integrity": "sha256-MatRb/8ISAproozowr/GATwcM8eBN0qww7Z/hvEKiPg="
+          "name": "Microsoft.CodeAnalysis.Workspaces.resources.hz9zb8k7nm.wasm",
+          "integrity": "sha256-s9fnrOJAkwfS27dcYcdKwBrg2SNKfPa97nG8zVjmqGU="
         }
       ]
     }
