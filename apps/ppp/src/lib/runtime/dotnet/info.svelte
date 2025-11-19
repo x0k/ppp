@@ -2,6 +2,11 @@
   import { version } from "dotnet-runtime/version";
 
   import { LIBS } from "./test-compiler-factory";
+
+  const libs = LIBS.map(l => {
+    const i = l.lastIndexOf('/')
+    return i < 0 ? l : l.slice(i+1)
+  })
 </script>
 
 <p>
@@ -16,7 +21,7 @@
 <p>Available libraries:</p>
 
 <div class="grid grid-flow-row grid-cols-2 gap-x-2">
-  {#each LIBS as lib}
+  {#each libs as lib}
     <p class="truncate">
       {lib}
     </p>
