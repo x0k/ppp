@@ -1,6 +1,7 @@
 import type { CompilerFactory, Program } from 'libs/compiler';
 import type { Streams } from 'libs/io';
-import { inContext } from 'libs/context';
+import { createCachedFetch } from 'libs/fetch';
+import { createLogger } from 'libs/logger';
 import {
 	GoProgram,
 	makeCompilerFactory,
@@ -8,12 +9,21 @@ import {
 	makeGoExecutorFactory
 } from 'go-runtime';
 
-import wasmInit from 'go-runtime/compiler.wasm?init';
+import wasmUrl from 'go-runtime/compiler.wasm?url';
 
 export const makeGoCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
+	const logger = createLogger(streams.out);
+	const fetcher = createCachedFetch(await caches.open('go-cache'));
 	const goExecutorFactory = makeGoExecutorFactory(
-		makeGoCompilerFactory(await makeCompilerFactory((imports) => inContext(ctx, wasmInit(imports))))
+		makeGoCompilerFactory(
+			await makeCompilerFactory((imports) =>
+				WebAssembly.instantiateStreaming(fetcher(wasmUrl, { signal: ctx.signal }), imports).then(
+					(m) => m.instance
+				)
+			)
+		)
 	);
+	logger.info(`Loaded ${wasmUrl}`);
 	return {
 		async compile(ctx, files) {
 			if (files.length !== 1) {

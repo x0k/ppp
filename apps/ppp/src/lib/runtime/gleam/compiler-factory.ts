@@ -2,6 +2,7 @@ import { redirect, createLogger } from 'libs/logger';
 import type { CompilerFactory, Program } from 'libs/compiler';
 import type { Streams } from 'libs/io';
 import { compileJsModule } from 'libs/js';
+import { createCachedFetch } from 'libs/fetch';
 import { GleamModuleCompiler, type GleamModule, GleamProgram } from 'gleam-runtime';
 
 import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
@@ -14,12 +15,15 @@ const precompiledGleamStdlibIndexUrl = new URL(
 ).toString();
 
 export const makeGleamCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
-	const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
+	const logger = createLogger(streams.out);
+	const patchedConsole = redirect(globalThis.console, logger);
+	const fetcher = createCachedFetch(await caches.open('gleam-cache'));
 	const compiler = new GleamModuleCompiler(
 		streams.out,
 		precompiledGleamStdlibIndexUrl,
-		await WebAssembly.compileStreaming(fetch(compilerWasmUrl, { signal: ctx.signal }))
+		await WebAssembly.compileStreaming(fetcher(compilerWasmUrl, { signal: ctx.signal }))
 	);
+	logger.info(`Loaded ${compilerWasmUrl}`);
 	return {
 		async compile(_, files) {
 			if (files.length !== 1) {

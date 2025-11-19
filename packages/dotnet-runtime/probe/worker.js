@@ -1,17 +1,48 @@
 import { dotnet } from "./compiler/dotnet.js";
 
+export function createCachedFetch(cache) {
+  return async (url) => {
+    const request = new Request(url);
+    const cached = await cache.match(request);
+    if (cached) {
+      return cached.clone();
+    }
+    const response = await fetch(request);
+    if (response.ok && response.type === "basic") {
+      cache.put(request, response.clone());
+    }
+    return response;
+  };
+}
+
 onmessage = async (e) => {
   console.log("Message received from main script", e);
 
   const { setModuleImports, getAssemblyExports, getConfig } =
     await dotnet.create();
 
+  const load = createCachedFetch(await caches.open("dotnet-cache"));
+
+  let bytes;
   setModuleImports("main.js", {
     logger: {
       debug: (msg) => console.log(msg),
       info: (msg) => console.info(msg),
       warn: (msg) => console.warn(msg),
       error: (msg) => console.error(msg),
+    },
+    loader: {
+      load: (url) =>
+        load(url)
+          .then((r) => r.bytes())
+          .then(
+            (data) => {
+              bytes = data;
+              return 0;
+            },
+            () => 1
+          ),
+      getResult: () => bytes,
     },
   });
 
@@ -207,7 +238,9 @@ onmessage = async (e) => {
     "netstandard.dll",
   ];
 
-  let status = await exports.Compiler.Init(`${location.origin}/lib`, libs);
+  let status = await exports.Compiler.Init(
+    libs.map((l) => `${location.origin}/lib/${l}`)
+  );
   if (status !== 0) {
     throw new Error("Init failed");
   }
