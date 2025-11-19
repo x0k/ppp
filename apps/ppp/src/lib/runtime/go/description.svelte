@@ -7,7 +7,11 @@
     target="_blank"
     class="link"
     href="https://github.com/traefik/yaegi">Yaegi</a
-  > (compiled in WebAssembly with stdlib using go{version}) in a web worker environment.
+  > (compiled in WebAssembly with stdlib using go{version}, <a
+    target="_blank"
+    class="link"
+    href="https://github.com/traefik/yaegi/issues/1601">known limitations</a
+  >) in a web worker environment.
 </p>
 
 <p>
