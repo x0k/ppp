@@ -20,5 +20,5 @@ mk artifacts
 
 ## See also
 
-- [Client-side code playground 90+ languages/frameworks](https://github.com/live-codes/livecodes)
-- [Simple build automation tool mk](https://github.com/x0k/mk)
+- Client-side code playground 90+ languages/frameworks - [LiveCodes](https://github.com/live-codes/livecodes)
+- Simple build automation tool - [mk](https://github.com/x0k/mk)
