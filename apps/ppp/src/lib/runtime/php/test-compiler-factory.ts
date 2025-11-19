@@ -1,14 +1,20 @@
 import type { Context } from 'libs/context';
 import type { Streams } from 'libs/io';
-import { phpCompilerFactory, PHPTestProgram } from 'php-runtime';
 import type { TestCompiler } from 'libs/testing';
+import { createLogger, type Logger } from 'libs/logger';
+import { createCachedFetch } from 'libs/fetch';
+import { phpCompilerFactory, PHPTestProgram } from 'php-runtime';
 
 import phpWasmUrl from 'php-runtime/php.wasm?url';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
 export class PhpTestCompilerFactory {
-	constructor(protected readonly streams: Streams) {}
+	protected readonly logger: Logger;
+
+	constructor(protected readonly streams: Streams) {
+		this.logger = createLogger(streams.out);
+	}
 
 	async create<I, O>(
 		ctx: Context,
@@ -19,13 +25,15 @@ export class PhpTestCompilerFactory {
 				return generateCaseExecutionCode(data);
 			}
 		}
+		const fetcher = createCachedFetch(await caches.open('php-cache'));
 		const php = await phpCompilerFactory(ctx, async (info, resolve) => {
 			const { instance, module } = await WebAssembly.instantiateStreaming(
-				fetch(phpWasmUrl, { signal: ctx.signal, cache: 'force-cache' }),
+				fetcher(phpWasmUrl, { signal: ctx.signal }),
 				info
 			);
 			resolve(instance, module);
 		});
+		this.logger.info(`Loaded ${phpWasmUrl}`);
 		return {
 			compile: async (ctx, files) => {
 				if (files.length !== 1) {
