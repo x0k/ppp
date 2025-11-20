@@ -22,5 +22,7 @@
     "executionTimeout": "Таймаут выполнения (мс)",
     "executionTimeoutDescription": "Используйте ноль для отключения",
     "currently_untranslated_problem": "Данная проблема пока не переведена для вашего языка",
-    "input_mode": "режим ввода"
+    "input_mode": "режим ввода",
+    "problem_name_not_found": "Проблема \"{name}\" не найдена",
+    "back_to_problems": "Назад к проблемам"
 }

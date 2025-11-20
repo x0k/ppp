@@ -4,9 +4,9 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 
-	import type { Problem } from './model';
+	import type { ProblemMeta } from './model';
 
-	const { problem, content: dirtyContent }: { problem: Problem; content: Record<string, string> } =
+	const { meta, content: dirtyContent }: { meta: ProblemMeta; content: Record<string, string> } =
 		$props();
 
 	const lang = getLocale();
@@ -27,8 +27,8 @@
 </script>
 
 <svelte:head>
-	<title>{problem.titles[lang]}</title>
+	<title>{meta.titles[lang]}</title>
 </svelte:head>
 
-<h1 class="capitalize">{problem.titles[lang]}</h1>
+<h1 class="capitalize">{meta.titles[lang]}</h1>
 {@html marked.parse(content)}

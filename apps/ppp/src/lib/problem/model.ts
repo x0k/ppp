@@ -1,15 +1,23 @@
-import type { TestCompilerFactory } from 'libs/testing';
+import type { TestCase, TestCompilerFactory } from 'libs/testing';
 
 import { m } from '$lib/paraglide/messages';
 import type { Locale } from '$lib/paraglide/runtime';
 import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 
-export interface Problem {
-	titles: Record<Locale, string>
-}
-
 export enum ProblemCategory {
 	DesignPatterns = 'design-patterns'
+}
+
+export interface ProblemMeta {
+	titles: Record<Locale, string>;
+	category: ProblemCategory;
+}
+
+export interface Problem<I, O> {
+	meta: ProblemMeta;
+	content: Record<string, string>;
+	runtimes: Record<string, Runtime<I, O>>;
+	testCases: TestCase<I, O>[];
 }
 
 export const PROBLEM_CATEGORIES = Object.values(ProblemCategory);

@@ -13,5 +13,7 @@
     "execution_timeout": "execution timeout (ms)",
     "execution_timeout_description": "use zero to disable",
     "untranslated_content": "this content has not yet been translated into your language.",
-    "input_mode": "input mode"
+    "input_mode": "input mode",
+    "problem_name_not_found": "Problem \"{name}\" not found",
+    "back_to_problems": "Back to problems"
 }
