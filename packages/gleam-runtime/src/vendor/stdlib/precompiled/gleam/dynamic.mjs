@@ -421,26 +421,10 @@ export function result(decode_ok, decode_error) {
   };
 }
 
-function push_path(error, name) {
-  let name$1 = from(name);
-  let decoder = any(
-    toList([string, (x) => { return $result.map(int(x), $int.to_string); }]),
-  );
-  let _block;
-  let $ = decoder(name$1);
-  if ($ instanceof Ok) {
-    let name$2 = $[0];
-    _block = name$2;
-  } else {
-    let _pipe = toList(["<", classify(name$1), ">"]);
-    let _pipe$1 = $string_builder.from_strings(_pipe);
-    _block = $string_builder.to_string(_pipe$1);
-  }
-  let name$2 = _block;
-  return new DecodeError(
-    error.expected,
-    error.found,
-    listPrepend(name$2, error.path),
+function map_errors(result, f) {
+  return $result.map_error(
+    result,
+    (_capture) => { return $list.map(_capture, f); },
   );
 }
 
@@ -488,10 +472,26 @@ export function list(decoder_type) {
   };
 }
 
-function map_errors(result, f) {
-  return $result.map_error(
-    result,
-    (_capture) => { return $list.map(_capture, f); },
+function push_path(error, name) {
+  let name$1 = from(name);
+  let decoder = any(
+    toList([string, (x) => { return $result.map(int(x), $int.to_string); }]),
+  );
+  let _block;
+  let $ = decoder(name$1);
+  if ($ instanceof Ok) {
+    let name$2 = $[0];
+    _block = name$2;
+  } else {
+    let _pipe = toList(["<", classify(name$1), ">"]);
+    let _pipe$1 = $string_builder.from_strings(_pipe);
+    _block = $string_builder.to_string(_pipe$1);
+  }
+  let name$2 = _block;
+  return new DecodeError(
+    error.expected,
+    error.found,
+    listPrepend(name$2, error.path),
   );
 }
 

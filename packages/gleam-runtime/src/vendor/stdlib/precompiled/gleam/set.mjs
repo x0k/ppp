@@ -10,6 +10,8 @@ class Set extends $CustomType {
   }
 }
 
+const token = undefined;
+
 /**
  * Creates a new empty set.
  */
@@ -259,8 +261,6 @@ export function is_subset(first, second) {
 export function is_disjoint(first, second) {
   return isEqual(intersection(first, second), new$());
 }
-
-const token = undefined;
 
 /**
  * Inserts an member into the set.

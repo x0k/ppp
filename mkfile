@@ -100,7 +100,7 @@ gleam/:
     pnpm run build
   artifacts: compiler/* stdlib/*
   compiler/:
-    version="v1.13.0"
+    version="v1.14.0"
     name="gleam-${version}-browser"
     download:
       if [ ! -f "${name}.tar.gz" ]; then

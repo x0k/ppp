@@ -5,7 +5,6 @@ import {
   Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
-  isEqual,
 } from "../gleam.mjs";
 
 export class Some extends $CustomType {
@@ -78,7 +77,7 @@ export function all(list) {
  * ```
  */
 export function is_some(option) {
-  return !isEqual(option, new None());
+  return !(option instanceof None);
 }
 
 /**
@@ -97,7 +96,7 @@ export function is_some(option) {
  * ```
  */
 export function is_none(option) {
-  return isEqual(option, new None());
+  return option instanceof None;
 }
 
 /**
