@@ -2,10 +2,11 @@ import type { Streams } from 'libs/io';
 import { inContext, type Context } from 'libs/context';
 import type { TestCompiler } from 'libs/testing';
 import { createLogger, type Logger } from 'libs/logger';
-import { createCachedFetch } from 'libs/fetch';
 import { RubyTestProgram, createRubyVM } from 'ruby-runtime';
 
 import rubyWasmUrl from 'ruby-runtime/ruby.wasm?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
@@ -25,7 +26,7 @@ export class RubyTestCompilerFactory {
 				return generateCaseExecutionCode(input);
 			}
 		}
-		const fetcher = createCachedFetch(await caches.open('ruby-cache'));
+		const fetcher = await createCachedFetch('ruby-cache@', rubyWasmUrl);
 		const rubyWasmModule = await WebAssembly.compileStreaming(
 			fetcher(rubyWasmUrl, { signal: ctx.signal })
 		);

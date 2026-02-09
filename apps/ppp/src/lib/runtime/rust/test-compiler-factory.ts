@@ -1,11 +1,12 @@
 import type { Context } from 'libs/context';
-import { createCachedFetch } from 'libs/fetch';
 import type { Streams } from 'libs/io';
 import { createLogger, type Logger } from 'libs/logger';
 import type { TestCompiler } from 'libs/testing';
 import { RustTestProgram, createWASI } from 'rust-runtime';
 
 import miriWasmUrl from 'rust-runtime/miri.wasm?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 const libsUrls = import.meta.glob('/node_modules/rust-runtime/dist/lib/*', {
 	eager: true,
@@ -36,7 +37,10 @@ export class RustTestCompilerFactory {
 				return transformResult(data);
 			}
 		}
-		const fetcher = createCachedFetch(await caches.open('rust-cache'));
+		const fetcher = await createCachedFetch(
+			'rust-cache@',
+			`${miriWasmUrl}|${Object.values(libsUrls).join('|')}`
+		);
 		const [miri, libs] = await Promise.all([
 			await WebAssembly.compileStreaming(
 				fetcher(miriWasmUrl, { signal: ctx.signal }).then((r) => {

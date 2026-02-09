@@ -1,6 +1,5 @@
 import type { CompilerFactory, Program } from 'libs/compiler';
 import type { Streams } from 'libs/io';
-import { createCachedFetch } from 'libs/fetch';
 import { createLogger } from 'libs/logger';
 import {
 	GoProgram,
@@ -11,9 +10,11 @@ import {
 
 import wasmUrl from 'go-runtime/compiler.wasm?url';
 
+import { createCachedFetch } from '$lib/fetch';
+
 export const makeGoCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);
-	const fetcher = createCachedFetch(await caches.open('go-cache'));
+	const fetcher = await createCachedFetch('go-cache@', wasmUrl);
 	const goExecutorFactory = makeGoExecutorFactory(
 		makeGoCompilerFactory(
 			await makeCompilerFactory((imports) =>

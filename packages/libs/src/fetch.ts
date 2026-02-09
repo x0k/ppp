@@ -14,3 +14,13 @@ export function createCachedFetch(cache: Cache) {
     return response;
   };
 }
+
+export async function cache(prefix: string, version: string) {
+  const name = `${prefix}${version}`;
+  for (const n of await caches.keys()) {
+    if (n.startsWith(prefix) && n !== name) {
+      await caches.delete(n);
+    }
+  }
+  return await caches.open(name);
+}

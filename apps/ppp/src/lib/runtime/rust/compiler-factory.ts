@@ -1,10 +1,11 @@
 import type { CompilerFactory, Program } from 'libs/compiler';
-import { createCachedFetch } from 'libs/fetch';
 import type { Streams } from 'libs/io';
 import { createLogger } from 'libs/logger';
 import { RustProgram, createWASI } from 'rust-runtime';
 
 import miriWasmUrl from 'rust-runtime/miri.wasm?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 const libsUrls = import.meta.glob('/node_modules/rust-runtime/dist/lib/*', {
 	eager: true,
@@ -14,7 +15,10 @@ const libsUrls = import.meta.glob('/node_modules/rust-runtime/dist/lib/*', {
 
 export const makeRustCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);
-	const fetcher = createCachedFetch(await caches.open('rust-cache'));
+	const fetcher = await createCachedFetch(
+		'rust-cache@',
+		`${miriWasmUrl}|${Object.values(libsUrls).join('|')}`
+	);
 	const [miri, libs] = await Promise.all([
 		await WebAssembly.compileStreaming(
 			fetcher(miriWasmUrl, { signal: ctx.signal }).then((r) => {

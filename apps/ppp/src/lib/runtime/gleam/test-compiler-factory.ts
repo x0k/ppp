@@ -3,11 +3,11 @@ import type { Streams } from 'libs/io';
 import { createLogger, redirect, type Logger } from 'libs/logger';
 import { compileJsModule } from 'libs/js';
 import type { TestCompiler } from 'libs/testing';
-import { createCachedFetch } from 'libs/fetch';
 import { JsTestProgram } from 'javascript-runtime';
 import { GleamModuleCompiler } from 'gleam-runtime';
 
 import { base } from '$app/paths';
+import { createCachedFetch } from '$lib/fetch';
 
 import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
 
@@ -36,7 +36,7 @@ export class GleamTestCompilerFactory {
 				return executeTest(m, input);
 			}
 		}
-		const fetcher = createCachedFetch(await caches.open('gleam-cache'));
+		const fetcher = await createCachedFetch('gleam-cache@', compilerWasmUrl);
 		const compiler = new GleamModuleCompiler(
 			this.streams.out,
 			precompiledGleamStdlibIndexUrl,

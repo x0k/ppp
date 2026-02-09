@@ -4,9 +4,10 @@ import type { TestCompiler } from 'libs/testing';
 
 import { JavaCompiler, JavaTestProgram, initFs, makeJVMFactory } from 'java-runtime';
 import { createLogger, type Logger } from 'libs/logger';
-import { createCachedFetch } from 'libs/fetch';
 
 import libZipUrl from 'java-runtime/doppio.zip?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 export interface Options<I, O> {
 	className?: string;
@@ -27,7 +28,7 @@ export class JavaTestCompilerFactory {
 		{ className = 'Test', classDefinitions, mainMethodBody, nativesFactory }: Options<I, O>
 	): Promise<TestCompiler<I, O>> {
 		const jvmFactory = makeJVMFactory(this.streams);
-		const fetcher = createCachedFetch(await caches.open('java-cache'));
+		const fetcher = await createCachedFetch('java-cache@', libZipUrl);
 		const libZipData = await fetcher(libZipUrl, {
 			signal: ctx.signal
 		}).then((response) => response.arrayBuffer());

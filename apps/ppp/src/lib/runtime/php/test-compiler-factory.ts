@@ -2,10 +2,11 @@ import type { Context } from 'libs/context';
 import type { Streams } from 'libs/io';
 import type { TestCompiler } from 'libs/testing';
 import { createLogger, type Logger } from 'libs/logger';
-import { createCachedFetch } from 'libs/fetch';
 import { phpCompilerFactory, PHPTestProgram } from 'php-runtime';
 
 import phpWasmUrl from 'php-runtime/php.wasm?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
@@ -25,7 +26,7 @@ export class PhpTestCompilerFactory {
 				return generateCaseExecutionCode(data);
 			}
 		}
-		const fetcher = createCachedFetch(await caches.open('php-cache'));
+		const fetcher = await createCachedFetch('php-cache@', phpWasmUrl);
 		const php = await phpCompilerFactory(ctx, async (info, resolve) => {
 			const { instance, module } = await WebAssembly.instantiateStreaming(
 				fetcher(phpWasmUrl, { signal: ctx.signal }),

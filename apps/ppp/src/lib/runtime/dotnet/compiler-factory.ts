@@ -201,7 +201,7 @@ import mscorlibDllUrl from 'dotnet-runtime/lib/mscorlib.dll?url';
 import netstandardDllUrl from 'dotnet-runtime/lib/netstandard.dll?url';
 
 import { base } from '$app/paths';
-import { createCachedFetch } from 'libs/fetch';
+import { createCachedFetch } from '$lib/fetch';
 
 const dotnetUrl = new URL(
 	`${base}/assets/dotnet/compiler/dotnet.js`,
@@ -402,9 +402,9 @@ export const makeDotnetCompiler: CompilerFactory<Streams, Program> = async (ctx,
 	const patchedConsole = redirect(globalThis.console, log);
 
 	const { dotnet } = await inContext(ctx, import(/* @vite-ignore */ dotnetUrl));
-	log.info(`Loaded ${dotnetUrl}`)
+	log.info(`Loaded ${dotnetUrl}`);
 	using _ = patch(globalThis, 'console', patchedConsole);
-	const libsLoader = createLibsLoader(createCachedFetch(await caches.open('dotnet-cache')));
+	const libsLoader = createLibsLoader(await createCachedFetch('dotnet-cache@', LIBS.join('|')));
 	const compilerModule: DotnetModule<CompilerModuleImports, CompilerModuleExports> =
 		await inContext(ctx, dotnet.create());
 	const compiler = await inContext(

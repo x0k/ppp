@@ -27,7 +27,7 @@ export function createLibsLoader(fetcher: Fetcher): DotnetLibsLoader {
             bytes = data;
             return 0;
           },
-          () => 1
+          () => 1,
         ),
     getResult: () => bytes,
   };
@@ -59,7 +59,7 @@ export class DotnetCompilerFactory {
     protected readonly compilerModule: DotnetModule<
       CompilerModuleImports,
       CompilerModuleExports
-    >
+    >,
   ) {}
 
   async create(dllUrls: string[]): Promise<DotnetCompiler> {

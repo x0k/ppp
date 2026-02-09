@@ -3,7 +3,6 @@ import { createLogger, redirect, type Logger } from 'libs/logger';
 import type { Streams } from 'libs/io';
 import { patch } from 'libs/patcher';
 import type { TestCompiler } from 'libs/testing';
-import { createCachedFetch } from 'libs/fetch';
 import {
 	DotnetCompilerFactory,
 	DotnetRuntimeFactory,
@@ -13,8 +12,6 @@ import {
 	DotnetTestProgram,
 	createLibsLoader
 } from 'dotnet-runtime';
-
-import { base } from '$app/paths';
 
 import humanizerDllUrl from 'dotnet-runtime/lib/Humanizer.dll?url';
 import microsoftBclAsyncInterfacesDllUrl from 'dotnet-runtime/lib/Microsoft.Bcl.AsyncInterfaces.dll?url';
@@ -202,6 +199,9 @@ import webAssemblyDllUrl from 'dotnet-runtime/lib/WebAssembly.dll?url';
 // import compilerDllUrl from "dotnet-runtime/lib/compiler.dll?url"
 import mscorlibDllUrl from 'dotnet-runtime/lib/mscorlib.dll?url';
 import netstandardDllUrl from 'dotnet-runtime/lib/netstandard.dll?url';
+
+import { base } from '$app/paths';
+import { createCachedFetch } from '$lib/fetch';
 
 const dotnetUrl = new URL(
 	`${base}/assets/dotnet/compiler/dotnet.js`,
@@ -416,7 +416,7 @@ export class DotnetTestCompilerFactory {
 	): Promise<TestCompiler<I, O>> {
 		const { dotnet } = await inContext(ctx, import(/* @vite-ignore */ dotnetUrl));
 		using _ = patch(globalThis, 'console', this.patchedConsole);
-		const libsLoader = createLibsLoader(createCachedFetch(await caches.open('dotnet-cache')));
+		const libsLoader = createLibsLoader(await createCachedFetch('dotnet-cache@', LIBS.join('|')));
 		const compilerModule: DotnetModule<CompilerModuleImports, CompilerModuleExports> =
 			await inContext(ctx, dotnet.create());
 		const compiler = await inContext(

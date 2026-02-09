@@ -6,10 +6,10 @@ d:
   pnpm run dev
 
 c:
-  pnpm run check
+  pnpm run check $@
 
 b:
-  pnpm run build
+  pnpm run build $@
 
 p:
   pnpm run preview

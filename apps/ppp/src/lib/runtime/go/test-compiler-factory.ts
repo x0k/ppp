@@ -2,7 +2,6 @@ import type { Context } from 'libs/context';
 import type { Streams } from 'libs/io';
 import type { TestCompiler } from 'libs/testing';
 import { createLogger, type Logger } from 'libs/logger';
-import { createCachedFetch } from 'libs/fetch';
 import {
 	makeCompilerFactory,
 	makeGoCompilerFactory,
@@ -11,6 +10,8 @@ import {
 } from 'go-runtime';
 
 import wasmUrl from 'go-runtime/compiler.wasm?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
@@ -30,7 +31,7 @@ export class GoTestCompilerFactory {
 				return generateCaseExecutionCode(input);
 			}
 		}
-		const fetcher = createCachedFetch(await caches.open('go-cache'));
+		const fetcher = await createCachedFetch('go-cache@', wasmUrl);
 		const goEvaluatorFactory = makeGoEvaluatorFactory<O>(
 			makeGoCompilerFactory(
 				await makeCompilerFactory((imports) =>
@@ -40,7 +41,7 @@ export class GoTestCompilerFactory {
 				)
 			)
 		);
-	  this.logger.info(`Loaded ${wasmUrl}`);
+		this.logger.info(`Loaded ${wasmUrl}`);
 		return {
 			compile: async (ctx, files) => {
 				if (files.length !== 1) {

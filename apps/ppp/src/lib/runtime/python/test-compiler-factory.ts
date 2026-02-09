@@ -1,5 +1,4 @@
 import type { Context } from 'libs/context';
-import { createCachedFetch } from 'libs/fetch';
 import type { Streams } from 'libs/io';
 import { createLogger, type Logger } from 'libs/logger';
 import type { TestCompiler } from 'libs/testing';
@@ -7,6 +6,8 @@ import { pyRuntimeFactory, PyTestProgram } from 'python-runtime';
 
 import wasmUrl from 'python-runtime/pyodide.wasm?url';
 import stdlibUrl from 'python-runtime/python-stdlib.zip?url';
+
+import { createCachedFetch } from '$lib/fetch';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
@@ -26,7 +27,7 @@ export class PythonTestCompilerFactory {
 				return generateCaseExecutionCode(data);
 			}
 		}
-		const fetcher = createCachedFetch(await caches.open('python-cache'));
+		const fetcher = await createCachedFetch('python-cache@', wasmUrl);
 		const pyRuntime = await pyRuntimeFactory(
 			ctx,
 			this.streams,

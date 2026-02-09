@@ -2,12 +2,12 @@ import { redirect, createLogger } from 'libs/logger';
 import type { CompilerFactory, Program } from 'libs/compiler';
 import type { Streams } from 'libs/io';
 import { compileJsModule } from 'libs/js';
-import { createCachedFetch } from 'libs/fetch';
 import { GleamModuleCompiler, type GleamModule, GleamProgram } from 'gleam-runtime';
 
 import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
 
 import { base } from '$app/paths';
+import { createCachedFetch } from '$lib/fetch';
 
 const precompiledGleamStdlibIndexUrl = new URL(
 	`${base}/assets/gleam`,
@@ -17,7 +17,7 @@ const precompiledGleamStdlibIndexUrl = new URL(
 export const makeGleamCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);
 	const patchedConsole = redirect(globalThis.console, logger);
-	const fetcher = createCachedFetch(await caches.open('gleam-cache'));
+	const fetcher = await createCachedFetch('gleam-cache@', compilerWasmUrl);
 	const compiler = new GleamModuleCompiler(
 		streams.out,
 		precompiledGleamStdlibIndexUrl,
