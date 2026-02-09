@@ -15,6 +15,9 @@ catalogs:
     vite-plugin-static-copy:
       specifier: ^3.2.0
       version: 3.2.0
+    vitest:
+      specifier: ^4.0.18
+      version: 4.0.18
 
 patchedDependencies:
   browserfs@1.4.3:
@@ -339,7 +342,7 @@ importers:
         specifier: workspace:*
         version: link:../libs
     devDependencies:
-      '@ruby/3.4-wasm-wasi':
+      '@ruby/4.0-wasm-wasi':
         specifier: ^2.8.1
         version: 2.8.1
       vite:
@@ -851,8 +854,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@ruby/3.4-wasm-wasi@2.8.1':
-    resolution: {integrity: sha512-lxID0PK2uj669VryTSytMQ9+HflzZgFyzKXLJH+tTOLYOK+VxUjUL8eae0UmCchrhmH1lODfkPPS68MB36uv7A==}
+  '@ruby/4.0-wasm-wasi@2.8.1':
+    resolution: {integrity: sha512-khK+7+/nRfbTf99YUf/edi1AUiZj6UnJygdRoG94IyumX773dxdnMQtecxfe1bW4imVAl4eOUZZQQKzMi8urJA==}
 
   '@ruby/wasm-wasi@2.7.2':
     resolution: {integrity: sha512-KiVtLRFUC4V9hiiNV+ABzZL8tYQ0/nhBEQw9Lu+wj4zxCOw43RYcu+Yru7hwlb8ADppGRKYSv0CeDQqZ8OSqKw==}
@@ -3138,7 +3141,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.53.2':
     optional: true
 
-  '@ruby/3.4-wasm-wasi@2.8.1':
+  '@ruby/4.0-wasm-wasi@2.8.1':
     dependencies:
       '@ruby/wasm-wasi': 2.7.2
 
