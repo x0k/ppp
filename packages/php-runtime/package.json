@@ -9,13 +9,13 @@
   },
   "dependencies": {
     "@php-wasm/universal": "^3.0.46",
-    "@php-wasm/web": "^3.0.46",
+    "@php-wasm/web-8-5": "^3.0.46",
     "libs": "workspace:*"
   },
   "devDependencies": {
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
-		"vite-plugin-static-copy": "catalog:"
+    "vite-plugin-static-copy": "catalog:"
   },
   "exports": {
     ".": "./dist/index.js",

@@ -39,21 +39,11 @@ export default defineConfig({
         }
       },
     },
-    {
-      name: "transform-php-imports",
-      transform(code, id) {
-        if (id.includes("@php-wasm/web/index.js")) {
-          return {
-            code: code.replace(/await import\(".*php_\d_\d\.js"\)/g, "{}"),
-          };
-        }
-      },
-    },
     dts(),
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/@php-wasm/web/php/jspi/8_4_14/php_8_4.wasm",
+          src: "node_modules/@php-wasm/web-8-5/jspi/8_5_2/php_8_5.wasm",
           dest: ".",
           rename: "php.wasm",
         },

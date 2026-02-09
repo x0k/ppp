@@ -6,11 +6,11 @@ import {
 import type { Context } from "libs/context";
 
 // @ts-expect-error hack
-import * as phpModule from "/node_modules/@php-wasm/web/php/jspi/php_8_4.js";
+import * as phpModule from "/node_modules/@php-wasm/web-8-5/jspi/php_8_5.js";
 
 export async function phpCompilerFactory(
   ctx: Context,
-  instantiateWasm: EmscriptenOptions["instantiateWasm"]
+  instantiateWasm: EmscriptenOptions["instantiateWasm"],
 ) {
   const phpRuntime = await loadPHPRuntime(phpModule, {
     instantiateWasm,
