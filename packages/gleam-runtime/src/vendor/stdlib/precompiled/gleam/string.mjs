@@ -629,17 +629,17 @@ export function utf_codepoint(value) {
   let i = value;
   if (i > 1_114_111) {
     return new Error(undefined);
-  } else if (value === 65_534) {
+  } else if (value === 65534) {
     return new Error(undefined);
-  } else if (value === 65_535) {
+  } else if (value === 65535) {
     return new Error(undefined);
   } else {
-    let i$1 = value;
-    if ((i$1 >= 55_296) && (i$1 <= 57_343)) {
+    let i = value;
+    if ((i >= 55_296) && (i <= 57_343)) {
       return new Error(undefined);
     } else {
-      let i$2 = value;
-      return new Ok(unsafe_int_to_utf_codepoint(i$2));
+      let i = value;
+      return new Ok(unsafe_int_to_utf_codepoint(i));
     }
   }
 }

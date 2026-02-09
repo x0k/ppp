@@ -12,8 +12,8 @@ interface EmscriptenSettings {
     imports: { [key: string]: any },
     successCallback: (
       instance: WebAssembly.Instance,
-      module: WebAssembly.Module
-    ) => void
+      module: WebAssembly.Module,
+    ) => void,
   ) => void;
 }
 
@@ -28,9 +28,9 @@ export const pyRuntimeFactory = async (
   streams: Streams,
   wasmInstance: (
     ctx: Context,
-    imports: WebAssembly.Imports
+    imports: WebAssembly.Imports,
   ) => Promise<WebAssembly.WebAssemblyInstantiatedSource>,
-  stdLibUrl: string
+  stdLibUrl: string,
 ): Promise<PyodideInterface> => {
   using _ = patch(
     globalThis,
@@ -53,12 +53,12 @@ export const pyRuntimeFactory = async (
               const text = stringifyError(e);
               const encoder = new TextEncoder();
               streams.err.write(encoder.encode(text));
-            }
+            },
           );
           return {};
         },
       });
-    }
+    },
   );
   const pyodide = await inContext(
     ctx,
@@ -66,10 +66,11 @@ export const pyRuntimeFactory = async (
       indexURL: "intentionally-missing-index-url",
       stdLibURL: stdLibUrl,
       lockFileURL: lockFilerUrl,
-    })
+    }),
   );
   pyodide.setStdin({
     stdin: streams.in.read.bind(streams.in),
+    isatty: true,
     autoEOF: false,
   });
   pyodide.setStdout({

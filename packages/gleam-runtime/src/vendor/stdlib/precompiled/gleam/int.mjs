@@ -569,11 +569,11 @@ function do_undigits(loop$numbers, loop$base, loop$acc) {
       if (digit >= base) {
         return new Error(new InvalidBase());
       } else {
-        let digit$1 = numbers.head;
+        let digit = numbers.head;
         let rest = numbers.tail;
         loop$numbers = rest;
         loop$base = base;
-        loop$acc = acc * base + digit$1;
+        loop$acc = acc * base + digit;
       }
     }
   }

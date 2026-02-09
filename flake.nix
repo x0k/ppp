@@ -1,8 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
+    nixpkgs2111.url = "github:NixOS/nixpkgs/nixos-21.11";
     mk.url = "github:x0k/mk";
   };
   outputs =
@@ -10,7 +10,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
-      nixpkgs-old,
+      nixpkgs2111,
       mk,
     }:
     let
@@ -24,7 +24,7 @@
       pkgs-unstable = import nixpkgs-unstable {
         inherit system;
       };
-      pkgs-old = import nixpkgs-old {
+      pkgs2111 = import nixpkgs2111 {
         inherit system;
         config = {
           permittedInsecurePackages = [ "nodejs-12.22.12" ];
@@ -55,9 +55,9 @@
             pkgs.nodejs_24
             pkgs.bun
             pkgs.pnpm
-            pkgs.go_1_25
+            pkgs.go_1_24
             pkgs-unstable.gleam
-            pkgs.python314
+            pkgs.python315
             pkgs.dotnet-sdk_10
           ];
           shellHook = ''
@@ -81,7 +81,7 @@
         };
         java = pkgs.mkShell {
           buildInputs = [
-            pkgs-old.nodejs-12_x
+            pkgs2111.nodejs-12_x
             pkgs.jdk8
           ];
           shellHook = ''
