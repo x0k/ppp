@@ -1,8 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11"; # For Node.js 12
+    nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-21.11";
     mk.url = "github:x0k/mk";
   };
   outputs =
@@ -55,9 +55,9 @@
             pkgs.nodejs_24
             pkgs.bun
             pkgs.pnpm
-            pkgs.go_1_25
+            pkgs.go
             pkgs-unstable.gleam
-            pkgs.python314
+            pkgs.python315
             pkgs.dotnet-sdk_10
           ];
           shellHook = ''
