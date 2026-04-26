@@ -43,7 +43,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/@php-wasm/web-8-5/jspi/8_5_2/php_8_5.wasm",
+          src: "node_modules/@php-wasm/web-8-5/jspi/8_5_3/php_8_5.wasm",
           dest: ".",
           rename: { stripBase: true, name: "php.wasm" },
         },

@@ -16,7 +16,7 @@
   let { panelHeight = $bindable(), maxPanelHeight }: Props = $props();
 
   const isCollapsed = $derived(panelHeight === MIN_PANEL_HEIGHT);
-  let lastExpandedSize = Math.round(maxPanelHeight / 3);
+  let lastExpandedSize = $derived(Math.round(maxPanelHeight / 3));
   let lastSelectedTab: EditorPanelTab | undefined = EditorPanelTab.Output;
 
   const ctx = getEditorPanelContext();

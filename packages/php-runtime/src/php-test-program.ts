@@ -5,16 +5,17 @@ import type { TestProgram } from "libs/testing";
 
 export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
   private result?: O;
+  private disposeOnMessage: () => Promise<void>;
 
   constructor(
     protected readonly streams: Streams,
     protected readonly php: PHP,
-    protected readonly code: string
+    protected readonly code: string,
   ) {
-    php.onMessage(this.handleResult.bind(this));
+    this.disposeOnMessage = php.onMessage(this.handleResult.bind(this));
   }
 
-  protected caseExecutionCode(input: I): string {
+  protected caseExecutionCode(_input: I): string {
     throw new Error("Not implemented");
   }
 
@@ -34,13 +35,14 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 
   async run(_: Context, input: I): Promise<O> {
     const code = this.transformCode(input);
-    const response = await this.php.run({ code });
-    const text = response.bytes;
-    if (text.byteLength > 0) {
-      this.streams.out.write(new Uint8Array(text));
-    }
-    if (response.errors) {
-      throw new Error(response.errors);
+    const response = await this.php.runStream({ code });
+    await Promise.all([
+      response.stdout.pipeTo(new WritableStream(this.streams.out)),
+      response.stderr.pipeTo(new WritableStream(this.streams.err)),
+    ]);
+    const exitCode = await response.exitCode;
+    if (exitCode !== 0) {
+      throw new Error(`Command failed with exit code ${exitCode}`);
     }
     if (this.result === undefined) {
       throw new Error("No result");
@@ -50,6 +52,6 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 
   [Symbol.dispose]() {
     this.result = undefined;
-    // TODO: Remove on message callback
+    this.disposeOnMessage();
   }
 }

@@ -4,8 +4,8 @@
   "collaborators": [
     "Louis Pilfold <louis@lpil.uk>"
   ],
-  "version": "1.14.0",
-  "license": "SEE LICENSE IN LICENCE",
+  "version": "1.16.0",
+  "license": "Apache-2.0",
   "files": [
     "gleam_wasm_bg.wasm",
     "gleam_wasm.js",
