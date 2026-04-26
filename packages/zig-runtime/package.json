@@ -1,0 +1,23 @@
+{
+  "name": "zig-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "libs": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./version": "./dist/version.js",
+    "./zig.wasm": "./dist/zig/bin/zig.wasm",
+    "./lib/*": "./dist/zig/*"
+  }
+}

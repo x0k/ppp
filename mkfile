@@ -198,6 +198,22 @@ ruby/:
     bun run index.ts
     popd
 
+zig/:
+  pushd packages/zig-runtime
+  b:
+    pnpm run build
+  artifacts: compiler/*
+  compiler/:
+    pushd compiler
+    build:
+      zig build -Drelease
+    copy:
+      rm -rf ../public
+      mkdir -p ../public/zig
+      cp -r zig-out/* ../public/zig/
+    popd
+  popd
+
 rust/:
   pushd packages/rust-runtime
   p:
