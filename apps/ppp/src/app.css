@@ -1,10 +1,10 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui" {
-  themes: business --default;
+@plugin 'daisyui/index.js' {
+	themes: business --default;
 }
-@plugin "daisyui/theme" {
-  name: "business";
-  default: true;
-  --color-base-100: oklch(28% 0 0);
+@plugin 'daisyui/theme/index.js' {
+	name: 'business';
+	default: true;
+	--color-base-100: oklch(28% 0 0);
 }

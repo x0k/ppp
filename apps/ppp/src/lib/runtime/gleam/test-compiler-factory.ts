@@ -6,13 +6,12 @@ import type { TestCompiler } from 'libs/testing';
 import { JsTestProgram } from 'javascript-runtime';
 import { GleamModuleCompiler } from 'gleam-runtime';
 
-import { base } from '$app/paths';
 import { createCachedFetch } from '$lib/fetch';
 
 import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
 
 const precompiledGleamStdlibIndexUrl = new URL(
-	`${base}/assets/gleam`,
+	`${import.meta.env.BASE_URL}assets/gleam`,
 	globalThis.location.origin
 ).toString();
 

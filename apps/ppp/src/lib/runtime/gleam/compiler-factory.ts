@@ -6,11 +6,10 @@ import { GleamModuleCompiler, type GleamModule, GleamProgram } from 'gleam-runti
 
 import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
 
-import { base } from '$app/paths';
 import { createCachedFetch } from '$lib/fetch';
 
 const precompiledGleamStdlibIndexUrl = new URL(
-	`${base}/assets/gleam`,
+	`${import.meta.env.BASE_URL}assets/gleam`,
 	globalThis.location.origin
 ).toString();
 

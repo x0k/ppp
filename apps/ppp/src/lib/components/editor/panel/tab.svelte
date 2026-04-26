@@ -36,8 +36,9 @@
 </span>
 
 <style>
-  @reference "../../../../app.css";
   .tab-with-badge {
-    @apply flex gap-2 items-center;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
   }
 </style>

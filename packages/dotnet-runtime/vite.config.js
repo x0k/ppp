@@ -36,10 +36,12 @@ export default defineConfig({
         {
           src: "src/vendor/compiler",
           dest: ".",
+          rename: { stripBase: 2 },
         },
         {
           src: "src/vendor/lib",
           dest: ".",
+          rename: { stripBase: 2 },
         },
       ],
     }),

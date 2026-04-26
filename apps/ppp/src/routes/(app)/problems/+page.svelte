@@ -2,7 +2,7 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import type { ProblemMeta } from '$lib/problem';
 
-	const problems = import.meta.glob<ProblemMeta>('./[problem]/**/problem.ts', { eager: true, import: 'meta' });
+	const problems = import.meta.glob<ProblemMeta>('./\\[problem\\]/**/problem.ts', { eager: true, import: 'meta' });
 
 	const lang = getLocale();
 

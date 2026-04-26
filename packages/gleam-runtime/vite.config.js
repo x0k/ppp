@@ -36,10 +36,12 @@ export default defineConfig({
         {
           src: "src/vendor/compiler/gleam_wasm_bg.wasm",
           dest: ".",
+          rename: { stripBase: true },
         },
         {
-          src: "src/vendor/stdlib/precompiled",
+          src: "src/vendor/stdlib/precompiled/**",
           dest: ".",
+          rename: { stripBase: 3 },
         },
       ],
     }),

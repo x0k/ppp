@@ -13,9 +13,8 @@
 </div>
 
 <style>
-  @reference "../../../../app.css";
   .panel-tabs :global {
-    @apply uppercase;
+    text-transform: uppercase;
     .tab:not(.tab-active) {
       --tab-color: oklch(var(--bc) / 0.5);
     }

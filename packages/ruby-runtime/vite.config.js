@@ -36,7 +36,7 @@ export default defineConfig({
         {
           src: "node_modules/@ruby/4.0-wasm-wasi/dist/ruby+stdlib.wasm",
           dest: ".",
-          rename: "ruby.wasm",
+          rename: { stripBase: true, name: "ruby.wasm" },
         },
       ],
     }),

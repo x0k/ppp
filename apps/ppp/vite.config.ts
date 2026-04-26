@@ -55,16 +55,13 @@ export default defineConfig({
 			targets: [
 				{
 					src: 'node_modules/gleam-runtime/dist/precompiled',
-					dest: 'assets',
-					rename: 'gleam'
+					dest: 'assets/gleam',
+					rename: { stripBase: 4 }
 				},
 				{
 					src: 'node_modules/dotnet-runtime/dist/compiler',
-					dest: 'assets/dotnet'
-				},
-				{
-					src: 'node_modules/dotnet-runtime/dist/lib',
-					dest: 'assets/dotnet'
+					dest: 'assets/dotnet',
+					rename: { stripBase: 4 }
 				}
 			]
 		})

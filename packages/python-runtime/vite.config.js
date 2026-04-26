@@ -46,10 +46,12 @@ export default defineConfig({
         {
           src: "node_modules/pyodide/pyodide.asm.wasm",
           dest: "pyodide",
+          rename: { stripBase: true },
         },
         {
           src: "node_modules/pyodide/python_stdlib.zip",
           dest: "pyodide",
+          rename: { stripBase: true },
         },
       ],
     }),

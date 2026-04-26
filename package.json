@@ -15,7 +15,7 @@
   "devDependencies": {
     "@total-typescript/tsconfig": "^1.0.4",
     "only-allow": "^1.2.2",
-    "turbo": "^2.8.3",
+    "turbo": "^2.9.6",
     "typescript": "^5.9.3"
   },
   "pnpm": {

@@ -45,7 +45,7 @@ export default defineConfig({
         {
           src: "node_modules/@php-wasm/web-8-5/jspi/8_5_2/php_8_5.wasm",
           dest: ".",
-          rename: "php.wasm",
+          rename: { stripBase: true, name: "php.wasm" },
         },
       ],
     }),
