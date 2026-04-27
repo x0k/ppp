@@ -29,7 +29,6 @@ export class ZigCompiler {
 
   protected get rootDir(): OpenDirectory {
     const dir = this.wasi.fds[3];
-    console.log(dir);
     assertOpenDir(dir);
     return dir;
   }
