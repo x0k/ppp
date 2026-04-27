@@ -2,8 +2,7 @@ import { Fd, WASI, OpenDirectory, File } from "@bjorn3/browser_wasi_shim";
 import type { TestProgram } from "libs/testing";
 import { inContext, type Context } from "libs/context";
 import { isErr } from "libs/result";
-
-import { assertOpenDir, lookupFile } from "./wasi";
+import { assertOpenDir, lookupFile } from "libs/wasi";
 
 export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
   protected threads_count = 1;
@@ -12,7 +11,7 @@ export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
     protected readonly code: string,
     protected readonly wasi: WASI,
     protected readonly miriModule: WebAssembly.Module,
-    protected readonly outputPath: string
+    protected readonly outputPath: string,
   ) {}
 
   async run(ctx: Context, input: I): Promise<O> {
@@ -33,7 +32,7 @@ export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
           },
         },
         wasi_snapshot_preview1: this.wasi.wasiImport,
-      })
+      }),
     );
     // @ts-expect-error lack of type information
     const exitCode = this.wasi.start(instance);

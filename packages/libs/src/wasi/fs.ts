@@ -6,7 +6,8 @@ import {
   wasi as wasiDef,
   File,
 } from "@bjorn3/browser_wasi_shim";
-import { type Result, err, ok, isErr } from "libs/result";
+
+import { type Result, err, ok, isErr } from "../result.js";
 
 export function contents(data: Record<string, Inode>): Map<string, Inode> {
   return new Map(Object.entries(data));
@@ -24,7 +25,7 @@ export function assertOpenDir(fd: Fd): asserts fd is OpenDirectory {
 
 export function lookup(
   dir: OpenDirectory,
-  path: string
+  path: string,
 ): Result<Inode, string> {
   const { ret, inode_obj } = dir.path_lookup(path, 0);
   if (ret !== wasiDef.ERRNO_SUCCESS || !inode_obj) {
@@ -35,7 +36,7 @@ export function lookup(
 
 export function lookupFile(
   dir: OpenDirectory,
-  path: string
+  path: string,
 ): Result<File, string> {
   const r = lookup(dir, path);
   if (isErr(r)) {

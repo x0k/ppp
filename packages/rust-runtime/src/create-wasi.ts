@@ -7,13 +7,11 @@ import {
   Directory,
 } from "@bjorn3/browser_wasi_shim";
 import type { Streams } from "libs/io";
-
-import { contents, dir } from "./wasi.js";
-import { Stdin } from "./stdin";
+import { contents, dir, Stdin } from "libs/wasi";
 
 export function createWASI(
   streams: Streams,
-  libs: [string, ArrayBuffer][]
+  libs: [string, ArrayBuffer][],
 ): WASI {
   const env: string[] = [];
   const args = [
@@ -46,19 +44,19 @@ export function createWASI(
           "x86_64-unknown-linux-gnu": dir({
             lib: new Directory(
               libs.map(
-                ([lib, buffer]) => [lib, new File(buffer)] as [string, File]
-              )
+                ([lib, buffer]) => [lib, new File(buffer)] as [string, File],
+              ),
             ),
           }),
         }),
       }),
-    })
+    }),
   );
   const rootDir = new PreopenDirectory(
     "/",
     contents({
       "main.rs": new File([]),
-    })
+    }),
   );
   const descriptors: Array<Fd> = [
     new Stdin(streams.in.read.bind(streams.in)),

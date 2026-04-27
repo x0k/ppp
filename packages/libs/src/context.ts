@@ -71,7 +71,7 @@ export interface RecoverableContext extends Disposable {
 }
 
 export function createRecoverableContext(
-  contextFactory: () => [Context, () => void]
+  contextFactory: () => [Context, () => void],
 ): RecoverableContext {
   let [ref, cancel] = contextFactory();
   const disposable = ref.onCancel(function handleCancel() {

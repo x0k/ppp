@@ -279,6 +279,9 @@ importers:
 
   packages/libs:
     devDependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
@@ -379,6 +382,9 @@ importers:
 
   packages/zig-runtime:
     dependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: ^0.4.2
+        version: 0.4.2
       libs:
         specifier: workspace:*
         version: link:../libs
