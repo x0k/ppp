@@ -7,3 +7,4 @@ catalog:
   vitest: ^4.1.5
   vite-plugin-dts: ^4.5.4
   vite-plugin-static-copy: ^4.1.0
+  "@bjorn3/browser_wasi_shim": "^0.4.2"

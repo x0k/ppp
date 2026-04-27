@@ -9,7 +9,8 @@ type CachePrefix =
 	| 'php-cache@'
 	| 'python-cache@'
 	| 'ruby-cache@'
-	| 'rust-cache@';
+	| 'rust-cache@'
+	| 'zig-cache@';
 
 export async function createCachedFetch(prefix: CachePrefix, key: string) {
 	return createFetch(await cache(prefix, await hashString(key)));

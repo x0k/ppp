@@ -14,18 +14,6 @@ b:
 p:
   pnpm run preview
 
-ppp/:
-  pushd apps/ppp
-  c:
-    pnpm run check
-  d:
-    pnpm run dev
-  b:
-    pnpm run build
-  p:
-    pnpm run preview
-  popd
-
 artifacts: */artifacts
 
 libs/:
@@ -281,4 +269,16 @@ java/:
       bun run preview
     bun run dev
     popd
+  popd
+
+ppp/:
+  pushd apps/ppp
+  c:
+    pnpm run check
+  d:
+    pnpm run dev
+  b:
+    pnpm run build
+  p:
+    pnpm run preview
   popd

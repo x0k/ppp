@@ -12,6 +12,7 @@ import GleamWorker from '$lib/runtime/gleam/worker?worker';
 import JavaWorker from '$lib/runtime/java/worker?worker';
 import RubyWorker from '$lib/runtime/ruby/worker?worker';
 import DotnetWorker from '$lib/runtime/dotnet/worker?worker';
+import ZigWorker from '$lib/runtime/zig/worker?worker';
 
 import phpProgram from './_program.php?raw';
 import tsProgram from './_program.ts?raw';
@@ -23,6 +24,7 @@ import gleamProgram from './_program.gleam?raw';
 import javaProgram from './_program.java?raw';
 import csProgram from './_program.cs?raw';
 import rubyProgram from './_program.rb?raw';
+import zigProgram from './_program.zig?raw';
 
 interface Runtime {
 	initialValue: string;
@@ -69,5 +71,9 @@ export const RUNTIMES: Record<Language, Runtime> = {
 	[Language.Ruby]: {
 		initialValue: rubyProgram,
 		compilerFactory: makeRemoteCompilerFactory(RubyWorker)
+	},
+	[Language.Zig]: {
+		initialValue: zigProgram,
+		compilerFactory: makeRemoteCompilerFactory(ZigWorker)
 	}
 };
