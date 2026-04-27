@@ -7,12 +7,15 @@
     "check": "tsc",
     "build": "vite build"
   },
+  "peerDependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.4.0"
+  },
   "dependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.2",
     "@ruby/wasm-wasi": "2.9.3-2.9.4",
     "libs": "workspace:*"
   },
   "devDependencies": {
+    "@bjorn3/browser_wasi_shim": "catalog:",
     "@ruby/4.0-wasm-wasi": "2.9.3-2.9.4",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",

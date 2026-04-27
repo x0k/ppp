@@ -7,11 +7,14 @@
     "check": "tsc",
     "build": "vite build"
   },
+  "peerDependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.4.0"
+  },
   "dependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.2",
     "libs": "workspace:*"
   },
   "devDependencies": {
+    "@bjorn3/browser_wasi_shim": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:"
   },
