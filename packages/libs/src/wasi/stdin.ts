@@ -15,7 +15,7 @@ export class Stdin extends Fd {
     const filestat = new wasi.Filestat(
       this.ino,
       wasi.FILETYPE_CHARACTER_DEVICE,
-      BigInt(0)
+      BigInt(0),
     );
     return { ret: 0, filestat };
   }

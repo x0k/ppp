@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@bjorn3/browser_wasi_shim':
+      specifier: ^0.4.2
+      version: 0.4.2
     vite:
       specifier: ^8.0.10
       version: 8.0.10
@@ -46,6 +49,9 @@ importers:
 
   apps/ppp:
     dependencies:
+      '@andrewbranch/untar.js':
+        specifier: ^1.0.3
+        version: 1.0.3
       '@xterm/addon-fit':
         specifier: ^0.11.0
         version: 0.11.0
@@ -106,6 +112,9 @@ importers:
       typescript-runtime:
         specifier: workspace:*
         version: link:../../packages/typescript-runtime
+      zig-runtime:
+        specifier: workspace:*
+        version: link:../../packages/zig-runtime
     devDependencies:
       '@eslint/compat':
         specifier: ^2.0.5
@@ -279,6 +288,9 @@ importers:
 
   packages/libs:
     devDependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
@@ -332,9 +344,6 @@ importers:
 
   packages/ruby-runtime:
     dependencies:
-      '@bjorn3/browser_wasi_shim':
-        specifier: ^0.4.2
-        version: 0.4.2
       '@ruby/wasm-wasi':
         specifier: 2.9.3-2.9.4
         version: 2.9.3-2.9.4
@@ -342,6 +351,9 @@ importers:
         specifier: workspace:*
         version: link:../libs
     devDependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: 'catalog:'
+        version: 0.4.2
       '@ruby/4.0-wasm-wasi':
         specifier: 2.9.3-2.9.4
         version: 2.9.3-2.9.4
@@ -357,13 +369,13 @@ importers:
 
   packages/rust-runtime:
     dependencies:
-      '@bjorn3/browser_wasi_shim':
-        specifier: ^0.4.2
-        version: 0.4.2
       libs:
         specifier: workspace:*
         version: link:../libs
     devDependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: 'catalog:'
+        version: 0.4.2
       vite:
         specifier: 'catalog:'
         version: 8.0.10(@types/node@24.12.2)(esbuild@0.28.0)(jiti@2.6.1)(yaml@2.5.1)
@@ -377,7 +389,26 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
+  packages/zig-runtime:
+    dependencies:
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+    devDependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: 'catalog:'
+        version: 0.4.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.10(@types/node@24.12.2)(esbuild@0.28.0)(jiti@2.6.1)(yaml@2.5.1)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 4.5.4(@types/node@24.12.2)(rollup@4.53.2)(typescript@5.9.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.28.0)(jiti@2.6.1)(yaml@2.5.1))
+
 packages:
+
+  '@andrewbranch/untar.js@1.0.3':
+    resolution: {integrity: sha512-Jh15/qVmrLGhkKJBdXlK1+9tY4lZruYjsgkDFj08ZmDiWVBLJcqkok7Z0/R0In+i1rScBpJlSvrTS2Lm41Pbnw==}
 
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
@@ -2793,6 +2824,8 @@ packages:
     resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
 
 snapshots:
+
+  '@andrewbranch/untar.js@1.0.3': {}
 
   '@antfu/install-pkg@1.1.0':
     dependencies:

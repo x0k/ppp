@@ -1,37 +1,45 @@
-import { RubyVM } from '@ruby/wasm-wasi'
-import { Fd, PreopenDirectory, WASI, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
-import { inContext, type Context } from 'libs/context';
-import type { Streams } from 'libs/io';
+import { RubyVM } from "@ruby/wasm-wasi";
+import {
+  Fd,
+  PreopenDirectory,
+  WASI,
+  ConsoleStdout,
+} from "@bjorn3/browser_wasi_shim";
+import { inContext, type Context } from "libs/context";
+import type { Streams } from "libs/io";
+import { Stdin } from "libs/wasi";
 
-import { Stdin } from './stdin';
-
-export async function createRubyVM (
+// https://github.com/ruby/ruby.wasm/blob/ef0300af384779db2e5de1e8c4528597d28eabe2/packages/npm-packages/ruby-wasm-wasi/src/vm.ts#L126
+export async function createRubyVM(
   ctx: Context,
   streams: Streams,
   wasmModule: WebAssembly.Module,
 ) {
-  const args: string[] = []
-  const env: string[] = []
+  const args: string[] = [];
+  const env: string[] = [];
 
   const fds: Fd[] = [
     new Stdin(streams.in.read.bind(streams.in)),
     new ConsoleStdout(streams.out.write.bind(streams.out)),
     new ConsoleStdout(streams.err.write.bind(streams.err)),
     new PreopenDirectory("/", new Map()),
-  ]
-  const wasi = new WASI(args, env, fds, { debug: false })
-  const vm = new RubyVM()
+  ];
+  const wasi = new WASI(args, env, fds, { debug: false });
+  const vm = new RubyVM();
   const imports = {
-    wasi_snapshot_preview1: wasi.wasiImport
-  }
-  vm.addToImports(imports)
+    wasi_snapshot_preview1: wasi.wasiImport,
+  };
+  vm.addToImports(imports);
 
-  const instance = await inContext(ctx, WebAssembly.instantiate(wasmModule, imports))
-  await inContext(ctx, vm.setInstance(instance))
+  const instance = await inContext(
+    ctx,
+    WebAssembly.instantiate(wasmModule, imports),
+  );
+  await inContext(ctx, vm.setInstance(instance));
 
   //@ts-expect-error lack of type information
-  wasi.initialize(instance)
-  vm.initialize()
+  wasi.initialize(instance);
+  vm.initialize();
 
-  return vm
+  return vm;
 }

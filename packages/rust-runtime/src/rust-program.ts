@@ -2,8 +2,7 @@ import type { OpenDirectory, WASI } from "@bjorn3/browser_wasi_shim";
 import type { Program } from "libs/compiler";
 import { inContext, type Context } from "libs/context";
 import { isErr } from "libs/result";
-
-import { assertOpenDir, lookupFile } from "./wasi";
+import { assertOpenDir, lookupFile } from "libs/wasi";
 
 // TODO: extract common code with RustTestProgram
 export class RustProgram implements Program {
@@ -12,7 +11,7 @@ export class RustProgram implements Program {
   constructor(
     protected readonly code: string,
     protected readonly wasi: WASI,
-    protected readonly miriModule: WebAssembly.Module
+    protected readonly miriModule: WebAssembly.Module,
   ) {}
 
   async run(ctx: Context): Promise<void> {
@@ -33,7 +32,7 @@ export class RustProgram implements Program {
           },
         },
         wasi_snapshot_preview1: this.wasi.wasiImport,
-      })
+      }),
     );
     // @ts-expect-error lack of type information
     const exitCode = this.wasi.start(instance);

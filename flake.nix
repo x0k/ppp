@@ -59,6 +59,8 @@
             pkgs-unstable.gleam
             pkgs.python315
             pkgs.dotnet-sdk_10
+            pkgs-unstable.binaryen
+            pkgs-unstable.zig
           ];
           shellHook = ''
             source <(COMPLETE=bash mk)

@@ -14,18 +14,6 @@ b:
 p:
   pnpm run preview
 
-ppp/:
-  pushd apps/ppp
-  c:
-    pnpm run check
-  d:
-    pnpm run dev
-  b:
-    pnpm run build
-  p:
-    pnpm run preview
-  popd
-
 artifacts: */artifacts
 
 libs/:
@@ -198,6 +186,22 @@ ruby/:
     bun run index.ts
     popd
 
+zig/:
+  pushd packages/zig-runtime
+  b:
+    pnpm run build
+  artifacts: compiler/*
+  compiler/:
+    pushd compiler
+    build:
+      zig build -Drelease
+    copy:
+      rm -rf ../public
+      mkdir -p ../public/zig
+      cp -r zig-out/* ../public/zig/
+    popd
+  popd
+
 rust/:
   pushd packages/rust-runtime
   p:
@@ -265,4 +269,16 @@ java/:
       bun run preview
     bun run dev
     popd
+  popd
+
+ppp/:
+  pushd apps/ppp
+  c:
+    pnpm run check
+  d:
+    pnpm run dev
+  b:
+    pnpm run build
+  p:
+    pnpm run preview
   popd

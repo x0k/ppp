@@ -1,5 +1,5 @@
 {
-  "name": "ruby-runtime",
+  "name": "zig-runtime",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -11,19 +11,17 @@
     "@bjorn3/browser_wasi_shim": "^0.4.0"
   },
   "dependencies": {
-    "@ruby/wasm-wasi": "2.9.3-2.9.4",
     "libs": "workspace:*"
   },
   "devDependencies": {
     "@bjorn3/browser_wasi_shim": "catalog:",
-    "@ruby/4.0-wasm-wasi": "2.9.3-2.9.4",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
-    "vite-plugin-static-copy": "catalog:"
+    "vite-plugin-dts": "catalog:"
   },
   "exports": {
     ".": "./dist/index.js",
     "./version": "./dist/version.js",
-    "./ruby.wasm": "./dist/ruby.wasm"
+    "./zig.wasm": "./dist/zig/bin/zig.wasm",
+    "./lib/*": "./dist/zig/*"
   }
 }

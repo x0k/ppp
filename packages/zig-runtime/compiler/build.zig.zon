@@ -1,0 +1,12 @@
+.{
+    .name = .compiler,
+    .version = "0.16.0",
+    .dependencies = .{
+        .zig = .{
+            .url = "git+https://github.com/zigtools/zig?ref=wasm32-wasi#1c430bc130989d285723de8b7aa8e3c77297a266",
+            .hash = "zig-0.0.0-Fp4XJHzK5Q2xL7r676PlbSvBhz_af_mGXkGPVaXvf_Kx",
+        },
+    },
+    .paths = .{""},
+    .fingerprint = 0xaa62bd49ef1e104b,
+}
