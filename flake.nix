@@ -54,6 +54,9 @@
         dotnet-compiler = import ./packages/dotnet-runtime/compiler/dotnet-compiler.nix {
           inherit pkgs;
         };
+        zig-compiler = import ./packages/zig-runtime/compiler/zig-compiler.nix {
+          pkgs-unstable = pkgs-unstable;
+        };
       };
 
       devShells.${system} = {
