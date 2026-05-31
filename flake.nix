@@ -51,6 +51,9 @@
           inherit pkgs;
           pkgs-unstable = pkgs-unstable;
         };
+        dotnet-compiler = import ./packages/dotnet-runtime/compiler/dotnet-compiler.nix {
+          inherit pkgs;
+        };
       };
 
       devShells.${system} = {
