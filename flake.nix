@@ -57,6 +57,9 @@
         zig-compiler = import ./packages/zig-runtime/compiler/zig-compiler.nix {
           pkgs-unstable = pkgs-unstable;
         };
+        java-doppio = import ./packages/java-runtime/java-doppio.nix {
+          inherit pkgs pkgs2111;
+        };
       };
 
       devShells.${system} = {
