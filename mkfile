@@ -74,39 +74,6 @@ gleam/:
     bun run probe/index.ts
   b:
     pnpm run build
-  artifacts: compiler/* stdlib/*
-  compiler/:
-    version="v1.16.0"
-    name="gleam-${version}-browser"
-    download:
-      if [ ! -f "${name}.tar.gz" ]; then
-        curl -L -C - -O "https://github.com/gleam-lang/gleam/releases/download/${version}/${name}.tar.gz"
-        mkdir -p "${name}"
-        tar -xzvf "${name}.tar.gz" --directory "${name}"
-      fi
-    copy:
-      mkdir -p src/vendor/compiler
-      cp -r $name/* src/vendor/compiler/
-    # Remove link to wasm file to prevent
-    # Asset embedding by Vite
-    refine:
-      sed -i '/async function __wbg_init/,/^}/{
-          /^async function __wbg_init/!{
-              /^}/!d
-          }
-      }' src/vendor/compiler/gleam_wasm.js    
-    cleanup:
-      rm -rf ${name}*
-  stdlib/:
-    pushd gleamstd
-    build:
-      gleam run
-    copy:
-      mkdir -p ../src/vendor/stdlib
-      cp -r dist/* ../src/vendor/stdlib/
-    cleanup:
-      rm -rf dist build
-    popd
   popd
 
 dotnet/:

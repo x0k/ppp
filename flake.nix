@@ -30,6 +30,7 @@
           permittedInsecurePackages = [ "nodejs-12.22.12" ];
         };
       };
+
     in
     # pkgs-very-old = import (pkgs.fetchFromGitHub {
     #   owner = "NixOS";
@@ -41,6 +42,14 @@
       packages.${system} = {
         go-compiler = import ./packages/go-runtime/go/go-compiler.nix {
           inherit pkgs;
+        };
+        gleam-compiler = import ./packages/gleam-runtime/gleam-compiler.nix {
+          inherit pkgs;
+          version = "1.16.0";
+        };
+        gleam-stdlib = import ./packages/gleam-runtime/gleamstd/gleam-stdlib.nix {
+          inherit pkgs;
+          pkgs-unstable = pkgs-unstable;
         };
       };
 
