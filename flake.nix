@@ -38,6 +38,12 @@
     #   sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
     # }) { inherit system; };
     {
+      packages.${system} = {
+        go-compiler = import ./packages/go-runtime/go/go-compiler.nix {
+          inherit pkgs;
+        };
+      };
+
       devShells.${system} = {
         default = pkgs.mkShell {
           # NOTE: this is required for NixOS (configuration.nix)

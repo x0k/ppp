@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "check": "tsc",
+    "prebuild": "./artifacts.sh",
     "build": "vite build"
   },
   "dependencies": {

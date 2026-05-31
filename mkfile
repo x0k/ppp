@@ -66,18 +66,6 @@ go/:
     bun run probe/index.ts
   b:
     pnpm run build
-  update-wasm-exec:
-    cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" src/vendor
-  artifacts: compiler/build
-  compiler/:
-    pushd go
-    build:
-      GOOS=js GOARCH=wasm go build -o ../public/compiler.wasm cmd/compiler/main.go
-    probe:
-      go run cmd/probe/main.go
-    tidy:
-      go mod tidy
-    popd
   popd
 
 gleam/:
