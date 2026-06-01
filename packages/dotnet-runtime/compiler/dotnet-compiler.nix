@@ -8,7 +8,7 @@ pkgs.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-bF1SCteXQ+T9f8yjntSU8q8nGWcQCnq64HOTB45NBKA=";
+  outputHash = "sha256-JvYyLmuF6Cx6mCgv86ulg8FCGD2v2ngAwsdoHEZZ5no=";
 
   dontConfigure = true;
   preBuild = ''
@@ -23,5 +23,10 @@ pkgs.stdenv.mkDerivation {
     mkdir -p $out/compiler $out/lib
     cp -r bin/Release/net10.0/wwwroot/_framework/* $out/compiler/
     cp bin/Release/net10.0/*.dll $out/lib/
+    # Strip debug symbols, source maps, and locale satellite assemblies
+    find $out -name '*.pdb' -delete
+    find $out -name '*.js.map' -delete
+    find $out/compiler -type d -name '[a-z][a-z]' -prune -exec rm -rf {} +
+    find $out/compiler -type d -name '[a-z][a-z]-[A-Z][A-Z]' -prune -exec rm -rf {} +
   '';
 }
