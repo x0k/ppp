@@ -12,14 +12,17 @@ pkgs.stdenv.mkDerivation {
 
   dontConfigure = true;
   preBuild = ''
+    set -euo pipefail
     export HOME=$(pwd)
   '';
   buildPhase = ''
+    set -euo pipefail
     dotnet restore compiler.csproj --source https://api.nuget.org/v3/index.json
     dotnet publish compiler.csproj -c Release --no-restore
   '';
 
   installPhase = ''
+    set -euo pipefail
     mkdir -p $out/compiler $out/lib
     cp -r bin/Release/net10.0/wwwroot/_framework/* $out/compiler/
     cp bin/Release/net10.0/*.dll $out/lib/

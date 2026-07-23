@@ -22,14 +22,17 @@ pkgs.stdenv.mkDerivation {
   outputHash = "sha256-jrA9FzgMle6wPjXwVBQYwD5YYzZLRLeqGWqZNg8dMxc=";
 
   buildPhase = ''
+    set -euo pipefail
     export HOME=$(pwd)
-    export NODE_TLS_REJECT_UNAUTHORIZED=0
-    yarn install --frozen-lockfile --ignore-scripts
+    # Node.js 12 bundled CA certs are too old for modern TLS endpoints.
+    # This is safe here because we only install pinned lockfile dependencies.
+    NODE_TLS_REJECT_UNAUTHORIZED=0 yarn install --frozen-lockfile --ignore-scripts
     patchShebangs node_modules
     node ./node_modules/.bin/grunt release --force --grunt-ignore-compile-errors
   '';
 
   installPhase = ''
+    set -euo pipefail
     mkdir -p $out
     cp -rL build/release/. $out/
     rm -rf $out/classes/test $out/*.js* $out/vendor/java_home/lib/ext

@@ -14,6 +14,7 @@ pkgs.stdenv.mkDerivation {
   outputHash = "sha256-qWvP8wXf7/NEqqZb4sni0II42WDsuPEyueN2ZAI0yu8=";
 
   buildPhase = ''
+    set -euo pipefail
     export HOME=$(pwd)
     gleam deps download
     gleam build
@@ -21,6 +22,7 @@ pkgs.stdenv.mkDerivation {
   '';
 
   installPhase = ''
+    set -euo pipefail
     mkdir -p $out
     cp -r dist/* $out/
   '';

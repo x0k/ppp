@@ -11,9 +11,15 @@ pkgs.stdenv.mkDerivation {
   sourceRoot = ".";
 
   installPhase = ''
+    set -euo pipefail
     mkdir -p $out
-    cp -t $out gleam_wasm_bg.wasm gleam_wasm_bg.wasm.d.ts gleam_wasm.d.ts \
-      gleam_wasm.js package.json README.md LICENCE 2>/dev/null || true
+    # Copy only the required files; extras (README, LICENCE) may not be present
+    for f in gleam_wasm_bg.wasm gleam_wasm_bg.wasm.d.ts gleam_wasm.d.ts gleam_wasm.js package.json; do
+      if [ -f "$f" ]; then cp "$f" "$out/"; fi
+    done
+    # Strip the __wbg_init function body — it contains wasm init logic that we
+    # handle separately. This sed is fragile: it will break if the function
+    # signature or brace style changes upstream.
     sed -i '/async function __wbg_init/,/^}/{
         /^async function __wbg_init/!{
             /^}/!d

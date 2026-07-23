@@ -112,22 +112,6 @@ rust/:
     bun run probe/index.ts
   b:
     pnpm run build
-  artifacts: compiler/*
-  compiler/:
-    pushd rust
-    sdk:
-      if [ ! -f wasi-sdk-20.0-linux.tar.gz ]; then
-        curl -L -C - -O https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
-        tar -xzvf wasi-sdk-20.0-linux.tar.gz
-      fi
-    install:
-      nix develop ../../..#rust --command bash -xe -c "./x.py install"
-    copy:
-      cp dist/bin/miri.wasm ../public
-      cp -r dist/lib/rustlib/x86_64-unknown-linux-gnu/lib/* ../public/lib/
-    cleanup:
-      rm -rf wasi-sdk-20.0* build dist
-    popd
   popd
 
 java/:
