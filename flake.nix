@@ -55,6 +55,8 @@
         };
       };
 
+      checks.${system} = builtins.mapAttrs (_name: pkg: pkg) self.packages.${system};
+
       devShells.${system} = {
         default = pkgs.mkShell {
           # NOTE: this is required for NixOS (configuration.nix)
