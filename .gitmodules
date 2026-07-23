@@ -1,4 +1,0 @@
-[submodule "packages/rust-runtime/rust"]
-	path = packages/rust-runtime/rust
-	url = git@github.com:x0k/rust.git
-	branch = miri-wasm

@@ -32,12 +32,6 @@
       };
 
     in
-    # pkgs-very-old = import (pkgs.fetchFromGitHub {
-    #   owner = "NixOS";
-    #   repo = "nixpkgs";
-    #   rev = "19.09";
-    #   sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
-    # }) { inherit system; };
     {
       packages.${system} = {
         go-compiler = import ./packages/go-runtime/go/go-compiler.nix {
@@ -48,14 +42,13 @@
           version = "1.16.0";
         };
         gleam-stdlib = import ./packages/gleam-runtime/gleamstd/gleam-stdlib.nix {
-          inherit pkgs;
-          pkgs-unstable = pkgs-unstable;
+          inherit pkgs pkgs-unstable;
         };
         dotnet-compiler = import ./packages/dotnet-runtime/compiler/dotnet-compiler.nix {
           inherit pkgs;
         };
         zig-compiler = import ./packages/zig-runtime/compiler/zig-compiler.nix {
-          pkgs-unstable = pkgs-unstable;
+          inherit pkgs-unstable;
         };
         java-doppio = import ./packages/java-runtime/java-doppio.nix {
           inherit pkgs pkgs2111;
@@ -89,21 +82,6 @@
           shellHook = ''
             source <(COMPLETE=bash mk)
           '';
-        };
-        rust = pkgs.mkShell {
-          buildInputs = [
-            pkgs.gcc
-            pkgs.ninja
-            pkgs.cmake
-            pkgs.llvmPackages.bintools
-            pkgs.libiconv
-          ];
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            pkgs.stdenv.cc.cc
-            pkgs.xz
-            pkgs.zlib
-          ];
-          CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
         };
         java = pkgs.mkShell {
           buildInputs = [
