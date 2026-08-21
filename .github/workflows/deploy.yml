@@ -18,6 +18,17 @@ jobs:
         with:
           lfs: true
 
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v17
+        with:
+          name: ppp
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          installCommand: |
+            nix profile add nixpkgs#cachix
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -39,7 +50,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build
-        run: pnpm run build
+        run: nix develop -c pnpm run build
         env:
           BASE_PATH: "/${{ github.event.repository.name }}"
 
