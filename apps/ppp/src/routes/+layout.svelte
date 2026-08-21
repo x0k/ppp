@@ -16,11 +16,12 @@
 	<script
 		data-goatcounter="https://ppp.counter.x0k.dev/count"
 		async
-		src="https://ppp.counter.x0k.dev/count.js"></script>
+		src="https://ppp.counter.x0k.dev/count.js"
+	></script>
 </svelte:head>
 
 <div style="display:none">
-	{#each locales as locale}
+	{#each locales as locale (locale)}
 		<a href={localizeHref(page.url.pathname, { locale })}>{locale}</a>
 	{/each}
 </div>

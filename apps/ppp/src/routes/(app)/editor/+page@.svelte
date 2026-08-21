@@ -101,18 +101,18 @@
 	let executionTimeout = $state(executionTimeoutStorage.load());
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-	const inputModeStorage = createSyncStorage(localStorage, "editor-input-mode", InputMode.Line)
-	let inputMode = $state(inputModeStorage.load())
-	immediateSave(inputModeStorage, () => inputMode)
+	const inputModeStorage = createSyncStorage(localStorage, 'editor-input-mode', InputMode.Line);
+	let inputMode = $state(inputModeStorage.load());
+	immediateSave(inputModeStorage, () => inputMode);
 
 	const { terminal, fitAddon } = createTerminal();
-	let lastInput: ReadableStreamOfBytes | undefined
+	let lastInput: ReadableStreamOfBytes | undefined;
 	const input = $derived.by(() => {
-		lastInput?.cancel()
-		return lastInput = createReadableStream(terminal).pipeThrough(
+		lastInput?.cancel();
+		return (lastInput = createReadableStream(terminal).pipeThrough(
 			(inputMode === InputMode.Line ? createLineInputMode : createRawInputMode)(terminal)
-		)
-	})
+		));
+	});
 	const terminalLogger = createLogger(terminal);
 
 	setEditorContext(new EditorContext(model, terminal, fitAddon));
@@ -133,7 +133,7 @@
 	});
 	const programCtx = createRecoverableContext(() => withCancel(compilerCtx.ref));
 	$effect(() => () => programCtx[Symbol.dispose]());
-	
+
 	async function handleRun() {
 		if (status === 'running') {
 			// At the moment, programs do not know how to stop
@@ -200,14 +200,12 @@
 							class="invisible group-hover:visible"
 						/>
 					{/snippet}
-					{#snippet children()}
-						<li>
-							<a target="_blank" href="https://github.com/x0k/ppp">
-								<LucideGithub />
-								<span class="font-[sans-serif]"> GitHub </span>
-							</a>
-						</li>
-					{/snippet}
+					<li>
+						<a target="_blank" href="https://github.com/x0k/ppp">
+							<LucideGithub />
+							<span class="font-[sans-serif]"> GitHub </span>
+						</a>
+					</li>
 				</Dropdown>
 				<PanelToggle bind:panelHeight maxPanelHeight={innerHeight.current!} />
 			</div>
@@ -229,8 +227,6 @@
 	</EditorProvider>
 </div>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog bind:this={descriptionDialogElement} class="modal" onclick={(e) => e.stopPropagation()}>
 	<div class="modal-box w-full max-w-2xl">
 		<form method="dialog">

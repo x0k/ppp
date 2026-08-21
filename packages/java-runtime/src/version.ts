@@ -1,1 +1,1 @@
-export const version = "Java 8 OpenJDK"
+export const version = 'Java 8 OpenJDK';

@@ -1,10 +1,10 @@
 packages:
-  - "packages/*"
-  - "apps/*"
+  - packages/*
+  - apps/*
 
 catalog:
-  vite: ^8.0.10
-  vitest: ^4.1.5
-  vite-plugin-dts: ^4.5.4
-  vite-plugin-static-copy: ^4.1.0
-  "@bjorn3/browser_wasi_shim": "^0.4.2"
+  '@bjorn3/browser_wasi_shim': ^0.4.2
+  vite: ^8.2.2
+  vite-plugin-dts: ^5.0.3
+  vite-plugin-static-copy: ^4.1.1
+  vitest: ^4.1.11

@@ -1,16 +1,14 @@
-import { startTestCompilerActor } from "libs/testing/actor";
-import { createContext } from "libs/context";
+import { startTestCompilerActor } from 'libs/testing/actor';
+import { createContext } from 'libs/context';
 
-import { PythonTestCompilerFactory } from "./test-compiler-factory";
+import { PythonTestCompilerFactory } from './test-compiler-factory';
 
 export interface PythonTestWorkerConfig {
-  pythonTestCompilerFactory: PythonTestCompilerFactory;
+	pythonTestCompilerFactory: PythonTestCompilerFactory;
 }
 
-startTestCompilerActor<PythonTestWorkerConfig>(
-  createContext(),
-  (ctx, streams, factory) =>
-    factory(ctx, {
-      pythonTestCompilerFactory: new PythonTestCompilerFactory(streams),
-    })
+startTestCompilerActor<PythonTestWorkerConfig>(createContext(), (ctx, streams, factory) =>
+	factory(ctx, {
+		pythonTestCompilerFactory: new PythonTestCompilerFactory(streams)
+	})
 );

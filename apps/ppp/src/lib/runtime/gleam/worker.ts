@@ -1,6 +1,6 @@
-import { startCompilerActor } from "libs/compiler/actor";
+import { startCompilerActor } from 'libs/compiler/actor';
 import { createContext } from 'libs/context';
 
-import { makeGleamCompiler } from "./compiler-factory";
+import { makeGleamCompiler } from './compiler-factory';
 
 startCompilerActor(createContext(), makeGleamCompiler);

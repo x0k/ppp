@@ -6,11 +6,24 @@ import svelte from 'eslint-plugin-svelte';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
-import svelteConfig from './svelte.config.js';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
 export default defineConfig(
+	{
+		ignores: [
+			'dist/**',
+			'node_modules/**',
+			'.svelte-kit/**',
+			'messages/**',
+			'project.inlang/**',
+			'src/lib/paraglide/**',
+			// vendored third-party code
+			'src/lib/assets/**',
+			// problem statement example code, intentionally non-idiomatic
+			'src/routes/(app)/problems/**/runtimes/*/code.*'
+		]
+	},
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
 	...ts.configs.recommended,
@@ -40,13 +53,27 @@ export default defineConfig(
 		}
 	},
 	{
+		files: ['**/*.svelte'],
+		rules: {
+			// bare reads of reactive variables inside $effect are the idiomatic
+			// Svelte 5 way of declaring dependencies
+			'@typescript-eslint/no-unused-expressions': 'off'
+		}
+	},
+	{
+		// renders trusted problem-statement markdown
+		files: ['**/problem/content.svelte'],
+		rules: {
+			'svelte/no-at-html-tags': 'off'
+		}
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: {
 				projectService: true,
 				extraFileExtensions: ['.svelte'],
-				parser: ts.parser,
-				svelteConfig
+				parser: ts.parser
 			}
 		}
 	}

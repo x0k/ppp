@@ -203,7 +203,7 @@ import netstandardDllUrl from 'dotnet-runtime/lib/netstandard.dll?url';
 import { createCachedFetch } from '$lib/fetch';
 
 const dotnetUrl = new URL(
-	`${import.meta.env.BASE_URL.replace(/\/$/, "")}/assets/dotnet/dotnet.js`,
+	`${import.meta.env.BASE_URL.replace(/\/$/, '')}/assets/dotnet/dotnet.js`,
 	globalThis.location.origin
 ).toString();
 

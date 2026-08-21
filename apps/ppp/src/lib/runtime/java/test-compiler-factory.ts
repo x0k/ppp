@@ -13,7 +13,10 @@ export interface Options<I, O> {
 	className?: string;
 	classDefinitions: string;
 	mainMethodBody: string;
-	nativesFactory: (input: I, saveOutput: (output: O) => void) => Record<string, Function>;
+	nativesFactory: (
+		input: I,
+		saveOutput: (output: O) => void
+	) => Record<string, (...args: never[]) => unknown>;
 }
 
 export class JavaTestCompilerFactory {
@@ -40,7 +43,7 @@ export class JavaTestCompilerFactory {
 			private saveOutput(output: O) {
 				this.output = output;
 			}
-			protected override getNatives(input: I): Record<string, Function> {
+			protected override getNatives(input: I): Record<string, (...args: never[]) => unknown> {
 				this.output = undefined;
 				return nativesFactory(input, this.saveOutput.bind(this));
 			}

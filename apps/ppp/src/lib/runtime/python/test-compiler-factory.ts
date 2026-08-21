@@ -4,11 +4,6 @@ import { createLogger, type Logger } from 'libs/logger';
 import type { TestCompiler } from 'libs/testing';
 import { pyRuntimeFactory, PyTestProgram } from 'python-runtime';
 
-import wasmUrl from 'python-runtime/pyodide.wasm?url';
-import stdlibUrl from 'python-runtime/python-stdlib.zip?url';
-
-import { createCachedFetch } from '$lib/fetch';
-
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 
 export class PythonTestCompilerFactory {
@@ -27,15 +22,12 @@ export class PythonTestCompilerFactory {
 				return generateCaseExecutionCode(data);
 			}
 		}
-		const fetcher = await createCachedFetch('python-cache@', wasmUrl);
-		const pyRuntime = await pyRuntimeFactory(
-			ctx,
-			this.streams,
-			(ctx, imports) =>
-				WebAssembly.instantiateStreaming(fetcher(wasmUrl, { signal: ctx.signal }), imports),
-			stdlibUrl
-		);
-		this.logger.info(`Loaded ${wasmUrl}`);
+		const indexUrl = new URL(
+			`${import.meta.env.BASE_URL.replace(/\/$/, '')}/assets/pyodide/`,
+			globalThis.location.origin
+		).toString();
+		const pyRuntime = await pyRuntimeFactory(ctx, this.streams, indexUrl);
+		this.logger.info(`Loaded ${indexUrl}`);
 		return {
 			async compile(_, files) {
 				if (files.length !== 1) {

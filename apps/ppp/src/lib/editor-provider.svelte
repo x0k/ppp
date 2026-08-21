@@ -2,8 +2,8 @@
 	import type { Snippet } from 'svelte';
 
 	import 'monaco-editor';
-	import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-	import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+	import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker';
+	import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker';
 
 	import { loadTmGrammars } from '$lib/monaco';
 

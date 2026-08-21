@@ -1,13 +1,11 @@
 {
-    "wasmHostProperties": {
-        "perHostConfig": [
-            {
-                "name": "browser",
-                "host": "browser",
-                "assemblies": [
-                    "System.Text.Json.dll"
-                ]
-            }
-        ]
-    }
+	"wasmHostProperties": {
+		"perHostConfig": [
+			{
+				"name": "browser",
+				"host": "browser",
+				"assemblies": ["System.Text.Json.dll"]
+			}
+		]
+	}
 }

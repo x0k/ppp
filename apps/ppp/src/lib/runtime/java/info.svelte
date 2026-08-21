@@ -1,14 +1,13 @@
 <script lang="ts">
-  import { version } from "java-runtime/version";
+	import { version } from 'java-runtime/version';
 </script>
 
 <p>
-  {version}
+	{version}
 </p>
 
 <p>
-  Your code is compiled by <code>Javac</code> and executed in
-  <a target="_blank" class="link" href="https://github.com/plasma-umass/doppio/"
-    >DoppioJVM</a
-  > in a web worker environment.
+	Your code is compiled by <code>Javac</code> and executed in
+	<a target="_blank" class="link" href="https://github.com/plasma-umass/doppio/">DoppioJVM</a> in a web
+	worker environment.
 </p>

@@ -1,3 +1,3 @@
 import BrowserFS from 'browserfs';
 
-export { BrowserFS }
+export { BrowserFS };

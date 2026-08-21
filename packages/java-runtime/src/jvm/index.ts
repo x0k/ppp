@@ -1,1 +1,1 @@
-export * from './jvm.js'
+export * from './jvm.js';

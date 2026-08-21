@@ -31,4 +31,5 @@
 </svelte:head>
 
 <h1 class="capitalize">{meta.titles[lang]}</h1>
+<!-- content is trusted problem markdown -->
 {@html marked.parse(content)}

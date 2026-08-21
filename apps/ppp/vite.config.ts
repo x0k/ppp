@@ -7,12 +7,22 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import Icons from 'unplugin-icons/vite';
 import { DEV } from 'esm-env';
+import adapter from '@sveltejs/adapter-static';
+import { resolve } from 'path';
 
 const base = DEV ? undefined : process.env.BASE_PATH?.slice(1);
 
 export default defineConfig({
 	worker: {
 		format: 'es'
+	},
+	resolve: {
+		alias: {
+			$lib: resolve(import.meta.dirname, 'src/lib'),
+			// monaco 0.56 added a strict exports map that doesn't match
+			// subpath imports with vite's ?worker query suffix
+			'monaco-editor/esm/vs': resolve(import.meta.dirname, 'node_modules/monaco-editor/esm/vs')
+		}
 	},
 	esbuild: {
 		target: 'es2022'
@@ -32,7 +42,18 @@ export default defineConfig({
 	assetsInclude: ['**/*.wasm', '**/*.zip', '**/*.rlib', '**/*.so'],
 	plugins: [
 		tailwindcss(),
-		sveltekit(),
+		sveltekit({
+			adapter: adapter({
+				fallback: '404.html',
+				pages: 'dist'
+			}),
+			paths: {
+				base: process.argv.includes('dev')
+					? ''
+					: (process.env.BASE_PATH as `/${string}` | undefined),
+				relative: false
+			}
+		}),
 		Icons({ compiler: 'svelte' }),
 		devtoolsJson(),
 		paraglideVitePlugin({
@@ -61,6 +82,13 @@ export default defineConfig({
 				{
 					src: 'node_modules/dotnet-runtime/dist/compiler',
 					dest: 'assets/dotnet',
+					rename: { stripBase: 4 }
+				},
+				{
+					// pyodide 314 eagerly fetches `${indexURL}pyodide.asm.wasm` itself,
+					// so the wasm must be available at a stable (non-hashed) path
+					src: 'node_modules/python-runtime/dist/pyodide',
+					dest: 'assets/pyodide',
 					rename: { stripBase: 4 }
 				}
 			]

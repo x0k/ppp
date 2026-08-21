@@ -1,0 +1,26 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "none",
+	"printWidth": 100,
+	"svelte": {},
+	"sortTailwindcss": {
+		"stylesheet": "./src/app.css"
+	},
+	"ignorePatterns": [
+		"package-lock.json",
+		"pnpm-lock.yaml",
+		"yarn.lock",
+		"bun.lock",
+		"bun.lockb",
+		"**/.svelte-kit",
+		"**/dist",
+		"**/.turbo",
+		"**/node_modules",
+		"messages/",
+		"project.inlang/",
+		"src/lib/paraglide/",
+		"src/lib/assets/"
+	]
+}

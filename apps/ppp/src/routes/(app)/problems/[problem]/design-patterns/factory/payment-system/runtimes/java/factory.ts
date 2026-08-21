@@ -32,12 +32,12 @@ export const factory: TestCompilerFactory<RemoteCompilerFactoryOptions, Input, O
       getAmount()
     ));`,
 				nativesFactory: (input, save) => ({
-					// @ts-expect-error TODO: import thread type
-					'getSystemType()Ljava/lang/String;': (t) =>
-						util.initString(t.getBsCl(), JAVA_PAYMENT_SYSTEM_TYPES[input.paymentSystem]),
+					'getSystemType()Ljava/lang/String;': (t: {
+						getBsCl(): Parameters<typeof util.initString>[0];
+					}) => util.initString(t.getBsCl(), JAVA_PAYMENT_SYSTEM_TYPES[input.paymentSystem]),
 					'getBase()I': () => input.base,
 					'getAmount()I': () => input.amount,
-					'saveResult(I)V': (_: unknown, result: number) => save(result)
+					'saveResult(I)V': (_: never, result: number) => save(result)
 				})
 			});
 		}

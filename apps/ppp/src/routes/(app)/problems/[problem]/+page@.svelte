@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	const problems = import.meta.glob<Problem<unknown, unknown>>('./**/problem.ts', {
 		import: 'default'
-	})
+	});
 </script>
 
 <script lang="ts">
@@ -10,9 +10,11 @@
 	import Editor from '$lib/problem/editor.svelte';
 	import { m } from '$lib/paraglide/messages';
 
-	import { page } from '$app/state'
+	import { page } from '$app/state';
 
-	const key = $derived(Object.keys(problems).find(p => p.endsWith(`${page.params.problem}/problem.ts`)));
+	const key = $derived(
+		Object.keys(problems).find((p) => p.endsWith(`${page.params.problem}/problem.ts`))
+	);
 </script>
 
 {#if key}
@@ -27,8 +29,8 @@
 		</Editor>
 	{/await}
 {:else}
-	<div class="h-screen flex flex-col items-center justify-center gap-4">
+	<div class="flex h-screen flex-col items-center justify-center gap-4">
 		<p>{m.problem_name_not_found({ name: page.params.problem! })}</p>
-		<a class="btn" href="../" >{m.back_to_problems()}</a>
+		<a class="btn" href="../">{m.back_to_problems()}</a>
 	</div>
 {/if}

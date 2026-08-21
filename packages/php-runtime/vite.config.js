@@ -1,53 +1,54 @@
-import { resolve } from "path";
-import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
-import { viteStaticCopy } from "vite-plugin-static-copy";
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
-  build: {
-    lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: {
-        index: resolve(__dirname, "src/index.ts"),
-        version: resolve(__dirname, "src/version.ts"),
-      },
-      formats: ["es"],
-      // name: "MyLib",
-      // the proper extensions will be added
-      // fileName: "index",
-    },
-    rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
-      external: [/^libs\//],
-      output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          // vue: "Vue",
-        },
-        assetFileNames: "assets/[name].[hash].[ext]",
-      },
-    },
-  },
-  plugins: [
-    {
-      name: "ignore-wasm-imports",
-      load(id) {
-        if (id.endsWith(".wasm")) {
-          return `export default {}`;
-        }
-      },
-    },
-    dts(),
-    viteStaticCopy({
-      targets: [
-        {
-          src: "node_modules/@php-wasm/web-8-5/jspi/8_5_3/php_8_5.wasm",
-          dest: ".",
-          rename: { stripBase: true, name: "php.wasm" },
-        },
-      ],
-    }),
-  ],
+	build: {
+		lib: {
+			// Could also be a dictionary or array of multiple entry points
+			entry: {
+				index: resolve(import.meta.dirname, 'src/index.ts'),
+				version: resolve(import.meta.dirname, 'src/version.ts')
+			},
+			formats: ['es']
+			// name: "MyLib",
+			// the proper extensions will be added
+			// fileName: "index",
+		},
+		rollupOptions: {
+			// make sure to externalize deps that shouldn't be bundled
+			// into your library
+			external: [/^libs\//],
+			output: {
+				// Provide global variables to use in the UMD build
+				// for externalized deps
+				globals: {
+					// vue: "Vue",
+				},
+				assetFileNames: 'assets/[name].[hash].[ext]'
+			}
+		}
+	},
+	plugins: [
+		{
+			name: 'ignore-wasm-imports',
+			enforce: 'pre',
+			load(id) {
+				if (id.endsWith('.wasm')) {
+					return `export default {}`;
+				}
+			}
+		},
+		dts(),
+		viteStaticCopy({
+			targets: [
+				{
+					src: 'node_modules/@php-wasm/web-8-5/jspi/8_5_8/php_8_5.wasm',
+					dest: '.',
+					rename: { stripBase: true, name: 'php.wasm' }
+				}
+			]
+		})
+	]
 });

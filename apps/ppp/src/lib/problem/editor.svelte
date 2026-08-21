@@ -37,7 +37,7 @@
 		createLineInputMode,
 		INPUT_MODS,
 		InputMode,
-		createRawInputMode,
+		createRawInputMode
 	} from '$lib/components/editor';
 	import {
 		Panel,
@@ -176,18 +176,22 @@
 	let executionTimeout = $state(executionTimeoutStorage.load());
 	debouncedSave(executionTimeoutStorage, () => executionTimeout, 100);
 
-	const inputModeStorage = createSyncStorage(localStorage, "test-editor-input-mode", InputMode.Line)
-	let inputMode = $state(inputModeStorage.load())
-	immediateSave(inputModeStorage, () => inputMode)
+	const inputModeStorage = createSyncStorage(
+		localStorage,
+		'test-editor-input-mode',
+		InputMode.Line
+	);
+	let inputMode = $state(inputModeStorage.load());
+	immediateSave(inputModeStorage, () => inputMode);
 
 	const { terminal, fitAddon } = createTerminal();
-	let lastInput: ReadableStreamOfBytes | undefined
+	let lastInput: ReadableStreamOfBytes | undefined;
 	const input = $derived.by(() => {
-		lastInput?.cancel()
-		return lastInput = createReadableStream(terminal).pipeThrough(
+		lastInput?.cancel();
+		return (lastInput = createReadableStream(terminal).pipeThrough(
 			(inputMode === InputMode.Line ? createLineInputMode : createRawInputMode)(terminal)
-		)
-	})
+		));
+	});
 	const terminalLogger = createLogger(terminal);
 
 	const editorContext = new EditorContext(model, terminal, fitAddon);
@@ -258,13 +262,13 @@
 				<div class="breadcrumbs">
 					<ul>
 						<li class="min-w-0">
-							<a class="truncate capitalize block" href="..">
+							<a class="block truncate capitalize" href="..">
 								{PROBLEM_CATEGORY_TO_LABEL[problemCategory]()}
 							</a>
 						</li>
 					</ul>
 				</div>
-				<div class="ml-auto join rounded">
+				<div class="join ml-auto rounded">
 					<button class="btn join-item btn-ghost btn-lg"><LucideChevronLeft /></button>
 					<button class="btn join-item btn-ghost btn-lg"><LucideChevronRight /></button>
 					<button class="btn join-item btn-ghost btn-lg"><LucideShuffle /></button>
@@ -334,7 +338,7 @@
 				<TerminalTab width={innerWidth.current!} height={panelHeight} class="mt-4 ml-4 grow" />
 				<TabContent tab={EditorPanelTab.Tests}>
 					<div class="flex flex-col gap-4 overflow-auto p-4">
-						{#each testCases as testCase, i}
+						{#each testCases as testCase, i (i)}
 							<div>
 								<div class="flex items-center gap-2 pb-2">
 									{#if lastTestId === i}
@@ -369,8 +373,6 @@
 	</ResizablePanel>
 </div>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog bind:this={descriptionDialogElement} class="modal" onclick={(e) => e.stopPropagation()}>
 	<div class="modal-box w-full max-w-2xl">
 		<form method="dialog">

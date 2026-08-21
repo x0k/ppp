@@ -1,24 +1,26 @@
 {
-  "name": "java-runtime",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "check": "tsc",
-    "prebuild": "./artifacts.sh",
-    "build": "node build.mjs"
-  },
-  "dependencies": {
-    "browserfs": "^1.4.3",
-    "doppiojvm": "^0.5.0",
-    "libs": "workspace:*"
-  },
-  "devDependencies": {
-    "esbuild": "~0.28.0"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./version": "./dist/version.js",
-    "./doppio.zip": "./dist/doppio/doppio.zip"
-  }
+	"name": "java-runtime",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js",
+		"./version": "./dist/version.js",
+		"./doppio.zip": "./dist/doppio/doppio.zip"
+	},
+	"scripts": {
+		"check": "tsc",
+		"prebuild": "./artifacts.sh",
+		"build": "node build.mjs",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check ."
+	},
+	"dependencies": {
+		"browserfs": "^1.4.3",
+		"doppiojvm": "^0.5.0",
+		"libs": "workspace:*"
+	},
+	"devDependencies": {
+		"esbuild": "~0.28.2"
+	}
 }

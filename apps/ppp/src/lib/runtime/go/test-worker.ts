@@ -1,16 +1,14 @@
-import { startTestCompilerActor } from "libs/testing/actor";
-import { createContext } from "libs/context";
+import { startTestCompilerActor } from 'libs/testing/actor';
+import { createContext } from 'libs/context';
 
-import { GoTestCompilerFactory } from "./test-compiler-factory";
+import { GoTestCompilerFactory } from './test-compiler-factory';
 
 export interface GoTestWorkerConfig {
-  goTestCompilerFactory: GoTestCompilerFactory;
+	goTestCompilerFactory: GoTestCompilerFactory;
 }
 
-startTestCompilerActor<GoTestWorkerConfig>(
-  createContext(),
-  (ctx, out, factory) =>
-    factory(ctx, {
-      goTestCompilerFactory: new GoTestCompilerFactory(out),
-    })
+startTestCompilerActor<GoTestWorkerConfig>(createContext(), (ctx, out, factory) =>
+	factory(ctx, {
+		goTestCompilerFactory: new GoTestCompilerFactory(out)
+	})
 );

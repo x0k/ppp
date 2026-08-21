@@ -1,25 +1,27 @@
 {
-  "name": "go-runtime",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "precheck": "./artifacts.sh",
-    "check": "tsc",
-    "prebuild": "./artifacts.sh",
-    "build": "vite build"
-  },
-  "dependencies": {
-    "libs": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/golang-wasm-exec": "^1.15.2",
-    "vite": "catalog:",
-    "vite-plugin-dts": "catalog:"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./version": "./dist/version.js",
-    "./compiler.wasm": "./dist/compiler.wasm"
-  }
+	"name": "go-runtime",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js",
+		"./version": "./dist/version.js",
+		"./compiler.wasm": "./dist/compiler.wasm"
+	},
+	"scripts": {
+		"precheck": "./artifacts.sh",
+		"check": "tsc",
+		"prebuild": "./artifacts.sh",
+		"build": "vite build",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check ."
+	},
+	"dependencies": {
+		"libs": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/golang-wasm-exec": "^1.15.2",
+		"vite": "catalog:",
+		"vite-plugin-dts": "catalog:"
+	}
 }
