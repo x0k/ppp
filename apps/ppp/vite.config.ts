@@ -7,12 +7,19 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import Icons from 'unplugin-icons/vite';
 import { DEV } from 'esm-env';
+import adapter from '@sveltejs/adapter-static';
+import { resolve } from 'path';
 
 const base = DEV ? undefined : process.env.BASE_PATH?.slice(1);
 
 export default defineConfig({
 	worker: {
 		format: 'es'
+	},
+	resolve: {
+		alias: {
+			$lib: resolve(__dirname, 'src/lib')
+		}
 	},
 	esbuild: {
 		target: 'es2022'
@@ -32,7 +39,18 @@ export default defineConfig({
 	assetsInclude: ['**/*.wasm', '**/*.zip', '**/*.rlib', '**/*.so'],
 	plugins: [
 		tailwindcss(),
-		sveltekit(),
+		sveltekit({
+			adapter: adapter({
+				fallback: '404.html',
+				pages: 'dist'
+			}),
+			paths: {
+				base: process.argv.includes('dev')
+					? ''
+					: (process.env.BASE_PATH as `/${string}` | undefined),
+				relative: false
+			}
+		}),
 		Icons({ compiler: 'svelte' }),
 		devtoolsJson(),
 		paraglideVitePlugin({
