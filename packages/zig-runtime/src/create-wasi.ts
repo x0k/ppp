@@ -59,7 +59,8 @@ export function createCompilerWASI(
 	stdLibFiles: {
 		filename: string;
 		fileData: Uint8Array;
-	}[]
+	}[],
+	extraArgs: string[] = []
 ) {
 	const files: FileData[] = [];
 	for (const f of stdLibFiles) {
@@ -83,7 +84,7 @@ export function createCompilerWASI(
 		new PreopenDirectory('/lib', convert(files).contents),
 		new PreopenDirectory('/cache', new Map())
 	];
-	return new WASI(compilerArgs, compilerEnv, descriptors, { debug: false });
+	return new WASI([...compilerArgs, ...extraArgs], compilerEnv, descriptors, { debug: false });
 }
 
 const programArgs = ['main.wasm'];
