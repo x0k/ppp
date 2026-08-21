@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Info from "./info.svelte";
+	import Info from './info.svelte';
 </script>
 
 <p>
-  Class <code>Program</code> with a public static method <code>main</code> is required.
+	Class <code>Program</code> with a public static method <code>main</code> is required.
 </p>
 
 <Info />

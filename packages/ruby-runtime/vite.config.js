@@ -8,8 +8,8 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: {
-        index: resolve(__dirname, "src/index.ts"),
-        version: resolve(__dirname, "src/version.ts"),
+        index: resolve(import.meta.dirname, "src/index.ts"),
+        version: resolve(import.meta.dirname, "src/version.ts"),
       },
       formats: ["es"],
       // name: "MyLib",

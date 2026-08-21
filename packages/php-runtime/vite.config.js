@@ -8,8 +8,8 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: {
-        index: resolve(__dirname, "src/index.ts"),
-        version: resolve(__dirname, "src/version.ts"),
+        index: resolve(import.meta.dirname, "src/index.ts"),
+        version: resolve(import.meta.dirname, "src/version.ts"),
       },
       formats: ["es"],
       // name: "MyLib",
@@ -33,6 +33,7 @@ export default defineConfig({
   plugins: [
     {
       name: "ignore-wasm-imports",
+      enforce: "pre",
       load(id) {
         if (id.endsWith(".wasm")) {
           return `export default {}`;
@@ -43,7 +44,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/@php-wasm/web-8-5/jspi/8_5_3/php_8_5.wasm",
+          src: "node_modules/@php-wasm/web-8-5/jspi/8_5_8/php_8_5.wasm",
           dest: ".",
           rename: { stripBase: true, name: "php.wasm" },
         },

@@ -18,7 +18,10 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			$lib: resolve(__dirname, 'src/lib')
+			$lib: resolve(import.meta.dirname, 'src/lib'),
+			// monaco 0.56 added a strict exports map that doesn't match
+			// subpath imports with vite's ?worker query suffix
+			'monaco-editor/esm/vs': resolve(import.meta.dirname, 'node_modules/monaco-editor/esm/vs')
 		}
 	},
 	esbuild: {
@@ -79,6 +82,13 @@ export default defineConfig({
 				{
 					src: 'node_modules/dotnet-runtime/dist/compiler',
 					dest: 'assets/dotnet',
+					rename: { stripBase: 4 }
+				},
+				{
+					// pyodide 314 eagerly fetches `${indexURL}pyodide.asm.wasm` itself,
+					// so the wasm must be available at a stable (non-hashed) path
+					src: 'node_modules/python-runtime/dist/pyodide',
+					dest: 'assets/pyodide',
 					rename: { stripBase: 4 }
 				}
 			]

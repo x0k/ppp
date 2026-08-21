@@ -1,26 +1,26 @@
-import type { languages } from "monaco-editor";
+import type { languages } from 'monaco-editor';
 
 export default {
-  comments: {
-    lineComment: "//",
-  },
-  brackets: [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"],
-  ],
-  autoClosingPairs: [
-    { open:"{", close:"}" },
-    { open:"[", close:"]" },
-    { open:"(", close:")" },
-    { open:'"', close:'"' },
-    { open:"'", close:"'" },
-  ],
-  surroundingPairs: [
-    { open:"{", close: "}"},
-    { open:"[", close: "]"},
-    { open:"(", close: ")"},
-    { open:'"', close: '"'},
-    { open:"'", close: "'"},
-  ],
+	comments: {
+		lineComment: '//'
+	},
+	brackets: [
+		['{', '}'],
+		['[', ']'],
+		['(', ')']
+	],
+	autoClosingPairs: [
+		{ open: '{', close: '}' },
+		{ open: '[', close: ']' },
+		{ open: '(', close: ')' },
+		{ open: '"', close: '"' },
+		{ open: "'", close: "'" }
+	],
+	surroundingPairs: [
+		{ open: '{', close: '}' },
+		{ open: '[', close: ']' },
+		{ open: '(', close: ')' },
+		{ open: '"', close: '"' },
+		{ open: "'", close: "'" }
+	]
 } satisfies languages.LanguageConfiguration;

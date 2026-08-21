@@ -1,16 +1,16 @@
-import { redirect, createLogger } from "libs/logger";
-import type { CompilerFactory, Program } from "libs/compiler";
+import { redirect, createLogger } from 'libs/logger';
+import type { CompilerFactory, Program } from 'libs/compiler';
 import type { Streams } from 'libs/io';
-import { JsProgram } from "javascript-runtime";
+import { JsProgram } from 'javascript-runtime';
 
 export const makeJsCompiler: CompilerFactory<Streams, Program> = async (_, streams) => {
-  const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
-  return {
-    async compile(_, files) {
-      if (files.length !== 1) {
-        throw new Error("Compilation of multiple files is not implemented");
-      }
-      return new JsProgram(files[0].content, patchedConsole);
-    },
-  };
+	const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
+	return {
+		async compile(_, files) {
+			if (files.length !== 1) {
+				throw new Error('Compilation of multiple files is not implemented');
+			}
+			return new JsProgram(files[0].content, patchedConsole);
+		}
+	};
 };

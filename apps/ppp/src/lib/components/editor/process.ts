@@ -1,1 +1,1 @@
-export type ProcessStatus = 'stopped' | 'stopping' | 'running'
+export type ProcessStatus = 'stopped' | 'stopping' | 'running';

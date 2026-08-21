@@ -1,20 +1,20 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
-  
-  import { EditorPanelTab } from '$lib/editor-panel-tab';
-  
-  import { getEditorPanelContext } from './context.svelte';
+	import type { Snippet } from 'svelte';
 
-  interface Props {
-    tab: EditorPanelTab
-    children: Snippet
-  }
+	import { EditorPanelTab } from '$lib/editor-panel-tab';
 
-  const { tab, children }: Props = $props();
+	import { getEditorPanelContext } from './context.svelte';
 
-  const ctx = getEditorPanelContext();
+	interface Props {
+		tab: EditorPanelTab;
+		children: Snippet;
+	}
+
+	const { tab, children }: Props = $props();
+
+	const ctx = getEditorPanelContext();
 </script>
 
 {#if ctx.selectedTab === tab}
-  {@render children()}
+	{@render children()}
 {/if}

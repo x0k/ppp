@@ -16,14 +16,6 @@
 			"$lib/*": ["./src/lib/*"]
 		}
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.js",
-		"src/**/*.svelte",
-		"*.d.ts"
-	],
-	"exclude": [
-		"src/lib/assets/**",
-		"src/routes/(app)/problems/**/runtimes/*/code.*"
-	]
+	"include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "*.d.ts"],
+	"exclude": ["src/lib/assets/**", "src/routes/(app)/problems/**/runtimes/*/code.*"]
 }

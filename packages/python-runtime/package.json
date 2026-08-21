@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "libs": "workspace:*",
-    "pyodide": "^0.29.3"
+    "pyodide": "^314.0.5"
   },
   "devDependencies": {
     "vite": "catalog:",

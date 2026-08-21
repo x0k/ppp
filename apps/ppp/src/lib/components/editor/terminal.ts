@@ -16,7 +16,7 @@ export enum InputMode {
 	Raw = 'raw'
 }
 
-export const INPUT_MODS = Object.values(InputMode)
+export const INPUT_MODS = Object.values(InputMode);
 
 export function createTerminal({ theme = makeTerminalTheme() }: TerminalConfig = {}) {
 	const terminal = new Terminal({
@@ -39,7 +39,7 @@ export function createReadableStream(terminal: Terminal) {
 			});
 		},
 		cancel() {
-			console.log("CANCEL")
+			console.log('CANCEL');
 			disposable.dispose();
 		}
 	});

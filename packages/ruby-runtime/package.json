@@ -11,12 +11,12 @@
     "@bjorn3/browser_wasi_shim": "^0.4.0"
   },
   "dependencies": {
-    "@ruby/wasm-wasi": "2.9.3-2.9.4",
+    "@ruby/wasm-wasi": "2.10.1",
     "libs": "workspace:*"
   },
   "devDependencies": {
     "@bjorn3/browser_wasi_shim": "catalog:",
-    "@ruby/4.0-wasm-wasi": "2.9.3-2.9.4",
+    "@ruby/4.0-wasm-wasi": "2.10.1",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-static-copy": "catalog:"

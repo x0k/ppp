@@ -1,7 +1,7 @@
 export enum Page {
-  Main = "/",
-  Problems = "/problems",
-  Editor = "/editor",
+	Main = '/',
+	Problems = '/problems',
+	Editor = '/editor'
 }
 
-export const TITLE = "Programming Patterns Practice";
+export const TITLE = 'Programming Patterns Practice';

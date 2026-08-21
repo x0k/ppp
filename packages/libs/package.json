@@ -28,8 +28,8 @@
     "@bjorn3/browser_wasi_shim": "^0.4.0"
   },
   "devDependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.2",
-    "@types/node": "^24.10.1",
+    "@bjorn3/browser_wasi_shim": "catalog:",
+    "@types/node": "^26.2.0",
     "vite": "catalog:",
     "vitest": "catalog:"
   }

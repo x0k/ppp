@@ -9,7 +9,7 @@ import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
 import { createCachedFetch } from '$lib/fetch';
 
 const precompiledGleamStdlibIndexUrl = new URL(
-	`${import.meta.env.BASE_URL.replace(/\/$/, "")}/assets/gleam`,
+	`${import.meta.env.BASE_URL.replace(/\/$/, '')}/assets/gleam`,
 	globalThis.location.origin
 ).toString();
 
