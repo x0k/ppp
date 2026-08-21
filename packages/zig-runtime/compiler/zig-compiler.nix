@@ -11,7 +11,7 @@ pkgs-unstable.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-vnHks1rbZBH7oaHc5R/kKkG5zRJXPMuqk5bYy7vD6Lk=";
+  outputHash = "sha256-k9ws/yM0RQj549869v6ddk5T9UyFGyvWwXa0uBZRjFQ=";
 
   buildPhase = ''
     set -euo pipefail
@@ -30,7 +30,9 @@ pkgs-unstable.stdenv.mkDerivation {
     find "$tarroot" -type d -exec chmod 755 {} +
     find "$tarroot" -type f -exec chmod 644 {} +
     find "$tarroot" -exec touch -h -d @1 {} +
-    tar --sort=name --numeric-owner --owner=0 --group=0 --mtime=@1 -C "$tarroot" -cf - . | gzip -n > $out/zig/zig.tar.gz
+    # %P strips the "./" prefix so entry names match what the runtime's
+    # untar expects (lib/std/...); sorted input keeps the archive deterministic.
+    (cd "$tarroot" && find . -mindepth 1 -printf '%P\n' | LC_ALL=C sort | tar --sort=name --no-recursion --numeric-owner --owner=0 --group=0 --mtime=@1 -T - -cf -) | gzip -n > $out/zig/zig.tar.gz
     rm -rf "$tarroot"
 
     cp -r zig-out/bin zig-out/libcompiler_rt.a $out/zig/

@@ -8,7 +8,7 @@ pkgs.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-XQRAeIa/HiY7GciqFE9z8bSyyDkEvcYLXT8ZMJ0/jAc=";
+  outputHash = "sha256-UFR5yFD5oYmayQJKQXxoE7/p2M/j1td+QaxIibBLtT8=";
 
   dontConfigure = true;
   dontStrip = true;
@@ -19,7 +19,10 @@ pkgs.stdenv.mkDerivation {
   buildPhase = ''
     set -euo pipefail
     dotnet restore compiler.csproj --source https://api.nuget.org/v3/index.json
-    dotnet publish compiler.csproj -c Release --no-restore
+    # Skip pdbs and satellite assemblies so the boot manifest embedded in
+    # dotnet.js only references files that actually exist.
+    dotnet publish compiler.csproj -c Release --no-restore \
+      -p:DebugType=none -p:DebugSymbols=false -p:SatelliteResourceLanguages=en
   '';
 
   installPhase = ''
@@ -27,10 +30,6 @@ pkgs.stdenv.mkDerivation {
     mkdir -p $out/compiler $out/lib
     cp -r bin/Release/net10.0/wwwroot/_framework/* $out/compiler/
     cp bin/Release/net10.0/*.dll $out/lib/
-    # Strip debug symbols, source maps, and locale satellite assemblies
-    find $out -name '*.pdb' -delete
     find $out -name '*.js.map' -delete
-    find $out/compiler -type d -name '[a-z][a-z]' -prune -exec rm -rf {} +
-    find $out/compiler -type d -name '[a-z][a-z]-[A-Z][A-Z]' -prune -exec rm -rf {} +
   '';
 }
