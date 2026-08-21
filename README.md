@@ -13,7 +13,6 @@ Clone the repository:
 
 ```
 git clone https://github.com/x0k/ppp.git
-git submodule update --init
 ```
 
 Install dependencies and start the dev server:
