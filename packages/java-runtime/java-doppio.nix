@@ -19,7 +19,7 @@ pkgs.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-jrA9FzgMle6wPjXwVBQYwD5YYzZLRLeqGWqZNg8dMxc=";
+  outputHash = "sha256-NNmI7X/d/BGmMktbtdeKLEANiLBIx67VLYLHtztPX+I=";
 
   buildPhase = ''
     set -euo pipefail
@@ -36,8 +36,12 @@ pkgs.stdenv.mkDerivation {
     mkdir -p $out
     cp -rL build/release/. $out/
     rm -rf $out/classes/test $out/*.js* $out/vendor/java_home/lib/ext
+    # Normalize timestamps so the zip is deterministic across builds.
+    find $out -exec touch -h -d @1 {} +
     cd $out
-    zip -r doppio.zip .
+    find . -type d -exec chmod 755 {} +
+    find . -type f -exec chmod 644 {} +
+    zip -r -X doppio.zip .
     rm -rf classes vendor
   '';
   dontFixup = true;

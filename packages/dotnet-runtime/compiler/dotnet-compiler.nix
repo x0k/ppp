@@ -8,9 +8,10 @@ pkgs.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-JvYyLmuF6Cx6mCgv86ulg8FCGD2v2ngAwsdoHEZZ5no=";
+  outputHash = "sha256-XQRAeIa/HiY7GciqFE9z8bSyyDkEvcYLXT8ZMJ0/jAc=";
 
   dontConfigure = true;
+  dontStrip = true;
   preBuild = ''
     set -euo pipefail
     export HOME=$(pwd)

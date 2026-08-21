@@ -5,6 +5,15 @@ pkgs.buildGoModule {
   src = builtins.path {
     path = ./.;
     name = "go-compiler-src";
+    filter =
+      path: type:
+      !builtins.elem (baseNameOf path) [
+        "result"
+        "result-1"
+        "result-2"
+        ".git"
+        "node_modules"
+      ];
   };
 
   vendorHash = "sha256-gzo2GWgCG13smBq9y8t5c8+L3Gyv3xzsOSp7PdjOaYs=";
