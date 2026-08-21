@@ -1,7 +1,7 @@
 {
 	"name": "ppp",
-	"private": true,
 	"version": "0.0.1",
+	"private": true,
 	"type": "module",
 	"scripts": {
 		"paraglide-compile": "paraglide-js compile --strategy url --project ./project.inlang --outdir ./src/lib/paraglide",
@@ -12,10 +12,11 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint .",
+		"format": "oxfmt",
+		"lint": "eslint .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "npm run test:unit -- --run",
+		"format:check": "oxfmt --check ."
 	},
 	"dependencies": {
 		"@andrewbranch/untar.js": "^1.0.4",
@@ -60,10 +61,8 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.23.0",
 		"globals": "^17.11.0",
+		"oxfmt": "^0.64.0",
 		"playwright": "^1.62.1",
-		"prettier": "^3.9.6",
-		"prettier-plugin-svelte": "^4.1.1",
-		"prettier-plugin-tailwindcss": "^0.8.1",
 		"svelte": "^5.56.10",
 		"svelte-check": "^4.7.6",
 		"tailwindcss": "^4.3.3",

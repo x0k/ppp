@@ -1,28 +1,30 @@
 {
-  "name": "zig-runtime",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "check": "tsc",
-    "prebuild": "./artifacts.sh",
-    "build": "vite build"
-  },
-  "peerDependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.0"
-  },
-  "dependencies": {
-    "libs": "workspace:*"
-  },
-  "devDependencies": {
-    "@bjorn3/browser_wasi_shim": "catalog:",
-    "vite": "catalog:",
-    "vite-plugin-dts": "catalog:"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./version": "./dist/version.js",
-    "./zig.wasm": "./dist/zig/bin/zig.wasm",
-    "./lib/*": "./dist/zig/*"
-  }
+	"name": "zig-runtime",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js",
+		"./version": "./dist/version.js",
+		"./zig.wasm": "./dist/zig/bin/zig.wasm",
+		"./lib/*": "./dist/zig/*"
+	},
+	"scripts": {
+		"check": "tsc",
+		"prebuild": "./artifacts.sh",
+		"build": "vite build",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check ."
+	},
+	"dependencies": {
+		"libs": "workspace:*"
+	},
+	"devDependencies": {
+		"@bjorn3/browser_wasi_shim": "catalog:",
+		"vite": "catalog:",
+		"vite-plugin-dts": "catalog:"
+	},
+	"peerDependencies": {
+		"@bjorn3/browser_wasi_shim": "^0.4.0"
+	}
 }

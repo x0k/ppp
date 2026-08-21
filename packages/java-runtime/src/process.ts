@@ -1,3 +1,3 @@
-import BrowserFS from "browserfs";
+import BrowserFS from 'browserfs';
 
-export const process = BrowserFS.BFSRequire("process");
+export const process = BrowserFS.BFSRequire('process');

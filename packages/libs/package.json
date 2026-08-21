@@ -1,36 +1,38 @@
 {
-  "name": "libs",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "vitest run"
-  },
-  "keywords": [],
-  "author": "Krasilnikov Roman",
-  "license": "ISC",
-  "exports": {
-    "./sync": "./dist/sync/index.js",
-    "./actor": "./dist/actor/index.js",
-    "./compiler": "./dist/compiler/index.js",
-    "./compiler/actor": "./dist/compiler/actor.js",
-    "./testing": "./dist/testing/index.js",
-    "./testing/actor": "./dist/testing/actor.js",
-    "./wasi": "./dist/wasi/index.js",
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./dist/*.js"
-    }
-  },
-  "peerDependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.0"
-  },
-  "devDependencies": {
-    "@bjorn3/browser_wasi_shim": "catalog:",
-    "@types/node": "^26.2.0",
-    "vite": "catalog:",
-    "vitest": "catalog:"
-  }
+	"name": "libs",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"license": "ISC",
+	"author": "Krasilnikov Roman",
+	"type": "module",
+	"exports": {
+		"./sync": "./dist/sync/index.js",
+		"./actor": "./dist/actor/index.js",
+		"./compiler": "./dist/compiler/index.js",
+		"./compiler/actor": "./dist/compiler/actor.js",
+		"./testing": "./dist/testing/index.js",
+		"./testing/actor": "./dist/testing/actor.js",
+		"./wasi": "./dist/wasi/index.js",
+		"./*": {
+			"types": "./dist/*.d.ts",
+			"default": "./dist/*.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"test": "vitest run",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check ."
+	},
+	"devDependencies": {
+		"@bjorn3/browser_wasi_shim": "catalog:",
+		"@types/node": "^26.2.0",
+		"vite": "catalog:",
+		"vitest": "catalog:"
+	},
+	"peerDependencies": {
+		"@bjorn3/browser_wasi_shim": "^0.4.0"
+	}
 }

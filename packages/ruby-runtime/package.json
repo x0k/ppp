@@ -1,29 +1,31 @@
 {
-  "name": "ruby-runtime",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "check": "tsc",
-    "build": "vite build"
-  },
-  "peerDependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.0"
-  },
-  "dependencies": {
-    "@ruby/wasm-wasi": "2.10.1",
-    "libs": "workspace:*"
-  },
-  "devDependencies": {
-    "@bjorn3/browser_wasi_shim": "catalog:",
-    "@ruby/4.0-wasm-wasi": "2.10.1",
-    "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
-    "vite-plugin-static-copy": "catalog:"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./version": "./dist/version.js",
-    "./ruby.wasm": "./dist/ruby.wasm"
-  }
+	"name": "ruby-runtime",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js",
+		"./version": "./dist/version.js",
+		"./ruby.wasm": "./dist/ruby.wasm"
+	},
+	"scripts": {
+		"check": "tsc",
+		"build": "vite build",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check ."
+	},
+	"dependencies": {
+		"@ruby/wasm-wasi": "2.10.1",
+		"libs": "workspace:*"
+	},
+	"devDependencies": {
+		"@bjorn3/browser_wasi_shim": "catalog:",
+		"@ruby/4.0-wasm-wasi": "2.10.1",
+		"vite": "catalog:",
+		"vite-plugin-dts": "catalog:",
+		"vite-plugin-static-copy": "catalog:"
+	},
+	"peerDependencies": {
+		"@bjorn3/browser_wasi_shim": "^0.4.0"
+	}
 }

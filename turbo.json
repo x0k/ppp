@@ -1,35 +1,51 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "check": {
-      "dependsOn": [
-        "^build"
-      ]
-    },
-    "build": {
-      "dependsOn": [
-        "check"
-      ],
-      "env": [
-        "BASE_PATH"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
-    },
-    "dev": {
-      "dependsOn": [
-        "^build"
-      ],
-      "persistent": true,
-      "cache": false
-    },
-    "preview": {
-      "persistent": true,
-      "cache": false,
-      "dependsOn": [
-        "build"
-      ]
-    }
-  }
+	"tasks": {
+		"check": {
+			"dependsOn": [
+				"^build"
+			]
+		},
+		"build": {
+			"dependsOn": [
+				"^build",
+				"format:check",
+				"check"
+			],
+			"env": [
+				"BASE_PATH"
+			],
+			"outputs": [
+				"dist/**"
+			]
+		},
+		"dev": {
+			"dependsOn": [
+				"^build"
+			],
+			"persistent": true,
+			"cache": false
+		},
+		"preview": {
+			"persistent": true,
+			"cache": false,
+			"dependsOn": [
+				"build"
+			]
+		},
+		"lint": {
+			"dependsOn": [
+				"format:check",
+				"^build"
+			]
+		},
+		"format:check": {
+			"dependsOn": [
+				"^build"
+			]
+		},
+		"format": {
+			"cache": false
+		}
+	}
 }

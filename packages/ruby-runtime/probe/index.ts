@@ -1,16 +1,13 @@
-import { DefaultRubyVM } from "@ruby/wasm-wasi/dist/browser";
+import { DefaultRubyVM } from '@ruby/wasm-wasi/dist/browser';
 
 // @ts-expect-error
-import WASM_PATH from "./public/ruby+stdlib.wasm";
+import WASM_PATH from './public/ruby+stdlib.wasm';
 
 const wasmFile = Bun.file(WASM_PATH);
 
-const { vm } = await DefaultRubyVM(
-  await WebAssembly.compile(await wasmFile.arrayBuffer()),
-  {
-    consolePrint: true
-  }
-);
+const { vm } = await DefaultRubyVM(await WebAssembly.compile(await wasmFile.arrayBuffer()), {
+	consolePrint: true
+});
 
 vm.eval("puts 'hello world'");
-vm.printVersion()
+vm.printVersion();

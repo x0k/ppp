@@ -1,32 +1,35 @@
 {
-  "name": "root",
-  "version": "0.0.0",
-  "author": "Krasilnikov Roman",
-  "private": true,
-  "type": "module",
-  "packageManager": "pnpm@10.28.0",
-  "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "check": "turbo run check",
-    "preview": "turbo run preview"
-  },
-  "devDependencies": {
-    "@total-typescript/tsconfig": "^1.0.4",
-    "@typescript/typescript6": "^6.0.2",
-    "only-allow": "^1.2.2",
-    "turbo": "^2.10.11",
-    "typescript": "^6.0.3"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "browserfs@1.4.3": "patches/browserfs@1.4.3.patch",
-      "doppiojvm@0.5.0": "patches/doppiojvm@0.5.0.patch"
-    },
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "@tailwindcss/oxide"
-    ]
-  }
+	"name": "root",
+	"version": "0.0.0",
+	"author": "Krasilnikov Roman",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@10.28.0",
+	"scripts": {
+		"preinstall": "npx only-allow pnpm",
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"check": "turbo run check",
+		"preview": "turbo run preview",
+		"format": "turbo run format",
+		"format:check": "turbo run format:check"
+	},
+	"devDependencies": {
+		"@total-typescript/tsconfig": "^1.0.4",
+		"@typescript/typescript6": "^6.0.2",
+		"only-allow": "^1.2.2",
+		"oxfmt": "^0.64.0",
+		"turbo": "^2.10.11",
+		"typescript": "^6.0.3"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"browserfs@1.4.3": "patches/browserfs@1.4.3.patch",
+			"doppiojvm@0.5.0": "patches/doppiojvm@0.5.0.patch"
+		},
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"@tailwindcss/oxide"
+		]
+	}
 }

@@ -14,6 +14,9 @@ b:
 p:
   pnpm run preview
 
+fmt:
+  pnpm run format
+
 artifacts: */artifacts
 
 libs/:
