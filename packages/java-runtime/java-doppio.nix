@@ -19,7 +19,7 @@ pkgs.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-NNmI7X/d/BGmMktbtdeKLEANiLBIx67VLYLHtztPX+I=";
+  outputHash = "sha256-KEELtExWUWq5PwfHH57rHg9pAWTDaFEkbjb4REVFXEM=";
 
   buildPhase = ''
     set -euo pipefail
@@ -36,12 +36,21 @@ pkgs.stdenv.mkDerivation {
     mkdir -p $out
     cp -rL build/release/. $out/
     rm -rf $out/classes/test $out/*.js* $out/vendor/java_home/lib/ext
-    # Normalize timestamps so the zip is deterministic across builds.
+    # Normalize timestamps and permissions so the zip is deterministic across builds.
     find $out -exec touch -h -d @1 {} +
     cd $out
     find . -type d -exec chmod 755 {} +
     find . -type f -exec chmod 644 {} +
-    zip -r -X doppio.zip .
+    # Feed entries in sorted order: zip -r walks directories in readdir
+    # order, which varies across filesystems/machines.
+    rm -f doppio.zip
+    find . -mindepth 1 | LC_ALL=C sort | while read -r entry; do
+      if [ -d "$entry" ]; then
+        printf '%s/\n' "''${entry#./}"
+      else
+        printf '%s\n' "''${entry#./}"
+      fi
+    done | zip -q -X doppio.zip -@
     rm -rf classes vendor
   '';
   dontFixup = true;

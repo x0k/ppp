@@ -16,4 +16,4 @@ jobs:
           installCommand: |
             nix profile install nixpkgs#cachix
           pushFilter: '(-source$|-dev$)'
-      - run: nix flake check --no-link
+      - run: nix flake check
