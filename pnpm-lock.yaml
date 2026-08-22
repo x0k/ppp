@@ -27,7 +27,7 @@ patchedDependencies:
     hash: 298d43ad26f589e1a61d6e04912575cc6fab3fda3cd533a274fc353b5de5862e
     path: patches/browserfs@1.4.3.patch
   doppiojvm@0.5.0:
-    hash: 614d81e33db7769f5c9c06b22a82481109af374ce1d50744db7f2cf6b310748e
+    hash: 39e5a394b9ac3f9fe0638715c090d20b8bdecd35639cf4fca3adfb6024f3b66a
     path: patches/doppiojvm@0.5.0.patch
 
 importers:
@@ -271,7 +271,7 @@ importers:
         version: 1.4.3(patch_hash=298d43ad26f589e1a61d6e04912575cc6fab3fda3cd533a274fc353b5de5862e)
       doppiojvm:
         specifier: ^0.5.0
-        version: 0.5.0(patch_hash=614d81e33db7769f5c9c06b22a82481109af374ce1d50744db7f2cf6b310748e)
+        version: 0.5.0(patch_hash=39e5a394b9ac3f9fe0638715c090d20b8bdecd35639cf4fca3adfb6024f3b66a)
       libs:
         specifier: workspace:*
         version: link:../libs
@@ -4115,7 +4115,7 @@ snapshots:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
-  doppiojvm@0.5.0(patch_hash=614d81e33db7769f5c9c06b22a82481109af374ce1d50744db7f2cf6b310748e):
+  doppiojvm@0.5.0(patch_hash=39e5a394b9ac3f9fe0638715c090d20b8bdecd35639cf4fca3adfb6024f3b66a):
     dependencies:
       async: 2.6.4
       browserfs: 1.4.3(patch_hash=298d43ad26f589e1a61d6e04912575cc6fab3fda3cd533a274fc353b5de5862e)
