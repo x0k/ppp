@@ -62,10 +62,7 @@ export class RustTestCompilerFactory {
 		const wasi = createWASI(this.streams, libs);
 		return {
 			async compile(_, files) {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				return new TestProgram(files[0].content, wasi, miri, 'case_output');
+				return new TestProgram(files, wasi, miri, 'case_output');
 			}
 		};
 	}

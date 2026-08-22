@@ -1,22 +1,24 @@
 import type { OpenDirectory, WASI } from '@bjorn3/browser_wasi_shim';
-import type { Program } from 'libs/compiler';
+import type { File, Program } from 'libs/compiler';
 import { inContext, type Context } from 'libs/context';
 import { isErr } from 'libs/result';
-import { assertOpenDir, lookupFile } from 'libs/wasi';
+import { assertOpenDir } from 'libs/wasi';
+
+import { rustEntryFile, writeRustSources } from './rust-files';
 
 // TODO: extract common code with RustTestProgram
 export class RustProgram implements Program {
 	protected threads_count = 1;
 
 	constructor(
-		protected readonly code: string,
+		protected readonly files: File[],
 		protected readonly wasi: WASI,
 		protected readonly miriModule: WebAssembly.Module
 	) {}
 
 	async run(ctx: Context): Promise<void> {
 		this.threads_count = 1;
-		this.writeCaseExecutionCode(this.code);
+		this.writeSources(this.files);
 		const instance = await inContext(
 			ctx,
 			WebAssembly.instantiate(this.miriModule, {
@@ -47,11 +49,8 @@ export class RustProgram implements Program {
 		return dir;
 	}
 
-	protected writeCaseExecutionCode(code: string) {
-		const file = lookupFile(this.rootDir, 'main.rs');
-		if (isErr(file)) {
-			throw new Error(`Failed to read main file: ${file.error}`);
-		}
-		file.value.data = new TextEncoder().encode(code);
+	protected writeSources(files: File[]) {
+		const entry = rustEntryFile(files);
+		writeRustSources(this.rootDir, files, entry, entry.content);
 	}
 }
