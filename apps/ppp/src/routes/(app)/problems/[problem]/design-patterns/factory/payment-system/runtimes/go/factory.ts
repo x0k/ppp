@@ -1,13 +1,13 @@
 import { makeRemoteTestCompilerFactory } from 'libs/testing/actor';
 
-import Worker from '$lib/runtime/go/test-worker?worker';
+import Worker from '#lib/runtime/go/test-worker.ts?worker';
 
 // Only type imports are allowed
 
 import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 import type { TestCompilerFactory } from 'libs/testing';
 
-import type { GoTestWorkerConfig } from '$lib/runtime/go/test-worker';
+import type { GoTestWorkerConfig } from '#lib/runtime/go/test-worker.ts';
 
 import type { Input, Output } from '../../tests-data';
 import type { PaymentSystemType } from '../../reference';

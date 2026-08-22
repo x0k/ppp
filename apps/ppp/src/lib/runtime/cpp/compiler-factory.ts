@@ -7,7 +7,7 @@ import clangWasmUrl from 'cpp-runtime/clang.wasm?url';
 import lldWasmUrl from 'cpp-runtime/lld.wasm?url';
 import sysrootUrl from 'cpp-runtime/sysroot.tar?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export const makeCppCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);

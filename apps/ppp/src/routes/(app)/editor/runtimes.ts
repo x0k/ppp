@@ -1,20 +1,20 @@
 import type { CompilerFactory, Program } from 'libs/compiler';
 import { makeRemoteCompilerFactory, type RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 
-import { Language } from '$lib/language';
-import PhpWorker from '$lib/runtime/php/worker?worker';
-import TsWorker from '$lib/runtime/ts/worker?worker';
-import PythonWorker from '$lib/runtime/python/worker?worker';
-import JsWorker from '$lib/runtime/js/worker?worker';
-import GoWorker from '$lib/runtime/go/worker?worker';
-import RustWorker from '$lib/runtime/rust/worker?worker';
-import GleamWorker from '$lib/runtime/gleam/worker?worker';
-import JavaWorker from '$lib/runtime/java/worker?worker';
-import RubyWorker from '$lib/runtime/ruby/worker?worker';
-import DotnetWorker from '$lib/runtime/dotnet/worker?worker';
-import ZigWorker from '$lib/runtime/zig/worker?worker';
-import CppWorker from '$lib/runtime/cpp/worker?worker';
-import LuaWorker from '$lib/runtime/lua/worker?worker';
+import { Language } from '#lib/language.ts';
+import PhpWorker from '#lib/runtime/php/worker.ts?worker';
+import TsWorker from '#lib/runtime/ts/worker.ts?worker';
+import PythonWorker from '#lib/runtime/python/worker.ts?worker';
+import JsWorker from '#lib/runtime/js/worker.ts?worker';
+import GoWorker from '#lib/runtime/go/worker.ts?worker';
+import RustWorker from '#lib/runtime/rust/worker.ts?worker';
+import GleamWorker from '#lib/runtime/gleam/worker.ts?worker';
+import JavaWorker from '#lib/runtime/java/worker.ts?worker';
+import RubyWorker from '#lib/runtime/ruby/worker.ts?worker';
+import DotnetWorker from '#lib/runtime/dotnet/worker.ts?worker';
+import ZigWorker from '#lib/runtime/zig/worker.ts?worker';
+import CppWorker from '#lib/runtime/cpp/worker.ts?worker';
+import LuaWorker from '#lib/runtime/lua/worker.ts?worker';
 
 import phpProgram from './_program.php?raw';
 import tsProgram from './_program.ts?raw';

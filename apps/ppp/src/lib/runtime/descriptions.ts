@@ -1,6 +1,6 @@
 import type { Component } from 'svelte';
 
-import { Language } from '$lib/language';
+import { Language } from '#lib/language.ts';
 
 import JsDescription from './js/description.svelte';
 import TsDescription from './ts/description.svelte';

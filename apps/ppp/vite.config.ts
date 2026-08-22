@@ -18,7 +18,6 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			$lib: resolve(import.meta.dirname, 'src/lib'),
 			// monaco 0.56 added a strict exports map that doesn't match
 			// subpath imports with vite's ?worker query suffix
 			'monaco-editor/esm/vs': resolve(import.meta.dirname, 'node_modules/monaco-editor/esm/vs')

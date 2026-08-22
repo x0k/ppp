@@ -200,7 +200,7 @@ import webAssemblyDllUrl from 'dotnet-runtime/lib/WebAssembly.dll?url';
 import mscorlibDllUrl from 'dotnet-runtime/lib/mscorlib.dll?url';
 import netstandardDllUrl from 'dotnet-runtime/lib/netstandard.dll?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 const dotnetUrl = new URL(
 	`${import.meta.env.BASE_URL.replace(/\/$/, '')}/assets/dotnet/dotnet.js`,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { EditorPanelTab } from '$lib/editor-panel-tab';
+	import { EditorPanelTab } from '#lib/editor-panel-tab.ts';
 	import '@xterm/xterm/css/xterm.css';
 
 	import { getEditorContext } from '../context.svelte';

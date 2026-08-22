@@ -16,15 +16,15 @@
 	import LucideShuffle from '~icons/lucide/shuffle';
 	import LucideRotateCcw from '~icons/lucide/rotate-ccw';
 
-	import { debouncedSave, immediateSave } from '$lib/sync-storage.svelte';
-	import { LANGUAGES, LANGUAGE_TITLE, LANGUAGE_ICONS, isLanguage } from '$lib/language';
-	import { EditorPanelTab } from '$lib/editor-panel-tab';
-	import { MONACO_LANGUAGE_ID } from '$lib/monaco';
-	import { createSyncStorage } from '$lib/storage';
-	import { DESCRIPTIONS } from '$lib/runtime/test-descriptions';
-	import Logo from '$lib/components/logo.svelte';
-	import Dropdown from '$lib/components/dropdown.svelte';
-	import ResizablePanel from '$lib/components/resizable-panel.svelte';
+	import { debouncedSave, immediateSave } from '#lib/sync-storage.svelte.ts';
+	import { LANGUAGES, LANGUAGE_TITLE, LANGUAGE_ICONS, isLanguage } from '#lib/language.ts';
+	import { EditorPanelTab } from '#lib/editor-panel-tab.ts';
+	import { MONACO_LANGUAGE_ID } from '#lib/monaco.ts';
+	import { createSyncStorage } from '#lib/storage.ts';
+	import { DESCRIPTIONS } from '#lib/runtime/test-descriptions.ts';
+	import Logo from '#lib/components/logo.svelte';
+	import Dropdown from '#lib/components/dropdown.svelte';
+	import ResizablePanel from '#lib/components/resizable-panel.svelte';
 	import {
 		Editor,
 		VimStatus,
@@ -38,7 +38,7 @@
 		INPUT_MODS,
 		InputMode,
 		createRawInputMode
-	} from '$lib/components/editor';
+	} from '#lib/components/editor/index.ts';
 	import {
 		Panel,
 		PanelToggle,
@@ -46,10 +46,10 @@
 		Tabs,
 		TerminalTab,
 		TabContent
-	} from '$lib/components/editor/panel';
-	import { CheckBox, Number, Select } from '$lib/components/editor/controls';
-	import { m } from '$lib/paraglide/messages';
-	import EditorProvider from '$lib/editor-provider.svelte';
+	} from '#lib/components/editor/panel/index.ts';
+	import { CheckBox, Number, Select } from '#lib/components/editor/controls/index.ts';
+	import { m } from '#lib/paraglide/messages.js';
+	import EditorProvider from '#lib/editor-provider.svelte';
 
 	import {
 		type Runtime,

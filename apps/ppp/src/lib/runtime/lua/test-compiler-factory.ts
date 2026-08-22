@@ -6,7 +6,7 @@ import { luaRuntimeFactory, LuaTestProgram } from 'lua-runtime';
 
 import glueWasmUrl from 'lua-runtime/glue.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export type CaseExecutionCode<I> = (input: I) => string;
 export type TransformResult<O> = (result: unknown) => O;

@@ -9,13 +9,13 @@
 	import { stringifyError } from 'libs/error';
 	import type { Compiler, Program } from 'libs/compiler';
 
-	import { debouncedSave, immediateSave } from '$lib/sync-storage.svelte';
-	import { Language, LANGUAGE_TITLE, LANGUAGE_ICONS } from '$lib/language';
-	import { EditorPanelTab } from '$lib/editor-panel-tab';
-	import { createSyncStorage } from '$lib/storage';
-	import { MONACO_LANGUAGE_ID } from '$lib/monaco';
-	import { DESCRIPTIONS } from '$lib/runtime/descriptions';
-	import Dropdown from '$lib/components/dropdown.svelte';
+	import { debouncedSave, immediateSave } from '#lib/sync-storage.svelte.ts';
+	import { Language, LANGUAGE_TITLE, LANGUAGE_ICONS } from '#lib/language.ts';
+	import { EditorPanelTab } from '#lib/editor-panel-tab.ts';
+	import { createSyncStorage } from '#lib/storage.ts';
+	import { MONACO_LANGUAGE_ID } from '#lib/monaco.ts';
+	import { DESCRIPTIONS } from '#lib/runtime/descriptions.ts';
+	import Dropdown from '#lib/components/dropdown.svelte';
 	import {
 		Editor,
 		EditorContext,
@@ -29,7 +29,7 @@
 		InputMode,
 		INPUT_MODS,
 		createRawInputMode
-	} from '$lib/components/editor';
+	} from '#lib/components/editor/index.ts';
 	import {
 		Panel,
 		Tab,
@@ -37,10 +37,10 @@
 		TerminalTab,
 		TabContent,
 		PanelToggle
-	} from '$lib/components/editor/panel';
-	import { CheckBox, Number, Select } from '$lib/components/editor/controls';
-	import { m } from '$lib/paraglide/messages';
-	import EditorProvider from '$lib/editor-provider.svelte';
+	} from '#lib/components/editor/panel/index.ts';
+	import { CheckBox, Number, Select } from '#lib/components/editor/controls/index.ts';
+	import { m } from '#lib/paraglide/messages.js';
+	import EditorProvider from '#lib/editor-provider.svelte';
 
 	import { RUNTIMES } from './runtimes';
 	import type { ReadableStreamOfBytes } from 'libs/io';

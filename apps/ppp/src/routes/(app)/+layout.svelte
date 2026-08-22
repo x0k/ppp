@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import Logo from '$lib/components/logo.svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { localizeHref } from '$lib/paraglide/runtime';
-	import { Page, TITLE } from '$lib/routes';
+	import Logo from '#lib/components/logo.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import { localizeHref } from '#lib/paraglide/runtime.js';
+	import { Page, TITLE } from '#lib/routes.ts';
 
 	const { children }: { children: Snippet } = $props();
 </script>

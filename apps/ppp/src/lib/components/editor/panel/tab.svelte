@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import { EditorPanelTab, EDITOR_PANEL_TAB_TO_LABEL } from '$lib/editor-panel-tab';
+	import { EditorPanelTab, EDITOR_PANEL_TAB_TO_LABEL } from '#lib/editor-panel-tab.ts';
 
 	import { getEditorPanelContext } from './context.svelte';
 

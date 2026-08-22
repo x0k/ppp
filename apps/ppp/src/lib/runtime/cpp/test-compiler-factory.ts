@@ -8,7 +8,7 @@ import clangWasmUrl from 'cpp-runtime/clang.wasm?url';
 import lldWasmUrl from 'cpp-runtime/lld.wasm?url';
 import sysrootUrl from 'cpp-runtime/sysroot.tar?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export type GenerateOutputContentCode<I> = (input: I) => string;
 export type TransformResult<O> = (result: string) => O;

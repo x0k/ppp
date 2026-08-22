@@ -5,7 +5,7 @@ import { luaRuntimeFactory, LuaProgram } from 'lua-runtime';
 
 import glueWasmUrl from 'lua-runtime/glue.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export const makeLuaCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);

@@ -3,7 +3,7 @@
 	import LucideChevronDown from '~icons/lucide/chevron-down';
 	import LucideChevronUp from '~icons/lucide/chevron-up';
 
-	import { EditorPanelTab } from '$lib/editor-panel-tab';
+	import { EditorPanelTab } from '#lib/editor-panel-tab.ts';
 
 	import { MIN_PANEL_HEIGHT } from './model';
 	import { getEditorPanelContext } from './context.svelte';

@@ -1,7 +1,7 @@
 import type { TestCase, TestCompilerFactory } from 'libs/testing';
 
-import { m } from '$lib/paraglide/messages';
-import type { Locale } from '$lib/paraglide/runtime';
+import { m } from '#lib/paraglide/messages.js';
+import type { Locale } from '#lib/paraglide/runtime.js';
 import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 
 export enum ProblemCategory {

@@ -5,7 +5,7 @@ import { initFs, JavaCompiler, JavaProgram, makeJVMFactory } from 'java-runtime'
 
 import libZipUrl from 'java-runtime/doppio.zip?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 const CLASSNAME = 'Program';
 

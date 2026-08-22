@@ -5,7 +5,7 @@ import type { TestCompiler } from 'libs/testing';
 import { JsTestProgram } from 'javascript-runtime';
 import { GleamModuleCompiler } from 'gleam-runtime';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 import compilerWasmUrl from 'gleam-runtime/compiler.wasm?url';
 

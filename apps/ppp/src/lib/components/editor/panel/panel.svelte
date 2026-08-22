@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import { EditorPanelTab } from '$lib/editor-panel-tab';
-	import ResizablePanel, { Orientation } from '$lib/components/resizable-panel.svelte';
+	import { EditorPanelTab } from '#lib/editor-panel-tab.ts';
+	import ResizablePanel, { Orientation } from '#lib/components/resizable-panel.svelte';
 
 	import { EditorPanelContext, setEditorPanelContext } from './context.svelte';
 	import { MIN_PANEL_HEIGHT } from './model';

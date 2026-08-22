@@ -7,7 +7,7 @@ import { createLogger, type Logger } from 'libs/logger';
 
 import libZipUrl from 'java-runtime/doppio.zip?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export interface Options<I, O> {
 	className?: string;

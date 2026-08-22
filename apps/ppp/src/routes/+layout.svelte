@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
-	import favicon from '$lib/assets/favicon.svg';
-	// import scriptUrl from '$lib/assets/enable-threads?url';
+	import { locales, localizeHref } from '#lib/paraglide/runtime.js';
+	import favicon from '#lib/assets/favicon.svg';
+	// import scriptUrl from '#lib/assets/enable-threads.js?url';
 	import { page } from '$app/state';
-	import { TITLE } from '$lib/routes';
+	import { TITLE } from '#lib/routes.ts';
 	import '../app.css';
 
 	let { children } = $props();

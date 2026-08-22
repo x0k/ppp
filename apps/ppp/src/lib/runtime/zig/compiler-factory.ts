@@ -8,7 +8,7 @@ import zigWasmUrl from 'zig-runtime/zig.wasm?url';
 import compilerRtUrl from 'zig-runtime/lib/libcompiler_rt.a?url';
 import stdLibUrl from 'zig-runtime/lib/zig.tar.gz?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export const makeZigCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);

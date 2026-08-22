@@ -5,10 +5,10 @@
 </script>
 
 <script lang="ts">
-	import { deLocalizeHref } from '$lib/paraglide/runtime';
-	import { Content, type Problem } from '$lib/problem';
-	import Editor from '$lib/problem/editor.svelte';
-	import { m } from '$lib/paraglide/messages';
+	import { deLocalizeHref } from '#lib/paraglide/runtime.js';
+	import { Content, type Problem } from '#lib/problem/index.ts';
+	import Editor from '#lib/problem/editor.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import { page } from '$app/state';
 

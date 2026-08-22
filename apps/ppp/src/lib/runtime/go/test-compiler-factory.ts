@@ -11,7 +11,7 @@ import {
 
 import wasmUrl from 'go-runtime/compiler.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 

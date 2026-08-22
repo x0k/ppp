@@ -10,7 +10,7 @@ import {
 
 import wasmUrl from 'go-runtime/compiler.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export const makeGoCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);

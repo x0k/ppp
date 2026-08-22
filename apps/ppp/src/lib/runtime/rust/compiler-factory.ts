@@ -5,7 +5,7 @@ import { RustProgram, createWASI } from 'rust-runtime';
 
 import miriWasmUrl from 'rust-runtime/miri.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 const libsUrls = import.meta.glob('/node_modules/rust-runtime/dist/lib/*', {
 	eager: true,

@@ -5,7 +5,7 @@
 	import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker';
 	import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker';
 
-	import { loadTmGrammars } from '$lib/monaco';
+	import { loadTmGrammars } from '#lib/monaco.ts';
 
 	// svelte-ignore non_reactive_update
 	let promise: Promise<unknown> = Promise.resolve();

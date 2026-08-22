@@ -1,6 +1,6 @@
 import type { Handle } from '@sveltejs/kit/hooks';
-import { paraglideMiddleware } from '$lib/paraglide/server';
-import { getTextDirection } from '$lib/paraglide/runtime';
+import { paraglideMiddleware } from '#lib/paraglide/server.js';
+import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { sequence } from '@sveltejs/kit/hooks';
 
 const paraglideHandle: Handle = ({ event, resolve }) =>

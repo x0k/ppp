@@ -9,7 +9,7 @@ import zigWasmUrl from 'zig-runtime/zig.wasm?url';
 import compilerRtUrl from 'zig-runtime/lib/libcompiler_rt.a?url';
 import stdLibUrl from 'zig-runtime/lib/zig.tar.gz?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export type GenerateOutputContentCode<I> = (input: I) => string;
 export type TransformResult<O> = (result: string) => O;

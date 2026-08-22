@@ -5,7 +5,7 @@ import { phpCompilerFactory, PHPProgram } from 'php-runtime';
 
 import phpWasmUrl from 'php-runtime/php.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export const makePhpCompiler: CompilerFactory<Streams, Program> = async (ctx, streams) => {
 	const logger = createLogger(streams.out);

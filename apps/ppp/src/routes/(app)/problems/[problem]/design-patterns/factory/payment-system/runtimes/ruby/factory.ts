@@ -1,13 +1,13 @@
 import { makeRemoteTestCompilerFactory } from 'libs/testing/actor';
 
-import Worker from '$lib/runtime/ruby/test-worker?worker';
+import Worker from '#lib/runtime/ruby/test-worker.ts?worker';
 
 // Only type imports are allowed
 
 import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 import type { TestCompilerFactory } from 'libs/testing';
 
-import type { RubyTestWorkerConfig } from '$lib/runtime/ruby/test-worker';
+import type { RubyTestWorkerConfig } from '#lib/runtime/ruby/test-worker.ts';
 
 import type { Input, Output } from '../../tests-data';
 

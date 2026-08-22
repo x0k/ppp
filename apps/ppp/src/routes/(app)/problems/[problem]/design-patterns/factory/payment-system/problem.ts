@@ -1,4 +1,9 @@
-import { ProblemCategory, type Problem, type ProblemMeta, type Runtime } from '$lib/problem';
+import {
+	ProblemCategory,
+	type Problem,
+	type ProblemMeta,
+	type Runtime
+} from '#lib/problem/index.ts';
 import { type Input, type Output, testCases } from './tests-data';
 
 export const meta = {

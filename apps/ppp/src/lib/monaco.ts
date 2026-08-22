@@ -5,11 +5,11 @@ import { wireTmGrammars } from 'monaco-editor-textmate';
 
 import onigasmWasmUrl from 'onigasm/lib/onigasm.wasm?url';
 
-import { Language } from '$lib/language';
-import gleamConfiguration from '$lib/gleam/language-configuration';
-import gleamGrammarUrl from '$lib/gleam/gleam.tmLanguage.json?url';
-import zigConfiguration from '$lib/zig/language-configuration';
-import zigGrammarUrl from '$lib/zig/zig.tmLanguage.json?url';
+import { Language } from '#lib/language.ts';
+import gleamConfiguration from '#lib/gleam/language-configuration.ts';
+import gleamGrammarUrl from '#lib/gleam/gleam.tmLanguage.json?url';
+import zigConfiguration from '#lib/zig/language-configuration.ts';
+import zigGrammarUrl from '#lib/zig/zig.tmLanguage.json?url';
 
 export const MONACO_LANGUAGE_ID: Record<Language, string> = {
 	[Language.PHP]: 'php',

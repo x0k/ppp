@@ -6,7 +6,7 @@ import { phpCompilerFactory, PHPTestProgram } from 'php-runtime';
 
 import phpWasmUrl from 'php-runtime/php.wasm?url';
 
-import { createCachedFetch } from '$lib/fetch';
+import { createCachedFetch } from '#lib/fetch.ts';
 
 export type GenerateCaseExecutionCode<I> = (input: I) => string;
 

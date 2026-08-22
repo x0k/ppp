@@ -1,6 +1,6 @@
 import { getContext, setContext } from 'svelte';
 
-import { EditorPanelTab } from '$lib/editor-panel-tab';
+import { EditorPanelTab } from '#lib/editor-panel-tab.ts';
 
 export class EditorPanelContext {
 	selectedTab = $state<EditorPanelTab>();

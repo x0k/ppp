@@ -1,4 +1,4 @@
-import type { SyncStorage } from '$lib/sync-storage.svelte';
+import type { SyncStorage } from '#lib/sync-storage.svelte.ts';
 
 export function createSyncStorage<T>(
 	storage: Storage,

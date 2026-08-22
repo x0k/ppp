@@ -1,13 +1,13 @@
 import { makeRemoteTestCompilerFactory } from 'libs/testing/actor';
 
-import Worker from '$lib/runtime/lua/test-worker?worker';
+import Worker from '#lib/runtime/lua/test-worker.ts?worker';
 
 // Only type imports are allowed
 
 import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 import type { TestCompilerFactory } from 'libs/testing';
 
-import type { LuaTestWorkerConfig } from '$lib/runtime/lua/test-worker';
+import type { LuaTestWorkerConfig } from '#lib/runtime/lua/test-worker.ts';
 
 import type { Input, Output } from '../../tests-data';
 import type { PaymentSystemType } from '../../reference';

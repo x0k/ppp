@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getLocale } from '$lib/paraglide/runtime';
-	import type { ProblemMeta } from '$lib/problem';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import type { ProblemMeta } from '#lib/problem/index.ts';
 
 	const problems = import.meta.glob<ProblemMeta>('./\\[problem\\]/**/problem.ts', {
 		eager: true,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LucidePlay from '~icons/lucide/play';
 
-	import * as m from '$lib/paraglide/messages';
+	import * as m from '#lib/paraglide/messages.js';
 
 	import type { ProcessStatus } from './process';
 

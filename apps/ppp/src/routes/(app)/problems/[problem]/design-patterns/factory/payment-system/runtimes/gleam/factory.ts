@@ -1,6 +1,6 @@
 import { makeRemoteTestCompilerFactory } from 'libs/testing/actor';
 
-import Worker from '$lib/runtime/gleam/test-worker?worker';
+import Worker from '#lib/runtime/gleam/test-worker.ts?worker';
 
 // Only type imports are allowed
 
@@ -8,7 +8,7 @@ import type { RemoteCompilerFactoryOptions } from 'libs/compiler/actor';
 import type { TestCompilerFactory } from 'libs/testing';
 import type { CustomType } from 'gleam-runtime/stdlib/gleam.mjs';
 
-import type { GleamTestWorkerConfig } from '$lib/runtime/gleam/test-worker';
+import type { GleamTestWorkerConfig } from '#lib/runtime/gleam/test-worker.ts';
 
 import type { PaymentSystemType } from '../../reference';
 import type { Input, Output } from '../../tests-data';
