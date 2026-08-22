@@ -1,6 +1,5 @@
 import type { Streams } from 'libs/io';
 import { createLogger, redirect } from 'libs/logger';
-import { compileJsModule } from 'libs/js';
 import type { TestCompiler } from 'libs/testing';
 import { JsTestProgram } from 'javascript-runtime';
 
@@ -21,10 +20,7 @@ export class JsTestCompilerFactory {
 		}
 		return {
 			compile: async (_, files) => {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				return new TestProgram(await compileJsModule(files[0].content), this.patchedConsole);
+				return new TestProgram(files, this.patchedConsole);
 			}
 		};
 	}

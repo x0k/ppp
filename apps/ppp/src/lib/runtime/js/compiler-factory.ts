@@ -7,10 +7,7 @@ export const makeJsCompiler: CompilerFactory<Streams, Program> = async (_, strea
 	const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
 	return {
 		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			return new JsProgram(files[0].content, patchedConsole);
+			return new JsProgram(files, patchedConsole);
 		}
 	};
 };

@@ -8,10 +8,11 @@ export const makeTsCompiler: CompilerFactory<Streams, Program> = async (_, strea
 	const patchedConsole = redirect(globalThis.console, createLogger(streams.out));
 	return {
 		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			return new JsProgram(compileTsModule(files[0].content), patchedConsole);
+			const modules = files.map((file) => ({
+				filename: file.filename,
+				content: compileTsModule(file.content)
+			}));
+			return new JsProgram(modules, patchedConsole);
 		}
 	};
 };

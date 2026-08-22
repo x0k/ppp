@@ -1,5 +1,6 @@
+import type { File } from 'libs/compiler';
 import type { Streams } from 'libs/io';
-import { compileJsModule } from 'libs/js';
+import { compileJsFiles } from 'libs/js';
 import { createLogger, redirect } from 'libs/logger';
 import type { TestCompiler } from 'libs/testing';
 import { JsTestProgram } from 'javascript-runtime';
@@ -16,19 +17,20 @@ export class TsTestCompilerFactory {
 
 	create<M, I, O>(invokeTestMethod: InvokeTestMethod<M, I, O>): TestCompiler<I, O> {
 		class TestProgram extends JsTestProgram<M, I, O> {
+			protected override async compile(files: File[]): Promise<M> {
+				const modules = files.map((file) => ({
+					filename: file.filename,
+					content: compileTsModule(file.content)
+				}));
+				return await compileJsFiles<M>(modules);
+			}
 			override async executeTest(m: M, input: I): Promise<O> {
 				return invokeTestMethod(m, input);
 			}
 		}
 		return {
 			compile: async (_, files) => {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				return new TestProgram(
-					await compileJsModule(compileTsModule(files[0].content)),
-					this.patchedConsole
-				);
+				return new TestProgram(files, this.patchedConsole);
 			}
 		};
 	}
