@@ -64,6 +64,9 @@ importers:
       '@xterm/xterm':
         specifier: ^6.0.0
         version: 6.0.0
+      cpp-runtime:
+        specifier: workspace:*
+        version: link:../../packages/cpp-runtime
       dotnet-runtime:
         specifier: workspace:*
         version: link:../../packages/dotnet-runtime
@@ -215,6 +218,25 @@ importers:
       vitest-browser-svelte:
         specifier: ^3.0.0
         version: 3.0.0(svelte@5.56.10(@typescript-eslint/types@8.67.0))(vitest@4.1.11)
+
+  packages/cpp-runtime:
+    dependencies:
+      libs:
+        specifier: workspace:*
+        version: link:../libs
+    devDependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: 'catalog:'
+        version: 0.4.2
+      browsercc:
+        specifier: 0.1.1
+        version: 0.1.1
+      vite:
+        specifier: 'catalog:'
+        version: 8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.5.1)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 5.0.3(@microsoft/api-extractor@7.54.0(@types/node@26.2.0))(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.53.2)(typescript@6.0.3)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.5.1))
 
   packages/dotnet-runtime:
     dependencies:
@@ -1554,6 +1576,9 @@ packages:
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
+
+  browsercc@0.1.1:
+    resolution: {integrity: sha512-zKSm2b10XjqRBPkY67rS5FK+YgcXd5CH2GRVwyK2+f7EOQRmHR0IN2lQCvJZQfTytSFbwFmlIpZaxSMFcE+jxw==}
 
   browserfs@1.4.3:
     resolution: {integrity: sha512-tz8HClVrzTJshcyIu8frE15cjqjcBIu15Bezxsvl/i+6f59iNCN3kznlWjz0FEb3DlnDx3gW5szxeT6D1x0s0w==}
@@ -3997,6 +4022,8 @@ snapshots:
   braces@3.0.3:
     dependencies:
       fill-range: 7.1.1
+
+  browsercc@0.1.1: {}
 
   browserfs@1.4.3(patch_hash=298d43ad26f589e1a61d6e04912575cc6fab3fda3cd533a274fc353b5de5862e):
     dependencies:

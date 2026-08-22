@@ -22,7 +22,8 @@ export const MONACO_LANGUAGE_ID: Record<Language, string> = {
 	[Language.CSharp]: 'csharp',
 	[Language.Java]: 'java',
 	[Language.Ruby]: 'ruby',
-	[Language.Zig]: Language.Zig
+	[Language.Zig]: Language.Zig,
+	[Language.Cpp]: 'cpp'
 };
 
 const SCOPE_NAME_META = new Map<

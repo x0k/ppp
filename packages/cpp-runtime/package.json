@@ -1,0 +1,32 @@
+{
+	"name": "cpp-runtime",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js",
+		"./version": "./dist/version.js",
+		"./clang.wasm": "./dist/cpp/clang.wasm",
+		"./lld.wasm": "./dist/cpp/lld.wasm",
+		"./sysroot.tar": "./dist/cpp/sysroot.tar"
+	},
+	"scripts": {
+		"check": "tsc",
+		"prebuild": "./artifacts.sh",
+		"build": "vite build",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check ."
+	},
+	"dependencies": {
+		"libs": "workspace:*"
+	},
+	"devDependencies": {
+		"@bjorn3/browser_wasi_shim": "catalog:",
+		"browsercc": "0.1.1",
+		"vite": "catalog:",
+		"vite-plugin-dts": "catalog:"
+	},
+	"peerDependencies": {
+		"@bjorn3/browser_wasi_shim": "^0.4.0"
+	}
+}

@@ -13,6 +13,7 @@ import DotnetDescription from './dotnet/test-description.svelte';
 import JavaDescription from './java/test-description.svelte';
 import RubyDescription from './ruby/description.svelte';
 import ZigDescription from './zig/description.svelte';
+import CppDescription from './cpp/description.svelte';
 
 export const DESCRIPTIONS: Record<Language, Component> = {
 	[Language.JavaScript]: JsDescription,
@@ -25,5 +26,6 @@ export const DESCRIPTIONS: Record<Language, Component> = {
 	[Language.CSharp]: DotnetDescription,
 	[Language.Java]: JavaDescription,
 	[Language.Ruby]: RubyDescription,
-	[Language.Zig]: ZigDescription
+	[Language.Zig]: ZigDescription,
+	[Language.Cpp]: CppDescription
 };
