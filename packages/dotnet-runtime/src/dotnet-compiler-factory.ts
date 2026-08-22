@@ -41,7 +41,7 @@ export interface CompilerModuleImports {
 export interface CompilerModuleExports {
 	Compiler: {
 		Init: (dllUrls: string[]) => Promise<number>;
-		Compile: (code: string[]) => number;
+		Compile: (filenames: string[], code: string[]) => number;
 		Run: (typeFullName: string, methodName: string, args: string[]) => number;
 		GetResultAsString: () => string | null;
 		DisposeAssembly: () => void;

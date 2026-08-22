@@ -12,7 +12,10 @@ export class DotnetRuntimeFactory {
 		ctx.onCancel(() => {
 			this.compiler.DisposeAssembly();
 		});
-		const status = this.compiler.Compile(files.map((file) => file.content));
+		const status = this.compiler.Compile(
+			files.map((file) => file.filename),
+			files.map((file) => file.content)
+		);
 		if (status !== 0) {
 			throw new Error('Compilation failed');
 		}

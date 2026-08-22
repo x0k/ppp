@@ -72,17 +72,22 @@ public partial class Compiler
 
   [JSExport]
   [RequiresUnreferencedCode("Calls System.AppDomain.Load(Byte[])")]
-  internal static int Compile(string[] code)
+  internal static int Compile(string[] filenames, string[] code)
   {
     if (references == null)
     {
       Logger.Error("Compiler is not initialized");
       return -1;
     }
+    if (filenames.Length != code.Length)
+    {
+      Logger.Error("Filenames and sources counts do not match");
+      return -1;
+    }
     SyntaxTree[] trees = new SyntaxTree[code.Length];
     for (int i = 0; i < code.Length; i++)
     {
-      SyntaxTree tree = CSharpSyntaxTree.ParseText(code[i]);
+      SyntaxTree tree = CSharpSyntaxTree.ParseText(code[i], path: filenames[i]);
       var hasDiagnosticError = false;
       foreach (var diagnostic in tree.GetDiagnostics())
       {

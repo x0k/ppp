@@ -8,7 +8,7 @@ pkgs.stdenv.mkDerivation {
 
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-UFR5yFD5oYmayQJKQXxoE7/p2M/j1td+QaxIibBLtT8=";
+  outputHash = "sha256-BQcQWLpLw9DiCaFvAoHYyX2vadAO81WqhF0omFjQ3UU=";
 
   dontConfigure = true;
   dontStrip = true;
