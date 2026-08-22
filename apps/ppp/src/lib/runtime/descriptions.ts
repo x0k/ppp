@@ -14,6 +14,7 @@ import JavaDescription from './java/description.svelte';
 import RubyDescription from './ruby/description.svelte';
 import ZigDescription from './zig/description.svelte';
 import CppDescription from './cpp/description.svelte';
+import LuaDescription from './lua/description.svelte';
 
 export const DESCRIPTIONS: Record<Language, Component> = {
 	[Language.JavaScript]: JsDescription,
@@ -27,5 +28,6 @@ export const DESCRIPTIONS: Record<Language, Component> = {
 	[Language.Java]: JavaDescription,
 	[Language.Ruby]: RubyDescription,
 	[Language.Zig]: ZigDescription,
-	[Language.Cpp]: CppDescription
+	[Language.Cpp]: CppDescription,
+	[Language.Lua]: LuaDescription
 };

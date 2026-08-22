@@ -30,6 +30,7 @@
 		"java-runtime": "workspace:*",
 		"javascript-runtime": "workspace:*",
 		"libs": "workspace:*",
+		"lua-runtime": "workspace:*",
 		"marked": "^18.0.10",
 		"monaco-editor": "^0.56.0",
 		"monaco-editor-textmate": "^4.0.0",

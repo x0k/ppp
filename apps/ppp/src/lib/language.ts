@@ -12,6 +12,7 @@ import VscodeIconsFileTypeCsharp from '~icons/vscode-icons/file-type-csharp';
 import VscodeIconsFileTypeJava from '~icons/vscode-icons/file-type-java';
 import VscodeIconsFileTypeRuby from '~icons/vscode-icons/file-type-ruby';
 import VscodeIconsFileTypeCpp from '~icons/vscode-icons/file-type-cpp';
+import VscodeIconsFileTypeLua from '~icons/vscode-icons/file-type-lua';
 import VscodeIconsFileTypeZig from '~icons/vscode-icons/file-type-zig';
 
 export enum Language {
@@ -26,7 +27,8 @@ export enum Language {
 	Java = 'java',
 	Ruby = 'ruby',
 	Zig = 'zig',
-	Cpp = 'cpp'
+	Cpp = 'cpp',
+	Lua = 'lua'
 }
 
 export const LANGUAGES = Object.values(Language).sort();
@@ -43,7 +45,8 @@ export const LANGUAGE_TITLE: Record<Language, string> = {
 	[Language.Java]: 'Java',
 	[Language.Ruby]: 'Ruby',
 	[Language.Zig]: 'Zig',
-	[Language.Cpp]: 'C++'
+	[Language.Cpp]: 'C++',
+	[Language.Lua]: 'Lua'
 };
 
 export const LANGUAGE_ICONS: Record<Language, Component<SVGAttributes<SVGSVGElement>>> = {
@@ -58,7 +61,8 @@ export const LANGUAGE_ICONS: Record<Language, Component<SVGAttributes<SVGSVGElem
 	[Language.Java]: VscodeIconsFileTypeJava,
 	[Language.Ruby]: VscodeIconsFileTypeRuby,
 	[Language.Zig]: VscodeIconsFileTypeZig,
-	[Language.Cpp]: VscodeIconsFileTypeCpp
+	[Language.Cpp]: VscodeIconsFileTypeCpp,
+	[Language.Lua]: VscodeIconsFileTypeLua
 };
 
 export function isLanguage(lang: string): lang is Language {
