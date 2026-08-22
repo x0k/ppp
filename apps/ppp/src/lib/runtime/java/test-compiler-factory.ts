@@ -37,7 +37,7 @@ export class JavaTestCompilerFactory {
 		}).then((response) => response.arrayBuffer());
 		this.logger.info(`Loaded ${libZipUrl}`);
 		const fs = await initFs(libZipData);
-		const compiler = new JavaCompiler(jvmFactory, `/home/${className}.java`, fs);
+		const compiler = new JavaCompiler(jvmFactory, fs);
 		class TestProgram extends JavaTestProgram<I, O> implements Disposable {
 			private output?: O;
 			private saveOutput(output: O) {
@@ -59,22 +59,20 @@ export class JavaTestCompilerFactory {
 		}
 		return {
 			async compile(ctx, files) {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
 				// TODO: Fix handling compilation errors or at least remove previous
 				// compilation output
-				await compiler.compile(
-					ctx,
-					`${files[0].content}
-
-public class ${className} {
+				await compiler.compile(ctx, [
+					...files,
+					{
+						filename: className,
+						content: `public class ${className} {
   ${classDefinitions}
   public static void main(String[] args) {
     ${mainMethodBody}
   }
 }`
-				);
+					}
+				]);
 				const program = new TestProgram(className, jvmFactory);
 				ctx.onCancel(() => {
 					program[Symbol.dispose]();

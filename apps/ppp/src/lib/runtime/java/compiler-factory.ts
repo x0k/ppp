@@ -18,13 +18,10 @@ export const makeJavaCompiler: CompilerFactory<Streams, Program> = async (ctx, s
 	}).then((response) => response.arrayBuffer());
 	logger.info(`Loaded ${libZipUrl}`);
 	const fs = await initFs(libZipData);
-	const compiler = new JavaCompiler(jvmFactory, `/home/${CLASSNAME}.java`, fs);
+	const compiler = new JavaCompiler(jvmFactory, fs);
 	return {
 		async compile(ctx, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			await compiler.compile(ctx, files[0].content);
+			await compiler.compile(ctx, files);
 			return new JavaProgram(CLASSNAME, jvmFactory);
 		}
 	};
