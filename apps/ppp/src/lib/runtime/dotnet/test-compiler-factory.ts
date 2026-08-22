@@ -425,10 +425,10 @@ export class DotnetTestCompilerFactory {
 		const runtimeFactory = new DotnetRuntimeFactory(compiler);
 		return {
 			async compile(ctx, files) {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				const runtime = runtimeFactory.create(ctx, files[0].content, executionCode);
+				const runtime = runtimeFactory.create(ctx, [
+					...files.map((file) => file.content),
+					executionCode
+				]);
 				return new DotnetTestProgram<I, O>(typeFullName, methodName, runtime);
 			}
 		};

@@ -7,7 +7,7 @@ export type DotnetRuntime = Omit<DotnetCompiler, 'Compile' | 'DisposeAssembly'>;
 export class DotnetRuntimeFactory {
 	constructor(protected readonly compiler: DotnetCompiler) {}
 
-	create(ctx: Context, ...code: string[]): DotnetRuntime {
+	create(ctx: Context, code: string[]): DotnetRuntime {
 		ctx.onCancel(() => {
 			this.compiler.DisposeAssembly();
 		});
