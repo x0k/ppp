@@ -37,10 +37,7 @@ export class PhpTestCompilerFactory {
 		this.logger.info(`Loaded ${phpWasmUrl}`);
 		return {
 			compile: async (ctx, files) => {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				const program = new TestProgram(this.streams, php, files[0].content);
+				const program = new TestProgram(this.streams, php, files);
 				ctx.onCancel(() => {
 					program[Symbol.dispose]();
 				});

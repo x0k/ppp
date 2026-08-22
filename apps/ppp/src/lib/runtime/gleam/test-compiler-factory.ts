@@ -1,7 +1,6 @@
 import type { Context } from 'libs/context';
 import type { Streams } from 'libs/io';
 import { createLogger, redirect, type Logger } from 'libs/logger';
-import { compileJsModule } from 'libs/js';
 import type { TestCompiler } from 'libs/testing';
 import { JsTestProgram } from 'javascript-runtime';
 import { GleamModuleCompiler } from 'gleam-runtime';
@@ -48,7 +47,7 @@ export class GleamTestCompilerFactory {
 					throw new Error('Compilation of multiple files is not implemented');
 				}
 				const jsCode = compiler.compile(files[0].content);
-				return new TestProgram(await compileJsModule(jsCode), this.patchedConsole);
+				return new TestProgram([{ filename: 'main', content: jsCode }], this.patchedConsole);
 			}
 		};
 	}

@@ -15,12 +15,9 @@ export const makeRubyCompiler: CompilerFactory<Streams, Program> = async (ctx, s
 	);
 	logger.info(`Loaded ${rubyWasmUrl}`);
 	return {
-		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			const vm = await createRubyVM(ctx, streams, rubyWasmModule);
-			return new RubyProgram(files[0].content, vm);
+		async compile(ctx, files) {
+			const vm = await createRubyVM(ctx, streams, rubyWasmModule, files);
+			return new RubyProgram(files, vm);
 		}
 	};
 };

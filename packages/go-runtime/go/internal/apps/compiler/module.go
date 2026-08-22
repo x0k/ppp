@@ -13,6 +13,21 @@ import (
 	"github.com/x0k/vert"
 )
 
+func jsSources(v js.Value) ([]compiler.Source, error) {
+	if !v.InstanceOf(js.Global().Get("Array")) {
+		return nil, errors.New("Expected an array of files")
+	}
+	sources := make([]compiler.Source, v.Length())
+	for i := range sources {
+		item := v.Index(i)
+		sources[i] = compiler.Source{
+			Filename: item.Get("filename").String(),
+			Code:     item.Get("content").String(),
+		}
+	}
+	return sources, nil
+}
+
 func New(jsConfig js.Value) js_adapters.Result {
 	var cfg CompilerConfig
 	if err := vert.Assign(jsConfig, &cfg); err != nil {
@@ -49,7 +64,11 @@ func New(jsConfig js.Value) js_adapters.Result {
 		if err != nil {
 			return js_adapters.ResolveErr(err)
 		}
-		return js_adapters.Resolve(js_compiler.New(compiler).CreateEvaluator(ctx, args[1].String()))
+		sources, err := jsSources(args[1])
+		if err != nil {
+			return js_adapters.ResolveErr(err)
+		}
+		return js_adapters.Resolve(js_compiler.New(compiler).CreateEvaluator(ctx, sources))
 	}))
 
 	root.Set("createExecutor", js_adapters.Async(func(args []js.Value) js_adapters.Promise {
@@ -67,7 +86,11 @@ func New(jsConfig js.Value) js_adapters.Result {
 		if err != nil {
 			return js_adapters.ResolveErr(err)
 		}
-		return js_adapters.Resolve(js_compiler.New(compiler).CreateExecuter(ctx, args[1].String()))
+		sources, err := jsSources(args[1])
+		if err != nil {
+			return js_adapters.ResolveErr(err)
+		}
+		return js_adapters.Resolve(js_compiler.New(compiler).CreateExecuter(ctx, sources))
 	}))
 
 	return js_adapters.Ok(root)

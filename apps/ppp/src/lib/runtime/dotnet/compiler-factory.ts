@@ -413,10 +413,7 @@ export const makeDotnetCompiler: CompilerFactory<Streams, Program> = async (ctx,
 	const runtimeFactory = new DotnetRuntimeFactory(compiler);
 	return {
 		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			const runtime = runtimeFactory.create(ctx, files[0].content);
+			const runtime = runtimeFactory.create(ctx, files);
 			return new DotnetProgram(runtime);
 		}
 	};

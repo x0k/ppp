@@ -12,6 +12,12 @@ import (
 
 var ErrProgramNotCompiled = errors.New("program not compiled")
 
+// Source is a single file of a program to compile.
+type Source struct {
+	Filename string
+	Code     string
+}
+
 type Compiler struct {
 	inter *interp.Interpreter
 }
@@ -37,8 +43,12 @@ func New(
 	}, nil
 }
 
-func (c *Compiler) Compile(_ context.Context, code string) (*Program, error) {
-	prog, err := c.inter.Compile(code)
+func (c *Compiler) Compile(_ context.Context, sources []Source) (*Program, error) {
+	src, err := mergeSources(sources)
+	if err != nil {
+		return nil, err
+	}
+	prog, err := c.inter.Compile(src)
 	if err != nil {
 		return nil, err
 	}
@@ -48,9 +58,12 @@ func (c *Compiler) Compile(_ context.Context, code string) (*Program, error) {
 	}, nil
 }
 
-func (c *Compiler) Prepare(ctx context.Context, code string) (*Program, error) {
-	_, err := c.inter.EvalWithContext(ctx, code)
+func (c *Compiler) Prepare(ctx context.Context, sources []Source) (*Program, error) {
+	src, err := mergeSources(sources)
 	if err != nil {
+		return nil, err
+	}
+	if _, err := c.inter.EvalWithContext(ctx, src); err != nil {
 		return nil, err
 	}
 	return &Program{

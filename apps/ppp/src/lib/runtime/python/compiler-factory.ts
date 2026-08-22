@@ -13,10 +13,7 @@ export const makePythonCompiler: CompilerFactory<Streams, Program> = async (ctx,
 	logger.info(`Loaded ${indexUrl}`);
 	return {
 		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			return new PyProgram(files[0].content, pyRuntime);
+			return new PyProgram(files, pyRuntime);
 		}
 	};
 };

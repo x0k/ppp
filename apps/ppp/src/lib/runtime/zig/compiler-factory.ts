@@ -43,10 +43,7 @@ export const makeZigCompiler: CompilerFactory<Streams, Program> = async (ctx, st
 	const compiler = new ZigCompiler(compilerWasi, zigWasmModule);
 	return {
 		async compile(ctx, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			const program = await compiler.compile(ctx, files[0].content);
+			const program = await compiler.compile(ctx, files);
 			return new ZigProgram(
 				programWasi,
 				program.buffer instanceof ArrayBuffer

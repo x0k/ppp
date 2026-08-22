@@ -2,7 +2,7 @@ import type { Streams } from 'libs/io';
 import { inContext, type Context } from 'libs/context';
 import type { TestCompiler } from 'libs/testing';
 import { createLogger, type Logger } from 'libs/logger';
-import { RubyTestProgram, createRubyVM } from 'ruby-runtime';
+import { RubyTestProgram, createRubyVM, rubyEntryFile, rubyFilePath } from 'ruby-runtime';
 
 import rubyWasmUrl from 'ruby-runtime/ruby.wasm?url';
 
@@ -33,11 +33,11 @@ export class RubyTestCompilerFactory {
 		this.logger.info(`Loaded ${rubyWasmUrl}`);
 		return {
 			compile: async (ctx, files) => {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				const vm = await createRubyVM(ctx, this.streams, rubyWasmModule);
-				await inContext(ctx, vm.evalAsync(files[0].content));
+				const vm = await createRubyVM(ctx, this.streams, rubyWasmModule, files);
+				const entry = rubyFilePath(rubyEntryFile(files));
+				// Load the entry from the VM filesystem instead of evaluating it
+				// inline, so require_relative works across the program files.
+				await inContext(ctx, vm.evalAsync(`load '${entry}'`));
 				return new TestProgram(vm);
 			}
 		};

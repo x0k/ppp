@@ -30,10 +30,7 @@ export class PythonTestCompilerFactory {
 		this.logger.info(`Loaded ${indexUrl}`);
 		return {
 			async compile(_, files) {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				return new TestProgram(pyRuntime, files[0].content);
+				return new TestProgram(pyRuntime, files);
 			}
 		};
 	}

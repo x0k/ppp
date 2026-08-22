@@ -1,14 +1,17 @@
-import { Fd, WASI, OpenDirectory, File } from '@bjorn3/browser_wasi_shim';
+import { Fd, WASI, OpenDirectory, File as WasiFile } from '@bjorn3/browser_wasi_shim';
+import type { File } from 'libs/compiler';
 import type { TestProgram } from 'libs/testing';
 import { inContext, type Context } from 'libs/context';
 import { isErr } from 'libs/result';
 import { assertOpenDir, lookupFile } from 'libs/wasi';
 
+import { rustEntryFile, writeRustSources } from './rust-files';
+
 export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
 	protected threads_count = 1;
 
 	constructor(
-		protected readonly code: string,
+		protected readonly files: File[],
 		protected readonly wasi: WASI,
 		protected readonly miriModule: WebAssembly.Module,
 		protected readonly outputPath: string
@@ -16,7 +19,7 @@ export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
 
 	async run(ctx: Context, input: I): Promise<O> {
 		this.threads_count = 1;
-		this.writeCaseExecutionCode(this.generateCaseExecutionCode(input));
+		this.writeSources(this.generateCaseExecutionCode(input));
 		const instance = await inContext(
 			ctx,
 			WebAssembly.instantiate(this.miriModule, {
@@ -72,6 +75,10 @@ export abstract class RustTestProgram<I, O> implements TestProgram<I, O> {
 		return dir;
 	}
 
+	protected get code(): string {
+		return rustEntryFile(this.files).content;
+	}
+
 	/**
 	 * Should generate a code that produces a variable `output_content: &[u8]`
 	 */
@@ -90,17 +97,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 `;
 	}
 
-	protected writeCaseExecutionCode(code: string) {
-		const file = lookupFile(this.rootDir, 'main.rs');
-		if (isErr(file)) {
-			throw new Error(`Failed to read main file: ${file.error}`);
-		}
-		file.value.data = new TextEncoder().encode(code);
+	protected writeSources(entryCode: string) {
+		writeRustSources(this.rootDir, this.files, rustEntryFile(this.files), entryCode);
 	}
 
 	protected abstract transformResult(data: string): O;
 
-	protected readOutputFile(): File {
+	protected readOutputFile(): WasiFile {
 		const file = lookupFile(this.rootDir, this.outputPath);
 		if (isErr(file)) {
 			throw new Error(`Failed to read output file: ${file.error}`);
@@ -108,7 +111,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 		return file.value;
 	}
 
-	protected decodeFileContent(file: File): string {
+	protected decodeFileContent(file: WasiFile): string {
 		return new TextDecoder('utf-8').decode(file.data);
 	}
 

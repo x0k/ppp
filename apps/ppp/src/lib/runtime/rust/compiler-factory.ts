@@ -40,10 +40,7 @@ export const makeRustCompiler: CompilerFactory<Streams, Program> = async (ctx, s
 	const wasi = createWASI(streams, libs);
 	return {
 		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			return new RustProgram(files[0].content, wasi, miri);
+			return new RustProgram(files, wasi, miri);
 		}
 	};
 };
