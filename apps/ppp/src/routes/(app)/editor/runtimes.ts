@@ -14,6 +14,7 @@ import RubyWorker from '$lib/runtime/ruby/worker?worker';
 import DotnetWorker from '$lib/runtime/dotnet/worker?worker';
 import ZigWorker from '$lib/runtime/zig/worker?worker';
 import CppWorker from '$lib/runtime/cpp/worker?worker';
+import LuaWorker from '$lib/runtime/lua/worker?worker';
 
 import phpProgram from './_program.php?raw';
 import tsProgram from './_program.ts?raw';
@@ -27,6 +28,7 @@ import csProgram from './_program.cs?raw';
 import rubyProgram from './_program.rb?raw';
 import zigProgram from './_program.zig?raw';
 import cppProgram from './_program.cpp?raw';
+import luaProgram from './_program.lua?raw';
 
 interface Runtime {
 	initialValue: string;
@@ -81,5 +83,9 @@ export const RUNTIMES: Record<Language, Runtime> = {
 	[Language.Cpp]: {
 		initialValue: cppProgram,
 		compilerFactory: makeRemoteCompilerFactory(CppWorker)
+	},
+	[Language.Lua]: {
+		initialValue: luaProgram,
+		compilerFactory: makeRemoteCompilerFactory(LuaWorker)
 	}
 };

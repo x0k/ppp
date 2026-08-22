@@ -7,6 +7,7 @@ type CachePrefix =
 	| 'gleam-cache@'
 	| 'go-cache@'
 	| 'java-cache@'
+	| 'lua-cache@'
 	| 'php-cache@'
 	| 'python-cache@'
 	| 'ruby-cache@'
