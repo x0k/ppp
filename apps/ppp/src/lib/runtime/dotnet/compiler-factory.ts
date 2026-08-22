@@ -413,10 +413,7 @@ export const makeDotnetCompiler: CompilerFactory<Streams, Program> = async (ctx,
 	const runtimeFactory = new DotnetRuntimeFactory(compiler);
 	return {
 		async compile(_, files) {
-			const runtime = runtimeFactory.create(
-				ctx,
-				files.map((file) => file.content)
-			);
+			const runtime = runtimeFactory.create(ctx, files);
 			return new DotnetProgram(runtime);
 		}
 	};

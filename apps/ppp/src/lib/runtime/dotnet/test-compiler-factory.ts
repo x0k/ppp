@@ -426,8 +426,8 @@ export class DotnetTestCompilerFactory {
 		return {
 			async compile(ctx, files) {
 				const runtime = runtimeFactory.create(ctx, [
-					...files.map((file) => file.content),
-					executionCode
+					...files,
+					{ filename: 'execution', content: executionCode }
 				]);
 				return new DotnetTestProgram<I, O>(typeFullName, methodName, runtime);
 			}

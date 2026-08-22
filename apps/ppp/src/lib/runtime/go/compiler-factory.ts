@@ -27,10 +27,7 @@ export const makeGoCompiler: CompilerFactory<Streams, Program> = async (ctx, str
 	logger.info(`Loaded ${wasmUrl}`);
 	return {
 		async compile(ctx, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			return new GoProgram(await goExecutorFactory(ctx, streams, files[0].content));
+			return new GoProgram(await goExecutorFactory(ctx, streams, files));
 		}
 	};
 };

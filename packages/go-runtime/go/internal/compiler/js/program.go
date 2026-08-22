@@ -24,8 +24,8 @@ func New(
 	}
 }
 
-func (c *JsCompiler) CreateEvaluator(ctx context.Context, code string) js_adapters.Result {
-	p, err := c.compiler.Prepare(ctx, code)
+func (c *JsCompiler) CreateEvaluator(ctx context.Context, sources []compiler.Source) js_adapters.Result {
+	p, err := c.compiler.Prepare(ctx, sources)
 	if err != nil {
 		return js_adapters.Err(err)
 	}
@@ -44,8 +44,8 @@ func (c *JsCompiler) CreateEvaluator(ctx context.Context, code string) js_adapte
 	return js_adapters.Ok(exec.Value)
 }
 
-func (c *JsCompiler) CreateExecuter(ctx context.Context, code string) js_adapters.Result {
-	p, err := c.compiler.Compile(ctx, code)
+func (c *JsCompiler) CreateExecuter(ctx context.Context, sources []compiler.Source) js_adapters.Result {
+	p, err := c.compiler.Compile(ctx, sources)
 	if err != nil {
 		return js_adapters.Err(err)
 	}

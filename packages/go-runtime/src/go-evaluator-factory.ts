@@ -5,9 +5,9 @@ import { type Evaluator, type GoCompilerFactory, type GoProgramFactory } from '.
 export function makeGoEvaluatorFactory<O>(
 	makeCompiler: GoCompilerFactory
 ): GoProgramFactory<Evaluator<O>> {
-	return async (ctx, streams, code) => {
+	return async (ctx, streams, files) => {
 		const compiler = makeCompiler(streams);
-		const executor = await compiler.createEvaluator<O>(ctx.signal, code);
+		const executor = await compiler.createEvaluator<O>(ctx.signal, files);
 		if (isErr(executor)) {
 			throw new Error(executor.error);
 		}

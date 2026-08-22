@@ -44,10 +44,7 @@ export class GoTestCompilerFactory {
 		this.logger.info(`Loaded ${wasmUrl}`);
 		return {
 			compile: async (ctx, files) => {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				return new TestProgram(await goEvaluatorFactory(ctx, this.streams, files[0].content));
+				return new TestProgram(await goEvaluatorFactory(ctx, this.streams, files));
 			}
 		};
 	}
