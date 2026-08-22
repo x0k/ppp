@@ -66,10 +66,7 @@ export class ZigTestCompilerFactory {
 		]);
 		return {
 			async compile(_, files) {
-				if (files.length !== 1) {
-					throw new Error('Compilation of multiple files is not implemented');
-				}
-				return new TestProgram(files[0].content, wasi, zigWasmModule, 'case_output');
+				return new TestProgram(files, wasi, zigWasmModule, 'case_output');
 			}
 		};
 	}

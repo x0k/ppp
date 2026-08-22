@@ -1,7 +1,10 @@
 import type { OpenDirectory, WASI } from '@bjorn3/browser_wasi_shim';
+import type { File } from 'libs/compiler';
 import { inContext, type Context } from 'libs/context';
 import { isErr } from 'libs/result';
 import { assertOpenDir, lookupFile } from 'libs/wasi';
+
+import { writeZigSources, zigEntryFile } from './zig-files';
 
 export class ZigCompiler {
 	protected textEncoder = new TextEncoder();
@@ -11,8 +14,8 @@ export class ZigCompiler {
 		protected readonly zigModule: WebAssembly.Module
 	) {}
 
-	async compile(ctx: Context, source: string) {
-		this.writeSourceCode(source);
+	async compile(ctx: Context, files: File[]) {
+		this.writeSources(files);
 		const instance = await inContext(
 			ctx,
 			WebAssembly.instantiate(this.zigModule, {
@@ -33,12 +36,9 @@ export class ZigCompiler {
 		return dir;
 	}
 
-	protected writeSourceCode(code: string) {
-		const file = lookupFile(this.rootDir, 'main.zig');
-		if (isErr(file)) {
-			throw new Error(`Failed to read main file: ${file.error}`);
-		}
-		file.value.data = this.textEncoder.encode(code);
+	protected writeSources(files: File[]) {
+		const entry = zigEntryFile(files);
+		writeZigSources(this.rootDir, files, entry, entry.content);
 	}
 
 	protected getWasmFile() {

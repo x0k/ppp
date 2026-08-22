@@ -1,15 +1,18 @@
 import type { OpenDirectory, WASI } from '@bjorn3/browser_wasi_shim';
+import type { File } from 'libs/compiler';
 import type { TestProgram } from 'libs/testing';
 import { inContext, type Context } from 'libs/context';
 import { isErr } from 'libs/result';
 import { assertOpenDir, lookupFile } from 'libs/wasi';
+
+import { writeZigSources, zigEntryFile } from './zig-files';
 
 export abstract class ZigTestProgram<I, O> implements TestProgram<I, O> {
 	protected textEncoder = new TextEncoder();
 	protected textDecoder = new TextDecoder();
 
 	constructor(
-		protected readonly code: string,
+		protected readonly files: File[],
 		protected readonly wasi: WASI,
 		protected readonly zigModule: WebAssembly.Module,
 		protected readonly outputPath: string
@@ -82,11 +85,11 @@ export fn _start() void {
 	}
 
 	protected writeCaseExecutionCode(code: string) {
-		const file = lookupFile(this.rootDir, 'main.zig');
-		if (isErr(file)) {
-			throw new Error(`Failed to read main file: ${file.error}`);
-		}
-		file.value.data = this.textEncoder.encode(code);
+		writeZigSources(this.rootDir, this.files, zigEntryFile(this.files), code);
+	}
+
+	protected get code(): string {
+		return zigEntryFile(this.files).content;
 	}
 
 	protected get rootDir(): OpenDirectory {
