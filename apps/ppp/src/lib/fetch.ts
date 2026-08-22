@@ -2,6 +2,7 @@ import { cache, createCachedFetch as createFetch } from 'libs/fetch';
 import { hashString } from 'libs/hash';
 
 type CachePrefix =
+	| 'cpp-cache@'
 	| 'dotnet-cache@'
 	| 'gleam-cache@'
 	| 'go-cache@'

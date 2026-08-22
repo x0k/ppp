@@ -1,0 +1,4 @@
+# Toolchain artifacts copied from node_modules/browsercc by artifacts.sh
+public/
+src/vendor/*
+!src/vendor/*.d.ts
