@@ -1,7 +1,10 @@
 import type { PHP } from '@php-wasm/universal';
+import type { File } from 'libs/compiler';
 import type { Streams } from 'libs/io';
 import type { Context } from 'libs/context';
 import type { TestProgram } from 'libs/testing';
+
+import { phpEntryFile, phpFilePath } from './php-program';
 
 export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 	private result?: O;
@@ -10,7 +13,7 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 	constructor(
 		protected readonly streams: Streams,
 		protected readonly php: PHP,
-		protected readonly code: string
+		protected readonly files: File[]
 	) {
 		this.disposeOnMessage = php.onMessage(this.handleResult.bind(this));
 	}
@@ -20,7 +23,12 @@ export abstract class PHPTestProgram<I, O> implements TestProgram<I, O> {
 	}
 
 	protected transformCode(input: I) {
-		return `${this.code}\npost_message_to_js(json_encode(${this.caseExecutionCode(input)}));`;
+		const entryPath = phpFilePath(phpEntryFile(this.files));
+		return [
+			'<?php',
+			`require '${entryPath}';`,
+			`post_message_to_js(json_encode(${this.caseExecutionCode(input)}));`
+		].join('\n');
 	}
 
 	protected transformResult(result: string): O {

@@ -20,10 +20,7 @@ export const makePhpCompiler: CompilerFactory<Streams, Program> = async (ctx, st
 	logger.info(`Loaded ${phpWasmUrl}`);
 	return {
 		async compile(_, files) {
-			if (files.length !== 1) {
-				throw new Error('Compilation of multiple files is not implemented');
-			}
-			return new PHPProgram(files[0].content, php, streams);
+			return new PHPProgram(files, php, streams);
 		}
 	};
 };
